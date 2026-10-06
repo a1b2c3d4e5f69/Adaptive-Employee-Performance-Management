@@ -17,6 +17,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class UserRepository {
 
     private final SupabaseClient supabaseClient;
@@ -976,6 +979,237 @@ public void deleteUserByAdmin(
 
         return null;
     }
+
+   // =========================================================
+// UPLOAD PROFILE IMAGE
+// =========================================================
+
+public String uploadProfileImage(
+        String userId,
+        Path imagePath,
+        String accessToken
+) throws Exception {
+
+    if (imagePath == null) {
+
+        throw new Exception(
+                "Please select an image."
+        );
+    }
+
+
+    byte[] imageBytes =
+            Files.readAllBytes(
+                    imagePath
+            );
+
+
+    String fileName =
+            imagePath
+                    .getFileName()
+                    .toString()
+                    .toLowerCase();
+
+
+    String contentType;
+
+
+    if (
+            fileName.endsWith(".png")
+    ) {
+
+        contentType =
+                "image/png";
+
+    } else if (
+            fileName.endsWith(".jpg")
+                    || fileName.endsWith(".jpeg")
+    ) {
+
+        contentType =
+                "image/jpeg";
+
+    } else {
+
+        throw new Exception(
+                "Only JPG, JPEG and PNG images are supported."
+        );
+    }
+
+
+    // =========================================
+    // OBJECT PATH
+    // =========================================
+
+    String extension =
+            contentType.equals("image/png")
+                    ? ".png"
+                    : ".jpg";
+
+
+    String objectPath =
+            userId
+                    + "/profile"
+                    + extension;
+
+
+    String uploadUrl =
+            AppConfig.STORAGE_URL
+                    + "/object/profile-images/"
+                    + objectPath;
+
+
+    // =========================================
+    // IMPORTANT:
+    // Do NOT use createAuthenticatedRequest()
+    // because that method adds application/json.
+    // =========================================
+
+    HttpRequest request =
+            HttpRequest
+                    .newBuilder()
+                    .uri(
+                            java.net.URI.create(
+                                    uploadUrl
+                            )
+                    )
+
+                    .header(
+                            "apikey",
+                            AppConfig.SUPABASE_PUBLISHABLE_KEY
+                    )
+
+                    .header(
+                            "Authorization",
+                            "Bearer " + accessToken
+                    )
+
+                    .header(
+                            "Content-Type",
+                            contentType
+                    )
+
+                    .header(
+                            "x-upsert",
+                            "true"
+                    )
+
+                    .POST(
+                            HttpRequest
+                                    .BodyPublishers
+                                    .ofByteArray(
+                                            imageBytes
+                                    )
+                    )
+
+                    .build();
+
+
+    HttpResponse<String> response =
+            supabaseClient
+                    .getHttpClient()
+                    .send(
+                            request,
+                            HttpResponse
+                                    .BodyHandlers
+                                    .ofString()
+                    );
+
+
+    System.out.println(
+            "PROFILE IMAGE STATUS: "
+                    + response.statusCode()
+    );
+
+
+    System.out.println(
+            "PROFILE IMAGE RESPONSE: "
+                    + response.body()
+    );
+
+
+    if (
+            response.statusCode() < 200
+                    || response.statusCode() >= 300
+    ) {
+
+        throw new Exception(
+                "Unable to upload profile image."
+        );
+    }
+
+
+    // =========================================
+    // PUBLIC URL
+    // =========================================
+
+    return AppConfig.STORAGE_URL
+            + "/object/public/profile-images/"
+            + objectPath;
+}
+
+// =========================================================
+// UPDATE PROFILE IMAGE URL
+// =========================================================
+
+public void updateProfileImage(
+        String userId,
+        String profileImageUrl,
+        String accessToken
+) throws Exception {
+
+    JsonObject json =
+            new JsonObject();
+
+
+    json.addProperty(
+            "profile_image",
+            profileImageUrl
+    );
+
+
+    String url =
+            AppConfig.REST_URL
+                    + "/user_tbl"
+                    + "?user_id=eq."
+                    + encode(userId);
+
+
+    HttpRequest request =
+            supabaseClient
+                    .createAuthenticatedRequest(
+                            url,
+                            accessToken
+                    )
+                    .method(
+                            "PATCH",
+                            HttpRequest.BodyPublishers
+                                    .ofString(
+                                            json.toString()
+                                    )
+                    )
+                    .build();
+
+
+    HttpResponse<String> response =
+            supabaseClient
+                    .getHttpClient()
+                    .send(
+                            request,
+                            HttpResponse.BodyHandlers.ofString()
+                    );
+
+
+    if (
+            response.statusCode() < 200
+                    || response.statusCode() >= 300
+    ) {
+
+        throw new Exception(
+                "Unable to save profile image."
+        );
+    }
+}
 
 
     

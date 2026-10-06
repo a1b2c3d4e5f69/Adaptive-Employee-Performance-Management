@@ -1,21 +1,61 @@
 package com.aepm.ui.employee;
 
-import com.aepm.data.repository.UserRepository;
+import com.aepm.logic.user.UserService;
 import com.aepm.model.User;
 import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import javafx.scene.shape.Circle;
+
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.nio.file.Path;
+
 public class EmployeeProfileController {
+
+    // =========================================================
+    // TOP BAR
+    // =========================================================
+
+    @FXML
+    private Label welcomeLabel;
+
+    @FXML
+    private Label topNameLabel;
+
+
+    // =========================================================
+    // PROFILE IMAGE
+    // =========================================================
+
+    @FXML
+    private ImageView profileImageView;
+
+    @FXML
+    private Label profileInitialLabel;
+
+    @FXML
+    private Button editImageButton;
+
+
+    // =========================================================
+    // PROFILE INFORMATION
+    // =========================================================
 
     @FXML
     private Label fullNameLabel;
@@ -30,9 +70,6 @@ public class EmployeeProfileController {
     private Label emailLabel;
 
     @FXML
-    private TextField contactNumberField;
-
-    @FXML
     private Label departmentLabel;
 
     @FXML
@@ -42,109 +79,418 @@ public class EmployeeProfileController {
     private Label accountStatusLabel;
 
     @FXML
+    private TextField contactNumberField;
+
+
+    // =========================================================
+    // OTHER
+    // =========================================================
+
+    @FXML
     private Label messageLabel;
 
     @FXML
     private Button saveButton;
 
-    private final UserRepository userRepository =
-            new UserRepository();
 
-    private User currentUser;
+    private final UserService userService =
+            new UserService();
 
+
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
 
     @FXML
     public void initialize() {
-
-        UIHelper.hideMessage(messageLabel);
-
-        currentUser =
-                SessionManager.getCurrentUser();
-
-        loadProfile();
-    }
-
-
-    private void loadProfile() {
-
-        if (currentUser == null) {
-
-            UIHelper.showError(
-                    messageLabel,
-                    "Unable to load user profile."
-            );
-
-            return;
-        }
-
-        fullNameLabel.setText(
-                safe(currentUser.getFullName())
-        );
-
-        employeeIdLabel.setText(
-                safe(currentUser.getEmployeeId())
-        );
-
-        usernameLabel.setText(
-                safe(currentUser.getUsername())
-        );
-
-        emailLabel.setText(
-                safe(currentUser.getEmail())
-        );
-
-        contactNumberField.setText(
-                safe(currentUser.getContactNumber())
-        );
-
-        departmentLabel.setText(
-                safe(currentUser.getDepartment())
-        );
-
-        roleLabel.setText(
-                currentUser.getRole() == null
-                        ? "-"
-                        : currentUser.getRole()
-                        .name()
-                        .replace("_", " ")
-        );
-
-        accountStatusLabel.setText(
-                safe(currentUser.getAccountStatus())
-        );
-    }
-
-
-    @FXML
-    private void handleSave() {
-
-        String contactNumber =
-                contactNumberField
-                        .getText()
-                        .trim();
 
         UIHelper.hideMessage(
                 messageLabel
         );
 
-        setLoading(true);
 
-        Task<Void> updateTask =
+        Circle clip =
+                new Circle(
+                        60,
+                        60,
+                        60
+                );
+
+
+        profileImageView.setClip(
+                clip
+        );
+
+
+        loadProfile();
+    }
+
+
+    // =========================================================
+    // LOAD PROFILE
+    // =========================================================
+
+    private void loadProfile() {
+
+        User user =
+                SessionManager.getCurrentUser();
+
+
+        if (user == null) {
+
+            UIHelper.showError(
+                    messageLabel,
+                    "No logged-in user found."
+            );
+
+            return;
+        }
+
+
+        String name =
+                user.getFullName() == null
+                        ? "Employee"
+                        : user.getFullName();
+
+
+        welcomeLabel.setText(
+                "Welcome, " + name
+        );
+
+
+        topNameLabel.setText(
+                name
+        );
+
+
+        fullNameLabel.setText(
+                name
+        );
+
+
+        employeeIdLabel.setText(
+                safe(
+                        user.getEmployeeId()
+                )
+        );
+
+
+        usernameLabel.setText(
+                safe(
+                        user.getUsername()
+                )
+        );
+
+
+        emailLabel.setText(
+                safe(
+                        user.getEmail()
+                )
+        );
+
+
+        departmentLabel.setText(
+                safe(
+                        user.getDepartment()
+                )
+        );
+
+
+        roleLabel.setText(
+                "Employee"
+        );
+
+
+        accountStatusLabel.setText(
+                safe(
+                        user.getAccountStatus()
+                )
+        );
+
+
+        contactNumberField.setText(
+                user.getContactNumber() == null
+                        ? ""
+                        : user.getContactNumber()
+        );
+
+
+        loadProfileImage(
+                user
+        );
+    }
+
+
+    // =========================================================
+    // LOAD PROFILE IMAGE
+    // =========================================================
+
+    private void loadProfileImage(
+            User user
+    ) {
+
+        String imageUrl =
+                user.getProfileImage();
+
+
+        if (
+                imageUrl != null
+                        && !imageUrl.isBlank()
+        ) {
+
+            try {
+
+                Image image =
+                        new Image(
+                                imageUrl
+                                        + "?t="
+                                        + System.currentTimeMillis(),
+                                true
+                        );
+
+
+                profileImageView.setImage(
+                        image
+                );
+
+
+                profileImageView.setVisible(
+                        true
+                );
+
+
+                profileInitialLabel.setVisible(
+                        false
+                );
+
+
+                return;
+
+            } catch (Exception ignored) {
+            }
+        }
+
+
+        profileImageView.setImage(
+                null
+        );
+
+
+        profileImageView.setVisible(
+                false
+        );
+
+
+        profileInitialLabel.setVisible(
+                true
+        );
+
+
+        String name =
+                user.getFullName();
+
+
+        if (
+                name != null
+                        && !name.isBlank()
+        ) {
+
+            profileInitialLabel.setText(
+                    name.substring(
+                            0,
+                            1
+                    ).toUpperCase()
+            );
+
+        } else {
+
+            profileInitialLabel.setText(
+                    "E"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // CHANGE PROFILE IMAGE
+    // =========================================================
+
+    @FXML
+    private void handleChangeProfileImage(
+            ActionEvent event
+    ) {
+
+        FileChooser chooser =
+                new FileChooser();
+
+
+        chooser.setTitle(
+                "Select Profile Image"
+        );
+
+
+        chooser.getExtensionFilters()
+                .add(
+                        new FileChooser.ExtensionFilter(
+                                "Image Files",
+                                "*.png",
+                                "*.jpg",
+                                "*.jpeg"
+                        )
+                );
+
+
+        File file =
+                chooser.showOpenDialog(
+                        getStage(event)
+                );
+
+
+        if (file == null) {
+            return;
+        }
+
+
+        long maxSize =
+                5L
+                        * 1024
+                        * 1024;
+
+
+        if (file.length() > maxSize) {
+
+            UIHelper.showError(
+                    messageLabel,
+                    "Profile image must be smaller than 5 MB."
+            );
+
+            return;
+        }
+
+
+        Path path =
+                file.toPath();
+
+
+        editImageButton.setDisable(
+                true
+        );
+
+
+        UIHelper.hideMessage(
+                messageLabel
+        );
+
+
+        Task<String> task =
+                new Task<>() {
+
+                    @Override
+                    protected String call()
+                            throws Exception {
+
+                        return userService
+                                .uploadOwnProfileImage(
+                                        path
+                                );
+                    }
+                };
+
+
+        task.setOnSucceeded(
+                e -> {
+
+                    editImageButton.setDisable(
+                            false
+                    );
+
+
+                    User user =
+                            SessionManager
+                                    .getCurrentUser();
+
+
+                    if (user != null) {
+
+                        loadProfileImage(
+                                user
+                        );
+                    }
+
+
+                    UIHelper.showSuccess(
+                            messageLabel,
+                            "Profile image updated successfully."
+                    );
+                }
+        );
+
+
+        task.setOnFailed(
+                e -> {
+
+                    editImageButton.setDisable(
+                            false
+                    );
+
+
+                    Throwable error =
+                            task.getException();
+
+
+                    UIHelper.showError(
+                            messageLabel,
+                            error == null
+                                    ? "Unable to upload profile image."
+                                    : error.getMessage()
+                    );
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        task
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // SAVE CONTACT
+    // =========================================================
+
+    @FXML
+    private void handleSave() {
+
+        String contact =
+                contactNumberField
+                        .getText()
+                        .trim();
+
+
+        saveButton.setDisable(
+                true
+        );
+
+
+        Task<Void> task =
                 new Task<>() {
 
                     @Override
                     protected Void call()
                             throws Exception {
 
-                        String accessToken =
-                                SessionManager
-                                        .getAccessToken();
-
-                        userRepository
-                                .updateContactNumber(
-                                        currentUser.getUserId(),
-                                        contactNumber,
-                                        accessToken
+                        userService
+                                .updateOwnContactNumber(
+                                        contact
                                 );
 
                         return null;
@@ -152,14 +498,13 @@ public class EmployeeProfileController {
                 };
 
 
-        updateTask.setOnSucceeded(
-                event -> {
+        task.setOnSucceeded(
+                e -> {
 
-                    setLoading(false);
-
-                    currentUser.setContactNumber(
-                            contactNumber
+                    saveButton.setDisable(
+                            false
                     );
+
 
                     UIHelper.showSuccess(
                             messageLabel,
@@ -169,20 +514,23 @@ public class EmployeeProfileController {
         );
 
 
-        updateTask.setOnFailed(
-                event -> {
+        task.setOnFailed(
+                e -> {
 
-                    setLoading(false);
+                    saveButton.setDisable(
+                            false
+                    );
 
-                    Throwable exception =
-                            updateTask
-                                    .getException();
+
+                    Throwable error =
+                            task.getException();
+
 
                     UIHelper.showError(
                             messageLabel,
-                            exception == null
+                            error == null
                                     ? "Unable to update profile."
-                                    : exception.getMessage()
+                                    : error.getMessage()
                     );
                 }
         );
@@ -190,67 +538,166 @@ public class EmployeeProfileController {
 
         Thread thread =
                 new Thread(
-                        updateTask
+                        task
                 );
+
 
         thread.setDaemon(
                 true
         );
 
+
         thread.start();
     }
 
 
-    @FXML
-    private void handleChangePassword() {
-
-    Stage stage =
-            (Stage) saveButton
-                    .getScene()
-                    .getWindow();
-
-
-    NavigationManager.navigate(
-            stage,
-            "/fxml/auth/changepassword.fxml"
-    );
-    }
-
+    // =========================================================
+    // HOME
+    // =========================================================
 
     @FXML
-    private void handleBack() {
+    private void handleHome(
+            ActionEvent event
+    ) {
 
-        Stage stage =
-                (Stage) saveButton
-                        .getScene()
-                        .getWindow();
-
-        NavigationManager.navigate(
-                stage,
+        navigate(
+                event,
                 "/fxml/employee/employeeHome.fxml"
         );
     }
 
 
-    private void setLoading(
-            boolean loading
+    // =========================================================
+    // PROFILE
+    // =========================================================
+
+    @FXML
+    private void handleProfile(
+        ActionEvent event
     ) {
-
-        saveButton.setDisable(
-                loading
-        );
-
-        contactNumberField.setDisable(
-                loading
-        );
-
-        saveButton.setText(
-                loading
-                        ? "Saving..."
-                        : "Save Changes"
+        navigate(
+            event,
+            "/fxml/employee/employeeProfile.fxml"
         );
     }
 
+
+    // =========================================================
+    // TASK
+    // =========================================================
+
+    @FXML
+    private void handleTasks(ActionEvent event) {
+        navigate(
+            event,
+            "/fxml/employee/employeeTask.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // KPI
+    // =========================================================
+
+    @FXML
+    private void handleKpi() {
+
+        System.out.println(
+                "Employee KPI not implemented yet."
+        );
+    }
+
+
+    // =========================================================
+    // REPORTS
+    // =========================================================
+
+    @FXML
+    private void handleReports() {
+
+        System.out.println(
+                "Employee Reports not implemented yet."
+        );
+    }
+
+
+    // =========================================================
+    // ANONYMOUS REPORT
+    // =========================================================
+
+    @FXML
+    private void handleAnonymousReport() {
+
+        System.out.println(
+                "Anonymous Report not implemented yet."
+        );
+    }
+
+
+    // =========================================================
+    // CHANGE PASSWORD
+    // =========================================================
+
+    @FXML
+    private void handleChangePassword(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/auth/changePassword.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // LOGOUT
+    // =========================================================
+
+    @FXML
+    private void handleLogout(
+            ActionEvent event
+    ) {
+
+        SessionManager.clearSession();
+
+
+        navigate(
+                event,
+                "/fxml/auth/login.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // NAVIGATION
+    // =========================================================
+
+    private void navigate(
+            ActionEvent event,
+            String path
+    ) {
+
+        NavigationManager.navigate(
+                getStage(event),
+                path
+        );
+    }
+
+
+    private Stage getStage(
+            ActionEvent event
+    ) {
+
+        return (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    }
+
+
+    // =========================================================
+    // HELPERS
+    // =========================================================
 
     private String safe(
             String value

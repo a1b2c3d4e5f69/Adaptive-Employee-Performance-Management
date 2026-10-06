@@ -27,4 +27,7 @@ public final class AppConfig {
 
     public static final String FUNCTIONS_URL =
         SUPABASE_URL + "/functions/v1";
+
+    public static final String STORAGE_URL =
+        SUPABASE_URL + "/storage/v1";
 }

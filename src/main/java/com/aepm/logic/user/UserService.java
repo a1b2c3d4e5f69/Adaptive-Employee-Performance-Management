@@ -6,6 +6,7 @@ import com.aepm.util.SessionManager;
 import com.aepm.util.ValidationUtil;
 
 import java.util.List;
+import java.nio.file.Path;
 
 public class UserService {
 
@@ -348,4 +349,119 @@ public void deleteUser(
             accessToken
     );
 }
+
+// =========================================================
+// UPDATE OWN CONTACT NUMBER
+// =========================================================
+
+public void updateOwnContactNumber(
+        String contactNumber
+) throws Exception {
+
+    User currentUser =
+            SessionManager
+                    .getCurrentUser();
+
+
+    if (currentUser == null) {
+
+        throw new Exception(
+                "No logged-in user found."
+        );
+    }
+
+
+    String accessToken =
+            SessionManager
+                    .getAccessToken();
+
+
+    if (
+            accessToken == null
+                    || accessToken.isBlank()
+    ) {
+
+        throw new Exception(
+                "Authentication session is unavailable."
+        );
+    }
+
+
+    userRepository.updateContactNumber(
+            currentUser.getUserId(),
+            contactNumber == null
+                    ? ""
+                    : contactNumber.trim(),
+            accessToken
+    );
+
+
+    currentUser.setContactNumber(
+            contactNumber == null
+                    ? ""
+                    : contactNumber.trim()
+    );
+}
+
+
+// =========================================================
+// UPLOAD OWN PROFILE IMAGE
+// =========================================================
+
+public String uploadOwnProfileImage(
+        Path imagePath
+) throws Exception {
+
+    User currentUser =
+            SessionManager
+                    .getCurrentUser();
+
+
+    if (currentUser == null) {
+
+        throw new Exception(
+                "No logged-in user found."
+        );
+    }
+
+
+    String accessToken =
+            SessionManager
+                    .getAccessToken();
+
+
+    if (
+            accessToken == null
+                    || accessToken.isBlank()
+    ) {
+
+        throw new Exception(
+                "Authentication session is unavailable."
+        );
+    }
+
+
+    String imageUrl =
+            userRepository.uploadProfileImage(
+                    currentUser.getUserId(),
+                    imagePath,
+                    accessToken
+            );
+
+
+    userRepository.updateProfileImage(
+            currentUser.getUserId(),
+            imageUrl,
+            accessToken
+    );
+
+
+    currentUser.setProfileImage(
+            imageUrl
+    );
+
+
+    return imageUrl;
+}
+
 }

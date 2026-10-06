@@ -21,27 +21,69 @@ public class AdminHomeController {
     private Label topNameLabel;
 
 
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
+
     @FXML
     public void initialize() {
 
         User user =
                 SessionManager.getCurrentUser();
 
-        if (user != null) {
 
-            String name =
-                    user.getFullName() == null
-                            ? "Administrator"
-                            : user.getFullName();
+        if (user == null) {
+            return;
+        }
+
+
+        String name =
+                user.getFullName() == null
+                        ? "Administrator"
+                        : user.getFullName();
+
+
+        if (welcomeLabel != null) {
 
             welcomeLabel.setText(
                     "Welcome, " + name
             );
-
-            if (topNameLabel != null) {
-                topNameLabel.setText(name);
-            }
         }
+
+
+        if (topNameLabel != null) {
+
+            topNameLabel.setText(
+                    name
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HOME
+    // =========================================================
+
+    @FXML
+    private void handleHome() {
+
+        // Already on Admin Home page.
+    }
+
+
+    // =========================================================
+    // PROFILE
+    // =========================================================
+
+    @FXML
+    private void handleProfile(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminProfile.fxml"
+        );
     }
 
 
@@ -62,53 +104,53 @@ public class AdminHomeController {
 
 
     // =========================================================
-    // TASK
+    // TASK MANAGEMENT
     // =========================================================
 
     @FXML
     private void handleTaskManagement() {
 
         System.out.println(
-                "Task Management not implemented yet."
+                "Admin Task Management not implemented yet."
         );
     }
 
 
     // =========================================================
-    // KPI
+    // KPI MANAGEMENT
     // =========================================================
 
     @FXML
     private void handleKpiManagement() {
 
         System.out.println(
-                "KPI Management not implemented yet."
+                "Admin KPI Management not implemented yet."
         );
     }
 
 
     // =========================================================
-    // REPORT
+    // REPORTS
     // =========================================================
 
     @FXML
     private void handleReports() {
 
         System.out.println(
-                "Reports not implemented yet."
+                "Admin Reports not implemented yet."
         );
     }
 
 
     // =========================================================
-    // ANONYMOUS REPORT
+    // ANONYMOUS REPORTS
     // =========================================================
 
     @FXML
     private void handleAnonymousReports() {
 
         System.out.println(
-                "Anonymous Reports not implemented yet."
+                "Admin Anonymous Reports not implemented yet."
         );
     }
 
@@ -123,6 +165,7 @@ public class AdminHomeController {
     ) {
 
         SessionManager.clearSession();
+
 
         navigate(
                 event,
@@ -144,6 +187,7 @@ public class AdminHomeController {
                 (Stage) ((Node) event.getSource())
                         .getScene()
                         .getWindow();
+
 
         NavigationManager.navigate(
                 stage,

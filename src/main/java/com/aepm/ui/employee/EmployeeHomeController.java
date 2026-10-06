@@ -4,8 +4,9 @@ import com.aepm.model.User;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 import javafx.stage.Stage;
@@ -153,27 +154,22 @@ public class EmployeeHomeController {
     );
 }
 
-    // =========================================================
     // TASK
-    // =========================================================
-
     @FXML
-    private void handleTasks() {
+    private void handleTasks(ActionEvent event) {
 
-        contentTitleLabel.setText(
-                "My Tasks"
-        );
+    Stage stage =
+            (Stage) ((Node) event.getSource())
+                    .getScene()
+                    .getWindow();
 
-        contentMessageLabel.setText(
-                "Task Management module will be available here."
-        );
-    }
+    NavigationManager.navigate(
+            stage,
+            "/fxml/employee/employeeTask.fxml"
+    );
+}
 
-
-    // =========================================================
     // KPI
-    // =========================================================
-
     @FXML
     private void handleKpi() {
 

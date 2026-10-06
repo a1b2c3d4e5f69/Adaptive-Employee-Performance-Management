@@ -214,26 +214,82 @@
     -fx-padding: 0 0 7px 8px;
 }
 
+/* =========================================================
+   SIDEBAR MENU
+   ========================================================= */
 
 .sidebar-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #4A4A57;
+    -fx-text-fill: #303248;
+
     -fx-font-size: 14px;
-    -fx-padding: 11px 14px;
+    -fx-font-weight: normal;
+
+    -fx-alignment: CENTER_LEFT;
+
     -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+
+    -fx-padding: 10px 14px;
+
     -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
+
+/* Hover only */
 
 .sidebar-button:hover {
-    -fx-background-color: #F0F0FF;
+    -fx-background-color: #F4F4FC;
     -fx-text-fill: #5B5FEF;
 }
 
 
+/* Prevent ugly grey JavaFX focus */
+
 .sidebar-button:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+
+/* =========================================================
+   ACTIVE SIDEBAR ITEM
+   ========================================================= */
+
+.sidebar-button-active {
     -fx-background-color: #EEEEFF;
     -fx-text-fill: #5B5FEF;
+
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+
+    -fx-padding: 10px 14px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+.sidebar-button-active:hover {
+    -fx-background-color: #E7E7FF;
+    -fx-text-fill: #5B5FEF;
+}
+
+
+.sidebar-button-active:focused {
+    -fx-background-color: #EEEEFF;
+    -fx-text-fill: #5B5FEF;
+    -fx-border-color: transparent;
 }
 
 
@@ -524,4 +580,48 @@
 
 .danger-button:hover {
     -fx-background-color: #FFE4E6;
+}
+
+/* =========================================================
+   PROFILE IMAGE
+   ========================================================= */
+
+.profile-avatar-background {
+    -fx-fill: #EEEFFE;
+    -fx-stroke: #D9DBF8;
+    -fx-stroke-width: 1;
+}
+
+.profile-avatar-initial {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5B5FEF;
+}
+
+.profile-avatar-edit-button {
+    -fx-background-color: #5B5FEF;
+    -fx-text-fill: white;
+
+    -fx-background-radius: 50%;
+
+    -fx-min-width: 34px;
+    -fx-min-height: 34px;
+
+    -fx-max-width: 34px;
+    -fx-max-height: 34px;
+
+    -fx-padding: 0;
+
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+
+    -fx-cursor: hand;
+}
+
+.profile-avatar-edit-button:hover {
+    -fx-opacity: 0.9;
+}
+
+.profile-divider {
+    -fx-background-color: #E5E7EB;
 }

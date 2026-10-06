@@ -10,6 +10,7 @@ public class SupabaseClient {
 
     private static SupabaseClient instance;
 
+
     private final HttpClient httpClient;
 
 
@@ -67,4 +68,6 @@ public class SupabaseClient {
                         "Bearer " + accessToken
                 );
     }
+
+   
 }
