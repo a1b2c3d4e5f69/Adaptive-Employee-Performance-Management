@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.admin.AdminHomeController"
+        styleClass="main-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <left>
+
+        <VBox
+                prefWidth="240"
+                styleClass="sidebar">
+
+            <padding>
+                <Insets
+                        top="28"
+                        right="18"
+                        bottom="24"
+                        left="18"/>
+            </padding>
+
+
+            <VBox spacing="3">
+
+                <Label
+                        text="AEPM"
+                        styleClass="sidebar-logo"/>
+
+                <Label
+                        text="Administrator Portal"
+                        styleClass="sidebar-subtitle"/>
+
+            </VBox>
+
+
+            <Region prefHeight="28"/>
+
+
+            <Label
+                    text="MENU"
+                    styleClass="sidebar-section-title"/>
+
+
+            <Button
+                    text="⌂   Home"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="●   User Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleUserManagement"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="✓   Task Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="★   KPI Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleKpiManagement"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="▤   Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleReports"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="!   Anonymous Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnonymousReports"
+                    styleClass="sidebar-button"/>
+
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Separator/>
+
+            <Region prefHeight="10"/>
+
+
+            <Button
+                    text="↪   Logout"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- TOPBAR -->
+
+    <top>
+
+        <HBox
+                alignment="CENTER_LEFT"
+                prefHeight="75"
+                spacing="15"
+                styleClass="topbar">
+
+            <padding>
+                <Insets
+                        top="15"
+                        right="30"
+                        bottom="15"
+                        left="30"/>
+            </padding>
+
+
+            <VBox spacing="3">
+
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome"
+                        styleClass="topbar-title"/>
+
+                <Label
+                        text="Administrator Portal"
+                        styleClass="topbar-subtitle"/>
+
+            </VBox>
+
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
+
+                <Label
+                        fx:id="nameLabel"
+                        text="-"
+                        styleClass="topbar-user-name"/>
+
+                <Label
+                        fx:id="roleLabel"
+                        text="Administrator"
+                        styleClass="topbar-user-role"/>
+
+            </VBox>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- CONTENT -->
+
+    <center>
+
+        <VBox
+                spacing="24"
+                styleClass="home-content">
+
+            <padding>
+                <Insets
+                        top="32"
+                        right="35"
+                        bottom="35"
+                        left="35"/>
+            </padding>
+
+
+            <VBox spacing="5">
+
+                <Label
+                        text="Administrator Home"
+                        styleClass="content-title"/>
+
+                <Label
+                        text="Manage users and system functions from here."
+                        styleClass="content-description"/>
+
+            </VBox>
+
+
+            <HBox spacing="18">
+
+                <VBox
+                        spacing="8"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="info-card">
+
+                    <Label
+                            text="IAM"
+                            styleClass="card-label"/>
+
+                    <Label
+                            text="User Management"
+                            styleClass="card-title"/>
+
+                    <Label
+                            text="Manage employee and manager accounts."
+                            wrapText="true"
+                            styleClass="card-description"/>
+
+                    <Button
+                            text="Manage Users"
+                            onAction="#handleUserManagement"
+                            styleClass="quick-button"/>
+
+                </VBox>
+
+
+                <VBox
+                        spacing="8"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="info-card">
+
+                    <Label
+                            text="TASK"
+                            styleClass="card-label"/>
+
+                    <Label
+                            text="Task Management"
+                            styleClass="card-title"/>
+
+                    <Label
+                            text="Task administration will be added next."
+                            wrapText="true"
+                            styleClass="card-description"/>
+
+                </VBox>
+
+
+                <VBox
+                        spacing="8"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="info-card">
+
+                    <Label
+                            text="KPI"
+                            styleClass="card-label"/>
+
+                    <Label
+                            text="Performance KPI"
+                            styleClass="card-title"/>
+
+                    <Label
+                            text="KPI configuration will be added later."
+                            wrapText="true"
+                            styleClass="card-description"/>
+
+                </VBox>
+
+            </HBox>
+
+        </VBox>
+
+    </center>
+
+</BorderPane>

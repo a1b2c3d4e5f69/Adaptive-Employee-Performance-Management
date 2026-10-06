@@ -3,18 +3,33 @@ package com.aepm.model;
 public class User {
 
     private String userId;
+
     private String fullName;
+
     private String username;
+
     private String email;
+
     private String contactNumber;
+
     private String department;
+
+    private long roleId;
+
     private Role role;
+
+    private String employeeId;
+
     private String managerId;
+
     private String accountStatus;
+
     private String profileImage;
+
 
     public User() {
     }
+
 
     public String getUserId() {
         return userId;
@@ -24,6 +39,7 @@ public class User {
         this.userId = userId;
     }
 
+
     public String getFullName() {
         return fullName;
     }
@@ -31,6 +47,7 @@ public class User {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
 
     public String getUsername() {
         return username;
@@ -40,6 +57,7 @@ public class User {
         this.username = username;
     }
 
+
     public String getEmail() {
         return email;
     }
@@ -47,6 +65,7 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
 
     public String getContactNumber() {
         return contactNumber;
@@ -56,6 +75,7 @@ public class User {
         this.contactNumber = contactNumber;
     }
 
+
     public String getDepartment() {
         return department;
     }
@@ -64,12 +84,30 @@ public class User {
         this.department = department;
     }
 
+
+    public long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(long roleId) {
+        this.roleId = roleId;
+    }
+
+
     public Role getRole() {
         return role;
     }
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getEmployeeId() {
+    return employeeId;
+    }
+    
+    public void setEmployeeId(String employeeId) {
+    this.employeeId = employeeId;
     }
 
     public String getManagerId() {
@@ -80,6 +118,7 @@ public class User {
         this.managerId = managerId;
     }
 
+
     public String getAccountStatus() {
         return accountStatus;
     }
@@ -87,6 +126,7 @@ public class User {
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
     }
+
 
     public String getProfileImage() {
         return profileImage;

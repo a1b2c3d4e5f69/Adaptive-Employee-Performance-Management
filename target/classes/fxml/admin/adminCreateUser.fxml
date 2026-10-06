@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.admin.AdminCreateUserController"
+        spacing="24"
+        styleClass="profile-page">
+
+    <padding>
+
+        <Insets
+                top="30"
+                right="40"
+                bottom="40"
+                left="40"/>
+
+    </padding>
+
+
+    <HBox
+            alignment="CENTER_LEFT">
+
+        <VBox spacing="5">
+
+            <Label
+                    text="Create User"
+                    styleClass="content-title"/>
+
+            <Label
+                    text="Create an Employee or Manager account."
+                    styleClass="content-description"/>
+
+        </VBox>
+
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+
+        <Button
+                text="Back"
+                onAction="#handleBack"
+                styleClass="secondary-button"/>
+
+    </HBox>
+
+
+    <VBox
+            maxWidth="700"
+            spacing="20"
+            styleClass="profile-card">
+
+        <Label
+                text="Account Information"
+                styleClass="section-title"/>
+
+
+        <GridPane
+                hgap="30"
+                vgap="18">
+
+
+            <Label
+                    text="Full Name"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="0"/>
+
+            <TextField
+                    fx:id="fullNameField"
+                    promptText="Enter full name"
+                    prefWidth="350"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="0"/>
+
+
+            <Label
+                    text="Staff ID"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="1"/>
+
+            <TextField
+                    fx:id="employeeIdField"
+                    promptText="EMP001 / MGR001"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="1"/>
+
+
+            <Label
+                    text="Department"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="2"/>
+
+            <TextField
+                    fx:id="departmentField"
+                    promptText="Enter department"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="2"/>
+
+
+            <Label
+                    text="Username"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="3"/>
+
+            <TextField
+                    fx:id="usernameField"
+                    promptText="Enter username"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="3"/>
+
+
+            <Label
+                    text="Email"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="4"/>
+
+            <TextField
+                    fx:id="emailField"
+                    promptText="Enter email"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="4"/>
+
+
+            <Label
+                    text="Role"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="5"/>
+
+            <ComboBox
+                    fx:id="roleComboBox"
+                    prefWidth="350"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="5"/>
+
+
+            <Label
+                    text="Password"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="6"/>
+
+            <PasswordField
+                    fx:id="passwordField"
+                    promptText="Enter password"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="6"/>
+
+
+            <Label
+                    text="Confirm Password"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="7"/>
+
+            <PasswordField
+                    fx:id="confirmPasswordField"
+                    promptText="Enter password again"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="7"/>
+
+        </GridPane>
+
+
+        <Label
+                fx:id="messageLabel"
+                visible="false"
+                managed="false"
+                wrapText="true"/>
+
+
+        <HBox spacing="12">
+
+            <Button
+                    fx:id="createButton"
+                    text="Create User"
+                    onAction="#handleCreateUser"
+                    styleClass="button-primary"/>
+
+
+            <Button
+                    text="Cancel"
+                    onAction="#handleBack"
+                    styleClass="secondary-button"/>
+
+        </HBox>
+
+    </VBox>
+
+</VBox>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane
+        xmlns:fx="http://javafx.com/fxml">
+
+    <Label
+            text="Manager Home"
+            style="-fx-font-size: 28px;
+                   -fx-font-weight: bold;"/>
+
+</StackPane>
