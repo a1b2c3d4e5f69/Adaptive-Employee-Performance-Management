@@ -235,37 +235,42 @@
                         <TableColumn
                                 fx:id="titleColumn"
                                 text="Task"
-                                prefWidth="190"/>
+                                prefWidth="150"/>
+
+                        <TableColumn
+                                fx:id="categoryColumn"
+                                text="Category"
+                                prefWidth="120"/>
 
                         <TableColumn
                                 fx:id="employeeColumn"
                                 text="Employee"
-                                prefWidth="180"/>
+                                prefWidth="155"/>
 
                         <TableColumn
                                 fx:id="priorityColumn"
                                 text="Priority"
-                                prefWidth="85"/>
+                                prefWidth="80"/>
 
                         <TableColumn
                                 fx:id="difficultyColumn"
                                 text="Difficulty"
-                                prefWidth="95"/>
+                                prefWidth="90"/>
 
                         <TableColumn
                                 fx:id="statusColumn"
                                 text="Status"
-                                prefWidth="110"/>
+                                prefWidth="105"/>
 
                         <TableColumn
                                 fx:id="progressColumn"
                                 text="Progress"
-                                prefWidth="90"/>
+                                prefWidth="80"/>
 
                         <TableColumn
                                 fx:id="dueDateColumn"
                                 text="Due Date"
-                                prefWidth="160"/>
+                                prefWidth="145"/>
 
                     </columns>
 
@@ -306,7 +311,7 @@
 
 
                 <GridPane
-                        hgap="30"
+                        hgap="28"
                         vgap="12">
 
                     <Label
@@ -321,41 +326,57 @@
                             GridPane.columnIndex="1"
                             GridPane.rowIndex="0"/>
 
+
                     <Label
-                            text="Employee"
+                            text="Category"
                             styleClass="input-label"
                             GridPane.columnIndex="2"
                             GridPane.rowIndex="0"/>
 
                     <Label
-                            fx:id="selectedEmployeeLabel"
+                            fx:id="selectedCategoryLabel"
                             text="-"
                             GridPane.columnIndex="3"
                             GridPane.rowIndex="0"/>
 
+
                     <Label
-                            text="Status"
+                            text="Employee"
                             styleClass="input-label"
                             GridPane.columnIndex="0"
                             GridPane.rowIndex="1"/>
 
                     <Label
-                            fx:id="selectedStatusLabel"
+                            fx:id="selectedEmployeeLabel"
                             text="-"
                             GridPane.columnIndex="1"
                             GridPane.rowIndex="1"/>
 
+
                     <Label
-                            text="Progress"
+                            text="Status"
                             styleClass="input-label"
                             GridPane.columnIndex="2"
                             GridPane.rowIndex="1"/>
 
                     <Label
-                            fx:id="selectedProgressLabel"
+                            fx:id="selectedStatusLabel"
                             text="-"
                             GridPane.columnIndex="3"
                             GridPane.rowIndex="1"/>
+
+
+                    <Label
+                            text="Progress"
+                            styleClass="input-label"
+                            GridPane.columnIndex="0"
+                            GridPane.rowIndex="2"/>
+
+                    <Label
+                            fx:id="selectedProgressLabel"
+                            text="-"
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="2"/>
 
                 </GridPane>
 

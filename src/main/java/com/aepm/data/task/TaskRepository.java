@@ -465,6 +465,13 @@ public void updateTask(
                     : task.getTaskDescription()
     );
 
+    body.put(
+        "category_id",
+        task.getCategoryId() == null
+                ? JSONObject.NULL
+                : task.getCategoryId()
+    );
+
 
     body.put(
             "priority",

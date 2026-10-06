@@ -209,63 +209,76 @@
                         styleClass="section-title"/>
 
 
-                <GridPane
-                        hgap="28"
-                        vgap="18">
+               <GridPane
+        hgap="28"
+        vgap="18">
 
-                    <Label
-                            text="Task Title"
-                            styleClass="input-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="0"/>
+    <Label
+            text="Task Title"
+            styleClass="input-label"
+            GridPane.columnIndex="0"
+            GridPane.rowIndex="0"/>
 
-                    <TextField
-                            fx:id="titleField"
-                            promptText="Enter task title"
-                            prefWidth="320"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="0"/>
-
-
-                    <Label
-                            text="Priority"
-                            styleClass="input-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="1"/>
-
-                    <ComboBox
-                            fx:id="priorityComboBox"
-                            prefWidth="320"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="1"/>
+    <TextField
+            fx:id="titleField"
+            prefWidth="320"
+            GridPane.columnIndex="1"
+            GridPane.rowIndex="0"/>
 
 
-                    <Label
-                            text="Difficulty"
-                            styleClass="input-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1"/>
+    <Label
+            text="Category"
+            styleClass="input-label"
+            GridPane.columnIndex="2"
+            GridPane.rowIndex="0"/>
 
-                    <ComboBox
-                            fx:id="difficultyComboBox"
-                            prefWidth="300"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
+    <ComboBox
+            fx:id="categoryComboBox"
+            prefWidth="300"
+            promptText="Select category"
+            GridPane.columnIndex="3"
+            GridPane.rowIndex="0"/>
 
 
-                    <Label
-                            text="Due Date"
-                            styleClass="input-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="2"/>
+    <Label
+            text="Priority"
+            styleClass="input-label"
+            GridPane.columnIndex="0"
+            GridPane.rowIndex="1"/>
 
-                    <DatePicker
-                            fx:id="dueDatePicker"
-                            prefWidth="320"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="2"/>
+    <ComboBox
+            fx:id="priorityComboBox"
+            prefWidth="320"
+            GridPane.columnIndex="1"
+            GridPane.rowIndex="1"/>
 
-                </GridPane>
+
+    <Label
+            text="Difficulty"
+            styleClass="input-label"
+            GridPane.columnIndex="2"
+            GridPane.rowIndex="1"/>
+
+    <ComboBox
+            fx:id="difficultyComboBox"
+            prefWidth="300"
+            GridPane.columnIndex="3"
+            GridPane.rowIndex="1"/>
+
+
+    <Label
+            text="Due Date"
+            styleClass="input-label"
+            GridPane.columnIndex="0"
+            GridPane.rowIndex="2"/>
+
+    <DatePicker
+            fx:id="dueDatePicker"
+            prefWidth="320"
+            GridPane.columnIndex="1"
+            GridPane.rowIndex="2"/>
+
+</GridPane>
 
 
                 <VBox spacing="7">

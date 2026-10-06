@@ -1,9 +1,13 @@
 package com.aepm.ui.manager;
 
+import com.aepm.logic.task.TaskCategoryService;
 import com.aepm.logic.task.TaskService;
 import com.aepm.logic.user.UserService;
+
 import com.aepm.model.Role;
+import com.aepm.model.TaskCategory;
 import com.aepm.model.User;
+
 import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
@@ -32,20 +36,12 @@ import java.util.List;
 
 public class ManagerCreateTaskController {
 
-    // =========================================================
-    // TOP BAR
-    // =========================================================
-
     @FXML
     private Label welcomeLabel;
 
     @FXML
     private Label topNameLabel;
 
-
-    // =========================================================
-    // FORM
-    // =========================================================
 
     @FXML
     private TextField titleField;
@@ -55,6 +51,9 @@ public class ManagerCreateTaskController {
 
     @FXML
     private ComboBox<User> employeeComboBox;
+
+    @FXML
+    private ComboBox<TaskCategory> categoryComboBox;
 
     @FXML
     private ComboBox<String> priorityComboBox;
@@ -69,10 +68,6 @@ public class ManagerCreateTaskController {
     private TextArea completionCriteriaArea;
 
 
-    // =========================================================
-    // MESSAGE / BUTTON
-    // =========================================================
-
     @FXML
     private Label messageLabel;
 
@@ -83,13 +78,12 @@ public class ManagerCreateTaskController {
     private final TaskService taskService =
             new TaskService();
 
+    private final TaskCategoryService categoryService =
+            new TaskCategoryService();
+
     private final UserService userService =
             new UserService();
 
-
-    // =========================================================
-    // INITIALIZE
-    // =========================================================
 
     @FXML
     public void initialize() {
@@ -107,7 +101,11 @@ public class ManagerCreateTaskController {
 
         configureEmployeeComboBox();
 
+        configureCategoryComboBox();
+
         loadEmployees();
+
+        loadCategories();
 
 
         dueDatePicker.setValue(
@@ -118,7 +116,7 @@ public class ManagerCreateTaskController {
 
 
     // =========================================================
-    // CURRENT USER
+    // USER
     // =========================================================
 
     private void loadCurrentUser() {
@@ -134,6 +132,7 @@ public class ManagerCreateTaskController {
 
         String name =
                 user.getFullName() == null
+                        || user.getFullName().isBlank()
                         ? "Manager"
                         : user.getFullName();
 
@@ -194,7 +193,7 @@ public class ManagerCreateTaskController {
 
 
     // =========================================================
-    // EMPLOYEE COMBO BOX DISPLAY
+    // EMPLOYEE DISPLAY
     // =========================================================
 
     private void configureEmployeeComboBox() {
@@ -212,7 +211,7 @@ public class ManagerCreateTaskController {
                         }
 
 
-                        String employeeId =
+                        String staffId =
                                 user.getEmployeeId() == null
                                         ? "-"
                                         : user.getEmployeeId();
@@ -224,7 +223,7 @@ public class ManagerCreateTaskController {
                                         : user.getFullName();
 
 
-                        return employeeId
+                        return staffId
                                 + " - "
                                 + name;
                     }
@@ -232,7 +231,42 @@ public class ManagerCreateTaskController {
 
                     @Override
                     public User fromString(
-                            String string
+                            String value
+                    ) {
+
+                        return null;
+                    }
+                }
+        );
+    }
+
+
+    // =========================================================
+    // CATEGORY DISPLAY
+    // =========================================================
+
+    private void configureCategoryComboBox() {
+
+        categoryComboBox.setConverter(
+                new StringConverter<>() {
+
+                    @Override
+                    public String toString(
+                            TaskCategory category
+                    ) {
+
+                        if (category == null) {
+                            return "";
+                        }
+
+
+                        return category.getCategoryName();
+                    }
+
+
+                    @Override
+                    public TaskCategory fromString(
+                            String value
                     ) {
 
                         return null;
@@ -282,20 +316,20 @@ public class ManagerCreateTaskController {
 
                         for (User user : users) {
 
-                            boolean isEmployee =
+                            boolean employee =
                                     user.getRole() == Role.EMPLOYEE
                                             || user.getRoleId() == 3;
 
 
-                            boolean isActive =
+                            boolean active =
                                     "Active".equalsIgnoreCase(
                                             user.getAccountStatus()
                                     );
 
 
                             if (
-                                    isEmployee
-                                            && isActive
+                                    employee
+                                            && active
                             ) {
 
                                 employeeComboBox
@@ -311,19 +345,6 @@ public class ManagerCreateTaskController {
                     employeeComboBox.setDisable(
                             false
                     );
-
-
-                    if (
-                            employeeComboBox
-                                    .getItems()
-                                    .isEmpty()
-                    ) {
-
-                        UIHelper.showError(
-                                messageLabel,
-                                "No active employees found."
-                        );
-                    }
                 }
         );
 
@@ -351,22 +372,102 @@ public class ManagerCreateTaskController {
 
 
         Thread thread =
-                new Thread(
-                        task
-                );
+                new Thread(task);
 
 
-        thread.setDaemon(
-                true
-        );
-
+        thread.setDaemon(true);
 
         thread.start();
     }
 
 
     // =========================================================
-    // CREATE TASK
+    // LOAD CATEGORIES
+    // =========================================================
+
+    private void loadCategories() {
+
+        categoryComboBox.setDisable(
+                true
+        );
+
+
+        Task<List<TaskCategory>> task =
+                new Task<>() {
+
+                    @Override
+                    protected List<TaskCategory> call()
+                            throws Exception {
+
+                        return categoryService
+                                .getActiveCategories();
+                    }
+                };
+
+
+        task.setOnSucceeded(
+                event -> {
+
+                    categoryComboBox
+                            .getItems()
+                            .setAll(
+                                    task.getValue()
+                            );
+
+
+                    categoryComboBox.setDisable(
+                            false
+                    );
+
+
+                    if (
+                            !categoryComboBox
+                                    .getItems()
+                                    .isEmpty()
+                    ) {
+
+                        categoryComboBox
+                                .getSelectionModel()
+                                .selectFirst();
+                    }
+                }
+        );
+
+
+        task.setOnFailed(
+                event -> {
+
+                    categoryComboBox.setDisable(
+                            false
+                    );
+
+
+                    Throwable error =
+                            task.getException();
+
+
+                    UIHelper.showError(
+                            messageLabel,
+                            error == null
+                                    ? "Unable to load task categories."
+                                    : error.getMessage()
+                    );
+                }
+        );
+
+
+        Thread thread =
+                new Thread(task);
+
+
+        thread.setDaemon(true);
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // CREATE
     // =========================================================
 
     @FXML
@@ -380,36 +481,19 @@ public class ManagerCreateTaskController {
                         .trim();
 
 
-        String description =
-                descriptionArea
-                        .getText()
-                        .trim();
-
-
         User employee =
                 employeeComboBox
                         .getValue();
 
 
-        String priority =
-                priorityComboBox
-                        .getValue();
-
-
-        String difficulty =
-                difficultyComboBox
+        TaskCategory category =
+                categoryComboBox
                         .getValue();
 
 
         LocalDate dueDate =
                 dueDatePicker
                         .getValue();
-
-
-        String criteria =
-                completionCriteriaArea
-                        .getText()
-                        .trim();
 
 
         if (title.isBlank()) {
@@ -434,6 +518,17 @@ public class ManagerCreateTaskController {
         }
 
 
+        if (category == null) {
+
+            UIHelper.showError(
+                    messageLabel,
+                    "Please select a task category."
+            );
+
+            return;
+        }
+
+
         if (dueDate == null) {
 
             UIHelper.showError(
@@ -445,10 +540,6 @@ public class ManagerCreateTaskController {
         }
 
 
-        /*
-         * Due date stored as timestamp with timezone.
-         * For now selected date = 11:59 PM.
-         */
         OffsetDateTime dueDateTime =
                 dueDate
                         .atTime(
@@ -456,7 +547,9 @@ public class ManagerCreateTaskController {
                                 59
                         )
                         .atZone(
-                                ZoneId.systemDefault()
+                                ZoneId.of(
+                                        "Asia/Kuala_Lumpur"
+                                )
                         )
                         .toOffsetDateTime();
 
@@ -466,12 +559,7 @@ public class ManagerCreateTaskController {
         );
 
 
-        UIHelper.hideMessage(
-                messageLabel
-        );
-
-
-        Task<Void> task =
+        Task<Void> createTask =
                 new Task<>() {
 
                     @Override
@@ -480,15 +568,19 @@ public class ManagerCreateTaskController {
 
                         taskService.createTask(
                                 title,
-                                description,
-                                null,
+                                descriptionArea
+                                        .getText()
+                                        .trim(),
+                                category.getCategoryId(),
                                 java.util.UUID.fromString(
                                         employee.getUserId()
                                 ),
-                                priority,
-                                difficulty,
+                                priorityComboBox.getValue(),
+                                difficultyComboBox.getValue(),
                                 dueDateTime,
-                                criteria
+                                completionCriteriaArea
+                                        .getText()
+                                        .trim()
                         );
 
 
@@ -497,19 +589,8 @@ public class ManagerCreateTaskController {
                 };
 
 
-        task.setOnSucceeded(
+        createTask.setOnSucceeded(
                 e -> {
-
-                    createButton.setDisable(
-                            false
-                    );
-
-
-                    UIHelper.showSuccess(
-                            messageLabel,
-                            "Task created successfully."
-                    );
-
 
                     navigate(
                             event,
@@ -519,7 +600,7 @@ public class ManagerCreateTaskController {
         );
 
 
-        task.setOnFailed(
+        createTask.setOnFailed(
                 e -> {
 
                     createButton.setDisable(
@@ -528,7 +609,7 @@ public class ManagerCreateTaskController {
 
 
                     Throwable error =
-                            task.getException();
+                            createTask.getException();
 
 
                     UIHelper.showError(
@@ -542,23 +623,14 @@ public class ManagerCreateTaskController {
 
 
         Thread thread =
-                new Thread(
-                        task
-                );
+                new Thread(createTask);
 
 
-        thread.setDaemon(
-                true
-        );
-
+        thread.setDaemon(true);
 
         thread.start();
     }
 
-
-    // =========================================================
-    // BACK
-    // =========================================================
 
     @FXML
     private void handleBack(
@@ -572,10 +644,6 @@ public class ManagerCreateTaskController {
     }
 
 
-    // =========================================================
-    // HOME
-    // =========================================================
-
     @FXML
     private void handleHome(
             ActionEvent event
@@ -587,10 +655,6 @@ public class ManagerCreateTaskController {
         );
     }
 
-
-    // =========================================================
-    // PROFILE
-    // =========================================================
 
     @FXML
     private void handleProfile(
@@ -604,56 +668,31 @@ public class ManagerCreateTaskController {
     }
 
 
-    // =========================================================
-    // TASK MANAGEMENT
-    // =========================================================
-
     @FXML
     private void handleTaskManagement(
             ActionEvent event
     ) {
 
-        navigate(
-                event,
-                "/fxml/manager/managerTask.fxml"
+        handleBack(
+                event
         );
     }
 
 
-    // =========================================================
-    // OTHER MENU
-    // =========================================================
-
     @FXML
     private void handlePerformance() {
-
-        System.out.println(
-                "Performance not implemented yet."
-        );
     }
 
 
     @FXML
     private void handleReports() {
-
-        System.out.println(
-                "Reports not implemented yet."
-        );
     }
 
 
     @FXML
     private void handleDashboard() {
-
-        System.out.println(
-                "Dashboard not implemented yet."
-        );
     }
 
-
-    // =========================================================
-    // LOGOUT
-    // =========================================================
 
     @FXML
     private void handleLogout(
@@ -669,10 +708,6 @@ public class ManagerCreateTaskController {
         );
     }
 
-
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
 
     private void navigate(
             ActionEvent event,

@@ -2,10 +2,12 @@ C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\m
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AuthRepository.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\UserRepository.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\supabase\SupabaseClient.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\task\TaskCategoryRepository.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\task\TaskProgressRepository.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\task\TaskRepository.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\auth\AuthService.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\auth\RegisterService.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\task\TaskCategoryService.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\task\TaskProgressService.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\task\TaskService.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\user\UserService.java
@@ -13,6 +15,7 @@ C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\m
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\AuthSession.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\Role.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\Task.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\TaskCategory.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\TaskProgress.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\User.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminCreateUserController.java

@@ -22,10 +22,6 @@
         styleClass="main-layout">
 
 
-    <!-- =====================================================
-         TOP BAR
-         ===================================================== -->
-
     <top>
 
         <HBox
@@ -41,7 +37,6 @@
                         left="28"/>
             </padding>
 
-
             <VBox spacing="2">
 
                 <Label
@@ -55,9 +50,7 @@
 
             </VBox>
 
-
             <Region HBox.hgrow="ALWAYS"/>
-
 
             <VBox
                     alignment="CENTER_RIGHT"
@@ -79,10 +72,6 @@
     </top>
 
 
-    <!-- =====================================================
-         SIDEBAR
-         ===================================================== -->
-
     <left>
 
         <VBox
@@ -98,7 +87,6 @@
                         left="18"/>
             </padding>
 
-
             <VBox spacing="3">
 
                 <Label
@@ -111,14 +99,11 @@
 
             </VBox>
 
-
             <Region prefHeight="18"/>
-
 
             <Label
                     text="MENU"
                     styleClass="sidebar-section-title"/>
-
 
             <Button
                     text="⌂   Home"
@@ -127,14 +112,12 @@
                     onAction="#handleHome"
                     styleClass="sidebar-button"/>
 
-
             <Button
                     text="●   My Profile"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleProfile"
                     styleClass="sidebar-button"/>
-
 
             <Button
                     text="✓   My Tasks"
@@ -143,14 +126,12 @@
                     onAction="#handleTasks"
                     styleClass="sidebar-button-active"/>
 
-
             <Button
                     text="★   Performance KPI"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleKpi"
                     styleClass="sidebar-button"/>
-
 
             <Button
                     text="≡   Reports"
@@ -159,7 +140,6 @@
                     onAction="#handleReports"
                     styleClass="sidebar-button"/>
 
-
             <Button
                     text="!   Anonymous Report"
                     maxWidth="Infinity"
@@ -167,9 +147,7 @@
                     onAction="#handleAnonymousReport"
                     styleClass="sidebar-button"/>
 
-
             <Region VBox.vgrow="ALWAYS"/>
-
 
             <Button
                     text="↪   Logout"
@@ -182,10 +160,6 @@
 
     </left>
 
-
-    <!-- =====================================================
-         CONTENT
-         ===================================================== -->
 
     <center>
 
@@ -202,9 +176,7 @@
             </padding>
 
 
-            <!-- =================================================
-                 HEADER
-                 ================================================= -->
+            <!-- HEADER -->
 
             <HBox alignment="CENTER_LEFT">
 
@@ -220,9 +192,7 @@
 
                 </VBox>
 
-
                 <Region HBox.hgrow="ALWAYS"/>
-
 
                 <Button
                         text="Refresh"
@@ -232,19 +202,15 @@
             </HBox>
 
 
-            <!-- =================================================
-                 TASK TABLE
-                 ================================================= -->
+            <!-- ASSIGNED TASKS -->
 
             <VBox
                     spacing="15"
                     styleClass="section-card">
 
-
                 <Label
                         text="Assigned Tasks"
                         styleClass="section-title"/>
-
 
                 <Label
                         fx:id="messageLabel"
@@ -253,50 +219,46 @@
                         wrapText="true"
                         styleClass="content-description"/>
 
-
                 <TableView
                         fx:id="taskTable"
                         prefHeight="270">
 
-
                     <columns>
-
 
                         <TableColumn
                                 fx:id="titleColumn"
                                 text="Task"
-                                prefWidth="260"/>
+                                prefWidth="190"/>
 
+                        <TableColumn
+                                fx:id="categoryColumn"
+                                text="Category"
+                                prefWidth="120"/>
 
                         <TableColumn
                                 fx:id="priorityColumn"
                                 text="Priority"
-                                prefWidth="110"/>
-
+                                prefWidth="90"/>
 
                         <TableColumn
                                 fx:id="difficultyColumn"
                                 text="Difficulty"
-                                prefWidth="120"/>
-
+                                prefWidth="100"/>
 
                         <TableColumn
                                 fx:id="statusColumn"
                                 text="Status"
-                                prefWidth="140"/>
-
+                                prefWidth="120"/>
 
                         <TableColumn
                                 fx:id="progressColumn"
                                 text="Progress"
-                                prefWidth="110"/>
-
+                                prefWidth="90"/>
 
                         <TableColumn
                                 fx:id="dueDateColumn"
                                 text="Due Date"
-                                prefWidth="180"/>
-
+                                prefWidth="150"/>
 
                     </columns>
 
@@ -305,26 +267,20 @@
             </VBox>
 
 
-            <!-- =================================================
-                 SELECTED TASK
-                 ================================================= -->
+            <!-- SELECTED TASK -->
 
             <VBox
                     spacing="16"
                     styleClass="section-card">
-
 
                 <Label
                         text="Selected Task"
                         styleClass="section-title"/>
 
 
-                <!-- BASIC INFORMATION -->
-
                 <GridPane
                         hgap="25"
                         vgap="14">
-
 
                     <Label
                             text="Task"
@@ -340,50 +296,59 @@
 
 
                     <Label
-                            text="Status"
+                            text="Category"
                             styleClass="input-label"
                             GridPane.columnIndex="2"
                             GridPane.rowIndex="0"/>
 
                     <Label
-                            fx:id="selectedStatusLabel"
+                            fx:id="selectedCategoryLabel"
                             text="-"
                             GridPane.columnIndex="3"
                             GridPane.rowIndex="0"/>
 
 
                     <Label
-                            text="Current Progress"
+                            text="Status"
                             styleClass="input-label"
                             GridPane.columnIndex="0"
                             GridPane.rowIndex="1"/>
 
                     <Label
-                            fx:id="selectedProgressLabel"
+                            fx:id="selectedStatusLabel"
                             text="-"
                             GridPane.columnIndex="1"
                             GridPane.rowIndex="1"/>
 
 
                     <Label
-                            text="New Progress (%)"
+                            text="Current Progress"
                             styleClass="input-label"
                             GridPane.columnIndex="2"
                             GridPane.rowIndex="1"/>
+
+                    <Label
+                            fx:id="selectedProgressLabel"
+                            text="-"
+                            GridPane.columnIndex="3"
+                            GridPane.rowIndex="1"/>
+
+
+                    <Label
+                            text="New Progress (%)"
+                            styleClass="input-label"
+                            GridPane.columnIndex="0"
+                            GridPane.rowIndex="2"/>
 
                     <TextField
                             fx:id="progressField"
                             promptText="0 - 100"
                             prefWidth="160"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="2"/>
 
                 </GridPane>
 
-
-                <!-- =================================================
-                     PROGRESS NOTE
-                     ================================================= -->
 
                 <VBox spacing="7">
 
@@ -400,10 +365,6 @@
                 </VBox>
 
 
-                <!-- =================================================
-                     ACTION BUTTONS
-                     ================================================= -->
-
                 <HBox spacing="10">
 
                     <Button
@@ -412,20 +373,17 @@
                             onAction="#handleAcceptTask"
                             styleClass="quick-button"/>
 
-
                     <Button
                             fx:id="startButton"
                             text="Start Task"
                             onAction="#handleStartTask"
                             styleClass="quick-button"/>
 
-
                     <Button
                             fx:id="updateProgressButton"
                             text="Update Progress"
                             onAction="#handleUpdateProgress"
                             styleClass="button-primary"/>
-
 
                     <Button
                             fx:id="completeButton"

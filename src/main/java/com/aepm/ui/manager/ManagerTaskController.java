@@ -1,10 +1,12 @@
 package com.aepm.ui.manager;
 
+import com.aepm.logic.task.TaskCategoryService;
 import com.aepm.logic.task.TaskProgressService;
 import com.aepm.logic.task.TaskService;
 import com.aepm.logic.user.UserService;
 
 import com.aepm.model.Task;
+import com.aepm.model.TaskCategory;
 import com.aepm.model.TaskProgress;
 import com.aepm.model.User;
 
@@ -14,11 +16,8 @@ import com.aepm.util.ManagerTaskEditContext;
 import com.aepm.util.SessionManager;
 
 import javafx.beans.property.SimpleStringProperty;
-
 import javafx.event.ActionEvent;
-
 import javafx.fxml.FXML;
-
 import javafx.scene.Node;
 
 import javafx.scene.control.Alert;
@@ -43,6 +42,10 @@ import java.util.Optional;
 
 public class ManagerTaskController {
 
+    // =========================================================
+    // TOP BAR
+    // =========================================================
+
     @FXML
     private Label welcomeLabel;
 
@@ -50,11 +53,18 @@ public class ManagerTaskController {
     private Label topNameLabel;
 
 
+    // =========================================================
+    // TASK TABLE
+    // =========================================================
+
     @FXML
     private TableView<Task> taskTable;
 
     @FXML
     private TableColumn<Task, String> titleColumn;
+
+    @FXML
+    private TableColumn<Task, String> categoryColumn;
 
     @FXML
     private TableColumn<Task, String> employeeColumn;
@@ -75,8 +85,15 @@ public class ManagerTaskController {
     private TableColumn<Task, OffsetDateTime> dueDateColumn;
 
 
+    // =========================================================
+    // SELECTED TASK
+    // =========================================================
+
     @FXML
     private Label selectedTaskLabel;
+
+    @FXML
+    private Label selectedCategoryLabel;
 
     @FXML
     private Label selectedEmployeeLabel;
@@ -87,6 +104,10 @@ public class ManagerTaskController {
     @FXML
     private Label selectedProgressLabel;
 
+
+    // =========================================================
+    // PROGRESS HISTORY
+    // =========================================================
 
     @FXML
     private TableView<TaskProgress> historyTable;
@@ -101,6 +122,10 @@ public class ManagerTaskController {
     private TableColumn<TaskProgress, OffsetDateTime> historyDateColumn;
 
 
+    // =========================================================
+    // MESSAGE
+    // =========================================================
+
     @FXML
     private Label messageLabel;
 
@@ -108,17 +133,31 @@ public class ManagerTaskController {
     private Label historyMessageLabel;
 
 
+    // =========================================================
+    // SERVICES
+    // =========================================================
+
     private final TaskService taskService =
             new TaskService();
 
     private final TaskProgressService taskProgressService =
             new TaskProgressService();
 
+    private final TaskCategoryService categoryService =
+            new TaskCategoryService();
+
     private final UserService userService =
             new UserService();
 
 
+    // =========================================================
+    // LOOKUP MAPS
+    // =========================================================
+
     private final Map<String, String> employeeDisplayMap =
+            new HashMap<>();
+
+    private final Map<Long, String> categoryDisplayMap =
             new HashMap<>();
 
 
@@ -146,7 +185,7 @@ public class ManagerTaskController {
 
         clearSelectedTask();
 
-        loadEmployeesAndTasks();
+        loadReferenceDataAndTasks();
     }
 
 
@@ -189,6 +228,7 @@ public class ManagerTaskController {
 
     private void setupTaskTable() {
 
+        // TASK
         titleColumn.setCellValueFactory(
                 new PropertyValueFactory<>(
                         "taskTitle"
@@ -196,6 +236,41 @@ public class ManagerTaskController {
         );
 
 
+        // CATEGORY
+        categoryColumn.setCellValueFactory(
+                cellData -> {
+
+                    Task task =
+                            cellData.getValue();
+
+
+                    if (
+                            task == null
+                                    || task.getCategoryId() == null
+                    ) {
+
+                        return new SimpleStringProperty(
+                                "-"
+                        );
+                    }
+
+
+                    String categoryName =
+                            categoryDisplayMap.get(
+                                    task.getCategoryId()
+                            );
+
+
+                    return new SimpleStringProperty(
+                            categoryName == null
+                                    ? "-"
+                                    : categoryName
+                    );
+                }
+        );
+
+
+        // EMPLOYEE
         employeeColumn.setCellValueFactory(
                 cellData -> {
 
@@ -264,6 +339,7 @@ public class ManagerTaskController {
         );
 
 
+        // PROGRESS
         progressColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
@@ -293,6 +369,7 @@ public class ManagerTaskController {
         );
 
 
+        // DUE DATE
         dueDateColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
@@ -454,7 +531,7 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // SELECTION
+    // TASK SELECTION
     // =========================================================
 
     private void configureTaskSelection() {
@@ -489,6 +566,10 @@ public class ManagerTaskController {
     }
 
 
+    // =========================================================
+    // DISPLAY SELECTED TASK
+    // =========================================================
+
     private void displaySelectedTask(
             Task task
     ) {
@@ -498,30 +579,47 @@ public class ManagerTaskController {
         );
 
 
-        String employee =
-                "-";
+        // CATEGORY
+        if (task.getCategoryId() == null) {
+
+            selectedCategoryLabel.setText(
+                    "-"
+            );
+
+        } else {
+
+            selectedCategoryLabel.setText(
+                    categoryDisplayMap.getOrDefault(
+                            task.getCategoryId(),
+                            "-"
+                    )
+            );
+        }
 
 
+        // EMPLOYEE
         if (
-                task.getAssignedEmployeeId() != null
+                task.getAssignedEmployeeId() == null
         ) {
 
-            String id =
+            selectedEmployeeLabel.setText(
+                    "-"
+            );
+
+        } else {
+
+            String employeeId =
                     task.getAssignedEmployeeId()
                             .toString();
 
 
-            employee =
+            selectedEmployeeLabel.setText(
                     employeeDisplayMap.getOrDefault(
-                            id,
-                            id
-                    );
+                            employeeId,
+                            employeeId
+                    )
+            );
         }
-
-
-        selectedEmployeeLabel.setText(
-                employee
-        );
 
 
         selectedStatusLabel.setText(
@@ -538,6 +636,10 @@ public class ManagerTaskController {
     }
 
 
+    // =========================================================
+    // CLEAR SELECTED TASK
+    // =========================================================
+
     private void clearSelectedTask() {
 
         selectedTask =
@@ -546,6 +648,11 @@ public class ManagerTaskController {
 
         selectedTaskLabel.setText(
                 "No task selected"
+        );
+
+
+        selectedCategoryLabel.setText(
+                "-"
         );
 
 
@@ -564,7 +671,9 @@ public class ManagerTaskController {
         );
 
 
-        historyTable.getItems().clear();
+        historyTable
+                .getItems()
+                .clear();
 
 
         showHistoryMessage(
@@ -574,96 +683,147 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // LOAD EMPLOYEES
+    // LOAD USERS + CATEGORIES + TASKS
     // =========================================================
 
-    private void loadEmployeesAndTasks() {
+    private void loadReferenceDataAndTasks() {
 
         hideMessage();
 
 
-        javafx.concurrent.Task<List<User>> employeeTask =
+        javafx.concurrent.Task<Void> referenceTask =
                 new javafx.concurrent.Task<>() {
 
                     @Override
-                    protected List<User> call()
+                    protected Void call()
                             throws Exception {
 
-                        return userService
-                                .getAllUsers();
+                        // =====================================
+                        // EMPLOYEES
+                        // =====================================
+
+                        List<User> users =
+                                userService
+                                        .getAllUsers();
+
+
+                        employeeDisplayMap.clear();
+
+
+                        if (users != null) {
+
+                            for (User user : users) {
+
+                                if (
+                                        user == null
+                                                || user.getRoleId() != 3
+                                ) {
+
+                                    continue;
+                                }
+
+
+                                if (
+                                        user.getUserId() == null
+                                                || user.getUserId().isBlank()
+                                ) {
+
+                                    continue;
+                                }
+
+
+                                String staffId =
+                                        user.getEmployeeId() == null
+                                                || user.getEmployeeId().isBlank()
+                                                ? "-"
+                                                : user.getEmployeeId();
+
+
+                                String name =
+                                        user.getFullName() == null
+                                                || user.getFullName().isBlank()
+                                                ? "-"
+                                                : user.getFullName();
+
+
+                                employeeDisplayMap.put(
+                                        user.getUserId(),
+                                        staffId
+                                                + " - "
+                                                + name
+                                );
+                            }
+                        }
+
+
+                        // =====================================
+                        // CATEGORIES
+                        // =====================================
+
+                        List<TaskCategory> categories =
+                                categoryService
+                                        .getActiveCategories();
+
+
+                        categoryDisplayMap.clear();
+
+
+                        if (categories != null) {
+
+                            for (
+                                    TaskCategory category
+                                    : categories
+                            ) {
+
+                                if (
+                                        category == null
+                                                || category.getCategoryId() == null
+                                ) {
+
+                                    continue;
+                                }
+
+
+                                categoryDisplayMap.put(
+                                        category.getCategoryId(),
+                                        category.getCategoryName()
+                                );
+                            }
+                        }
+
+
+                        return null;
                     }
                 };
 
 
-        employeeTask.setOnSucceeded(
+        referenceTask.setOnSucceeded(
+                event -> loadTasks()
+        );
+
+
+        referenceTask.setOnFailed(
                 event -> {
 
-                    employeeDisplayMap.clear();
+                    Throwable error =
+                            referenceTask.getException();
 
 
-                    List<User> users =
-                            employeeTask.getValue();
+                    if (error != null) {
 
-
-                    if (users != null) {
-
-                        for (User user : users) {
-
-                            if (
-                                    user == null
-                                            || user.getRoleId() != 3
-                            ) {
-
-                                continue;
-                            }
-
-
-                            if (
-                                    user.getUserId() == null
-                                            || user.getUserId().isBlank()
-                            ) {
-
-                                continue;
-                            }
-
-
-                            String staffId =
-                                    user.getEmployeeId() == null
-                                            || user.getEmployeeId().isBlank()
-                                            ? "-"
-                                            : user.getEmployeeId();
-
-
-                            String name =
-                                    user.getFullName() == null
-                                            || user.getFullName().isBlank()
-                                            ? "-"
-                                            : user.getFullName();
-
-
-                            employeeDisplayMap.put(
-                                    user.getUserId(),
-                                    staffId
-                                            + " - "
-                                            + name
-                            );
-                        }
+                        error.printStackTrace();
                     }
 
 
+                    // Still load tasks
                     loadTasks();
                 }
         );
 
 
-        employeeTask.setOnFailed(
-                event -> loadTasks()
-        );
-
-
         Thread thread =
                 new Thread(
-                        employeeTask
+                        referenceTask
                 );
 
 
@@ -695,7 +855,9 @@ public class ManagerTaskController {
         loadTask.setOnSucceeded(
                 event -> {
 
-                    taskTable.getItems().clear();
+                    taskTable
+                            .getItems()
+                            .clear();
 
 
                     List<Task> tasks =
@@ -763,14 +925,16 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // HISTORY
+    // PROGRESS HISTORY
     // =========================================================
 
     private void loadProgressHistory(
             Task task
     ) {
 
-        historyTable.getItems().clear();
+        historyTable
+                .getItems()
+                .clear();
 
 
         showHistoryMessage(
@@ -800,7 +964,9 @@ public class ManagerTaskController {
                             historyTask.getValue();
 
 
-                    historyTable.getItems().clear();
+                    historyTable
+                            .getItems()
+                            .clear();
 
 
                     if (history != null) {
@@ -1024,15 +1190,7 @@ public class ManagerTaskController {
 
 
         cancelTask.setOnSucceeded(
-                event -> {
-
-                    showMessage(
-                            "Task cancelled successfully."
-                    );
-
-
-                    loadEmployeesAndTasks();
-                }
+                event -> loadReferenceDataAndTasks()
         );
 
 
@@ -1071,7 +1229,7 @@ public class ManagerTaskController {
     @FXML
     private void handleRefresh() {
 
-        loadEmployeesAndTasks();
+        loadReferenceDataAndTasks();
     }
 
 
@@ -1110,28 +1268,16 @@ public class ManagerTaskController {
 
     @FXML
     private void handlePerformance() {
-
-        System.out.println(
-                "Performance not implemented yet."
-        );
     }
 
 
     @FXML
     private void handleReports() {
-
-        System.out.println(
-                "Reports not implemented yet."
-        );
     }
 
 
     @FXML
     private void handleDashboard() {
-
-        System.out.println(
-                "Dashboard not implemented yet."
-        );
     }
 
 
@@ -1162,9 +1308,11 @@ public class ManagerTaskController {
                 value
         );
 
+
         messageLabel.setVisible(
                 true
         );
+
 
         messageLabel.setManaged(
                 true
@@ -1178,9 +1326,11 @@ public class ManagerTaskController {
                 ""
         );
 
+
         messageLabel.setVisible(
                 false
         );
+
 
         messageLabel.setManaged(
                 false
@@ -1196,9 +1346,11 @@ public class ManagerTaskController {
                 value
         );
 
+
         historyMessageLabel.setVisible(
                 true
         );
+
 
         historyMessageLabel.setManaged(
                 true
@@ -1212,15 +1364,21 @@ public class ManagerTaskController {
                 ""
         );
 
+
         historyMessageLabel.setVisible(
                 false
         );
+
 
         historyMessageLabel.setManaged(
                 false
         );
     }
 
+
+    // =========================================================
+    // NAVIGATION HELPER
+    // =========================================================
 
     private void navigate(
             ActionEvent event,

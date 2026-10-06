@@ -1,10 +1,15 @@
 package com.aepm.ui.manager;
 
+import com.aepm.logic.task.TaskCategoryService;
 import com.aepm.logic.task.TaskService;
+
 import com.aepm.model.Task;
+import com.aepm.model.TaskCategory;
 import com.aepm.model.User;
+
 import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
+
 import com.aepm.util.ManagerTaskEditContext;
 import com.aepm.util.SessionManager;
 
@@ -26,6 +31,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
+import java.util.List;
+
 public class ManagerEditTaskController {
 
     @FXML
@@ -40,6 +47,9 @@ public class ManagerEditTaskController {
 
     @FXML
     private TextArea descriptionArea;
+
+    @FXML
+    private ComboBox<TaskCategory> categoryComboBox;
 
     @FXML
     private ComboBox<String> priorityComboBox;
@@ -64,6 +74,9 @@ public class ManagerEditTaskController {
     private final TaskService taskService =
             new TaskService();
 
+    private final TaskCategoryService categoryService =
+            new TaskCategoryService();
+
 
     private Task task;
 
@@ -80,7 +93,7 @@ public class ManagerEditTaskController {
 
         configureOptions();
 
-        loadTask();
+        loadCategories();
     }
 
 
@@ -97,7 +110,6 @@ public class ManagerEditTaskController {
 
         String name =
                 user.getFullName() == null
-                        || user.getFullName().isBlank()
                         ? "Manager"
                         : user.getFullName();
 
@@ -135,6 +147,91 @@ public class ManagerEditTaskController {
         );
     }
 
+
+    // =========================================================
+    // LOAD CATEGORIES THEN TASK
+    // =========================================================
+
+    private void loadCategories() {
+
+        categoryComboBox.setDisable(
+                true
+        );
+
+
+        javafx.concurrent.Task<List<TaskCategory>> categoryTask =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected List<TaskCategory> call()
+                            throws Exception {
+
+                        return categoryService
+                                .getActiveCategories();
+                    }
+                };
+
+
+        categoryTask.setOnSucceeded(
+                event -> {
+
+                    categoryComboBox
+                            .getItems()
+                            .setAll(
+                                    categoryTask.getValue()
+                            );
+
+
+                    categoryComboBox.setDisable(
+                            false
+                    );
+
+
+                    loadTask();
+                }
+        );
+
+
+        categoryTask.setOnFailed(
+                event -> {
+
+                    categoryComboBox.setDisable(
+                            false
+                    );
+
+
+                    Throwable error =
+                            categoryTask.getException();
+
+
+                    UIHelper.showError(
+                            messageLabel,
+                            error == null
+                                    ? "Unable to load categories."
+                                    : error.getMessage()
+                    );
+
+
+                    loadTask();
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        categoryTask
+                );
+
+
+        thread.setDaemon(true);
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // LOAD TASK
+    // =========================================================
 
     private void loadTask() {
 
@@ -195,7 +292,7 @@ public class ManagerEditTaskController {
                 task.getDueDate() != null
         ) {
 
-            LocalDate localDate =
+            LocalDate date =
                     task.getDueDate()
                             .atZoneSameInstant(
                                     ZoneId.of(
@@ -206,11 +303,45 @@ public class ManagerEditTaskController {
 
 
             dueDatePicker.setValue(
-                    localDate
+                    date
             );
+        }
+
+
+        // =====================================================
+        // SELECT CURRENT CATEGORY
+        // =====================================================
+
+        if (
+                task.getCategoryId() != null
+        ) {
+
+            for (
+                    TaskCategory category
+                    : categoryComboBox.getItems()
+            ) {
+
+                if (
+                        task.getCategoryId()
+                                .equals(
+                                        category.getCategoryId()
+                                )
+                ) {
+
+                    categoryComboBox.setValue(
+                            category
+                    );
+
+                    break;
+                }
+            }
         }
     }
 
+
+    // =========================================================
+    // SAVE
+    // =========================================================
 
     @FXML
     private void handleSave(
@@ -222,26 +353,25 @@ public class ManagerEditTaskController {
         }
 
 
-        String title =
-                titleField
-                        .getText()
-                        .trim();
+        TaskCategory category =
+                categoryComboBox
+                        .getValue();
+
+
+        if (category == null) {
+
+            UIHelper.showError(
+                    messageLabel,
+                    "Please select a category."
+            );
+
+            return;
+        }
 
 
         LocalDate dueDate =
                 dueDatePicker
                         .getValue();
-
-
-        if (title.isBlank()) {
-
-            UIHelper.showError(
-                    messageLabel,
-                    "Task title is required."
-            );
-
-            return;
-        }
 
 
         if (dueDate == null) {
@@ -253,6 +383,37 @@ public class ManagerEditTaskController {
 
             return;
         }
+
+
+        task.setTaskTitle(
+                titleField
+                        .getText()
+                        .trim()
+        );
+
+
+        task.setTaskDescription(
+                descriptionArea
+                        .getText()
+                        .trim()
+        );
+
+
+        task.setCategoryId(
+                category.getCategoryId()
+        );
+
+
+        task.setPriority(
+                priorityComboBox
+                        .getValue()
+        );
+
+
+        task.setDifficultyLevel(
+                difficultyComboBox
+                        .getValue()
+        );
 
 
         OffsetDateTime dueDateTime =
@@ -267,30 +428,6 @@ public class ManagerEditTaskController {
                                 )
                         )
                         .toOffsetDateTime();
-
-
-        task.setTaskTitle(
-                title
-        );
-
-
-        task.setTaskDescription(
-                descriptionArea
-                        .getText()
-                        .trim()
-        );
-
-
-        task.setPriority(
-                priorityComboBox
-                        .getValue()
-        );
-
-
-        task.setDifficultyLevel(
-                difficultyComboBox
-                        .getValue()
-        );
 
 
         task.setDueDate(
@@ -328,12 +465,7 @@ public class ManagerEditTaskController {
 
 
         saveTask.setOnSucceeded(
-                e -> {
-
-                    saveButton.setDisable(
-                            false
-                    );
-
+                event2 -> {
 
                     ManagerTaskEditContext.clear();
 
@@ -347,7 +479,7 @@ public class ManagerEditTaskController {
 
 
         saveTask.setOnFailed(
-                e -> {
+                event2 -> {
 
                     saveButton.setDisable(
                             false
@@ -369,9 +501,7 @@ public class ManagerEditTaskController {
 
 
         Thread thread =
-                new Thread(
-                        saveTask
-                );
+                new Thread(saveTask);
 
 
         thread.setDaemon(true);
@@ -387,7 +517,6 @@ public class ManagerEditTaskController {
 
         ManagerTaskEditContext.clear();
 
-
         navigate(
                 event,
                 "/fxml/manager/managerTask.fxml"
@@ -396,12 +525,9 @@ public class ManagerEditTaskController {
 
 
     @FXML
-    private void handleHome(
-            ActionEvent event
-    ) {
+    private void handleHome(ActionEvent event) {
 
         ManagerTaskEditContext.clear();
-
 
         navigate(
                 event,
@@ -411,12 +537,9 @@ public class ManagerEditTaskController {
 
 
     @FXML
-    private void handleProfile(
-            ActionEvent event
-    ) {
+    private void handleProfile(ActionEvent event) {
 
         ManagerTaskEditContext.clear();
-
 
         navigate(
                 event,
@@ -429,37 +552,25 @@ public class ManagerEditTaskController {
     private void handleTaskManagement(
             ActionEvent event
     ) {
-        navigate(
-            event,
-            "/fxml/manager/managerTask.fxml"
+
+        handleBack(
+                event
         );
     }
 
 
     @FXML
     private void handlePerformance() {
-
-        System.out.println(
-                "Performance not implemented yet."
-        );
     }
 
 
     @FXML
     private void handleReports() {
-
-        System.out.println(
-                "Reports not implemented yet."
-        );
     }
 
 
     @FXML
     private void handleDashboard() {
-
-        System.out.println(
-                "Dashboard not implemented yet."
-        );
     }
 
 

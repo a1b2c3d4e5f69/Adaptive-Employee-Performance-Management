@@ -1,14 +1,21 @@
 package com.aepm.ui.employee;
 
+import com.aepm.logic.task.TaskCategoryService;
 import com.aepm.logic.task.TaskProgressService;
 import com.aepm.logic.task.TaskService;
+
 import com.aepm.model.Task;
+import com.aepm.model.TaskCategory;
 import com.aepm.model.User;
+
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 
+import javafx.beans.property.SimpleStringProperty;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
 import javafx.scene.Node;
 
 import javafx.scene.control.Button;
@@ -27,7 +34,9 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeeTaskController {
 
@@ -53,6 +62,9 @@ public class EmployeeTaskController {
     private TableColumn<Task, String> titleColumn;
 
     @FXML
+    private TableColumn<Task, String> categoryColumn;
+
+    @FXML
     private TableColumn<Task, String> priorityColumn;
 
     @FXML
@@ -76,6 +88,9 @@ public class EmployeeTaskController {
     private Label selectedTaskLabel;
 
     @FXML
+    private Label selectedCategoryLabel;
+
+    @FXML
     private Label selectedStatusLabel;
 
     @FXML
@@ -83,7 +98,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // PROGRESS INPUT
+    // INPUT
     // =========================================================
 
     @FXML
@@ -128,10 +143,17 @@ public class EmployeeTaskController {
     private final TaskProgressService taskProgressService =
             new TaskProgressService();
 
+    private final TaskCategoryService categoryService =
+            new TaskCategoryService();
+
 
     // =========================================================
-    // SELECTED TASK
+    // CATEGORY MAP
     // =========================================================
+
+    private final Map<Long, String> categoryDisplayMap =
+            new HashMap<>();
+
 
     private Task selectedTask;
 
@@ -155,12 +177,12 @@ public class EmployeeTaskController {
 
         clearSelection();
 
-        loadTasks();
+        loadCategoriesAndTasks();
     }
 
 
     // =========================================================
-    // LOAD CURRENT USER
+    // CURRENT USER
     // =========================================================
 
     private void loadCurrentUser() {
@@ -193,7 +215,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // SETUP TABLE
+    // TABLE
     // =========================================================
 
     private void setupTable() {
@@ -202,6 +224,34 @@ public class EmployeeTaskController {
                 new PropertyValueFactory<>(
                         "taskTitle"
                 )
+        );
+
+
+        categoryColumn.setCellValueFactory(
+                cellData -> {
+
+                    Task task =
+                            cellData.getValue();
+
+
+                    if (
+                            task == null
+                                    || task.getCategoryId() == null
+                    ) {
+
+                        return new SimpleStringProperty(
+                                "-"
+                        );
+                    }
+
+
+                    return new SimpleStringProperty(
+                            categoryDisplayMap.getOrDefault(
+                                    task.getCategoryId(),
+                                    "-"
+                            )
+                    );
+                }
         );
 
 
@@ -240,50 +290,34 @@ public class EmployeeTaskController {
         );
 
 
-        // =====================================================
-        // PROGRESS DISPLAY
-        // =====================================================
-
         progressColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
 
                             @Override
                             protected void updateItem(
-                                    Double progress,
+                                    Double value,
                                     boolean empty
                             ) {
 
                                 super.updateItem(
-                                        progress,
+                                        value,
                                         empty
                                 );
 
 
-                                if (
-                                        empty
-                                                || progress == null
-                                ) {
-
-                                    setText("-");
-
-                                } else {
-
-                                    setText(
-                                            String.format(
-                                                    "%.0f%%",
-                                                    progress
-                                            )
-                                    );
-                                }
+                                setText(
+                                        empty || value == null
+                                                ? "-"
+                                                : String.format(
+                                                        "%.0f%%",
+                                                        value
+                                                )
+                                );
                             }
                         }
         );
 
-
-        // =====================================================
-        // DUE DATE DISPLAY
-        // =====================================================
 
         dueDateColumn.setCellFactory(
                 column ->
@@ -297,36 +331,35 @@ public class EmployeeTaskController {
 
                             @Override
                             protected void updateItem(
-                                    OffsetDateTime date,
+                                    OffsetDateTime value,
                                     boolean empty
                             ) {
 
                                 super.updateItem(
-                                        date,
+                                        value,
                                         empty
                                 );
 
 
                                 if (
                                         empty
-                                                || date == null
+                                                || value == null
                                 ) {
 
                                     setText("-");
 
-                                    return;
+                                } else {
+
+                                    setText(
+                                            value
+                                                    .atZoneSameInstant(
+                                                            MALAYSIA_ZONE
+                                                    )
+                                                    .format(
+                                                            formatter
+                                                    )
+                                    );
                                 }
-
-
-                                setText(
-                                        date
-                                                .atZoneSameInstant(
-                                                        MALAYSIA_ZONE
-                                                )
-                                                .format(
-                                                        formatter
-                                                )
-                                );
                             }
                         }
         );
@@ -339,7 +372,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // TABLE SELECTION
+    // SELECTION
     // =========================================================
 
     private void configureSelection() {
@@ -370,7 +403,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // DISPLAY SELECTED TASK
+    // DISPLAY SELECTED
     // =========================================================
 
     private void displaySelectedTask(
@@ -380,6 +413,23 @@ public class EmployeeTaskController {
         selectedTaskLabel.setText(
                 task.getTaskTitle()
         );
+
+
+        if (task.getCategoryId() == null) {
+
+            selectedCategoryLabel.setText(
+                    "-"
+            );
+
+        } else {
+
+            selectedCategoryLabel.setText(
+                    categoryDisplayMap.getOrDefault(
+                            task.getCategoryId(),
+                            "-"
+                    )
+            );
+        }
 
 
         selectedStatusLabel.setText(
@@ -444,23 +494,23 @@ public class EmployeeTaskController {
         );
 
 
-        boolean canUpdateProgress =
+        boolean canUpdate =
                 "In Progress".equals(status);
 
 
         progressField.setDisable(
-                !canUpdateProgress
+                !canUpdate
         );
 
 
         progressNoteArea.setDisable(
-                !canUpdateProgress
+                !canUpdate
         );
     }
 
 
     // =========================================================
-    // CLEAR SELECTION
+    // CLEAR
     // =========================================================
 
     private void clearSelection() {
@@ -471,6 +521,11 @@ public class EmployeeTaskController {
 
         selectedTaskLabel.setText(
                 "No task selected"
+        );
+
+
+        selectedCategoryLabel.setText(
+                "-"
         );
 
 
@@ -521,13 +576,98 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // LOAD MY TASKS
+    // LOAD CATEGORY + TASKS
     // =========================================================
 
-    private void loadTasks() {
+    private void loadCategoriesAndTasks() {
 
         hideMessage();
 
+
+        javafx.concurrent.Task<List<TaskCategory>> categoryTask =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected List<TaskCategory> call()
+                            throws Exception {
+
+                        return categoryService
+                                .getActiveCategories();
+                    }
+                };
+
+
+        categoryTask.setOnSucceeded(
+                event -> {
+
+                    categoryDisplayMap.clear();
+
+
+                    List<TaskCategory> categories =
+                            categoryTask.getValue();
+
+
+                    if (categories != null) {
+
+                        for (
+                                TaskCategory category
+                                : categories
+                        ) {
+
+                            if (
+                                    category != null
+                                            && category.getCategoryId() != null
+                            ) {
+
+                                categoryDisplayMap.put(
+                                        category.getCategoryId(),
+                                        category.getCategoryName()
+                                );
+                            }
+                        }
+                    }
+
+
+                    loadTasks();
+                }
+        );
+
+
+        categoryTask.setOnFailed(
+                event -> {
+
+                    Throwable error =
+                            categoryTask.getException();
+
+
+                    if (error != null) {
+
+                        error.printStackTrace();
+                    }
+
+
+                    loadTasks();
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        categoryTask
+                );
+
+
+        thread.setDaemon(true);
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // LOAD TASKS
+    // =========================================================
+
+    private void loadTasks() {
 
         javafx.concurrent.Task<List<Task>> loadTask =
                 new javafx.concurrent.Task<>() {
@@ -593,12 +733,6 @@ public class EmployeeTaskController {
                             loadTask.getException();
 
 
-                    if (error != null) {
-
-                        error.printStackTrace();
-                    }
-
-
                     showMessage(
                             error == null
                                     ? "Unable to load tasks."
@@ -614,17 +748,14 @@ public class EmployeeTaskController {
                 );
 
 
-        thread.setDaemon(
-                true
-        );
-
+        thread.setDaemon(true);
 
         thread.start();
     }
 
 
     // =========================================================
-    // ACCEPT TASK
+    // ACCEPT
     // =========================================================
 
     @FXML
@@ -636,19 +767,16 @@ public class EmployeeTaskController {
 
 
         runTaskAction(
-                () -> {
-
-                    taskService.acceptTask(
-                            selectedTask.getTaskId()
-                    );
-                },
-                "Task accepted successfully."
+                () ->
+                        taskService.acceptTask(
+                                selectedTask.getTaskId()
+                        )
         );
     }
 
 
     // =========================================================
-    // START TASK
+    // START
     // =========================================================
 
     @FXML
@@ -660,13 +788,10 @@ public class EmployeeTaskController {
 
 
         runTaskAction(
-                () -> {
-
-                    taskService.startTask(
-                            selectedTask.getTaskId()
-                    );
-                },
-                "Task started successfully."
+                () ->
+                        taskService.startTask(
+                                selectedTask.getTaskId()
+                        )
         );
     }
 
@@ -694,10 +819,6 @@ public class EmployeeTaskController {
                         .getText()
                         .trim();
 
-
-        // =====================================================
-        // VALIDATE PROGRESS
-        // =====================================================
 
         if (progressText.isBlank()) {
 
@@ -742,10 +863,6 @@ public class EmployeeTaskController {
         }
 
 
-        // =====================================================
-        // DO NOT ALLOW PROGRESS TO GO BACKWARDS
-        // =====================================================
-
         if (
                 progress
                         < selectedTask.getProgress()
@@ -758,10 +875,6 @@ public class EmployeeTaskController {
             return;
         }
 
-
-        // =====================================================
-        // NOTE REQUIRED
-        // =====================================================
 
         if (note.isBlank()) {
 
@@ -780,33 +893,24 @@ public class EmployeeTaskController {
         runTaskAction(
                 () -> {
 
-                    // ==========================================
-                    // 1. UPDATE MAIN TASK
-                    // ==========================================
-
                     taskService.updateProgress(
                             selectedTask.getTaskId(),
                             finalProgress
                     );
 
 
-                    // ==========================================
-                    // 2. SAVE PROGRESS HISTORY
-                    // ==========================================
-
                     taskProgressService.addProgress(
                             selectedTask.getTaskId(),
                             finalProgress,
                             note
                     );
-                },
-                "Task progress updated successfully."
+                }
         );
     }
 
 
     // =========================================================
-    // COMPLETE TASK
+    // COMPLETE
     // =========================================================
 
     @FXML
@@ -820,68 +924,27 @@ public class EmployeeTaskController {
         runTaskAction(
                 () -> {
 
-                    // ==========================================
-                    // COMPLETE MAIN TASK
-                    // ==========================================
-
                     taskService.completeTask(
                             selectedTask.getTaskId()
                     );
 
-
-                    // ==========================================
-                    // SAVE FINAL 100% HISTORY
-                    // ==========================================
 
                     taskProgressService.addProgress(
                             selectedTask.getTaskId(),
                             100,
                             "Task completed."
                     );
-                },
-                "Task completed successfully."
+                }
         );
     }
 
 
     // =========================================================
-    // REFRESH
-    // =========================================================
-
-    @FXML
-    private void handleRefresh() {
-
-        loadTasks();
-    }
-
-
-    // =========================================================
-    // CHECK SELECTED TASK
-    // =========================================================
-
-    private boolean checkSelectedTask() {
-
-        if (selectedTask == null) {
-
-            showMessage(
-                    "Please select a task first."
-            );
-
-            return false;
-        }
-
-
-        return true;
-    }
-
-
-    // =========================================================
-    // RUN BACKGROUND ACTION
+    // ACTION HELPER
     // =========================================================
 
     private void runTaskAction(
-            TaskAction action,
-            String successMessage
+            TaskAction action
     ) {
 
         disableActionButtons(
@@ -907,14 +970,7 @@ public class EmployeeTaskController {
 
 
         actionTask.setOnSucceeded(
-                event -> {
-
-                    /*
-                     * Reload latest task data after success.
-                     */
-
-                    loadTasks();
-                }
+                event -> loadCategoriesAndTasks()
         );
 
 
@@ -928,12 +984,6 @@ public class EmployeeTaskController {
 
                     Throwable error =
                             actionTask.getException();
-
-
-                    if (error != null) {
-
-                        error.printStackTrace();
-                    }
 
 
                     showMessage(
@@ -951,57 +1001,45 @@ public class EmployeeTaskController {
                 );
 
 
-        thread.setDaemon(
-                true
-        );
-
+        thread.setDaemon(true);
 
         thread.start();
     }
 
 
-    // =========================================================
-    // DISABLE BUTTONS
-    // =========================================================
-
     private void disableActionButtons(
-            boolean disabled
+            boolean value
     ) {
 
-        acceptButton.setDisable(
-                disabled
-        );
+        acceptButton.setDisable(value);
 
+        startButton.setDisable(value);
 
-        startButton.setDisable(
-                disabled
-        );
+        updateProgressButton.setDisable(value);
 
+        completeButton.setDisable(value);
 
-        updateProgressButton.setDisable(
-                disabled
-        );
+        progressField.setDisable(value);
 
-
-        completeButton.setDisable(
-                disabled
-        );
-
-
-        progressField.setDisable(
-                disabled
-        );
-
-
-        progressNoteArea.setDisable(
-                disabled
-        );
+        progressNoteArea.setDisable(value);
     }
 
 
-    // =========================================================
-    // TASK ACTION
-    // =========================================================
+    private boolean checkSelectedTask() {
+
+        if (selectedTask == null) {
+
+            showMessage(
+                    "Please select a task first."
+            );
+
+            return false;
+        }
+
+
+        return true;
+    }
+
 
     @FunctionalInterface
     private interface TaskAction {
@@ -1012,7 +1050,18 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // HOME
+    // REFRESH
+    // =========================================================
+
+    @FXML
+    private void handleRefresh() {
+
+        loadCategoriesAndTasks();
+    }
+
+
+    // =========================================================
+    // NAVIGATION
     // =========================================================
 
     @FXML
@@ -1027,10 +1076,6 @@ public class EmployeeTaskController {
     }
 
 
-    // =========================================================
-    // PROFILE
-    // =========================================================
-
     @FXML
     private void handleProfile(
             ActionEvent event
@@ -1043,59 +1088,25 @@ public class EmployeeTaskController {
     }
 
 
-    // =========================================================
-    // MY TASKS
-    // =========================================================
-
     @FXML
     private void handleTasks() {
-
-        // Already on My Tasks page.
     }
 
-
-    // =========================================================
-    // KPI
-    // =========================================================
 
     @FXML
     private void handleKpi() {
-
-        System.out.println(
-                "Employee KPI not implemented yet."
-        );
     }
 
-
-    // =========================================================
-    // REPORTS
-    // =========================================================
 
     @FXML
     private void handleReports() {
-
-        System.out.println(
-                "Employee Reports not implemented yet."
-        );
     }
 
-
-    // =========================================================
-    // ANONYMOUS REPORT
-    // =========================================================
 
     @FXML
     private void handleAnonymousReport() {
-
-        System.out.println(
-                "Anonymous Report not implemented yet."
-        );
     }
 
-
-    // =========================================================
-    // LOGOUT
-    // =========================================================
 
     @FXML
     private void handleLogout(
@@ -1117,11 +1128,11 @@ public class EmployeeTaskController {
     // =========================================================
 
     private void showMessage(
-            String message
+            String value
     ) {
 
         messageLabel.setText(
-                message
+                value
         );
 
 
@@ -1155,7 +1166,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // NAVIGATION
+    // NAVIGATE
     // =========================================================
 
     private void navigate(
