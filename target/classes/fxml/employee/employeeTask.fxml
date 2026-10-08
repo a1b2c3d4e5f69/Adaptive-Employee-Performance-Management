@@ -3,7 +3,9 @@
 <?import javafx.geometry.Insets?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -21,6 +23,10 @@
         fx:controller="com.aepm.ui.employee.EmployeeTaskController"
         styleClass="main-layout">
 
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
 
     <top>
 
@@ -71,6 +77,10 @@
 
     </top>
 
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
     <left>
 
@@ -161,241 +171,411 @@
     </left>
 
 
+    <!-- =====================================================
+         SCROLLABLE CONTENT
+         ===================================================== -->
+
     <center>
 
-        <VBox
-                spacing="22"
-                styleClass="home-content">
-
-            <padding>
-                <Insets
-                        top="32"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-            </padding>
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                pannable="true"
+                styleClass="content-scroll-pane">
 
 
-            <!-- HEADER -->
+            <content>
 
-            <HBox alignment="CENTER_LEFT">
+                <VBox
+                        spacing="22"
+                        styleClass="home-content">
 
-                <VBox spacing="4">
+                    <padding>
+                        <Insets
+                                top="32"
+                                right="35"
+                                bottom="40"
+                                left="35"/>
+                    </padding>
 
-                    <Label
-                            text="My Tasks"
-                            styleClass="content-title"/>
 
-                    <Label
-                            text="View and update tasks assigned to you."
-                            styleClass="content-description"/>
+                    <!-- =========================================
+                         PAGE HEADER
+                         ========================================= -->
+
+                    <HBox alignment="CENTER_LEFT">
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="My Tasks"
+                                    styleClass="content-title"/>
+
+                            <Label
+                                    text="View and update tasks assigned to you."
+                                    styleClass="content-description"/>
+
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button
+                                text="Refresh"
+                                onAction="#handleRefresh"
+                                styleClass="secondary-button"/>
+
+                    </HBox>
+
+
+                    <!-- =========================================
+                         ASSIGNED TASKS
+                         ========================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="section-card">
+
+
+                        <Label
+                                text="Assigned Tasks"
+                                styleClass="section-title"/>
+
+
+                        <!-- SEARCH & FILTER -->
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+
+                            <TextField
+                                    fx:id="searchField"
+                                    promptText="Search by task name..."
+                                    prefWidth="300"/>
+
+
+                            <DatePicker
+                                    fx:id="dueDateFilterPicker"
+                                    promptText="Filter by due date"
+                                    prefWidth="190"/>
+
+
+                            <Button
+                                    text="Clear"
+                                    onAction="#handleClearFilter"
+                                    styleClass="secondary-button"/>
+
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                        </HBox>
+
+
+                        <Label
+                                fx:id="messageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"
+                                styleClass="content-description"/>
+
+
+                        <!-- BIGGER TABLE -->
+
+                        <TableView
+                                fx:id="taskTable"
+                                prefHeight="340"
+                                minHeight="300">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="titleColumn"
+                                        text="Task"
+                                        prefWidth="175"/>
+
+                                <TableColumn
+                                        fx:id="categoryColumn"
+                                        text="Category"
+                                        prefWidth="110"/>
+
+                                <TableColumn
+                                        fx:id="priorityColumn"
+                                        text="Priority"
+                                        prefWidth="85"/>
+
+                                <TableColumn
+                                        fx:id="difficultyColumn"
+                                        text="Difficulty"
+                                        prefWidth="95"/>
+
+                                <TableColumn
+                                        fx:id="statusColumn"
+                                        text="Status"
+                                        prefWidth="110"/>
+
+                                <TableColumn
+                                        fx:id="progressColumn"
+                                        text="Progress"
+                                        prefWidth="85"/>
+
+                                <TableColumn
+                                        fx:id="dueDateColumn"
+                                        text="Due Date"
+                                        prefWidth="155"/>
+
+                            </columns>
+
+                        </TableView>
+
+                    </VBox>
+
+
+                    <!-- =========================================
+                         TASK DETAILS
+                         ========================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="section-card">
+
+                        <Label
+                                text="Task Details"
+                                styleClass="section-title"/>
+
+
+                        <GridPane
+                                hgap="28"
+                                vgap="14">
+
+                            <Label
+                                    text="Task"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="selectedTaskLabel"
+                                    text="No task selected"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Category"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="selectedCategoryLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Priority"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="selectedPriorityLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <Label
+                                    text="Difficulty"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="selectedDifficultyLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <Label
+                                    text="Status"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2"/>
+
+                            <Label
+                                    fx:id="selectedStatusLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <Label
+                                    text="Progress"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="2"/>
+
+                            <Label
+                                    fx:id="selectedProgressLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <Label
+                                    text="Assigned Date"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="3"/>
+
+                            <Label
+                                    fx:id="selectedAssignedDateLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="3"/>
+
+
+                            <Label
+                                    text="Due Date"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="3"/>
+
+                            <Label
+                                    fx:id="selectedDueDateLabel"
+                                    text="-"
+                                    styleClass="task-detail-value"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="3"/>
+
+                        </GridPane>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Description"
+                                    styleClass="input-label"/>
+
+                            <Label
+                                    fx:id="selectedDescriptionLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="content-description"/>
+
+                        </VBox>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Completion Criteria"
+                                    styleClass="input-label"/>
+
+                            <Label
+                                    fx:id="selectedCriteriaLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="content-description"/>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- =========================================
+                         UPDATE PROGRESS
+                         ========================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="section-card">
+
+                        <Label
+                                text="Update Progress"
+                                styleClass="section-title"/>
+
+
+                        <HBox
+                                spacing="20"
+                                alignment="CENTER_LEFT">
+
+                            <Label
+                                    text="New Progress (%)"
+                                    styleClass="input-label"/>
+
+                            <TextField
+                                    fx:id="progressField"
+                                    promptText="0 - 100"
+                                    prefWidth="160"/>
+
+                        </HBox>
+
+
+                        <VBox spacing="7">
+
+                            <Label
+                                    text="Progress Note"
+                                    styleClass="input-label"/>
+
+                            <TextArea
+                                    fx:id="progressNoteArea"
+                                    promptText="Describe what you have completed or updated..."
+                                    prefRowCount="3"
+                                    wrapText="true"/>
+
+                        </VBox>
+
+
+                        <HBox spacing="10">
+
+                            <Button
+                                    fx:id="acceptButton"
+                                    text="Accept Task"
+                                    onAction="#handleAcceptTask"
+                                    styleClass="quick-button task-action-button"/>
+
+                            <Button
+                                    fx:id="startButton"
+                                    text="Start Task"
+                                    onAction="#handleStartTask"
+                                    styleClass="quick-button task-action-button"/>
+
+                            <Button
+                                    fx:id="updateProgressButton"
+                                    text="Update Progress"
+                                    onAction="#handleUpdateProgress"
+                                    styleClass="button-primary task-action-button"/>
+
+                            <Button
+                                    fx:id="completeButton"
+                                    text="Complete Task"
+                                    onAction="#handleCompleteTask"
+                                    styleClass="button-primary task-action-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <Region prefHeight="15"/>
 
                 </VBox>
 
-                <Region HBox.hgrow="ALWAYS"/>
+            </content>
 
-                <Button
-                        text="Refresh"
-                        onAction="#handleRefresh"
-                        styleClass="secondary-button"/>
-
-            </HBox>
-
-
-            <!-- ASSIGNED TASKS -->
-
-            <VBox
-                    spacing="15"
-                    styleClass="section-card">
-
-                <Label
-                        text="Assigned Tasks"
-                        styleClass="section-title"/>
-
-                <Label
-                        fx:id="messageLabel"
-                        visible="false"
-                        managed="false"
-                        wrapText="true"
-                        styleClass="content-description"/>
-
-                <TableView
-                        fx:id="taskTable"
-                        prefHeight="270">
-
-                    <columns>
-
-                        <TableColumn
-                                fx:id="titleColumn"
-                                text="Task"
-                                prefWidth="190"/>
-
-                        <TableColumn
-                                fx:id="categoryColumn"
-                                text="Category"
-                                prefWidth="120"/>
-
-                        <TableColumn
-                                fx:id="priorityColumn"
-                                text="Priority"
-                                prefWidth="90"/>
-
-                        <TableColumn
-                                fx:id="difficultyColumn"
-                                text="Difficulty"
-                                prefWidth="100"/>
-
-                        <TableColumn
-                                fx:id="statusColumn"
-                                text="Status"
-                                prefWidth="120"/>
-
-                        <TableColumn
-                                fx:id="progressColumn"
-                                text="Progress"
-                                prefWidth="90"/>
-
-                        <TableColumn
-                                fx:id="dueDateColumn"
-                                text="Due Date"
-                                prefWidth="150"/>
-
-                    </columns>
-
-                </TableView>
-
-            </VBox>
-
-
-            <!-- SELECTED TASK -->
-
-            <VBox
-                    spacing="16"
-                    styleClass="section-card">
-
-                <Label
-                        text="Selected Task"
-                        styleClass="section-title"/>
-
-
-                <GridPane
-                        hgap="25"
-                        vgap="14">
-
-                    <Label
-                            text="Task"
-                            styleClass="input-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="0"/>
-
-                    <Label
-                            fx:id="selectedTaskLabel"
-                            text="No task selected"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="0"/>
-
-
-                    <Label
-                            text="Category"
-                            styleClass="input-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="0"/>
-
-                    <Label
-                            fx:id="selectedCategoryLabel"
-                            text="-"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="0"/>
-
-
-                    <Label
-                            text="Status"
-                            styleClass="input-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="1"/>
-
-                    <Label
-                            fx:id="selectedStatusLabel"
-                            text="-"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="1"/>
-
-
-                    <Label
-                            text="Current Progress"
-                            styleClass="input-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1"/>
-
-                    <Label
-                            fx:id="selectedProgressLabel"
-                            text="-"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
-
-
-                    <Label
-                            text="New Progress (%)"
-                            styleClass="input-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="2"/>
-
-                    <TextField
-                            fx:id="progressField"
-                            promptText="0 - 100"
-                            prefWidth="160"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="2"/>
-
-                </GridPane>
-
-
-                <VBox spacing="7">
-
-                    <Label
-                            text="Progress Note"
-                            styleClass="input-label"/>
-
-                    <TextArea
-                            fx:id="progressNoteArea"
-                            promptText="Describe what you have completed or updated..."
-                            prefRowCount="2"
-                            wrapText="true"/>
-
-                </VBox>
-
-
-                <HBox spacing="10">
-
-                    <Button
-                            fx:id="acceptButton"
-                            text="Accept Task"
-                            onAction="#handleAcceptTask"
-                            styleClass="quick-button"/>
-
-                    <Button
-                            fx:id="startButton"
-                            text="Start Task"
-                            onAction="#handleStartTask"
-                            styleClass="quick-button"/>
-
-                    <Button
-                            fx:id="updateProgressButton"
-                            text="Update Progress"
-                            onAction="#handleUpdateProgress"
-                            styleClass="button-primary"/>
-
-                    <Button
-                            fx:id="completeButton"
-                            text="Complete Task"
-                            onAction="#handleCompleteTask"
-                            styleClass="button-primary"/>
-
-                </HBox>
-
-            </VBox>
-
-        </VBox>
+        </ScrollPane>
 
     </center>
 

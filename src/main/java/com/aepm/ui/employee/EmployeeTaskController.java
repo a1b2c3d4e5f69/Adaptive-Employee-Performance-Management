@@ -13,12 +13,17 @@ import com.aepm.util.SessionManager;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.scene.Node;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -30,6 +35,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +58,18 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // TABLE
+    // SEARCH / FILTER
+    // =========================================================
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private DatePicker dueDateFilterPicker;
+
+
+    // =========================================================
+    // TASK TABLE
     // =========================================================
 
     @FXML
@@ -91,14 +108,32 @@ public class EmployeeTaskController {
     private Label selectedCategoryLabel;
 
     @FXML
+    private Label selectedPriorityLabel;
+
+    @FXML
+    private Label selectedDifficultyLabel;
+
+    @FXML
     private Label selectedStatusLabel;
 
     @FXML
     private Label selectedProgressLabel;
 
+    @FXML
+    private Label selectedAssignedDateLabel;
+
+    @FXML
+    private Label selectedDueDateLabel;
+
+    @FXML
+    private Label selectedDescriptionLabel;
+
+    @FXML
+    private Label selectedCriteriaLabel;
+
 
     // =========================================================
-    // INPUT
+    // PROGRESS
     // =========================================================
 
     @FXML
@@ -155,11 +190,27 @@ public class EmployeeTaskController {
             new HashMap<>();
 
 
+    // =========================================================
+    // TASK DATA FOR SEARCH / FILTER
+    // =========================================================
+
+    private final ObservableList<Task> allTasks =
+            FXCollections.observableArrayList();
+
+    private FilteredList<Task> filteredTasks;
+
+
     private Task selectedTask;
 
 
     private static final ZoneId MALAYSIA_ZONE =
             ZoneId.of("Asia/Kuala_Lumpur");
+
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern(
+                    "dd MMM yyyy HH:mm"
+            );
 
 
     // =========================================================
@@ -172,6 +223,8 @@ public class EmployeeTaskController {
         loadCurrentUser();
 
         setupTable();
+
+        setupFilters();
 
         configureSelection();
 
@@ -215,7 +268,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // TABLE
+    // SETUP TABLE
     // =========================================================
 
     private void setupTable() {
@@ -290,6 +343,10 @@ public class EmployeeTaskController {
         );
 
 
+        // =====================================================
+        // PROGRESS DISPLAY
+        // =====================================================
+
         progressColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
@@ -319,15 +376,13 @@ public class EmployeeTaskController {
         );
 
 
+        // =====================================================
+        // DUE DATE DISPLAY
+        // =====================================================
+
         dueDateColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
-
-                            private final DateTimeFormatter formatter =
-                                    DateTimeFormatter.ofPattern(
-                                            "dd MMM yyyy HH:mm"
-                                    );
-
 
                             @Override
                             protected void updateItem(
@@ -351,13 +406,9 @@ public class EmployeeTaskController {
                                 } else {
 
                                     setText(
-                                            value
-                                                    .atZoneSameInstant(
-                                                            MALAYSIA_ZONE
-                                                    )
-                                                    .format(
-                                                            formatter
-                                                    )
+                                            formatDateTime(
+                                                    value
+                                            )
                                     );
                                 }
                             }
@@ -372,7 +423,153 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // SELECTION
+    // SEARCH / FILTER SETUP
+    // =========================================================
+
+    private void setupFilters() {
+
+        filteredTasks =
+                new FilteredList<>(
+                        allTasks,
+                        task -> true
+                );
+
+
+        taskTable.setItems(
+                filteredTasks
+        );
+
+
+        searchField
+                .textProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        dueDateFilterPicker
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+    }
+
+
+    // =========================================================
+    // APPLY FILTER
+    // =========================================================
+
+    private void applyFilters() {
+
+        String searchText =
+                searchField.getText() == null
+                        ? ""
+                        : searchField
+                                .getText()
+                                .trim()
+                                .toLowerCase();
+
+
+        LocalDate selectedDate =
+                dueDateFilterPicker
+                        .getValue();
+
+
+        filteredTasks.setPredicate(
+                task -> {
+
+                    if (task == null) {
+                        return false;
+                    }
+
+
+                    // =========================================
+                    // TASK NAME SEARCH
+                    // =========================================
+
+                    boolean matchesName =
+                            searchText.isBlank()
+                                    || (
+                                    task.getTaskTitle() != null
+                                            && task.getTaskTitle()
+                                            .toLowerCase()
+                                            .contains(
+                                                    searchText
+                                            )
+                            );
+
+
+                    // =========================================
+                    // DUE DATE FILTER
+                    // =========================================
+
+                    boolean matchesDate =
+                            true;
+
+
+                    if (selectedDate != null) {
+
+                        if (task.getDueDate() == null) {
+
+                            matchesDate =
+                                    false;
+
+                        } else {
+
+                            LocalDate taskDueDate =
+                                    task.getDueDate()
+                                            .atZoneSameInstant(
+                                                    MALAYSIA_ZONE
+                                            )
+                                            .toLocalDate();
+
+
+                            matchesDate =
+                                    taskDueDate.equals(
+                                            selectedDate
+                                    );
+                        }
+                    }
+
+
+                    return matchesName
+                            && matchesDate;
+                }
+        );
+
+
+        clearSelection();
+    }
+
+
+    // =========================================================
+    // CLEAR FILTER
+    // =========================================================
+
+    @FXML
+    private void handleClearFilter() {
+
+        searchField.clear();
+
+        dueDateFilterPicker.setValue(
+                null
+        );
+
+
+        applyFilters();
+    }
+
+
+    // =========================================================
+    // TABLE SELECTION
     // =========================================================
 
     private void configureSelection() {
@@ -403,7 +600,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // DISPLAY SELECTED
+    // DISPLAY SELECTED TASK
     // =========================================================
 
     private void displaySelectedTask(
@@ -411,7 +608,9 @@ public class EmployeeTaskController {
     ) {
 
         selectedTaskLabel.setText(
-                task.getTaskTitle()
+                safe(
+                        task.getTaskTitle()
+                )
         );
 
 
@@ -432,8 +631,24 @@ public class EmployeeTaskController {
         }
 
 
+        selectedPriorityLabel.setText(
+                safe(
+                        task.getPriority()
+                )
+        );
+
+
+        selectedDifficultyLabel.setText(
+                safe(
+                        task.getDifficultyLevel()
+                )
+        );
+
+
         selectedStatusLabel.setText(
-                task.getTaskStatus()
+                safe(
+                        task.getTaskStatus()
+                )
         );
 
 
@@ -441,6 +656,38 @@ public class EmployeeTaskController {
                 String.format(
                         "%.0f%%",
                         task.getProgress()
+                )
+        );
+
+
+        selectedAssignedDateLabel.setText(
+                task.getAssignedDate() == null
+                        ? "-"
+                        : formatDateTime(
+                                task.getAssignedDate()
+                        )
+        );
+
+
+        selectedDueDateLabel.setText(
+                task.getDueDate() == null
+                        ? "-"
+                        : formatDateTime(
+                                task.getDueDate()
+                        )
+        );
+
+
+        selectedDescriptionLabel.setText(
+                emptyToDash(
+                        task.getTaskDescription()
+                )
+        );
+
+
+        selectedCriteriaLabel.setText(
+                emptyToDash(
+                        task.getCompletionCriteria()
                 )
         );
 
@@ -510,10 +757,15 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // CLEAR
+    // CLEAR SELECTION
     // =========================================================
 
     private void clearSelection() {
+
+        taskTable
+                .getSelectionModel()
+                .clearSelection();
+
 
         selectedTask =
                 null;
@@ -529,12 +781,42 @@ public class EmployeeTaskController {
         );
 
 
+        selectedPriorityLabel.setText(
+                "-"
+        );
+
+
+        selectedDifficultyLabel.setText(
+                "-"
+        );
+
+
         selectedStatusLabel.setText(
                 "-"
         );
 
 
         selectedProgressLabel.setText(
+                "-"
+        );
+
+
+        selectedAssignedDateLabel.setText(
+                "-"
+        );
+
+
+        selectedDueDateLabel.setText(
+                "-"
+        );
+
+
+        selectedDescriptionLabel.setText(
+                "-"
+        );
+
+
+        selectedCriteriaLabel.setText(
                 "-"
         );
 
@@ -576,7 +858,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // LOAD CATEGORY + TASKS
+    // LOAD CATEGORY + TASK
     // =========================================================
 
     private void loadCategoriesAndTasks() {
@@ -634,20 +916,7 @@ public class EmployeeTaskController {
 
 
         categoryTask.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            categoryTask.getException();
-
-
-                    if (error != null) {
-
-                        error.printStackTrace();
-                    }
-
-
-                    loadTasks();
-                }
+                event -> loadTasks()
         );
 
 
@@ -689,24 +958,21 @@ public class EmployeeTaskController {
                             loadTask.getValue();
 
 
-                    taskTable
-                            .getItems()
-                            .clear();
+                    allTasks.clear();
 
 
                     if (tasks != null) {
 
-                        taskTable
-                                .getItems()
-                                .addAll(
-                                        tasks
-                                );
+                        allTasks.addAll(
+                                tasks
+                        );
                     }
 
 
-                    taskTable.refresh();
+                    applyFilters();
 
-                    clearSelection();
+
+                    taskTable.refresh();
 
 
                     if (
@@ -755,7 +1021,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // ACCEPT
+    // ACCEPT TASK
     // =========================================================
 
     @FXML
@@ -776,7 +1042,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // START
+    // START TASK
     // =========================================================
 
     @FXML
@@ -910,7 +1176,7 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // COMPLETE
+    // COMPLETE TASK
     // =========================================================
 
     @FXML
@@ -1124,8 +1390,49 @@ public class EmployeeTaskController {
 
 
     // =========================================================
-    // MESSAGE
+    // HELPERS
     // =========================================================
+
+    private String formatDateTime(
+            OffsetDateTime dateTime
+    ) {
+
+        return dateTime
+                .atZoneSameInstant(
+                        MALAYSIA_ZONE
+                )
+                .format(
+                        DATE_FORMATTER
+                );
+    }
+
+
+    private String safe(
+            String value
+    ) {
+
+        return value == null
+                ? "-"
+                : value;
+    }
+
+
+    private String emptyToDash(
+            String value
+    ) {
+
+        if (
+                value == null
+                        || value.isBlank()
+        ) {
+
+            return "-";
+        }
+
+
+        return value;
+    }
+
 
     private void showMessage(
             String value
@@ -1164,10 +1471,6 @@ public class EmployeeTaskController {
         );
     }
 
-
-    // =========================================================
-    // NAVIGATE
-    // =========================================================
 
     private void navigate(
             ActionEvent event,

@@ -35,6 +35,7 @@ com\aepm\ui\navigation\NavigationManager.class
 com\aepm\model\TaskProgress.class
 com\aepm\ui\manager\ManagerTaskController$4.class
 com\aepm\data\repository\AuthRepository.class
+com\aepm\ui\employee\EmployeeTaskController$5.class
 com\aepm\Main.class
 com\aepm\ui\manager\ManagerProfileController$2.class
 com\aepm\ui\manager\ManagerTaskController$5.class

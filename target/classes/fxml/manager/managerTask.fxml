@@ -197,12 +197,12 @@
                     <Button
                             text="Refresh"
                             onAction="#handleRefresh"
-                            styleClass="secondary-button"/>
+                            styleClass="secondary-button task-action-button"/>
 
                     <Button
                             text="+ Create Task"
                             onAction="#handleCreateTask"
-                            styleClass="button-primary"/>
+                            styleClass="button-primary task-action-button"/>
 
                 </HBox>
 
@@ -298,12 +298,12 @@
                         <Button
                                 text="Edit Task"
                                 onAction="#handleEditTask"
-                                styleClass="secondary-button"/>
+                                styleClass="secondary-button task-action-button"/>
 
                         <Button
                                 text="Cancel Task"
                                 onAction="#handleCancelTask"
-                                styleClass="danger-button"/>
+                                styleClass="danger-button task-action-button"/>
 
                     </HBox>
 
