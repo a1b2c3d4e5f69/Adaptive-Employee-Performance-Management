@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -15,19 +14,75 @@
         styleClass="main-layout">
 
 
+    <!-- TOP BAR -->
+
+    <top>
+
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                styleClass="topbar">
+
+            <padding>
+                <Insets
+                        top="16"
+                        right="28"
+                        bottom="16"
+                        left="28"/>
+            </padding>
+
+
+            <VBox spacing="2">
+
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome, Administrator"
+                        styleClass="topbar-title"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="topbar-subtitle"/>
+
+            </VBox>
+
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
+
+                <Label
+                        fx:id="topNameLabel"
+                        text="Administrator"
+                        styleClass="topbar-user-name"/>
+
+                <Label
+                        text="ADMINISTRATOR"
+                        styleClass="topbar-user-role"/>
+
+            </VBox>
+
+        </HBox>
+
+    </top>
+
+
     <!-- SIDEBAR -->
 
     <left>
 
         <VBox
                 prefWidth="240"
+                spacing="10"
                 styleClass="sidebar">
 
             <padding>
                 <Insets
-                        top="28"
+                        top="30"
                         right="18"
-                        bottom="24"
+                        bottom="20"
                         left="18"/>
             </padding>
 
@@ -45,7 +100,7 @@
             </VBox>
 
 
-            <Region prefHeight="28"/>
+            <Region prefHeight="18"/>
 
 
             <Label
@@ -57,8 +112,10 @@
                     text="⌂   Home"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
-                    styleClass="sidebar-button"/>
-            
+                    onAction="#handleHome"
+                    styleClass="sidebar-button-active"/>
+
+
             <Button
                     text="●   My Profile"
                     maxWidth="Infinity"
@@ -66,12 +123,14 @@
                     onAction="#handleProfile"
                     styleClass="sidebar-button"/>
 
+
             <Button
-                    text="●   User Management"
+                    text="♟   User Management"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleUserManagement"
                     styleClass="sidebar-button"/>
+
 
             <Button
                     text="✓   Task Management"
@@ -90,7 +149,7 @@
 
 
             <Button
-                    text="▤   Reports"
+                    text="≡   Reports"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleReports"
@@ -107,10 +166,6 @@
 
             <Region VBox.vgrow="ALWAYS"/>
 
-            <Separator/>
-
-            <Region prefHeight="10"/>
-
 
             <Button
                     text="↪   Logout"
@@ -122,63 +177,6 @@
         </VBox>
 
     </left>
-
-
-    <!-- TOPBAR -->
-
-    <top>
-
-        <HBox
-                alignment="CENTER_LEFT"
-                prefHeight="75"
-                spacing="15"
-                styleClass="topbar">
-
-            <padding>
-                <Insets
-                        top="15"
-                        right="30"
-                        bottom="15"
-                        left="30"/>
-            </padding>
-
-
-            <VBox spacing="3">
-
-                <Label
-                        fx:id="welcomeLabel"
-                        text="Welcome"
-                        styleClass="topbar-title"/>
-
-                <Label
-                        text="Administrator Portal"
-                        styleClass="topbar-subtitle"/>
-
-            </VBox>
-
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-
-            <VBox
-                    alignment="CENTER_RIGHT"
-                    spacing="2">
-
-                <Label
-                        fx:id="nameLabel"
-                        text="-"
-                        styleClass="topbar-user-name"/>
-
-                <Label
-                        fx:id="roleLabel"
-                        text="Administrator"
-                        styleClass="topbar-user-role"/>
-
-            </VBox>
-
-        </HBox>
-
-    </top>
 
 
     <!-- CONTENT -->
@@ -198,7 +196,7 @@
             </padding>
 
 
-            <VBox spacing="5">
+            <VBox spacing="4">
 
                 <Label
                         text="Administrator Home"
@@ -211,12 +209,15 @@
             </VBox>
 
 
-            <HBox spacing="18">
+            <HBox spacing="22">
+
+
+                <!-- IAM -->
 
                 <VBox
-                        spacing="8"
-                        HBox.hgrow="ALWAYS"
-                        styleClass="info-card">
+                        spacing="10"
+                        styleClass="dashboard-card"
+                        HBox.hgrow="ALWAYS">
 
                     <Label
                             text="IAM"
@@ -228,21 +229,22 @@
 
                     <Label
                             text="Manage employee and manager accounts."
-                            wrapText="true"
-                            styleClass="card-description"/>
+                            styleClass="content-description"/>
 
                     <Button
                             text="Manage Users"
                             onAction="#handleUserManagement"
-                            styleClass="quick-button"/>
+                            styleClass="app-button"/>
 
                 </VBox>
 
 
+                <!-- TASK -->
+
                 <VBox
-                        spacing="8"
-                        HBox.hgrow="ALWAYS"
-                        styleClass="info-card">
+                        spacing="10"
+                        styleClass="dashboard-card"
+                        HBox.hgrow="ALWAYS">
 
                     <Label
                             text="TASK"
@@ -253,17 +255,23 @@
                             styleClass="card-title"/>
 
                     <Label
-                            text="Task administration will be added next."
-                            wrapText="true"
-                            styleClass="card-description"/>
+                            text="Monitor tasks across the organisation."
+                            styleClass="content-description"/>
+
+                    <Button
+                            text="View Tasks"
+                            onAction="#handleTaskManagement"
+                            styleClass="app-button"/>
 
                 </VBox>
 
 
+                <!-- KPI -->
+
                 <VBox
-                        spacing="8"
-                        HBox.hgrow="ALWAYS"
-                        styleClass="info-card">
+                        spacing="10"
+                        styleClass="dashboard-card"
+                        HBox.hgrow="ALWAYS">
 
                     <Label
                             text="KPI"
@@ -275,8 +283,7 @@
 
                     <Label
                             text="KPI configuration will be added later."
-                            wrapText="true"
-                            styleClass="card-description"/>
+                            styleClass="content-description"/>
 
                 </VBox>
 

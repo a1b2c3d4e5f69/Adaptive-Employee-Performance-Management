@@ -448,13 +448,13 @@
                             fx:id="saveButton"
                             text="Save Changes"
                             onAction="#handleSave"
-                            styleClass="button-primary"/>
+                            styleClass="app-button"/>
 
 
                     <Button
                             text="Change Password"
                             onAction="#handleChangePassword"
-                            styleClass="secondary-button"/>
+                            styleClass="app-button"/>
 
                 </HBox>
 

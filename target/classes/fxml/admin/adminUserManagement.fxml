@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -18,302 +19,468 @@
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.admin.AdminUserManagementController"
-        styleClass="profile-page">
+        styleClass="main-layout">
 
 
-    <!-- TOP -->
+    <!-- TOP BAR -->
 
     <top>
 
-        <VBox spacing="18">
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                styleClass="topbar">
 
             <padding>
-
                 <Insets
-                        top="30"
-                        right="35"
-                        bottom="10"
-                        left="35"/>
-
+                        top="16"
+                        right="28"
+                        bottom="16"
+                        left="28"/>
             </padding>
 
 
-            <HBox
-                    alignment="CENTER_LEFT"
-                    spacing="15">
+            <VBox spacing="2">
 
-                <VBox spacing="4">
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome, Administrator"
+                        styleClass="topbar-title"/>
 
-                    <Label
-                            text="User Management"
-                            styleClass="content-title"/>
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="topbar-subtitle"/>
 
-                    <Label
-                            text="View and manage system user accounts."
-                            styleClass="content-description"/>
-
-                </VBox>
+            </VBox>
 
 
-                <Region HBox.hgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS"/>
 
 
-                <Button
-                        text="Back"
-                        onAction="#handleBack"
-                        styleClass="secondary-button"/>
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
 
-            </HBox>
+                <Label
+                        fx:id="topNameLabel"
+                        text="Administrator"
+                        styleClass="topbar-user-name"/>
 
+                <Label
+                        text="ADMINISTRATOR"
+                        styleClass="topbar-user-role"/>
 
-            <HBox
-                    alignment="CENTER_LEFT"
-                    spacing="12">
+            </VBox>
 
-                <TextField
-                        fx:id="searchField"
-                        promptText="Search users..."
-                        prefWidth="300"/>
-
-
-                <ComboBox
-                        fx:id="filterRoleComboBox"
-                        prefWidth="160"/>
-
-
-                <Button
-                        text="Refresh"
-                        onAction="#loadUsers"
-                        styleClass="secondary-button"/>
-
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-
-                <Button
-                        text="+ Create User"
-                        onAction="#handleCreateUser"
-                        styleClass="button-primary"/>
-
-            </HBox>
-
-        </VBox>
+        </HBox>
 
     </top>
 
 
-    <!-- CENTER -->
+    <!-- SIDEBAR -->
 
-    <center>
+    <left>
 
-        <VBox spacing="20">
+        <VBox
+                prefWidth="240"
+                spacing="10"
+                styleClass="sidebar">
 
             <padding>
-
                 <Insets
-                        top="15"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-
+                        top="30"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
             </padding>
 
 
-            <!-- USER LIST -->
-
-            <VBox
-                    spacing="10"
-                    styleClass="profile-card">
+            <VBox spacing="3">
 
                 <Label
-                        text="User List"
-                        styleClass="section-title"/>
+                        text="AEPM"
+                        styleClass="sidebar-logo"/>
 
-
-                <!--
-                    IMPORTANT:
-                    NO columnResizePolicy here.
-                    We configure it in Java.
-                -->
-
-                <TableView
-                        fx:id="userTable"
-                        prefHeight="300">
-
-                    <columns>
-
-                        <TableColumn
-                                fx:id="employeeIdColumn"
-                                text="Staff ID"
-                                prefWidth="100"/>
-
-                        <TableColumn
-                                fx:id="nameColumn"
-                                text="Full Name"
-                                prefWidth="150"/>
-
-                        <TableColumn
-                                fx:id="usernameColumn"
-                                text="Username"
-                                prefWidth="120"/>
-
-                        <TableColumn
-                                fx:id="emailColumn"
-                                text="Email"
-                                prefWidth="200"/>
-
-                        <TableColumn
-                                fx:id="departmentColumn"
-                                text="Department"
-                                prefWidth="130"/>
-
-                        <TableColumn
-                                fx:id="roleColumn"
-                                text="Role"
-                                prefWidth="120"/>
-
-                        <TableColumn
-                                fx:id="statusColumn"
-                                text="Status"
-                                prefWidth="100"/>
-
-                    </columns>
-
-                </TableView>
+                <Label
+                        text="Administrator Portal"
+                        styleClass="sidebar-subtitle"/>
 
             </VBox>
 
 
-            <!-- SELECTED USER -->
-
-            <VBox
-                    spacing="18"
-                    styleClass="profile-card">
-
-                <Label
-                        text="Selected User Details"
-                        styleClass="section-title"/>
+            <Region prefHeight="18"/>
 
 
-                <GridPane
-                        hgap="20"
-                        vgap="15">
+            <Label
+                    text="MENU"
+                    styleClass="sidebar-section-title"/>
 
 
-                    <Label
-                            text="Staff ID"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="0"/>
-
-                    <TextField
-                            fx:id="employeeIdField"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="0"/>
+            <Button
+                    text="⌂   Home"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleHome"
+                    styleClass="sidebar-button"/>
 
 
-                    <Label
-                            text="Full Name"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="0"/>
-
-                    <TextField
-                            fx:id="fullNameField"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="0"/>
+            <Button
+                    text="●   My Profile"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleProfile"
+                    styleClass="sidebar-button"/>
 
 
-                    <Label
-                            text="Username"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="1"/>
-
-                    <TextField
-                            fx:id="usernameField"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="1"/>
+            <Button
+                    text="♟   User Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleUserManagement"
+                    styleClass="sidebar-button-active"/>
 
 
-                    <Label
-                            text="Email"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1"/>
-
-                    <TextField
-                            fx:id="emailField"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
+            <Button
+                    text="✓   Task Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
 
 
-                    <Label
-                            text="Contact Number"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="2"/>
-
-                    <TextField
-                            fx:id="contactNumberField"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="2"/>
+            <Button
+                    text="★   KPI Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleKpiManagement"
+                    styleClass="sidebar-button"/>
 
 
-                    <Label
-                            text="Department"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="2"/>
-
-                    <TextField
-                            fx:id="departmentField"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="2"/>
+            <Button
+                    text="≡   Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleReports"
+                    styleClass="sidebar-button"/>
 
 
-                    <Label
-                            text="Role"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="3"/>
-
-                    <ComboBox
-                            fx:id="roleComboBox"
-                            prefWidth="200"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="3"/>
-
-                </GridPane>
+            <Button
+                    text="!   Anonymous Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnonymousReports"
+                    styleClass="sidebar-button"/>
 
 
-                <Label
-                        fx:id="messageLabel"
-                        visible="false"
-                        managed="false"
-                        wrapText="true"/>
+            <Region VBox.vgrow="ALWAYS"/>
 
 
-                <HBox spacing="12">
-
-                    <Button
-                            fx:id="saveButton"
-                            text="Save Changes"
-                            onAction="#handleSave"
-                            styleClass="button-primary"/>
-
-
-                    <Button
-                            fx:id="statusButton"
-                            text="Deactivate Account"
-                            onAction="#handleToggleStatus"
-                            styleClass="secondary-button"/>
-
-
-                    <Button
-                            fx:id="deleteButton"
-                            text="Delete User"
-                            onAction="#handleDeleteUser"
-                            styleClass="secondary-button"/>
-
-                </HBox>
-
-            </VBox>
+            <Button
+                    text="↪   Logout"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
 
         </VBox>
+
+    </left>
+
+
+    <!-- CONTENT -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="content-scroll-pane">
+
+            <content>
+
+                <VBox
+                        spacing="22"
+                        styleClass="home-content">
+
+                    <padding>
+                        <Insets
+                                top="32"
+                                right="35"
+                                bottom="40"
+                                left="35"/>
+                    </padding>
+
+
+                    <!-- TITLE -->
+
+                    <VBox spacing="4">
+
+                        <Label
+                                text="User Management"
+                                styleClass="content-title"/>
+
+                        <Label
+                                text="View and manage system user accounts."
+                                styleClass="content-description"/>
+
+                    </VBox>
+
+
+                    <!-- USER LIST -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="section-card">
+
+                        <Label
+                                text="User List"
+                                styleClass="section-title"/>
+
+
+                        <!-- SEARCH INSIDE USER LIST -->
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+                            <TextField
+                                    fx:id="searchField"
+                                    promptText="Search users..."
+                                    prefWidth="320"/>
+
+
+                            <ComboBox
+                                    fx:id="roleFilterComboBox"
+                                    prefWidth="180"
+                                    promptText="All"/>
+
+
+                            <Button
+                                    text="Refresh"
+                                    onAction="#loadUsers"
+                                    styleClass="app-button"/>
+
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+
+                            <Button
+                                    text="+ Create User"
+                                    onAction="#handleCreateUser"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+
+                        <Label
+                                fx:id="messageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"/>
+
+
+                        <TableView
+                                fx:id="userTable"
+                                prefHeight="260"
+                                minHeight="240">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="employeeIdColumn"
+                                        text="Staff ID"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="nameColumn"
+                                        text="Full Name"
+                                        prefWidth="160"/>
+
+                                <TableColumn
+                                        fx:id="usernameColumn"
+                                        text="Username"
+                                        prefWidth="130"/>
+
+                                <TableColumn
+                                        fx:id="emailColumn"
+                                        text="Email"
+                                        prefWidth="220"/>
+
+                                <TableColumn
+                                        fx:id="departmentColumn"
+                                        text="Department"
+                                        prefWidth="145"/>
+
+                                <TableColumn
+                                        fx:id="roleColumn"
+                                        text="Role"
+                                        prefWidth="130"/>
+
+                                <TableColumn
+                                        fx:id="statusColumn"
+                                        text="Status"
+                                        prefWidth="110"/>
+
+                            </columns>
+
+                        </TableView>
+
+                    </VBox>
+
+
+                    <!-- SELECTED USER -->
+
+                    <VBox
+                            spacing="18"
+                            styleClass="section-card">
+
+                        <Label
+                                text="Selected User Details"
+                                styleClass="section-title"/>
+
+
+                        <GridPane
+                                hgap="28"
+                                vgap="16">
+
+
+                            <!-- ROW 1 -->
+
+                            <Label
+                                    text="Staff ID"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+                            <TextField
+                                    fx:id="employeeIdField"
+                                    editable="false"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Full Name"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+                            <TextField
+                                    fx:id="fullNameField"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <!-- ROW 2 -->
+
+                            <Label
+                                    text="Username"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+                            <TextField
+                                    fx:id="usernameField"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <Label
+                                    text="Email"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+                            <TextField
+                                    fx:id="emailField"
+                                    editable="false"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <!-- ROW 3 -->
+
+                            <Label
+                                    text="Contact Number"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2"/>
+
+                            <TextField
+                                    fx:id="contactNumberField"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <Label
+                                    text="Department"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="2"/>
+
+                            <TextField
+                                    fx:id="departmentField"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <!-- ROW 4 -->
+
+                            <Label
+                                    text="Role"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="3"/>
+
+                            <ComboBox
+                                    fx:id="roleComboBox"
+                                    prefWidth="250"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="3"/>
+
+                        </GridPane>
+
+
+                        <!-- ACTION BUTTONS -->
+
+                        <HBox spacing="12">
+
+                            <Button
+                                    fx:id="saveButton"
+                                    text="Save Changes"
+                                    onAction="#handleSave"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="statusButton"
+                                    text="Deactivate Account"
+                                    onAction="#handleToggleStatus"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="deleteButton"
+                                    text="Delete User"
+                                    onAction="#handleDeleteUser"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
 
     </center>
 

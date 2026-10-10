@@ -6,6 +6,7 @@ public class TaskCategory {
     private String categoryName;
     private String description;
     private String categoryStatus;
+    private String createdBy;
 
 
     public TaskCategory() {
@@ -45,6 +46,15 @@ public class TaskCategory {
 
     public void setCategoryStatus(String categoryStatus) {
         this.categoryStatus = categoryStatus;
+    }
+
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
 

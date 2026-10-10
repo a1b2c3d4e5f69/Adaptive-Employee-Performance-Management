@@ -195,7 +195,7 @@
                 <Button
                         text="← Back"
                         onAction="#handleBack"
-                        styleClass="secondary-button"/>
+                        styleClass="app-button"/>
 
             </HBox>
 
@@ -323,13 +323,13 @@
                     <Button
                             text="Cancel"
                             onAction="#handleBack"
-                            styleClass="secondary-button"/>
+                            styleClass="app-button"/>
 
                     <Button
                             fx:id="saveButton"
                             text="Save Changes"
                             onAction="#handleSave"
-                            styleClass="button-primary"/>
+                            styleClass="app-button"/>
 
                 </HBox>
 

@@ -52,7 +52,7 @@
         <Button
                 text="Back"
                 onAction="#handleBack"
-                styleClass="secondary-button"/>
+                styleClass="app-button"/>
 
     </HBox>
 
@@ -184,13 +184,13 @@
                     fx:id="createButton"
                     text="Create User"
                     onAction="#handleCreateUser"
-                    styleClass="button-primary task-action-button"/>
+                    styleClass="app-button"/>
 
 
             <Button
                     text="Cancel"
                     onAction="#handleBack"
-                    styleClass="secondary-button task-action-button"/>
+                    styleClass="app-button"/>
 
         </HBox>
 

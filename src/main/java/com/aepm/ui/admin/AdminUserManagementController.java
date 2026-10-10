@@ -5,6 +5,7 @@ import com.aepm.model.Role;
 import com.aepm.model.User;
 import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.util.SessionManager;
 
 import javafx.beans.property.SimpleStringProperty;
 
@@ -19,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.scene.Node;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -36,6 +38,17 @@ import java.util.List;
 import java.util.Optional;
 
 public class AdminUserManagementController {
+
+    // =========================================================
+    // TOP BAR
+    // =========================================================
+
+    @FXML
+    private Label welcomeLabel;
+
+    @FXML
+    private Label topNameLabel;
+
 
     // =========================================================
     // TABLE
@@ -67,18 +80,18 @@ public class AdminUserManagementController {
 
 
     // =========================================================
-    // SEARCH
+    // SEARCH / FILTER
     // =========================================================
 
     @FXML
     private TextField searchField;
 
     @FXML
-    private ComboBox<String> filterRoleComboBox;
+    private ComboBox<String> roleFilterComboBox;
 
 
     // =========================================================
-    // EDIT FORM
+    // FORM
     // =========================================================
 
     @FXML
@@ -102,10 +115,8 @@ public class AdminUserManagementController {
     @FXML
     private ComboBox<Role> roleComboBox;
 
-
-    // =========================================================
-    // BUTTONS
-    // =========================================================
+    @FXML
+    private Label messageLabel;
 
     @FXML
     private Button saveButton;
@@ -116,9 +127,10 @@ public class AdminUserManagementController {
     @FXML
     private Button deleteButton;
 
-    @FXML
-    private Label messageLabel;
 
+    // =========================================================
+    // DATA
+    // =========================================================
 
     private final UserService userService =
             new UserService();
@@ -140,29 +152,74 @@ public class AdminUserManagementController {
     @FXML
     public void initialize() {
 
-        System.out.println(
-                "AdminUserManagementController initialize()"
-        );
-
-
         UIHelper.hideMessage(
                 messageLabel
         );
 
 
+        loadCurrentUser();
+
         configureTable();
 
-        configureRoleBoxes();
+        configureRoleComboBox();
 
-        configureFiltering();
+        configureFilters();
 
         configureSelection();
 
-        setEditDisabled(
-                true
-        );
+        clearSelectedUser();
 
         loadUsers();
+    }
+
+
+    // =========================================================
+    // TOP USER
+    // =========================================================
+
+    private void loadCurrentUser() {
+
+        User currentUser =
+                SessionManager.getCurrentUser();
+
+
+        if (currentUser == null) {
+            return;
+        }
+
+
+        String name =
+                currentUser.getFullName();
+
+
+        if (
+                name == null
+                        || name.isBlank()
+        ) {
+
+            name =
+                    currentUser.getUsername();
+        }
+
+
+        if (
+                name == null
+                        || name.isBlank()
+        ) {
+
+            name =
+                    "Administrator";
+        }
+
+
+        welcomeLabel.setText(
+                "Welcome, " + name
+        );
+
+
+        topNameLabel.setText(
+                name
+        );
     }
 
 
@@ -215,27 +272,26 @@ public class AdminUserManagementController {
 
 
         roleColumn.setCellValueFactory(
-                data -> {
+                cellData -> {
 
                     User user =
-                            data.getValue();
+                            cellData.getValue();
 
-                    String role =
+
+                    String roleName =
                             user.getRole() == null
                                     ? "-"
                                     : formatRole(
                                             user.getRole()
                                     );
 
+
                     return new SimpleStringProperty(
-                            role
+                            roleName
                     );
                 }
         );
 
-
-        // IMPORTANT:
-        // Do this in Java, NOT in FXML.
 
         userTable.setColumnResizePolicy(
                 TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
@@ -244,41 +300,24 @@ public class AdminUserManagementController {
 
 
     // =========================================================
-    // ROLE BOXES
+    // ROLE
     // =========================================================
 
-    private void configureRoleBoxes() {
+    private void configureRoleComboBox() {
 
         roleComboBox.setItems(
                 FXCollections.observableArrayList(
-                        Role.ADMINISTRATOR,
-                        Role.MANAGER,
-                        Role.EMPLOYEE
+                        Role.values()
                 )
-        );
-
-
-        filterRoleComboBox.setItems(
-                FXCollections.observableArrayList(
-                        "All",
-                        "Administrator",
-                        "Manager",
-                        "Employee"
-                )
-        );
-
-
-        filterRoleComboBox.setValue(
-                "All"
         );
     }
 
 
     // =========================================================
-    // FILTER
+    // SEARCH + FILTER
     // =========================================================
 
-    private void configureFiltering() {
+    private void configureFilters() {
 
         filteredUsers =
                 new FilteredList<>(
@@ -292,6 +331,21 @@ public class AdminUserManagementController {
         );
 
 
+        roleFilterComboBox.setItems(
+                FXCollections.observableArrayList(
+                        "All",
+                        "Administrator",
+                        "Manager",
+                        "Employee"
+                )
+        );
+
+
+        roleFilterComboBox.setValue(
+                "All"
+        );
+
+
         searchField
                 .textProperty()
                 .addListener(
@@ -299,219 +353,92 @@ public class AdminUserManagementController {
                                 observable,
                                 oldValue,
                                 newValue
-                        ) -> applyFilter()
+                        ) -> applyFilters()
                 );
 
 
-        filterRoleComboBox
+        roleFilterComboBox
                 .valueProperty()
                 .addListener(
                         (
                                 observable,
                                 oldValue,
                                 newValue
-                        ) -> applyFilter()
+                        ) -> applyFilters()
                 );
     }
 
 
-    private void applyFilter() {
-
-        if (filteredUsers == null) {
-            return;
-        }
-
+    private void applyFilters() {
 
         String keyword =
                 searchField.getText() == null
                         ? ""
                         : searchField
-                        .getText()
-                        .trim()
-                        .toLowerCase();
+                                .getText()
+                                .trim()
+                                .toLowerCase();
 
 
-        String filterRole =
-                filterRoleComboBox.getValue();
+        String roleFilter =
+                roleFilterComboBox.getValue();
 
 
         filteredUsers.setPredicate(
                 user -> {
 
-                    boolean roleMatch =
-                            true;
-
-
-                    if (
-                            filterRole != null
-                                    && !"All".equals(
-                                    filterRole
-                            )
-                    ) {
-
-                        roleMatch =
-                                user.getRole() != null
-                                        && filterRole.equals(
-                                        formatRole(
-                                                user.getRole()
-                                        )
-                                );
-                    }
-
-
-                    if (!roleMatch) {
+                    if (user == null) {
                         return false;
                     }
 
 
-                    if (keyword.isEmpty()) {
-                        return true;
-                    }
+                    boolean matchesSearch =
+                            keyword.isBlank()
+                                    || contains(
+                                    user.getEmployeeId(),
+                                    keyword
+                            )
+                                    || contains(
+                                    user.getFullName(),
+                                    keyword
+                            )
+                                    || contains(
+                                    user.getUsername(),
+                                    keyword
+                            )
+                                    || contains(
+                                    user.getEmail(),
+                                    keyword
+                            )
+                                    || contains(
+                                    user.getDepartment(),
+                                    keyword
+                            )
+                                    || contains(
+                                    user.getAccountStatus(),
+                                    keyword
+                            );
 
 
-                    return contains(
-                            user.getEmployeeId(),
-                            keyword
-                    )
-                            || contains(
-                            user.getFullName(),
-                            keyword
-                    )
-                            || contains(
-                            user.getUsername(),
-                            keyword
-                    )
-                            || contains(
-                            user.getEmail(),
-                            keyword
-                    )
-                            || contains(
-                            user.getDepartment(),
-                            keyword
-                    )
-                            || contains(
-                            user.getAccountStatus(),
-                            keyword
-                    );
+                    boolean matchesRole =
+                            roleFilter == null
+                                    || "All".equals(
+                                    roleFilter
+                            )
+                                    || (
+                                    user.getRole() != null
+                                            && roleFilter.equals(
+                                            formatRole(
+                                                    user.getRole()
+                                            )
+                                    )
+                            );
+
+
+                    return matchesSearch
+                            && matchesRole;
                 }
         );
-    }
-
-
-    // =========================================================
-    // LOAD USERS
-    // =========================================================
-
-    @FXML
-    private void loadUsers() {
-
-        System.out.println(
-                "Loading users..."
-        );
-
-
-        Task<List<User>> task =
-                new Task<>() {
-
-                    @Override
-                    protected List<User> call()
-                            throws Exception {
-
-                        return userService
-                                .getAllUsers();
-                    }
-                };
-
-
-        task.setOnSucceeded(
-                event -> {
-
-                    List<User> result =
-                            task.getValue();
-
-
-                    users.clear();
-
-
-                    if (result != null) {
-
-                        users.addAll(
-                                result
-                        );
-                    }
-
-
-                    System.out.println(
-                            "Loaded users: "
-                                    + users.size()
-                    );
-
-
-                    for (User user : users) {
-
-                        System.out.println(
-                                "USER: "
-                                        + user.getEmployeeId()
-                                        + " | "
-                                        + user.getFullName()
-                                        + " | "
-                                        + user.getEmail()
-                        );
-                    }
-
-
-                    applyFilter();
-
-
-                    if (users.isEmpty()) {
-
-                        UIHelper.showError(
-                                messageLabel,
-                                "No users were returned from Supabase."
-                        );
-
-                    } else {
-
-                        UIHelper.hideMessage(
-                                messageLabel
-                        );
-                    }
-                }
-        );
-
-
-        task.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            task.getException();
-
-
-                    if (error != null) {
-                        error.printStackTrace();
-                    }
-
-
-                    UIHelper.showError(
-                            messageLabel,
-                            error == null
-                                    ? "Unable to load users."
-                                    : error.getMessage()
-                    );
-                }
-        );
-
-
-        Thread thread =
-                new Thread(
-                        task
-                );
-
-        thread.setDaemon(
-                true
-        );
-
-        thread.start();
     }
 
 
@@ -531,36 +458,22 @@ public class AdminUserManagementController {
                                 newValue
                         ) -> {
 
-                            selectedUser =
-                                    newValue;
+                            if (newValue != null) {
+
+                                selectedUser =
+                                        newValue;
 
 
-                            if (newValue == null) {
-
-                                clearFields();
-
-                                setEditDisabled(
-                                        true
+                                displaySelectedUser(
+                                        newValue
                                 );
-
-                                return;
                             }
-
-
-                            displayUser(
-                                    newValue
-                            );
-
-
-                            setEditDisabled(
-                                    false
-                            );
                         }
                 );
     }
 
 
-    private void displayUser(
+    private void displaySelectedUser(
             User user
     ) {
 
@@ -611,14 +524,131 @@ public class AdminUserManagementController {
         );
 
 
-        updateStatusButton(
+        updateStatusButtonText(
                 user.getAccountStatus()
+        );
+
+
+        saveButton.setDisable(
+                false
+        );
+
+        statusButton.setDisable(
+                false
+        );
+
+        deleteButton.setDisable(
+                false
+        );
+    }
+
+
+    private void clearSelectedUser() {
+
+        selectedUser =
+                null;
+
+
+        employeeIdField.clear();
+
+        fullNameField.clear();
+
+        usernameField.clear();
+
+        emailField.clear();
+
+        contactNumberField.clear();
+
+        departmentField.clear();
+
+        roleComboBox.setValue(
+                null
+        );
+
+
+        saveButton.setDisable(
+                true
+        );
+
+
+        statusButton.setDisable(
+                true
+        );
+
+
+        deleteButton.setDisable(
+                true
         );
     }
 
 
     // =========================================================
-    // SAVE
+    // LOAD USERS
+    // =========================================================
+
+    @FXML
+    private void loadUsers() {
+
+        Task<List<User>> task =
+                new Task<>() {
+
+                    @Override
+                    protected List<User> call()
+                            throws Exception {
+
+                        return userService
+                                .getAllUsers();
+                    }
+                };
+
+
+        task.setOnSucceeded(
+                event -> {
+
+                    users.setAll(
+                            task.getValue()
+                    );
+
+
+                    userTable.refresh();
+
+
+                    UIHelper.hideMessage(
+                            messageLabel
+                    );
+                }
+        );
+
+
+        task.setOnFailed(
+                event -> {
+
+                    Throwable exception =
+                            task.getException();
+
+
+                    UIHelper.showError(
+                            messageLabel,
+                            exception == null
+                                    ? "Unable to load users."
+                                    : exception.getMessage()
+                    );
+                }
+        );
+
+
+        Thread thread =
+                new Thread(task);
+
+
+        thread.setDaemon(true);
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // SAVE USER
     // =========================================================
 
     @FXML
@@ -635,11 +665,11 @@ public class AdminUserManagementController {
         }
 
 
-        Role role =
+        Role selectedRole =
                 roleComboBox.getValue();
 
 
-        if (role == null) {
+        if (selectedRole == null) {
 
             UIHelper.showError(
                     messageLabel,
@@ -679,13 +709,13 @@ public class AdminUserManagementController {
 
 
         selectedUser.setRole(
-                role
+                selectedRole
         );
 
 
         selectedUser.setRoleId(
                 roleToId(
-                        role
+                        selectedRole
                 )
         );
 
@@ -706,6 +736,7 @@ public class AdminUserManagementController {
                                 selectedUser
                         );
 
+
                         return null;
                     }
                 };
@@ -719,13 +750,13 @@ public class AdminUserManagementController {
                     );
 
 
+                    userTable.refresh();
+
+
                     UIHelper.showSuccess(
                             messageLabel,
                             "User updated successfully."
                     );
-
-
-                    loadUsers();
                 }
         );
 
@@ -738,15 +769,15 @@ public class AdminUserManagementController {
                     );
 
 
-                    Throwable error =
+                    Throwable exception =
                             task.getException();
 
 
                     UIHelper.showError(
                             messageLabel,
-                            error == null
+                            exception == null
                                     ? "Unable to update user."
-                                    : error.getMessage()
+                                    : exception.getMessage()
                     );
                 }
         );
@@ -754,6 +785,7 @@ public class AdminUserManagementController {
 
         Thread thread =
                 new Thread(task);
+
 
         thread.setDaemon(true);
 
@@ -779,13 +811,22 @@ public class AdminUserManagementController {
         }
 
 
+        String currentStatus =
+                selectedUser
+                        .getAccountStatus();
+
+
         String newStatus =
                 "Active".equalsIgnoreCase(
-                        selectedUser
-                                .getAccountStatus()
+                        currentStatus
                 )
                         ? "Inactive"
                         : "Active";
+
+
+        statusButton.setDisable(
+                true
+        );
 
 
         Task<Void> task =
@@ -795,11 +836,13 @@ public class AdminUserManagementController {
                     protected Void call()
                             throws Exception {
 
-                        userService.updateAccountStatus(
-                                selectedUser
-                                        .getUserId(),
-                                newStatus
-                        );
+                        userService
+                                .updateAccountStatus(
+                                        selectedUser
+                                                .getUserId(),
+                                        newStatus
+                                );
+
 
                         return null;
                     }
@@ -809,12 +852,29 @@ public class AdminUserManagementController {
         task.setOnSucceeded(
                 event -> {
 
-                    UIHelper.showSuccess(
-                            messageLabel,
-                            "Account status updated."
+                    statusButton.setDisable(
+                            false
                     );
 
-                    loadUsers();
+
+                    selectedUser
+                            .setAccountStatus(
+                                    newStatus
+                            );
+
+
+                    userTable.refresh();
+
+
+                    updateStatusButtonText(
+                            newStatus
+                    );
+
+
+                    UIHelper.showSuccess(
+                            messageLabel,
+                            "Account status updated successfully."
+                    );
                 }
         );
 
@@ -822,15 +882,20 @@ public class AdminUserManagementController {
         task.setOnFailed(
                 event -> {
 
-                    Throwable error =
+                    statusButton.setDisable(
+                            false
+                    );
+
+
+                    Throwable exception =
                             task.getException();
 
 
                     UIHelper.showError(
                             messageLabel,
-                            error == null
+                            exception == null
                                     ? "Unable to update account status."
-                                    : error.getMessage()
+                                    : exception.getMessage()
                     );
                 }
         );
@@ -838,6 +903,7 @@ public class AdminUserManagementController {
 
         Thread thread =
                 new Thread(task);
+
 
         thread.setDaemon(true);
 
@@ -852,192 +918,153 @@ public class AdminUserManagementController {
     @FXML
     private void handleDeleteUser() {
 
-    // =====================================================
-    // CHECK USER SELECTED
-    // =====================================================
+        if (selectedUser == null) {
 
-    if (selectedUser == null) {
-
-        UIHelper.showError(
-                messageLabel,
-                "Please select a user first."
-        );
-
-        return;
-    }
-
-
-    // =====================================================
-    // PREVENT DELETE ADMIN
-    // =====================================================
-
-    if (
-            selectedUser.getRole()
-                    == Role.ADMINISTRATOR
-    ) {
-
-        UIHelper.showError(
-                messageLabel,
-                "Administrator accounts cannot be deleted."
-        );
-
-        return;
-    }
-
-
-    // =====================================================
-    // CONFIRM DELETE
-    // =====================================================
-
-    Alert alert =
-            new Alert(
-                    Alert.AlertType.CONFIRMATION
+            UIHelper.showError(
+                    messageLabel,
+                    "Please select a user first."
             );
 
-
-    alert.setTitle(
-            "Delete User"
-    );
+            return;
+        }
 
 
-    alert.setHeaderText(
-            "Delete "
-                    + selectedUser
-                    .getFullName()
-                    + "?"
-    );
+        if (
+                selectedUser.getRoleId() == 1
+        ) {
+
+            UIHelper.showError(
+                    messageLabel,
+                    "Administrator accounts cannot be deleted."
+            );
+
+            return;
+        }
 
 
-    alert.setContentText(
-            "This will permanently delete the user account. "
-                    + "This action cannot be undone."
-    );
+        Alert alert =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION
+                );
 
 
-    Optional<ButtonType> result =
-            alert.showAndWait();
+        alert.setTitle(
+                "Delete User"
+        );
 
 
-    if (
-            result.isEmpty()
-                    || result.get()
-                    != ButtonType.OK
-    ) {
-
-        return;
-    }
-
-
-    String userId =
-            selectedUser.getUserId();
+        alert.setHeaderText(
+                "Delete "
+                        + safe(
+                        selectedUser.getFullName()
+                )
+                        + "?"
+        );
 
 
-    deleteButton.setDisable(
-            true
-    );
+        alert.setContentText(
+                "This action cannot be undone."
+        );
 
 
-    // =====================================================
-    // DELETE
-    // =====================================================
+        Optional<ButtonType> result =
+                alert.showAndWait();
 
-    Task<Void> task =
-            new Task<>() {
 
-                @Override
-                protected Void call()
-                        throws Exception {
+        if (
+                result.isEmpty()
+                        || result.get() != ButtonType.OK
+        ) {
 
-                    userService.deleteUser(
-                            userId
+            return;
+        }
+
+
+        deleteButton.setDisable(
+                true
+        );
+
+
+        Task<Void> task =
+                new Task<>() {
+
+                    @Override
+                    protected Void call()
+                            throws Exception {
+
+                        userService.deleteUser(
+                                selectedUser.getUserId()
+                        );
+
+
+                        return null;
+                    }
+                };
+
+
+        task.setOnSucceeded(
+                event -> {
+
+                    User deletedUser =
+                            selectedUser;
+
+
+                    users.remove(
+                            deletedUser
                     );
 
-                    return null;
+
+                    clearSelectedUser();
+
+
+                    UIHelper.showSuccess(
+                            messageLabel,
+                            "User deleted successfully."
+                    );
                 }
-            };
+        );
 
 
-    task.setOnSucceeded(
-            event -> {
+        task.setOnFailed(
+                event -> {
 
-                deleteButton.setDisable(
-                        false
-                );
-
-
-                UIHelper.showSuccess(
-                        messageLabel,
-                        "User deleted successfully."
-                );
+                    deleteButton.setDisable(
+                            false
+                    );
 
 
-                selectedUser =
-                        null;
+                    Throwable exception =
+                            task.getException();
 
 
-                clearFields();
+                    UIHelper.showError(
+                            messageLabel,
+                            exception == null
+                                    ? "Unable to delete user."
+                                    : exception.getMessage()
+                    );
+                }
+        );
 
 
-                setEditDisabled(
-                        true
-                );
+        Thread thread =
+                new Thread(task);
 
 
-                loadUsers();
-            }
-    );
+        thread.setDaemon(true);
 
-
-    task.setOnFailed(
-            event -> {
-
-                deleteButton.setDisable(
-                        false
-                );
-
-
-                Throwable error =
-                        task.getException();
-
-
-                UIHelper.showError(
-                        messageLabel,
-                        error == null
-                                ? "Unable to delete user."
-                                : error.getMessage()
-                );
-            }
-    );
-
-
-    Thread thread =
-            new Thread(
-                    task
-            );
-
-
-    thread.setDaemon(
-            true
-    );
-
-
-    thread.start();
-}
+        thread.start();
+    }
 
 
     // =========================================================
-    // CREATE USER NAVIGATION
+    // CREATE USER
     // =========================================================
 
     @FXML
     private void handleCreateUser(
             ActionEvent event
     ) {
-
-        System.out.println(
-                "Opening adminCreateUser.fxml"
-        );
-
 
         navigate(
                 event,
@@ -1047,11 +1074,11 @@ public class AdminUserManagementController {
 
 
     // =========================================================
-    // BACK
+    // SIDEBAR
     // =========================================================
 
     @FXML
-    private void handleBack(
+    private void handleHome(
             ActionEvent event
     ) {
 
@@ -1062,24 +1089,78 @@ public class AdminUserManagementController {
     }
 
 
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
-
-    private void navigate(
-            ActionEvent event,
-            String path
+    @FXML
+    private void handleProfile(
+            ActionEvent event
     ) {
 
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
+        navigate(
+                event,
+                "/fxml/admin/adminProfile.fxml"
+        );
+    }
 
 
-        NavigationManager.navigate(
-                stage,
-                path
+    @FXML
+    private void handleUserManagement() {
+
+        // Current page.
+    }
+
+
+    @FXML
+    private void handleTaskManagement(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminTask.fxml"
+        );
+    }
+
+
+        @FXML
+        private void handleKpiManagement(
+                ActionEvent event
+        ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminKpi.fxml"
+        );
+        }
+
+
+    @FXML
+    private void handleReports() {
+
+        System.out.println(
+                "Reports not implemented yet."
+        );
+    }
+
+
+    @FXML
+    private void handleAnonymousReports() {
+
+        System.out.println(
+                "Anonymous Reports not implemented yet."
+        );
+    }
+
+
+    @FXML
+    private void handleLogout(
+            ActionEvent event
+    ) {
+
+        SessionManager.clearSession();
+
+
+        navigate(
+                event,
+                "/fxml/auth/login.fxml"
         );
     }
 
@@ -1088,59 +1169,26 @@ public class AdminUserManagementController {
     // HELPERS
     // =========================================================
 
-    private void updateStatusButton(
+    private void updateStatusButtonText(
             String status
     ) {
 
-        statusButton.setText(
+        if (
                 "Active".equalsIgnoreCase(
                         status
                 )
-                        ? "Deactivate Account"
-                        : "Activate Account"
-        );
-    }
+        ) {
 
+            statusButton.setText(
+                    "Deactivate Account"
+            );
 
-    private void setEditDisabled(
-            boolean disabled
-    ) {
+        } else {
 
-        employeeIdField.setDisable(true);
-        emailField.setDisable(true);
-
-        fullNameField.setDisable(disabled);
-        usernameField.setDisable(disabled);
-        contactNumberField.setDisable(disabled);
-        departmentField.setDisable(disabled);
-        roleComboBox.setDisable(disabled);
-
-        saveButton.setDisable(disabled);
-        statusButton.setDisable(disabled);
-        deleteButton.setDisable(disabled);
-    }
-
-
-    private void clearFields() {
-
-        employeeIdField.clear();
-        fullNameField.clear();
-        usernameField.clear();
-        emailField.clear();
-        contactNumberField.clear();
-        departmentField.clear();
-
-        roleComboBox.setValue(null);
-    }
-
-
-    private String safe(
-            String value
-    ) {
-
-        return value == null
-                ? ""
-                : value;
+            statusButton.setText(
+                    "Activate Account"
+            );
+        }
     }
 
 
@@ -1152,7 +1200,19 @@ public class AdminUserManagementController {
         return value != null
                 && value
                 .toLowerCase()
-                .contains(keyword);
+                .contains(
+                        keyword
+                );
+    }
+
+
+    private String safe(
+            String value
+    ) {
+
+        return value == null
+                ? ""
+                : value;
     }
 
 
@@ -1189,5 +1249,23 @@ public class AdminUserManagementController {
             case EMPLOYEE ->
                     3L;
         };
+    }
+
+
+    private void navigate(
+            ActionEvent event,
+            String path
+    ) {
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                path
+        );
     }
 }

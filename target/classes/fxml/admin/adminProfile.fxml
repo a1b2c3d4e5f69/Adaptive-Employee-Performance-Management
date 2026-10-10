@@ -22,6 +22,9 @@
         fx:controller="com.aepm.ui.admin.AdminProfileController"
         styleClass="main-layout">
 
+
+    <!-- TOP BAR -->
+
     <top>
 
         <HBox
@@ -75,10 +78,7 @@
     </top>
 
 
-    <!-- =====================================================
-         SIDEBAR
-         SAME MASTER UI
-         ===================================================== -->
+    <!-- SIDEBAR -->
 
     <left>
 
@@ -117,8 +117,6 @@
                     styleClass="sidebar-section-title"/>
 
 
-            <!-- HOME -->
-
             <Button
                     text="⌂   Home"
                     maxWidth="Infinity"
@@ -126,8 +124,6 @@
                     onAction="#handleHome"
                     styleClass="sidebar-button"/>
 
-
-            <!-- PROFILE ACTIVE -->
 
             <Button
                     text="●   My Profile"
@@ -137,17 +133,13 @@
                     styleClass="sidebar-button-active"/>
 
 
-            <!-- USER MANAGEMENT -->
-
             <Button
-                    text="●   User Management"
+                    text="♟   User Management"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleUserManagement"
                     styleClass="sidebar-button"/>
 
-
-            <!-- TASK -->
 
             <Button
                     text="✓   Task Management"
@@ -157,8 +149,6 @@
                     styleClass="sidebar-button"/>
 
 
-            <!-- KPI -->
-
             <Button
                     text="★   KPI Management"
                     maxWidth="Infinity"
@@ -167,8 +157,6 @@
                     styleClass="sidebar-button"/>
 
 
-            <!-- REPORTS -->
-
             <Button
                     text="≡   Reports"
                     maxWidth="Infinity"
@@ -176,8 +164,6 @@
                     onAction="#handleReports"
                     styleClass="sidebar-button"/>
 
-
-            <!-- ANONYMOUS REPORT -->
 
             <Button
                     text="!   Anonymous Reports"
@@ -202,14 +188,12 @@
     </left>
 
 
-    <!-- =====================================================
-         PROFILE CONTENT
-         ===================================================== -->
+    <!-- CONTENT -->
 
     <center>
 
         <VBox
-                spacing="24"
+                spacing="22"
                 styleClass="home-content">
 
             <padding>
@@ -220,8 +204,6 @@
                         left="35"/>
             </padding>
 
-
-            <!-- PAGE TITLE -->
 
             <VBox spacing="4">
 
@@ -236,60 +218,61 @@
             </VBox>
 
 
-            <!-- PROFILE CARD -->
-
             <VBox
-                    spacing="28"
+                    spacing="24"
                     styleClass="profile-card">
 
 
-                <!-- PROFILE IMAGE -->
+                <!-- PROFILE HEADER -->
 
                 <HBox
-                        alignment="CENTER_LEFT"
-                        spacing="25">
+                        spacing="28"
+                        alignment="CENTER_LEFT">
 
+
+                    <!-- AVATAR -->
 
                     <StackPane
-                            prefWidth="130"
-                            prefHeight="130"
-                            maxWidth="130"
-                            maxHeight="130">
+                            prefWidth="145"
+                            prefHeight="145">
 
                         <Circle
                                 radius="60"
                                 styleClass="profile-avatar-background"/>
+
 
                         <Label
                                 fx:id="profileInitialLabel"
                                 text="A"
                                 styleClass="profile-avatar-initial"/>
 
+
                         <ImageView
                                 fx:id="profileImageView"
                                 fitWidth="120"
                                 fitHeight="120"
-                                preserveRatio="false"
-                                visible="false"/>
+                                preserveRatio="false"/>
+
 
                         <Button
-                                fx:id="editImageButton"
                                 text="✎"
                                 onAction="#handleChangeProfileImage"
-                                styleClass="profile-avatar-edit-button"
-                                StackPane.alignment="BOTTOM_RIGHT"/>
+                                translateX="48"
+                                translateY="48"
+                                styleClass="profile-avatar-edit-button"/>
 
                     </StackPane>
 
 
-                    <VBox spacing="5">
+                    <VBox spacing="7">
 
                         <Label
-                                fx:id="fullNameLabel"
+                                fx:id="profileNameLabel"
                                 text="Administrator"
                                 styleClass="section-title"/>
 
                         <Label
+                                fx:id="profileRoleLabel"
                                 text="Administrator"
                                 styleClass="content-description"/>
 
@@ -303,23 +286,25 @@
 
 
                 <Region
+                        minHeight="1"
                         prefHeight="1"
+                        maxHeight="1"
                         styleClass="profile-divider"/>
 
-
-                <!-- PERSONAL INFORMATION -->
 
                 <Label
                         text="Personal Information"
                         styleClass="section-title"/>
 
 
+                <!-- INFORMATION -->
+
                 <GridPane
-                        hgap="35"
-                        vgap="20">
+                        hgap="70"
+                        vgap="22">
 
 
-                    <!-- STAFF ID -->
+                    <!-- LEFT -->
 
                     <Label
                             text="Staff ID"
@@ -335,24 +320,6 @@
                             GridPane.rowIndex="0"/>
 
 
-                    <!-- USERNAME -->
-
-                    <Label
-                            text="Username"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="0"/>
-
-                    <Label
-                            fx:id="usernameLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="0"/>
-
-
-                    <!-- EMAIL -->
-
                     <Label
                             text="Email"
                             styleClass="profile-field-label"
@@ -366,24 +333,6 @@
                             GridPane.columnIndex="1"
                             GridPane.rowIndex="1"/>
 
-
-                    <!-- DEPARTMENT -->
-
-                    <Label
-                            text="Department"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1"/>
-
-                    <Label
-                            fx:id="departmentLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
-
-
-                    <!-- ROLE -->
 
                     <Label
                             text="Role"
@@ -399,7 +348,35 @@
                             GridPane.rowIndex="2"/>
 
 
-                    <!-- STATUS -->
+                    <!-- RIGHT -->
+
+                    <Label
+                            text="Username"
+                            styleClass="profile-field-label"
+                            GridPane.columnIndex="2"
+                            GridPane.rowIndex="0"/>
+
+                    <Label
+                            fx:id="usernameLabel"
+                            text="-"
+                            styleClass="profile-field-value"
+                            GridPane.columnIndex="3"
+                            GridPane.rowIndex="0"/>
+
+
+                    <Label
+                            text="Department"
+                            styleClass="profile-field-label"
+                            GridPane.columnIndex="2"
+                            GridPane.rowIndex="1"/>
+
+                    <Label
+                            fx:id="departmentLabel"
+                            text="-"
+                            styleClass="profile-field-value"
+                            GridPane.columnIndex="3"
+                            GridPane.rowIndex="1"/>
+
 
                     <Label
                             text="Account Status"
@@ -426,14 +403,12 @@
                     <TextField
                             fx:id="contactNumberField"
                             promptText="Enter contact number"
-                            prefWidth="260"
+                            prefWidth="325"
                             GridPane.columnIndex="1"
                             GridPane.rowIndex="3"/>
 
                 </GridPane>
 
-
-                <!-- MESSAGE -->
 
                 <Label
                         fx:id="messageLabel"
@@ -442,7 +417,7 @@
                         wrapText="true"/>
 
 
-                <!-- ACTION -->
+                <!-- CONSISTENT BUTTONS -->
 
                 <HBox spacing="12">
 
@@ -450,13 +425,13 @@
                             fx:id="saveButton"
                             text="Save Changes"
                             onAction="#handleSave"
-                            styleClass="button-primary task-action-button"/>
+                            styleClass="app-button"/>
 
 
                     <Button
                             text="Change Password"
                             onAction="#handleChangePassword"
-                            styleClass="secondary-button task-action-button"/>
+                            styleClass="app-button"/>
 
                 </HBox>
 

@@ -16,25 +16,36 @@ import com.aepm.util.ManagerTaskEditContext;
 import com.aepm.util.SessionManager;
 
 import javafx.beans.property.SimpleStringProperty;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
 import javafx.scene.Node;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +62,26 @@ public class ManagerTaskController {
 
     @FXML
     private Label topNameLabel;
+
+
+    // =========================================================
+    // SEARCH / FILTER
+    // =========================================================
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> employeeFilterComboBox;
+
+    @FXML
+    private ComboBox<String> categoryFilterComboBox;
+
+    @FXML
+    private ComboBox<String> statusFilterComboBox;
+
+    @FXML
+    private DatePicker dueDateFilterPicker;
 
 
     // =========================================================
@@ -161,11 +192,27 @@ public class ManagerTaskController {
             new HashMap<>();
 
 
+    // =========================================================
+    // FILTER DATA
+    // =========================================================
+
+    private final ObservableList<Task> allTasks =
+            FXCollections.observableArrayList();
+
+    private FilteredList<Task> filteredTasks;
+
+
     private Task selectedTask;
 
 
     private static final ZoneId MALAYSIA_ZONE =
             ZoneId.of("Asia/Kuala_Lumpur");
+
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern(
+                    "dd MMM yyyy HH:mm"
+            );
 
 
     // =========================================================
@@ -180,6 +227,8 @@ public class ManagerTaskController {
         setupTaskTable();
 
         setupHistoryTable();
+
+        setupFilters();
 
         configureTaskSelection();
 
@@ -228,7 +277,7 @@ public class ManagerTaskController {
 
     private void setupTaskTable() {
 
-        // TASK
+        // TASK TITLE
         titleColumn.setCellValueFactory(
                 new PropertyValueFactory<>(
                         "taskTitle"
@@ -255,16 +304,11 @@ public class ManagerTaskController {
                     }
 
 
-                    String categoryName =
-                            categoryDisplayMap.get(
-                                    task.getCategoryId()
-                            );
-
-
                     return new SimpleStringProperty(
-                            categoryName == null
-                                    ? "-"
-                                    : categoryName
+                            categoryDisplayMap.getOrDefault(
+                                    task.getCategoryId(),
+                                    "-"
+                            )
                     );
                 }
         );
@@ -289,15 +333,15 @@ public class ManagerTaskController {
                     }
 
 
-                    String id =
+                    String userId =
                             task.getAssignedEmployeeId()
                                     .toString();
 
 
                     return new SimpleStringProperty(
                             employeeDisplayMap.getOrDefault(
-                                    id,
-                                    id
+                                    userId,
+                                    userId
                             )
                     );
                 }
@@ -339,7 +383,7 @@ public class ManagerTaskController {
         );
 
 
-        // PROGRESS
+        // PROGRESS %
         progressColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
@@ -374,12 +418,6 @@ public class ManagerTaskController {
                 column ->
                         new TableCell<>() {
 
-                            private final DateTimeFormatter formatter =
-                                    DateTimeFormatter.ofPattern(
-                                            "dd MMM yyyy HH:mm"
-                                    );
-
-
                             @Override
                             protected void updateItem(
                                     OffsetDateTime value,
@@ -402,13 +440,9 @@ public class ManagerTaskController {
                                 } else {
 
                                     setText(
-                                            value
-                                                    .atZoneSameInstant(
-                                                            MALAYSIA_ZONE
-                                                    )
-                                                    .format(
-                                                            formatter
-                                                    )
+                                            formatDateTime(
+                                                    value
+                                            )
                                     );
                                 }
                             }
@@ -482,12 +516,6 @@ public class ManagerTaskController {
                 column ->
                         new TableCell<>() {
 
-                            private final DateTimeFormatter formatter =
-                                    DateTimeFormatter.ofPattern(
-                                            "dd MMM yyyy HH:mm"
-                                    );
-
-
                             @Override
                             protected void updateItem(
                                     OffsetDateTime value,
@@ -510,13 +538,9 @@ public class ManagerTaskController {
                                 } else {
 
                                     setText(
-                                            value
-                                                    .atZoneSameInstant(
-                                                            MALAYSIA_ZONE
-                                                    )
-                                                    .format(
-                                                            formatter
-                                                    )
+                                            formatDateTime(
+                                                    value
+                                            )
                                     );
                                 }
                             }
@@ -527,6 +551,427 @@ public class ManagerTaskController {
         historyTable.setColumnResizePolicy(
                 TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
         );
+    }
+
+
+    // =========================================================
+    // FILTER SETUP
+    // =========================================================
+
+    private void setupFilters() {
+
+        filteredTasks =
+                new FilteredList<>(
+                        allTasks,
+                        task -> true
+                );
+
+
+        taskTable.setItems(
+                filteredTasks
+        );
+
+
+        // DEFAULT STATUS OPTIONS
+        statusFilterComboBox.setItems(
+                FXCollections.observableArrayList(
+                        "All Status",
+                        "Pending",
+                        "Accepted",
+                        "In Progress",
+                        "Completed",
+                        "Overdue",
+                        "Cancelled",
+                        "Locked"
+                )
+        );
+
+
+        statusFilterComboBox.setValue(
+                "All Status"
+        );
+
+
+        // SEARCH TASK NAME
+        searchField
+                .textProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        // EMPLOYEE
+        employeeFilterComboBox
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        // CATEGORY
+        categoryFilterComboBox
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        // STATUS
+        statusFilterComboBox
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        // DUE DATE
+        dueDateFilterPicker
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+    }
+
+
+    // =========================================================
+    // POPULATE FILTER OPTIONS
+    // =========================================================
+
+    private void populateFilterOptions() {
+
+        // =====================================================
+        // EMPLOYEE FILTER
+        // =====================================================
+
+        List<String> employees =
+                new ArrayList<>(
+                        employeeDisplayMap.values()
+                );
+
+
+        employees.sort(
+                String.CASE_INSENSITIVE_ORDER
+        );
+
+
+        employeeFilterComboBox
+                .getItems()
+                .clear();
+
+
+        employeeFilterComboBox
+                .getItems()
+                .add(
+                        "All Employees"
+                );
+
+
+        employeeFilterComboBox
+                .getItems()
+                .addAll(
+                        employees
+                );
+
+
+        employeeFilterComboBox.setValue(
+                "All Employees"
+        );
+
+
+        // =====================================================
+        // CATEGORY FILTER
+        // =====================================================
+
+        List<String> categories =
+                new ArrayList<>(
+                        categoryDisplayMap.values()
+                );
+
+
+        categories.sort(
+                String.CASE_INSENSITIVE_ORDER
+        );
+
+
+        categoryFilterComboBox
+                .getItems()
+                .clear();
+
+
+        categoryFilterComboBox
+                .getItems()
+                .add(
+                        "All Categories"
+                );
+
+
+        categoryFilterComboBox
+                .getItems()
+                .addAll(
+                        categories
+                );
+
+
+        categoryFilterComboBox.setValue(
+                "All Categories"
+        );
+    }
+
+
+    // =========================================================
+    // APPLY FILTERS
+    // =========================================================
+
+    private void applyFilters() {
+
+        if (filteredTasks == null) {
+            return;
+        }
+
+
+        String searchText =
+                searchField.getText() == null
+                        ? ""
+                        : searchField
+                                .getText()
+                                .trim()
+                                .toLowerCase();
+
+
+        String selectedEmployee =
+                employeeFilterComboBox
+                        .getValue();
+
+
+        String selectedCategory =
+                categoryFilterComboBox
+                        .getValue();
+
+
+        String selectedStatus =
+                statusFilterComboBox
+                        .getValue();
+
+
+        LocalDate selectedDueDate =
+                dueDateFilterPicker
+                        .getValue();
+
+
+        filteredTasks.setPredicate(
+                task -> {
+
+                    if (task == null) {
+                        return false;
+                    }
+
+
+                    // =================================================
+                    // TASK NAME
+                    // =================================================
+
+                    boolean matchesTaskName =
+                            searchText.isBlank()
+                                    || (
+                                    task.getTaskTitle() != null
+                                            && task.getTaskTitle()
+                                            .toLowerCase()
+                                            .contains(
+                                                    searchText
+                                            )
+                            );
+
+
+                    // =================================================
+                    // EMPLOYEE
+                    // =================================================
+
+                    boolean matchesEmployee =
+                            true;
+
+
+                    if (
+                            selectedEmployee != null
+                                    && !"All Employees".equals(
+                                    selectedEmployee
+                            )
+                    ) {
+
+                        if (
+                                task.getAssignedEmployeeId() == null
+                        ) {
+
+                            matchesEmployee =
+                                    false;
+
+                        } else {
+
+                            String employeeDisplay =
+                                    employeeDisplayMap.get(
+                                            task.getAssignedEmployeeId()
+                                                    .toString()
+                                    );
+
+
+                            matchesEmployee =
+                                    selectedEmployee.equals(
+                                            employeeDisplay
+                                    );
+                        }
+                    }
+
+
+                    // =================================================
+                    // CATEGORY
+                    // =================================================
+
+                    boolean matchesCategory =
+                            true;
+
+
+                    if (
+                            selectedCategory != null
+                                    && !"All Categories".equals(
+                                    selectedCategory
+                            )
+                    ) {
+
+                        if (
+                                task.getCategoryId() == null
+                        ) {
+
+                            matchesCategory =
+                                    false;
+
+                        } else {
+
+                            String categoryName =
+                                    categoryDisplayMap.get(
+                                            task.getCategoryId()
+                                    );
+
+
+                            matchesCategory =
+                                    selectedCategory.equals(
+                                            categoryName
+                                    );
+                        }
+                    }
+
+
+                    // =================================================
+                    // STATUS
+                    // =================================================
+
+                    boolean matchesStatus =
+                            selectedStatus == null
+                                    || "All Status".equals(
+                                    selectedStatus
+                            )
+                                    || selectedStatus.equals(
+                                    task.getTaskStatus()
+                            );
+
+
+                    // =================================================
+                    // DUE DATE
+                    // =================================================
+
+                    boolean matchesDueDate =
+                            true;
+
+
+                    if (selectedDueDate != null) {
+
+                        if (
+                                task.getDueDate() == null
+                        ) {
+
+                            matchesDueDate =
+                                    false;
+
+                        } else {
+
+                            LocalDate taskDueDate =
+                                    task.getDueDate()
+                                            .atZoneSameInstant(
+                                                    MALAYSIA_ZONE
+                                            )
+                                            .toLocalDate();
+
+
+                            matchesDueDate =
+                                    taskDueDate.equals(
+                                            selectedDueDate
+                                    );
+                        }
+                    }
+
+
+                    return matchesTaskName
+                            && matchesEmployee
+                            && matchesCategory
+                            && matchesStatus
+                            && matchesDueDate;
+                }
+        );
+
+
+        clearSelectedTask();
+    }
+
+
+    // =========================================================
+    // CLEAR FILTERS
+    // =========================================================
+
+    @FXML
+    private void handleClearFilters() {
+
+        searchField.clear();
+
+
+        employeeFilterComboBox.setValue(
+                "All Employees"
+        );
+
+
+        categoryFilterComboBox.setValue(
+                "All Categories"
+        );
+
+
+        statusFilterComboBox.setValue(
+                "All Status"
+        );
+
+
+        dueDateFilterPicker.setValue(
+                null
+        );
+
+
+        applyFilters();
     }
 
 
@@ -575,12 +1020,16 @@ public class ManagerTaskController {
     ) {
 
         selectedTaskLabel.setText(
-                task.getTaskTitle()
+                safe(
+                        task.getTaskTitle()
+                )
         );
 
 
         // CATEGORY
-        if (task.getCategoryId() == null) {
+        if (
+                task.getCategoryId() == null
+        ) {
 
             selectedCategoryLabel.setText(
                     "-"
@@ -608,22 +1057,24 @@ public class ManagerTaskController {
 
         } else {
 
-            String employeeId =
+            String userId =
                     task.getAssignedEmployeeId()
                             .toString();
 
 
             selectedEmployeeLabel.setText(
                     employeeDisplayMap.getOrDefault(
-                            employeeId,
-                            employeeId
+                            userId,
+                            userId
                     )
             );
         }
 
 
         selectedStatusLabel.setText(
-                task.getTaskStatus()
+                safe(
+                        task.getTaskStatus()
+                )
         );
 
 
@@ -641,6 +1092,11 @@ public class ManagerTaskController {
     // =========================================================
 
     private void clearSelectedTask() {
+
+        taskTable
+                .getSelectionModel()
+                .clearSelection();
+
 
         selectedTask =
                 null;
@@ -683,7 +1139,7 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // LOAD USERS + CATEGORIES + TASKS
+    // LOAD EMPLOYEES + CATEGORIES
     // =========================================================
 
     private void loadReferenceDataAndTasks() {
@@ -698,9 +1154,9 @@ public class ManagerTaskController {
                     protected Void call()
                             throws Exception {
 
-                        // =====================================
+                        // =================================================
                         // EMPLOYEES
-                        // =====================================
+                        // =================================================
 
                         List<User> users =
                                 userService
@@ -756,9 +1212,9 @@ public class ManagerTaskController {
                         }
 
 
-                        // =====================================
+                        // =================================================
                         // CATEGORIES
-                        // =====================================
+                        // =================================================
 
                         List<TaskCategory> categories =
                                 categoryService
@@ -798,7 +1254,12 @@ public class ManagerTaskController {
 
 
         referenceTask.setOnSucceeded(
-                event -> loadTasks()
+                event -> {
+
+                    populateFilterOptions();
+
+                    loadTasks();
+                }
         );
 
 
@@ -815,7 +1276,6 @@ public class ManagerTaskController {
                     }
 
 
-                    // Still load tasks
                     loadTasks();
                 }
         );
@@ -855,28 +1315,24 @@ public class ManagerTaskController {
         loadTask.setOnSucceeded(
                 event -> {
 
-                    taskTable
-                            .getItems()
-                            .clear();
-
-
                     List<Task> tasks =
                             loadTask.getValue();
 
 
+                    allTasks.clear();
+
+
                     if (tasks != null) {
 
-                        taskTable
-                                .getItems()
-                                .addAll(
-                                        tasks
-                                );
+                        allTasks.addAll(
+                                tasks
+                        );
                     }
 
 
-                    taskTable.refresh();
+                    applyFilters();
 
-                    clearSelectedTask();
+                    taskTable.refresh();
 
 
                     if (
@@ -1028,7 +1484,7 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // CREATE
+    // CREATE TASK
     // =========================================================
 
     @FXML
@@ -1044,7 +1500,7 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // EDIT
+    // EDIT TASK
     // =========================================================
 
     @FXML
@@ -1092,7 +1548,7 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // CANCEL
+    // CANCEL TASK
     // =========================================================
 
     @FXML
@@ -1190,7 +1646,10 @@ public class ManagerTaskController {
 
 
         cancelTask.setOnSucceeded(
-                event -> loadReferenceDataAndTasks()
+                event -> {
+
+                    loadReferenceDataAndTasks();
+                }
         );
 
 
@@ -1266,10 +1725,22 @@ public class ManagerTaskController {
     }
 
 
-    @FXML
-    private void handlePerformance() {
-    }
+        @FXML
+        private void handlePerformance(
+                ActionEvent event
+        ) {
 
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerPerformance.fxml"
+        );
+        }
 
     @FXML
     private void handleReports() {
@@ -1297,8 +1768,32 @@ public class ManagerTaskController {
 
 
     // =========================================================
-    // MESSAGE
+    // HELPERS
     // =========================================================
+
+    private String safe(
+            String value
+    ) {
+
+        return value == null
+                ? "-"
+                : value;
+    }
+
+
+    private String formatDateTime(
+            OffsetDateTime value
+    ) {
+
+        return value
+                .atZoneSameInstant(
+                        MALAYSIA_ZONE
+                )
+                .format(
+                        DATE_FORMATTER
+                );
+    }
+
 
     private void showMessage(
             String value
@@ -1375,10 +1870,6 @@ public class ManagerTaskController {
         );
     }
 
-
-    // =========================================================
-    // NAVIGATION HELPER
-    // =========================================================
 
     private void navigate(
             ActionEvent event,

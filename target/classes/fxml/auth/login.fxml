@@ -109,7 +109,7 @@
                 maxWidth="Infinity"
                 prefHeight="45"
                 onAction="#handleLogin"
-                styleClass="button-primary"/>
+                styleClass="login-primary-button"/>
 
         <HBox
                 alignment="CENTER"

@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.employee.EmployeeTaskDetailController"
+        prefWidth="720"
+        minWidth="720"
+        maxWidth="720"
+        styleClass="task-popup-root">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <HBox
+            alignment="CENTER_LEFT"
+            spacing="12"
+            styleClass="task-popup-header">
+
+        <padding>
+            <Insets
+                    top="18"
+                    right="24"
+                    bottom="18"
+                    left="24"/>
+        </padding>
+
+
+        <Label
+                fx:id="difficultyBadgeLabel"
+                text="Medium"
+                styleClass="task-popup-badge"/>
+
+
+        <Label
+                fx:id="statusBadgeLabel"
+                text="Pending"
+                styleClass="task-popup-status"/>
+
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+
+        <Button
+                text="×"
+                onAction="#handleClose"
+                styleClass="task-popup-close"/>
+
+    </HBox>
+
+
+    <!-- =====================================================
+         SCROLL CONTENT
+         ===================================================== -->
+
+    <ScrollPane
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            prefHeight="580"
+            styleClass="task-popup-scroll">
+
+        <content>
+
+            <VBox
+                    spacing="22"
+                    styleClass="task-popup-content">
+
+                <padding>
+                    <Insets
+                            top="26"
+                            right="26"
+                            bottom="26"
+                            left="26"/>
+                </padding>
+
+
+                <!-- TITLE -->
+
+                <VBox spacing="7">
+
+                    <Label
+                            fx:id="taskTitleLabel"
+                            text="Task Name"
+                            wrapText="true"
+                            styleClass="task-popup-title"/>
+
+
+                    <Label
+                            fx:id="descriptionLabel"
+                            text="-"
+                            wrapText="true"
+                            maxWidth="Infinity"
+                            styleClass="task-popup-description"/>
+
+                </VBox>
+
+
+                <!-- MAIN INFO -->
+
+                <GridPane
+                        hgap="40"
+                        vgap="16"
+                        styleClass="task-popup-info-box">
+
+                    <padding>
+                        <Insets
+                                top="18"
+                                right="18"
+                                bottom="18"
+                                left="18"/>
+                    </padding>
+
+
+                    <VBox
+                            spacing="4"
+                            GridPane.columnIndex="0"
+                            GridPane.rowIndex="0">
+
+                        <Label
+                                text="Category"
+                                styleClass="task-popup-field-label"/>
+
+                        <Label
+                                fx:id="categoryLabel"
+                                text="-"
+                                styleClass="task-popup-field-value"/>
+
+                    </VBox>
+
+
+                    <VBox
+                            spacing="4"
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="0">
+
+                        <Label
+                                text="Priority"
+                                styleClass="task-popup-field-label"/>
+
+                        <Label
+                                fx:id="priorityLabel"
+                                text="-"
+                                styleClass="task-popup-field-value"/>
+
+                    </VBox>
+
+
+                    <VBox
+                            spacing="4"
+                            GridPane.columnIndex="2"
+                            GridPane.rowIndex="0">
+
+                        <Label
+                                text="Assigned Date"
+                                styleClass="task-popup-field-label"/>
+
+                        <Label
+                                fx:id="assignedDateLabel"
+                                text="-"
+                                styleClass="task-popup-field-value"/>
+
+                    </VBox>
+
+
+                    <VBox
+                            spacing="4"
+                            GridPane.columnIndex="0"
+                            GridPane.rowIndex="1">
+
+                        <Label
+                                text="Due Date"
+                                styleClass="task-popup-field-label"/>
+
+                        <Label
+                                fx:id="dueDateLabel"
+                                text="-"
+                                styleClass="task-popup-field-value"/>
+
+                    </VBox>
+
+
+                    <VBox
+                            spacing="4"
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="1">
+
+                        <Label
+                                text="Difficulty"
+                                styleClass="task-popup-field-label"/>
+
+                        <Label
+                                fx:id="difficultyLabel"
+                                text="-"
+                                styleClass="task-popup-field-value"/>
+
+                    </VBox>
+
+
+                    <VBox
+                            spacing="4"
+                            GridPane.columnIndex="2"
+                            GridPane.rowIndex="1">
+
+                        <Label
+                                text="Status"
+                                styleClass="task-popup-field-label"/>
+
+                        <Label
+                                fx:id="statusLabel"
+                                text="-"
+                                styleClass="task-popup-field-value"/>
+
+                    </VBox>
+
+                </GridPane>
+
+
+                <!-- COMPLETION CRITERIA -->
+
+                <VBox spacing="6">
+
+                    <Label
+                            text="Completion Criteria"
+                            styleClass="task-popup-section-title"/>
+
+                    <Label
+                            fx:id="criteriaLabel"
+                            text="-"
+                            wrapText="true"
+                            maxWidth="Infinity"
+                            styleClass="task-popup-description"/>
+
+                </VBox>
+
+
+                <Separator/>
+
+
+                <!-- PROGRESS -->
+
+                <VBox spacing="12">
+
+                    <HBox alignment="CENTER_LEFT">
+
+                        <Label
+                                text="Progress"
+                                styleClass="task-popup-section-title"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Label
+                                fx:id="progressValueLabel"
+                                text="0%"
+                                styleClass="task-popup-progress-text"/>
+
+                    </HBox>
+
+
+                    <ProgressBar
+                            fx:id="progressBar"
+                            progress="0"
+                            maxWidth="Infinity"
+                            styleClass="task-popup-progress"/>
+
+                </VBox>
+
+
+                <!-- PROGRESS UPDATE -->
+
+                <VBox
+                        fx:id="progressUpdateSection"
+                        spacing="14">
+
+                    <Label
+                            text="Update Progress"
+                            styleClass="task-popup-section-title"/>
+
+
+                    <VBox spacing="7">
+
+                        <Label
+                                text="Progress Percentage"
+                                styleClass="task-popup-field-label"/>
+
+                        <TextField
+                                fx:id="progressField"
+                                promptText="0 - 100"
+                                maxWidth="220"/>
+
+                    </VBox>
+
+
+                    <VBox spacing="7">
+
+                        <Label
+                                text="Progress Note"
+                                styleClass="task-popup-field-label"/>
+
+                        <TextArea
+                                fx:id="progressNoteArea"
+                                promptText="Add a short progress note..."
+                                prefRowCount="4"
+                                wrapText="true"/>
+
+                    </VBox>
+
+
+                    <Button
+                            fx:id="updateProgressButton"
+                            text="Update Progress"
+                            onAction="#handleUpdateProgress"
+                            styleClass="modern-primary-button"/>
+
+                </VBox>
+
+
+                <Label
+                        fx:id="messageLabel"
+                        visible="false"
+                        managed="false"
+                        wrapText="true"
+                        maxWidth="Infinity"
+                        styleClass="modern-message"/>
+
+            </VBox>
+
+        </content>
+
+    </ScrollPane>
+
+
+    <!-- =====================================================
+         FOOTER ACTIONS
+         ===================================================== -->
+
+    <HBox
+            spacing="12"
+            alignment="CENTER_RIGHT"
+            styleClass="task-popup-footer">
+
+        <padding>
+            <Insets
+                    top="16"
+                    right="24"
+                    bottom="16"
+                    left="24"/>
+        </padding>
+
+
+        <Button
+                fx:id="acceptButton"
+                text="Accept Task"
+                onAction="#handleAcceptTask"
+                styleClass="app-button"/>
+
+
+        <Button
+                fx:id="startButton"
+                text="Start Task"
+                onAction="#handleStartTask"
+                styleClass="app-button"/>
+
+
+        <Button
+                fx:id="completeButton"
+                text="Complete Task"
+                onAction="#handleCompleteTask"
+                styleClass="modern-primary-button"/>
+
+    </HBox>
+
+</VBox>

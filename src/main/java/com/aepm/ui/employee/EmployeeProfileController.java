@@ -600,12 +600,20 @@ public class EmployeeProfileController {
     // =========================================================
 
     @FXML
-    private void handleKpi() {
+        private void handleKpi(
+                ActionEvent event
+        ) {
 
-        System.out.println(
-                "Employee KPI not implemented yet."
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/employee/employeePerformance.fxml"
         );
-    }
+        }
 
 
     // =========================================================

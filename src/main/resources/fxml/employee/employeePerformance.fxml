@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.employee.EmployeePerformanceController"
+        styleClass="main-layout">
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
+    <top>
+
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="16"
+                styleClass="modern-topbar">
+
+            <padding>
+                <Insets
+                        top="14"
+                        right="30"
+                        bottom="14"
+                        left="30"/>
+            </padding>
+
+
+            <Label
+                    text="AEPM"
+                    styleClass="modern-brand"/>
+
+
+            <Region
+                    prefWidth="1"
+                    minWidth="1"
+                    maxWidth="1"
+                    prefHeight="28"
+                    styleClass="topbar-divider"/>
+
+
+            <Label
+                    text="Adaptive Employee Performance Management System"
+                    styleClass="modern-system-name"/>
+
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <VBox
+                    spacing="2"
+                    alignment="CENTER_RIGHT">
+
+                <Label
+                        fx:id="topNameLabel"
+                        text="Employee"
+                        styleClass="modern-user-name"/>
+
+                <Label
+                        fx:id="topRoleLabel"
+                        text="EMPLOYEE"
+                        styleClass="modern-user-role"/>
+
+            </VBox>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <left>
+
+        <VBox
+                prefWidth="245"
+                minWidth="245"
+                maxWidth="245"
+                spacing="8"
+                styleClass="modern-sidebar">
+
+            <padding>
+                <Insets
+                        top="28"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
+            </padding>
+
+
+            <Label
+                    text="MENU"
+                    styleClass="modern-sidebar-section"/>
+
+
+            <Button
+                    text="⌂   Home"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleHome"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="○   My Profile"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleProfile"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="✓   My Tasks"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleTasks"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="▥   Performance"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleKpi"
+                    styleClass="modern-nav-button-active"/>
+
+
+            <Button
+                    text="▤   Reports"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleReports"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="!   Anonymous Report"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleAnonymousReport"
+                    styleClass="modern-nav-button"/>
+
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+
+            <Button
+                    text="↪   Logout"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleLogout"
+                    styleClass="modern-logout-button"/>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- =====================================================
+         CONTENT
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                pannable="true"
+                styleClass="modern-content-scroll">
+
+            <content>
+
+                <VBox
+                        spacing="24"
+                        maxWidth="Infinity"
+                        styleClass="modern-content">
+
+                    <padding>
+                        <Insets
+                                top="30"
+                                right="32"
+                                bottom="40"
+                                left="32"/>
+                    </padding>
+
+
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
+
+                    <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="20">
+
+                        <VBox
+                                spacing="5"
+                                HBox.hgrow="ALWAYS">
+
+                            <Label
+                                    text="My Performance"
+                                    styleClass="modern-page-title"/>
+
+                            <Label
+                                    text="View your latest KPI result, performance breakdown, history, and manager feedback."
+                                    wrapText="true"
+                                    styleClass="modern-page-subtitle"/>
+
+                        </VBox>
+
+
+                        <Button
+                                text="↻  Refresh"
+                                onAction="#handleRefresh"
+                                styleClass="modern-primary-button"/>
+
+                    </HBox>
+
+
+                    <!-- compatibility -->
+
+                    <Label
+                            fx:id="welcomeLabel"
+                            text=""
+                            visible="false"
+                            managed="false"/>
+
+
+                    <!-- MESSAGE -->
+
+                    <Label
+                            fx:id="messageLabel"
+                            visible="false"
+                            managed="false"
+                            wrapText="true"
+                            maxWidth="Infinity"
+                            styleClass="modern-message"/>
+
+
+                    <!-- =================================================
+                         CURRENT PERFORMANCE
+                         ================================================= -->
+
+                    <HBox
+                            spacing="28"
+                            alignment="CENTER_LEFT"
+                            maxWidth="Infinity"
+                            styleClass="modern-card">
+
+                        <padding>
+                            <Insets
+                                    top="24"
+                                    right="28"
+                                    bottom="24"
+                                    left="28"/>
+                        </padding>
+
+
+                        <VBox
+                                spacing="7"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity">
+
+                            <Label
+                                    text="Overall KPI"
+                                    styleClass="modern-card-label"/>
+
+                            <Label
+                                    fx:id="overallKpiLabel"
+                                    text="-"
+                                    styleClass="modern-kpi-value"/>
+
+                            <Label
+                                    fx:id="performanceStatusLabel"
+                                    text="-"
+                                    styleClass="modern-status-badge"/>
+
+                        </VBox>
+
+
+                        <Region
+                                prefWidth="1"
+                                minWidth="1"
+                                maxWidth="1"
+                                prefHeight="90"
+                                styleClass="card-divider"/>
+
+
+                        <VBox
+                                spacing="8"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity">
+
+                            <Label
+                                    text="Evaluation Period"
+                                    styleClass="modern-card-label"/>
+
+                            <Label
+                                    fx:id="evaluationPeriodLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="modern-card-value"/>
+
+                        </VBox>
+
+
+                        <Region
+                                prefWidth="1"
+                                minWidth="1"
+                                maxWidth="1"
+                                prefHeight="90"
+                                styleClass="card-divider"/>
+
+
+                        <VBox
+                                spacing="8"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity">
+
+                            <Label
+                                    text="Calculated At"
+                                    styleClass="modern-card-label"/>
+
+                            <Label
+                                    fx:id="calculatedDateLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="modern-card-value"/>
+
+                        </VBox>
+
+                    </HBox>
+
+
+                    <!-- =================================================
+                         KPI BREAKDOWN
+                         ================================================= -->
+
+                    <VBox
+                            spacing="18"
+                            maxWidth="Infinity"
+                            styleClass="modern-card">
+
+                        <padding>
+                            <Insets
+                                    top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
+                        </padding>
+
+
+                        <Label
+                                text="KPI Breakdown"
+                                styleClass="modern-section-title"/>
+
+
+                        <HBox
+                                spacing="18"
+                                maxWidth="Infinity">
+
+
+                            <VBox
+                                    spacing="10"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="modern-metric-card">
+
+                                <Label
+                                        text="Productivity"
+                                        styleClass="modern-card-label"/>
+
+                                <Label
+                                        fx:id="productivityLabel"
+                                        text="-"
+                                        styleClass="modern-metric-value"/>
+
+                                <ProgressBar
+                                        fx:id="productivityProgressBar"
+                                        progress="0"
+                                        maxWidth="Infinity"
+                                        styleClass="metric-progress"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="10"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="modern-metric-card">
+
+                                <Label
+                                        text="Timeliness"
+                                        styleClass="modern-card-label"/>
+
+                                <Label
+                                        fx:id="timelinessLabel"
+                                        text="-"
+                                        styleClass="modern-metric-value"/>
+
+                                <ProgressBar
+                                        fx:id="timelinessProgressBar"
+                                        progress="0"
+                                        maxWidth="Infinity"
+                                        styleClass="metric-progress"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="10"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="modern-metric-card">
+
+                                <Label
+                                        text="Completion Rate"
+                                        styleClass="modern-card-label"/>
+
+                                <Label
+                                        fx:id="completionRateLabel"
+                                        text="-"
+                                        styleClass="modern-metric-value"/>
+
+                                <ProgressBar
+                                        fx:id="completionProgressBar"
+                                        progress="0"
+                                        maxWidth="Infinity"
+                                        styleClass="metric-progress"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="10"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="modern-metric-card">
+
+                                <Label
+                                        text="Attendance"
+                                        styleClass="modern-card-label"/>
+
+                                <Label
+                                        fx:id="attendanceLabel"
+                                        text="-"
+                                        styleClass="modern-metric-value"/>
+
+                                <ProgressBar
+                                        fx:id="attendanceProgressBar"
+                                        progress="0"
+                                        maxWidth="Infinity"
+                                        styleClass="metric-progress"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         PERFORMANCE HISTORY
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            maxWidth="Infinity"
+                            styleClass="modern-card">
+
+                        <padding>
+                            <Insets
+                                    top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
+                        </padding>
+
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Performance History"
+                                    styleClass="modern-section-title"/>
+
+                            <Label
+                                    text="Select a previous evaluation to view its KPI breakdown and manager feedback."
+                                    wrapText="true"
+                                    styleClass="modern-page-subtitle"/>
+
+                        </VBox>
+
+
+                        <TableView
+                                fx:id="historyTable"
+                                prefHeight="250"
+                                minHeight="220"
+                                maxWidth="Infinity"
+                                styleClass="modern-table">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="periodColumn"
+                                        text="Evaluation Period"
+                                        prefWidth="220"/>
+
+                                <TableColumn
+                                        fx:id="productivityColumn"
+                                        text="Productivity"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="timelinessColumn"
+                                        text="Timeliness"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="completionColumn"
+                                        text="Completion"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="attendanceColumn"
+                                        text="Attendance"
+                                        prefWidth="115"/>
+
+                                <TableColumn
+                                        fx:id="overallColumn"
+                                        text="Overall KPI"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="statusColumn"
+                                        text="Status"
+                                        prefWidth="110"/>
+
+                                <TableColumn
+                                        fx:id="calculatedColumn"
+                                        text="Calculated At"
+                                        prefWidth="165"/>
+
+                            </columns>
+
+                        </TableView>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         MANAGER FEEDBACK
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            maxWidth="Infinity"
+                            styleClass="modern-card">
+
+                        <padding>
+                            <Insets
+                                    top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
+                        </padding>
+
+
+                        <HBox
+                                alignment="CENTER_LEFT">
+
+                            <VBox
+                                    spacing="4"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="Manager Feedback"
+                                        styleClass="modern-section-title"/>
+
+                                <Label
+                                        fx:id="feedbackPeriodLabel"
+                                        text=""
+                                        styleClass="modern-page-subtitle"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <HBox
+                                spacing="16"
+                                alignment="CENTER_LEFT"
+                                maxWidth="Infinity"
+                                styleClass="modern-feedback-box">
+
+                            <Label
+                                    text="▢"
+                                    styleClass="modern-feedback-icon"/>
+
+
+                            <VBox
+                                    spacing="7"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="feedbackLabel"
+                                        text="No performance feedback is currently available."
+                                        wrapText="true"
+                                        maxWidth="Infinity"
+                                        styleClass="modern-feedback-title"/>
+
+
+                                <Label
+                                        fx:id="feedbackDateLabel"
+                                        text=""
+                                        wrapText="true"
+                                        maxWidth="Infinity"
+                                        styleClass="modern-page-subtitle"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <Region prefHeight="10"/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+</BorderPane>

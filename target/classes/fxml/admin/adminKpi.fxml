@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.admin.AdminKpiController"
+        styleClass="main-layout">
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
+    <top>
+
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                styleClass="topbar">
+
+            <padding>
+
+                <Insets
+                        top="16"
+                        right="28"
+                        bottom="16"
+                        left="28"/>
+
+            </padding>
+
+
+            <VBox spacing="2">
+
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome, Administrator"
+                        styleClass="topbar-title"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="topbar-subtitle"/>
+
+            </VBox>
+
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
+
+                <Label
+                        fx:id="topNameLabel"
+                        text="Administrator"
+                        styleClass="topbar-user-name"/>
+
+                <Label
+                        text="ADMINISTRATOR"
+                        styleClass="topbar-user-role"/>
+
+            </VBox>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <left>
+
+        <VBox
+                prefWidth="240"
+                spacing="10"
+                styleClass="sidebar">
+
+            <padding>
+
+                <Insets
+                        top="30"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
+
+            </padding>
+
+
+            <VBox spacing="3">
+
+                <Label
+                        text="AEPM"
+                        styleClass="sidebar-logo"/>
+
+                <Label
+                        text="Administrator Portal"
+                        styleClass="sidebar-subtitle"/>
+
+            </VBox>
+
+
+            <Region prefHeight="18"/>
+
+
+            <Label
+                    text="MENU"
+                    styleClass="sidebar-section-title"/>
+
+
+            <Button
+                    text="⌂   Home"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleHome"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="●   My Profile"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleProfile"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="♟   User Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleUserManagement"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="✓   Task Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="★   KPI Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleKpiManagement"
+                    styleClass="sidebar-button-active"/>
+
+
+            <Button
+                    text="≡   Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleReports"
+                    styleClass="sidebar-button"/>
+
+
+            <Button
+                    text="!   Anonymous Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnonymousReports"
+                    styleClass="sidebar-button"/>
+
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+
+            <Button
+                    text="↪   Logout"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- =====================================================
+         CONTENT
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                pannable="true"
+                styleClass="content-scroll-pane">
+
+            <content>
+
+                <VBox
+                        spacing="22"
+                        styleClass="home-content">
+
+                    <padding>
+
+                        <Insets
+                                top="32"
+                                right="35"
+                                bottom="40"
+                                left="35"/>
+
+                    </padding>
+
+
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
+
+                    <VBox spacing="4">
+
+                        <Label
+                                text="KPI Management"
+                                styleClass="content-title"/>
+
+                        <Label
+                                text="Configure KPI scoring rules and calculate employee performance."
+                                styleClass="content-description"/>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         KPI CONFIG LIST
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="section-card">
+
+                        <HBox alignment="CENTER_LEFT">
+
+                            <Label
+                                    text="KPI Configurations"
+                                    styleClass="section-title"/>
+
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+
+                            <Button
+                                    text="New Configuration"
+                                    onAction="#handleNewConfig"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+                            <TextField
+                                    fx:id="configSearchField"
+                                    promptText="Search KPI configuration..."
+                                    prefWidth="320"/>
+
+
+                            <Button
+                                    text="Refresh"
+                                    onAction="#loadConfigs"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+
+                        <TableView
+                                fx:id="configTable"
+                                prefHeight="280"
+                                minHeight="240">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="configIdColumn"
+                                        text="ID"
+                                        prefWidth="60"/>
+
+
+                                <TableColumn
+                                        fx:id="configNameColumn"
+                                        text="Configuration"
+                                        prefWidth="280"/>
+
+
+                                <TableColumn
+                                        fx:id="riskThresholdColumn"
+                                        text="Risk Threshold"
+                                        prefWidth="150"/>
+
+
+                                <TableColumn
+                                        fx:id="effectiveDateColumn"
+                                        text="Effective Date"
+                                        prefWidth="160"/>
+
+
+                                <TableColumn
+                                        fx:id="configStatusColumn"
+                                        text="Status"
+                                        prefWidth="130"/>
+
+                            </columns>
+
+                        </TableView>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         CONFIG DETAILS
+                         ================================================= -->
+
+                    <VBox
+                            spacing="18"
+                            styleClass="section-card">
+
+                        <Label
+                                text="Configuration Details"
+                                styleClass="section-title"/>
+
+
+                        <GridPane
+                                hgap="25"
+                                vgap="18">
+
+
+                            <Label
+                                    text="Configuration Name"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <TextField
+                                    fx:id="configNameField"
+                                    promptText="e.g. Standard Employee KPI 2026"
+                                    prefWidth="340"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Risk Threshold (%)"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <TextField
+                                    fx:id="riskThresholdField"
+                                    promptText="e.g. 60"
+                                    prefWidth="180"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Effective Date"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <DatePicker
+                                    fx:id="effectiveDatePicker"
+                                    prefWidth="220"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+                        </GridPane>
+
+
+                        <Label
+                                fx:id="configMessageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"/>
+
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+                            <Button
+                                    fx:id="createConfigButton"
+                                    text="Create Configuration"
+                                    onAction="#handleCreateConfig"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="saveConfigButton"
+                                    text="Save Changes"
+                                    onAction="#handleSaveConfig"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="configStatusButton"
+                                    text="Activate"
+                                    onAction="#handleToggleConfigStatus"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="deleteConfigButton"
+                                    text="Delete Configuration"
+                                    onAction="#handleDeleteConfig"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         KPI COMPONENTS
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="section-card">
+
+                        <HBox alignment="CENTER_LEFT">
+
+                            <VBox spacing="3">
+
+                                <Label
+                                        text="KPI Components"
+                                        styleClass="section-title"/>
+
+                                <Label
+                                        text="Select a configuration before managing its KPI components."
+                                        styleClass="content-description"/>
+
+                            </VBox>
+
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+
+                            <Button
+                                    text="New Component"
+                                    onAction="#handleNewComponent"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+
+                        <TableView
+                                fx:id="componentTable"
+                                prefHeight="260"
+                                minHeight="220">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="componentIdColumn"
+                                        text="ID"
+                                        prefWidth="70"/>
+
+
+                                <TableColumn
+                                        fx:id="componentNameColumn"
+                                        text="Component"
+                                        prefWidth="360"/>
+
+
+                                <TableColumn
+                                        fx:id="weightingColumn"
+                                        text="Weighting (%)"
+                                        prefWidth="180"/>
+
+
+                                <TableColumn
+                                        fx:id="componentStatusColumn"
+                                        text="Status"
+                                        prefWidth="150"/>
+
+                            </columns>
+
+                        </TableView>
+
+
+                        <Label
+                                fx:id="totalWeightingLabel"
+                                text="Total Active Weighting: 0.00% / 100%"
+                                styleClass="section-title"/>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         COMPONENT DETAILS
+                         ================================================= -->
+
+                    <VBox
+                            spacing="18"
+                            styleClass="section-card">
+
+                        <Label
+                                text="Component Details"
+                                styleClass="section-title"/>
+
+
+                        <GridPane
+                                hgap="25"
+                                vgap="18">
+
+
+                            <Label
+                                    text="Component Name"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <TextField
+                                    fx:id="componentNameField"
+                                    promptText="e.g. Productivity"
+                                    prefWidth="340"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Weighting (%)"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <TextField
+                                    fx:id="weightingField"
+                                    promptText="e.g. 30"
+                                    prefWidth="180"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+                        </GridPane>
+
+
+                        <Label
+                                fx:id="componentMessageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"/>
+
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+                            <Button
+                                    fx:id="createComponentButton"
+                                    text="Create Component"
+                                    onAction="#handleCreateComponent"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="saveComponentButton"
+                                    text="Save Component"
+                                    onAction="#handleSaveComponent"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="componentStatusButton"
+                                    text="Deactivate"
+                                    onAction="#handleToggleComponentStatus"
+                                    styleClass="app-button"/>
+
+
+                            <Button
+                                    fx:id="deleteComponentButton"
+                                    text="Delete Component"
+                                    onAction="#handleDeleteComponent"
+                                    styleClass="app-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         KPI CALCULATION
+                         ================================================= -->
+
+                    <VBox
+                            spacing="18"
+                            styleClass="section-card">
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="KPI Calculation"
+                                    styleClass="section-title"/>
+
+
+                            <Label
+                                    text="Calculate employee performance for a selected evaluation period."
+                                    styleClass="content-description"/>
+
+                        </VBox>
+
+
+                        <GridPane
+                                hgap="25"
+                                vgap="18">
+
+
+                            <Label
+                                    text="Employee"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <ComboBox
+                                    fx:id="employeeComboBox"
+                                    promptText="Select employee"
+                                    prefWidth="300"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Evaluation Start"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <DatePicker
+                                    fx:id="evaluationStartDatePicker"
+                                    prefWidth="220"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <Label
+                                    text="Evaluation End"
+                                    styleClass="input-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <DatePicker
+                                    fx:id="evaluationEndDatePicker"
+                                    prefWidth="220"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
+
+                        </GridPane>
+
+
+                        <Button
+                                fx:id="calculateKpiButton"
+                                text="Calculate KPI"
+                                onAction="#handleCalculateKpi"
+                                styleClass="app-button"/>
+
+
+                        <Label
+                                fx:id="calculationMessageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"/>
+
+
+                        <!-- =============================================
+                             CALCULATED RESULT
+                             ============================================= -->
+
+                        <VBox
+                                spacing="16"
+                                styleClass="section-card">
+
+                            <Label
+                                    text="Calculated Result"
+                                    styleClass="section-title"/>
+
+
+                            <GridPane
+                                    hgap="35"
+                                    vgap="16">
+
+
+                                <Label
+                                        text="Productivity"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="0"
+                                        GridPane.rowIndex="0"/>
+
+
+                                <Label
+                                        fx:id="productivityResultLabel"
+                                        text="-"
+                                        styleClass="task-detail-value"
+                                        GridPane.columnIndex="1"
+                                        GridPane.rowIndex="0"/>
+
+
+                                <Label
+                                        text="Timeliness"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="2"
+                                        GridPane.rowIndex="0"/>
+
+
+                                <Label
+                                        fx:id="timelinessResultLabel"
+                                        text="-"
+                                        styleClass="task-detail-value"
+                                        GridPane.columnIndex="3"
+                                        GridPane.rowIndex="0"/>
+
+
+                                <Label
+                                        text="Completion Rate"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="0"
+                                        GridPane.rowIndex="1"/>
+
+
+                                <Label
+                                        fx:id="completionResultLabel"
+                                        text="-"
+                                        styleClass="task-detail-value"
+                                        GridPane.columnIndex="1"
+                                        GridPane.rowIndex="1"/>
+
+
+                                <Label
+                                        text="Attendance"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="2"
+                                        GridPane.rowIndex="1"/>
+
+
+                                <Label
+                                        fx:id="attendanceResultLabel"
+                                        text="-"
+                                        styleClass="task-detail-value"
+                                        GridPane.columnIndex="3"
+                                        GridPane.rowIndex="1"/>
+
+
+                                <Label
+                                        text="Overall KPI"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="0"
+                                        GridPane.rowIndex="2"/>
+
+
+                                <Label
+                                        fx:id="overallKpiResultLabel"
+                                        text="-"
+                                        styleClass="section-title"
+                                        GridPane.columnIndex="1"
+                                        GridPane.rowIndex="2"/>
+
+
+                                <Label
+                                        text="Performance Status"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="2"
+                                        GridPane.rowIndex="2"/>
+
+
+                                <Label
+                                        fx:id="performanceStatusLabel"
+                                        text="-"
+                                        styleClass="section-title"
+                                        GridPane.columnIndex="3"
+                                        GridPane.rowIndex="2"/>
+
+                            </GridPane>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <Region prefHeight="15"/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+</BorderPane>

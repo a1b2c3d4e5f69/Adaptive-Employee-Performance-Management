@@ -6,10 +6,8 @@ import com.aepm.util.SessionManager;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-
 import javafx.stage.Stage;
 
 public class AdminHomeController {
@@ -21,59 +19,74 @@ public class AdminHomeController {
     private Label topNameLabel;
 
 
-    // =========================================================
-    // INITIALIZE
-    // =========================================================
-
     @FXML
     public void initialize() {
+
+        loadCurrentUser();
+    }
+
+
+    private void loadCurrentUser() {
 
         User user =
                 SessionManager.getCurrentUser();
 
 
         if (user == null) {
+
+            welcomeLabel.setText(
+                    "Welcome, Administrator"
+            );
+
+            topNameLabel.setText(
+                    "Administrator"
+            );
+
             return;
         }
 
 
         String name =
-                user.getFullName() == null
-                        ? "Administrator"
-                        : user.getFullName();
+                user.getFullName();
 
 
-        if (welcomeLabel != null) {
+        if (
+                name == null
+                        || name.isBlank()
+        ) {
 
-            welcomeLabel.setText(
-                    "Welcome, " + name
-            );
+            name =
+                    user.getUsername();
         }
 
 
-        if (topNameLabel != null) {
+        if (
+                name == null
+                        || name.isBlank()
+        ) {
 
-            topNameLabel.setText(
-                    name
-            );
+            name =
+                    "Administrator";
         }
+
+
+        welcomeLabel.setText(
+                "Welcome, " + name
+        );
+
+
+        topNameLabel.setText(
+                name
+        );
     }
 
-
-    // =========================================================
-    // HOME
-    // =========================================================
 
     @FXML
     private void handleHome() {
 
-        // Already on Admin Home page.
+        // Already on Home page.
     }
 
-
-    // =========================================================
-    // PROFILE
-    // =========================================================
 
     @FXML
     private void handleProfile(
@@ -87,10 +100,6 @@ public class AdminHomeController {
     }
 
 
-    // =========================================================
-    // USER MANAGEMENT
-    // =========================================================
-
     @FXML
     private void handleUserManagement(
             ActionEvent event
@@ -103,61 +112,45 @@ public class AdminHomeController {
     }
 
 
-    // =========================================================
-    // TASK MANAGEMENT
-    // =========================================================
-
     @FXML
-    private void handleTaskManagement() {
+    private void handleTaskManagement(
+            ActionEvent event
+    ) {
 
-        System.out.println(
-                "Admin Task Management not implemented yet."
+        navigate(
+                event,
+                "/fxml/admin/adminTask.fxml"
         );
     }
 
 
-    // =========================================================
-    // KPI MANAGEMENT
-    // =========================================================
-
     @FXML
-    private void handleKpiManagement() {
+    private void handleKpiManagement(ActionEvent event) {
 
-        System.out.println(
-                "Admin KPI Management not implemented yet."
+        navigate(
+                event,
+                "/fxml/admin/adminKpi.fxml"
         );
     }
 
-
-    // =========================================================
-    // REPORTS
-    // =========================================================
 
     @FXML
     private void handleReports() {
 
         System.out.println(
-                "Admin Reports not implemented yet."
+                "Reports not implemented yet."
         );
     }
 
-
-    // =========================================================
-    // ANONYMOUS REPORTS
-    // =========================================================
 
     @FXML
     private void handleAnonymousReports() {
 
         System.out.println(
-                "Admin Anonymous Reports not implemented yet."
+                "Anonymous Reports not implemented yet."
         );
     }
 
-
-    // =========================================================
-    // LOGOUT
-    // =========================================================
 
     @FXML
     private void handleLogout(
@@ -173,10 +166,6 @@ public class AdminHomeController {
         );
     }
 
-
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
 
     private void navigate(
             ActionEvent event,

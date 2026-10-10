@@ -7,8 +7,11 @@ import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 
 import javafx.concurrent.Task;
+
 import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
+
 import javafx.scene.Node;
 
 import javafx.scene.control.Button;
@@ -28,20 +31,12 @@ import java.nio.file.Path;
 
 public class AdminProfileController {
 
-    // =========================================================
-    // TOP BAR
-    // =========================================================
-
     @FXML
     private Label welcomeLabel;
 
     @FXML
     private Label topNameLabel;
 
-
-    // =========================================================
-    // PROFILE IMAGE
-    // =========================================================
 
     @FXML
     private ImageView profileImageView;
@@ -50,15 +45,11 @@ public class AdminProfileController {
     private Label profileInitialLabel;
 
     @FXML
-    private Button editImageButton;
-
-
-    // =========================================================
-    // PROFILE INFORMATION
-    // =========================================================
+    private Label profileNameLabel;
 
     @FXML
-    private Label fullNameLabel;
+    private Label profileRoleLabel;
+
 
     @FXML
     private Label employeeIdLabel;
@@ -78,13 +69,9 @@ public class AdminProfileController {
     @FXML
     private Label accountStatusLabel;
 
+
     @FXML
     private TextField contactNumberField;
-
-
-    // =========================================================
-    // OTHER
-    // =========================================================
 
     @FXML
     private Label messageLabel;
@@ -95,6 +82,9 @@ public class AdminProfileController {
 
     private final UserService userService =
             new UserService();
+
+
+    private User currentUser;
 
 
     // =========================================================
@@ -109,38 +99,27 @@ public class AdminProfileController {
         );
 
 
-        Circle clip =
-                new Circle(
-                        60,
-                        60,
-                        60
-                );
-
-
-        profileImageView.setClip(
-                clip
-        );
-
+        createCircularImage();
 
         loadProfile();
     }
 
 
     // =========================================================
-    // LOAD PROFILE
+    // PROFILE
     // =========================================================
 
     private void loadProfile() {
 
-        User user =
+        currentUser =
                 SessionManager.getCurrentUser();
 
 
-        if (user == null) {
+        if (currentUser == null) {
 
             UIHelper.showError(
                     messageLabel,
-                    "No logged-in user found."
+                    "Unable to load current user."
             );
 
             return;
@@ -148,9 +127,10 @@ public class AdminProfileController {
 
 
         String name =
-                user.getFullName() == null
-                        ? "Administrator"
-                        : user.getFullName();
+                safeDisplay(
+                        currentUser.getFullName(),
+                        "Administrator"
+                );
 
 
         welcomeLabel.setText(
@@ -163,35 +143,44 @@ public class AdminProfileController {
         );
 
 
-        fullNameLabel.setText(
+        profileNameLabel.setText(
                 name
         );
 
 
+        profileRoleLabel.setText(
+                "Administrator"
+        );
+
+
         employeeIdLabel.setText(
-                safe(
-                        user.getEmployeeId()
+                safeDisplay(
+                        currentUser.getEmployeeId(),
+                        "-"
                 )
         );
 
 
         usernameLabel.setText(
-                safe(
-                        user.getUsername()
+                safeDisplay(
+                        currentUser.getUsername(),
+                        "-"
                 )
         );
 
 
         emailLabel.setText(
-                safe(
-                        user.getEmail()
+                safeDisplay(
+                        currentUser.getEmail(),
+                        "-"
                 )
         );
 
 
         departmentLabel.setText(
-                safe(
-                        user.getDepartment()
+                safeDisplay(
+                        currentUser.getDepartment(),
+                        "-"
                 )
         );
 
@@ -202,134 +191,154 @@ public class AdminProfileController {
 
 
         accountStatusLabel.setText(
-                safe(
-                        user.getAccountStatus()
+                safeDisplay(
+                        currentUser.getAccountStatus(),
+                        "-"
                 )
         );
 
 
         contactNumberField.setText(
-                user.getContactNumber() == null
+                currentUser.getContactNumber() == null
                         ? ""
-                        : user.getContactNumber()
+                        : currentUser.getContactNumber()
         );
 
 
-        loadProfileImage(
-                user
+        String initial =
+                name.isBlank()
+                        ? "A"
+                        : name
+                        .substring(
+                                0,
+                                1
+                        )
+                        .toUpperCase();
+
+
+        profileInitialLabel.setText(
+                initial
         );
+
+
+        loadProfileImage();
     }
 
 
     // =========================================================
-    // LOAD PROFILE IMAGE
+    // IMAGE
     // =========================================================
 
-    private void loadProfileImage(
-            User user
-    ) {
+    private void createCircularImage() {
 
-        String imageUrl =
-                user.getProfileImage();
-
-
-        if (
-                imageUrl != null
-                        && !imageUrl.isBlank()
-        ) {
-
-            try {
-
-                Image image =
-                        new Image(
-                                imageUrl
-                                        + "?t="
-                                        + System.currentTimeMillis(),
-                                true
-                        );
-
-
-                profileImageView.setImage(
-                        image
-                );
-
-
-                profileImageView.setVisible(
-                        true
-                );
-
-
-                profileInitialLabel.setVisible(
-                        false
-                );
-
-
-                return;
-
-            } catch (Exception ignored) {
-            }
-        }
-
-
-        profileImageView.setImage(
-                null
+        profileImageView.setFitWidth(
+                120
         );
 
 
-        profileImageView.setVisible(
+        profileImageView.setFitHeight(
+                120
+        );
+
+
+        profileImageView.setPreserveRatio(
                 false
         );
 
 
-        profileInitialLabel.setVisible(
-                true
+        Circle clip =
+                new Circle(
+                        60,
+                        60,
+                        60
+                );
+
+
+        profileImageView.setClip(
+                clip
         );
+    }
 
 
-        String name =
-                user.getFullName();
-
+    private void loadProfileImage() {
 
         if (
-                name != null
-                        && !name.isBlank()
+                currentUser == null
+                        || currentUser.getProfileImage() == null
+                        || currentUser.getProfileImage().isBlank()
         ) {
 
-            profileInitialLabel.setText(
-                    name.substring(
-                            0,
-                            1
-                    ).toUpperCase()
+            profileImageView.setVisible(
+                    false
             );
 
-        } else {
 
-            profileInitialLabel.setText(
-                    "A"
+            profileInitialLabel.setVisible(
+                    true
+            );
+
+
+            return;
+        }
+
+
+        try {
+
+            String imageUrl =
+                    currentUser.getProfileImage()
+                            + "?t="
+                            + System.currentTimeMillis();
+
+
+            Image image =
+                    new Image(
+                            imageUrl,
+                            true
+                    );
+
+
+            profileImageView.setImage(
+                    image
+            );
+
+
+            profileImageView.setVisible(
+                    true
+            );
+
+
+            profileInitialLabel.setVisible(
+                    false
+            );
+
+        } catch (Exception e) {
+
+            profileImageView.setVisible(
+                    false
+            );
+
+
+            profileInitialLabel.setVisible(
+                    true
             );
         }
     }
 
 
-    // =========================================================
-    // CHANGE PROFILE IMAGE
-    // =========================================================
-
     @FXML
-    private void handleChangeProfileImage(
-            ActionEvent event
-    ) {
+    private void handleChangeProfileImage() {
 
-        FileChooser chooser =
+        FileChooser fileChooser =
                 new FileChooser();
 
 
-        chooser.setTitle(
+        fileChooser.setTitle(
                 "Select Profile Image"
         );
 
 
-        chooser.getExtensionFilters()
+        fileChooser
+                .getExtensionFilters()
                 .add(
                         new FileChooser.ExtensionFilter(
                                 "Image Files",
@@ -340,49 +349,42 @@ public class AdminProfileController {
                 );
 
 
-        File file =
-                chooser.showOpenDialog(
-                        getStage(event)
+        Stage stage =
+                (Stage) profileImageView
+                        .getScene()
+                        .getWindow();
+
+
+        File selectedFile =
+                fileChooser.showOpenDialog(
+                        stage
                 );
 
 
-        if (file == null) {
+        if (selectedFile == null) {
             return;
         }
 
 
-        long maxSize =
-                5L
-                        * 1024
-                        * 1024;
-
-
-        if (file.length() > maxSize) {
+        if (
+                selectedFile.length()
+                        > 5L * 1024L * 1024L
+        ) {
 
             UIHelper.showError(
                     messageLabel,
-                    "Profile image must be smaller than 5 MB."
+                    "Profile image must be 5 MB or smaller."
             );
 
             return;
         }
 
 
-        Path path =
-                file.toPath();
+        Path imagePath =
+                selectedFile.toPath();
 
 
-        editImageButton.setDisable(
-                true
-        );
-
-
-        UIHelper.hideMessage(
-                messageLabel
-        );
-
-
-        Task<String> task =
+        Task<String> uploadTask =
                 new Task<>() {
 
                     @Override
@@ -391,31 +393,20 @@ public class AdminProfileController {
 
                         return userService
                                 .uploadOwnProfileImage(
-                                        path
+                                        imagePath
                                 );
                     }
                 };
 
 
-        task.setOnSucceeded(
-                e -> {
+        uploadTask.setOnSucceeded(
+                event -> {
 
-                    editImageButton.setDisable(
-                            false
-                    );
-
-
-                    User user =
-                            SessionManager
-                                    .getCurrentUser();
+                    currentUser =
+                            SessionManager.getCurrentUser();
 
 
-                    if (user != null) {
-
-                        loadProfileImage(
-                                user
-                        );
-                    }
+                    loadProfileImage();
 
 
                     UIHelper.showSuccess(
@@ -426,16 +417,11 @@ public class AdminProfileController {
         );
 
 
-        task.setOnFailed(
-                e -> {
-
-                    editImageButton.setDisable(
-                            false
-                    );
-
+        uploadTask.setOnFailed(
+                event -> {
 
                     Throwable error =
-                            task.getException();
+                            uploadTask.getException();
 
 
                     UIHelper.showError(
@@ -450,14 +436,11 @@ public class AdminProfileController {
 
         Thread thread =
                 new Thread(
-                        task
+                        uploadTask
                 );
 
 
-        thread.setDaemon(
-                true
-        );
-
+        thread.setDaemon(true);
 
         thread.start();
     }
@@ -493,17 +476,22 @@ public class AdminProfileController {
                                         contact
                                 );
 
+
                         return null;
                     }
                 };
 
 
         task.setOnSucceeded(
-                e -> {
+                event -> {
 
                     saveButton.setDisable(
                             false
                     );
+
+
+                    currentUser =
+                            SessionManager.getCurrentUser();
 
 
                     UIHelper.showSuccess(
@@ -515,7 +503,7 @@ public class AdminProfileController {
 
 
         task.setOnFailed(
-                e -> {
+                event -> {
 
                     saveButton.setDisable(
                             false
@@ -537,114 +525,17 @@ public class AdminProfileController {
 
 
         Thread thread =
-                new Thread(
-                        task
-                );
+                new Thread(task);
 
 
-        thread.setDaemon(
-                true
-        );
-
+        thread.setDaemon(true);
 
         thread.start();
     }
 
 
     // =========================================================
-    // HOME
-    // =========================================================
-
-    @FXML
-    private void handleHome(
-            ActionEvent event
-    ) {
-
-        navigate(
-                event,
-                "/fxml/admin/adminHome.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // PROFILE
-    // =========================================================
-
-    @FXML
-    private void handleProfile(
-        ActionEvent event
-    ) {
-        Stage stage =
-            (Stage) ((Node) event.getSource())
-                    .getScene()
-                    .getWindow();
-                    
-            NavigationManager.navigate(
-                 stage,
-                 "/fxml/admin/adminProfile.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // USER MANAGEMENT
-    // =========================================================
-
-    @FXML
-    private void handleUserManagement(
-            ActionEvent event
-    ) {
-
-        navigate(
-                event,
-                "/fxml/admin/adminUserManagement.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // PLACEHOLDERS
-    // =========================================================
-
-    @FXML
-    private void handleTaskManagement() {
-
-        System.out.println(
-                "Admin Task Management not implemented yet."
-        );
-    }
-
-
-    @FXML
-    private void handleKpiManagement() {
-
-        System.out.println(
-                "Admin KPI Management not implemented yet."
-        );
-    }
-
-
-    @FXML
-    private void handleReports() {
-
-        System.out.println(
-                "Admin Reports not implemented yet."
-        );
-    }
-
-
-    @FXML
-    private void handleAnonymousReports() {
-
-        System.out.println(
-                "Admin Anonymous Reports not implemented yet."
-        );
-    }
-
-
-    // =========================================================
-    // CHANGE PASSWORD
+    // PASSWORD
     // =========================================================
 
     @FXML
@@ -660,8 +551,73 @@ public class AdminProfileController {
 
 
     // =========================================================
-    // LOGOUT
+    // SIDEBAR
     // =========================================================
+
+    @FXML
+    private void handleHome(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminHome.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleProfile() {
+
+        // Current page.
+    }
+
+
+    @FXML
+    private void handleUserManagement(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminUserManagement.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleTaskManagement(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminTask.fxml"
+        );
+    }
+
+
+        @FXML
+        private void handleKpiManagement(
+                ActionEvent event
+        ) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminKpi.fxml"
+        );
+        }
+
+
+    @FXML
+    private void handleReports() {
+    }
+
+
+    @FXML
+    private void handleAnonymousReports() {
+    }
+
 
     @FXML
     private void handleLogout(
@@ -679,42 +635,35 @@ public class AdminProfileController {
 
 
     // =========================================================
-    // NAVIGATION
+    // HELPERS
     // =========================================================
+
+    private String safeDisplay(
+            String value,
+            String fallback
+    ) {
+
+        return value == null
+                || value.isBlank()
+                ? fallback
+                : value;
+    }
+
 
     private void navigate(
             ActionEvent event,
             String path
     ) {
 
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
         NavigationManager.navigate(
-                getStage(event),
+                stage,
                 path
         );
-    }
-
-
-    private Stage getStage(
-            ActionEvent event
-    ) {
-
-        return (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
-    }
-
-
-    // =========================================================
-    // HELPERS
-    // =========================================================
-
-    private String safe(
-            String value
-    ) {
-
-        return value == null
-                || value.isBlank()
-                ? "-"
-                : value;
     }
 }

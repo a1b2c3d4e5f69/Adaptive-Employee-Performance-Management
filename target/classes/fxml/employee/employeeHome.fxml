@@ -4,15 +4,12 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
@@ -21,171 +18,61 @@
 
 
     <!-- =====================================================
-         SIDEBAR
-         ===================================================== -->
-
-    <left>
-
-        <VBox
-                prefWidth="240"
-                styleClass="sidebar">
-
-            <padding>
-                <Insets
-                        top="28"
-                        right="18"
-                        bottom="24"
-                        left="18"/>
-            </padding>
-
-
-            <!-- AEPM Logo -->
-
-            <VBox spacing="3">
-
-                <Label
-                        text="AEPM"
-                        styleClass="sidebar-logo"/>
-
-                <Label
-                        text="Employee Portal"
-                        styleClass="sidebar-subtitle"/>
-
-            </VBox>
-
-
-            <Region prefHeight="28"/>
-
-
-            <!-- Navigation -->
-
-            <Label
-                    text="MENU"
-                    styleClass="sidebar-section-title"/>
-
-
-            <Button
-                    text="⌂   Home"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleHome"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="●   My Profile"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleProfile"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="✓   My Tasks"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleTasks"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="★   Performance KPI"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleKpi"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="▤   Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleReports"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="!   Anonymous Report"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnonymousReport"
-                    styleClass="sidebar-button"/>
-
-
-            <!-- Push logout to bottom -->
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-
-            <Separator/>
-
-
-            <Region prefHeight="10"/>
-
-
-            <Button
-                    text="↪   Logout"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleLogout"
-                    styleClass="logout-button"/>
-
-        </VBox>
-
-    </left>
-
-
-    <!-- =====================================================
-         TOP HEADER
+         TOP BAR
          ===================================================== -->
 
     <top>
 
         <HBox
                 alignment="CENTER_LEFT"
-                prefHeight="75"
-                spacing="15"
-                styleClass="topbar">
+                spacing="16"
+                styleClass="modern-topbar">
 
             <padding>
+
                 <Insets
-                        top="15"
+                        top="14"
                         right="30"
-                        bottom="15"
+                        bottom="14"
                         left="30"/>
+
             </padding>
 
 
-            <VBox spacing="3">
+            <Label
+                    text="AEPM"
+                    styleClass="modern-brand"/>
 
-                <Label
-                        fx:id="welcomeLabel"
-                        text="Welcome"
-                        styleClass="topbar-title"/>
 
-                <Label
-                        text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
+            <Region
+                    prefWidth="1"
+                    minWidth="1"
+                    maxWidth="1"
+                    prefHeight="28"
+                    styleClass="topbar-divider"/>
 
-            </VBox>
+
+            <Label
+                    text="Adaptive Employee Performance Management System"
+                    styleClass="modern-system-name"/>
 
 
             <Region HBox.hgrow="ALWAYS"/>
 
 
             <VBox
-                    alignment="CENTER_RIGHT"
-                    spacing="2">
+                    spacing="2"
+                    alignment="CENTER_RIGHT">
 
                 <Label
-                        fx:id="nameLabel"
-                        text="-"
-                        styleClass="topbar-user-name"/>
+                        fx:id="topNameLabel"
+                        text="Employee"
+                        styleClass="modern-user-name"/>
 
                 <Label
-                        fx:id="roleLabel"
-                        text="-"
-                        styleClass="topbar-user-role"/>
+                        fx:id="topRoleLabel"
+                        text="EMPLOYEE"
+                        styleClass="modern-user-role"/>
 
             </VBox>
 
@@ -195,171 +82,549 @@
 
 
     <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <left>
+
+        <VBox
+                prefWidth="245"
+                minWidth="245"
+                maxWidth="245"
+                spacing="8"
+                styleClass="modern-sidebar">
+
+            <padding>
+
+                <Insets
+                        top="28"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
+
+            </padding>
+
+
+            <Label
+                    text="MENU"
+                    styleClass="modern-sidebar-section"/>
+
+
+            <Button
+                    text="⌂   Home"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleHome"
+                    styleClass="modern-nav-button-active"/>
+
+
+            <Button
+                    text="○   My Profile"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleProfile"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="✓   My Tasks"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleTasks"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="▥   Performance"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleKpi"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="▤   Reports"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleReports"
+                    styleClass="modern-nav-button"/>
+
+
+            <Button
+                    text="!   Anonymous Report"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleAnonymousReport"
+                    styleClass="modern-nav-button"/>
+
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+
+            <Button
+                    text="↪   Logout"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleLogout"
+                    styleClass="modern-logout-button"/>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- =====================================================
          MAIN CONTENT
          ===================================================== -->
 
     <center>
 
-        <VBox
-                spacing="24"
-                styleClass="home-content">
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                pannable="true"
+                styleClass="modern-content-scroll">
 
-            <padding>
-                <Insets
-                        top="32"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-            </padding>
-
-
-            <!-- Page Heading -->
-
-            <VBox spacing="5">
-
-                <Label
-                        fx:id="contentTitleLabel"
-                        text="Home"
-                        styleClass="content-title"/>
-
-                <Label
-                        fx:id="contentMessageLabel"
-                        text="Welcome to the Adaptive Employee Performance Management System."
-                        styleClass="content-description"/>
-
-            </VBox>
-
-
-            <!-- User Information Cards -->
-
-            <HBox spacing="18">
-
-
-                <!-- Name Card -->
+            <content>
 
                 <VBox
-                        spacing="8"
-                        HBox.hgrow="ALWAYS"
-                        styleClass="info-card">
+                        spacing="24"
+                        maxWidth="Infinity"
+                        styleClass="modern-content">
 
-                    <Label
-                            text="Employee"
-                            styleClass="card-label"/>
+                    <padding>
 
-                    <Label
-                            text="Your Account"
-                            styleClass="card-title"/>
+                        <Insets
+                                top="30"
+                                right="32"
+                                bottom="40"
+                                left="32"/>
 
-                    <Label
-                            text="View and manage your employee information."
-                            wrapText="true"
-                            styleClass="card-description"/>
+                    </padding>
+
+
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
+
+                    <VBox spacing="5">
+
+                        <Label
+                                text="Employee Home"
+                                styleClass="modern-page-title"/>
+
+                        <Label
+                                text="Access your assigned tasks, performance results, and employee services."
+                                wrapText="true"
+                                styleClass="modern-page-subtitle"/>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         WELCOME CARD
+                         ================================================= -->
+
+                    <HBox
+                            spacing="30"
+                            alignment="CENTER_LEFT"
+                            maxWidth="Infinity"
+                            styleClass="employee-welcome-card">
+
+                        <padding>
+
+                            <Insets
+                                    top="26"
+                                    right="30"
+                                    bottom="26"
+                                    left="30"/>
+
+                        </padding>
+
+
+                        <VBox
+                                spacing="8"
+                                HBox.hgrow="ALWAYS">
+
+                            <Label
+                                    text="Welcome back,"
+                                    styleClass="employee-welcome-small"/>
+
+
+                            <Label
+                                    fx:id="welcomeNameLabel"
+                                    text="Employee"
+                                    styleClass="employee-welcome-name"/>
+
+
+                            <Label
+                                    text="Stay on top of your assigned work and monitor your performance progress."
+                                    wrapText="true"
+                                    styleClass="employee-welcome-description"/>
+
+
+                            <HBox
+                                    spacing="12"
+                                    alignment="CENTER_LEFT">
+
+                                <Button
+                                        text="View My Tasks  →"
+                                        onAction="#handleTasks"
+                                        styleClass="modern-primary-button"/>
+
+
+                                <Button
+                                        text="View Performance"
+                                        onAction="#handleKpi"
+                                        styleClass="modern-secondary-button"/>
+
+                            </HBox>
+
+                        </VBox>
+
+
+                        <VBox
+                                spacing="12"
+                                prefWidth="260"
+                                styleClass="employee-info-panel">
+
+                            <HBox
+                                    spacing="18"
+                                    alignment="CENTER_LEFT">
+
+                                <VBox
+                                        spacing="4"
+                                        HBox.hgrow="ALWAYS">
+
+                                    <Label
+                                            text="Employee ID"
+                                            styleClass="modern-card-label"/>
+
+                                    <Label
+                                            fx:id="employeeIdLabel"
+                                            text="-"
+                                            styleClass="employee-info-value"/>
+
+                                </VBox>
+
+
+                                <VBox
+                                        spacing="4"
+                                        HBox.hgrow="ALWAYS">
+
+                                    <Label
+                                            text="Department"
+                                            styleClass="modern-card-label"/>
+
+                                    <Label
+                                            fx:id="departmentLabel"
+                                            text="-"
+                                            styleClass="employee-info-value"/>
+
+                                </VBox>
+
+                            </HBox>
+
+                        </VBox>
+
+                    </HBox>
+
+
+                    <!-- =================================================
+                         PRIMARY MODULES
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            maxWidth="Infinity">
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Your Workspace"
+                                    styleClass="modern-section-title"/>
+
+                            <Label
+                                    text="Continue with the areas you use most."
+                                    styleClass="modern-page-subtitle"/>
+
+                        </VBox>
+
+
+                        <HBox
+                                spacing="18"
+                                maxWidth="Infinity">
+
+
+                            <!-- TASKS -->
+
+                            <VBox
+                                    spacing="12"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="home-feature-card">
+
+                                <Label
+                                        text="✓"
+                                        styleClass="home-feature-icon"/>
+
+
+                                <Label
+                                        text="My Tasks"
+                                        styleClass="home-feature-title"/>
+
+
+                                <Label
+                                        text="View assigned tasks, accept work, update progress, and complete tasks."
+                                        wrapText="true"
+                                        maxWidth="Infinity"
+                                        styleClass="home-feature-description"/>
+
+
+                                <Region VBox.vgrow="ALWAYS"/>
+
+
+                                <Button
+                                        text="Open My Tasks  →"
+                                        onAction="#handleTasks"
+                                        styleClass="home-link-button"/>
+
+                            </VBox>
+
+
+                            <!-- PERFORMANCE -->
+
+                            <VBox
+                                    spacing="12"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="home-feature-card">
+
+                                <Label
+                                        text="▥"
+                                        styleClass="home-feature-icon"/>
+
+
+                                <Label
+                                        text="Performance"
+                                        styleClass="home-feature-title"/>
+
+
+                                <Label
+                                        text="Review your KPI score, performance breakdown, history, and feedback."
+                                        wrapText="true"
+                                        maxWidth="Infinity"
+                                        styleClass="home-feature-description"/>
+
+
+                                <Region VBox.vgrow="ALWAYS"/>
+
+
+                                <Button
+                                        text="View Performance  →"
+                                        onAction="#handleKpi"
+                                        styleClass="home-link-button"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         QUICK ACCESS
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            maxWidth="Infinity"
+                            styleClass="modern-card">
+
+                        <padding>
+
+                            <Insets
+                                    top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
+
+                        </padding>
+
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Quick Access"
+                                    styleClass="modern-section-title"/>
+
+                            <Label
+                                    text="Other employee services."
+                                    styleClass="modern-page-subtitle"/>
+
+                        </VBox>
+
+
+                        <HBox
+                                spacing="16"
+                                maxWidth="Infinity">
+
+
+                            <Button
+                                    text="○  My Profile"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    onAction="#handleProfile"
+                                    styleClass="quick-access-button"/>
+
+
+                            <Button
+                                    text="▤  Reports"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    onAction="#handleReports"
+                                    styleClass="quick-access-button"/>
+
+
+                            <Button
+                                    text="!  Anonymous Report"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    onAction="#handleAnonymousReport"
+                                    styleClass="quick-access-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         WORKFLOW
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            maxWidth="Infinity"
+                            styleClass="modern-card">
+
+                        <padding>
+
+                            <Insets
+                                    top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
+
+                        </padding>
+
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Employee Performance Flow"
+                                    styleClass="modern-section-title"/>
+
+                            <Label
+                                    text="Your normal workflow in AEPM."
+                                    styleClass="modern-page-subtitle"/>
+
+                        </VBox>
+
+
+                        <HBox
+                                spacing="14"
+                                alignment="CENTER_LEFT"
+                                maxWidth="Infinity">
+
+
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="workflow-step">
+
+                                <Label
+                                        text="1"
+                                        styleClass="workflow-number"/>
+
+                                <Label
+                                        text="Manage Tasks"
+                                        styleClass="workflow-title"/>
+
+                                <Label
+                                        text="Accept and complete assigned work."
+                                        wrapText="true"
+                                        styleClass="workflow-description"/>
+
+                            </VBox>
+
+
+                            <Label
+                                    text="→"
+                                    styleClass="workflow-arrow"/>
+
+
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="workflow-step">
+
+                                <Label
+                                        text="2"
+                                        styleClass="workflow-number"/>
+
+                                <Label
+                                        text="KPI Calculation"
+                                        styleClass="workflow-title"/>
+
+                                <Label
+                                        text="Task data contributes to your KPI result."
+                                        wrapText="true"
+                                        styleClass="workflow-description"/>
+
+                            </VBox>
+
+
+                            <Label
+                                    text="→"
+                                    styleClass="workflow-arrow"/>
+
+
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="workflow-step">
+
+                                <Label
+                                        text="3"
+                                        styleClass="workflow-number"/>
+
+                                <Label
+                                        text="Review Performance"
+                                        styleClass="workflow-title"/>
+
+                                <Label
+                                        text="View KPI history and manager feedback."
+                                        wrapText="true"
+                                        styleClass="workflow-description"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <Region prefHeight="10"/>
 
                 </VBox>
 
+            </content>
 
-                <!-- Department -->
-
-                <VBox
-                        spacing="8"
-                        HBox.hgrow="ALWAYS"
-                        styleClass="info-card">
-
-                    <Label
-                            text="Department"
-                            styleClass="card-label"/>
-
-                    <Label
-                            fx:id="departmentLabel"
-                            text="-"
-                            styleClass="card-value"/>
-
-                    <Label
-                            text="Your assigned department."
-                            styleClass="card-description"/>
-
-                </VBox>
-
-
-                <!-- Role -->
-
-                <VBox
-                        spacing="8"
-                        HBox.hgrow="ALWAYS"
-                        styleClass="info-card">
-
-                    <Label
-                            text="Role"
-                            styleClass="card-label"/>
-
-                    <Label
-                            text="Employee"
-                            styleClass="card-value"/>
-
-                    <Label
-                            text="Standard employee access."
-                            styleClass="card-description"/>
-
-                </VBox>
-
-            </HBox>
-
-
-            <!-- Quick Access -->
-
-            <VBox
-                    spacing="14"
-                    styleClass="section-card">
-
-                <Label
-                        text="Quick Access"
-                        styleClass="section-title"/>
-
-
-                <HBox spacing="12">
-
-                    <Button
-                            text="My Profile"
-                            onAction="#handleProfile"
-                            styleClass="quick-button"/>
-
-                    <Button
-                            text="My Tasks"
-                            onAction="#handleTasks"
-                            styleClass="quick-button"/>
-
-                    <Button
-                            text="View KPI"
-                            onAction="#handleKpi"
-                            styleClass="quick-button"/>
-
-                    <Button
-                            text="Reports"
-                            onAction="#handleReports"
-                            styleClass="quick-button"/>
-
-                </HBox>
-
-            </VBox>
-
-
-            <!-- Dashboard Placeholder -->
-
-            <VBox
-                    spacing="8"
-                    styleClass="dashboard-placeholder">
-
-                <Label
-                        text="Dashboard"
-                        styleClass="section-title"/>
-
-                <Label
-                        text="Dashboard information will be integrated here later."
-                        styleClass="content-description"/>
-
-            </VBox>
-
-        </VBox>
+        </ScrollPane>
 
     </center>
 

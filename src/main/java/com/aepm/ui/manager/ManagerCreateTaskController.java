@@ -679,9 +679,22 @@ public class ManagerCreateTaskController {
     }
 
 
-    @FXML
-    private void handlePerformance() {
-    }
+        @FXML
+        private void handlePerformance(
+                ActionEvent event
+        ) {
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerPerformance.fxml"
+        );
+        }
 
 
     @FXML

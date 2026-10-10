@@ -8,34 +8,43 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-
 import javafx.stage.Stage;
 
 public class EmployeeHomeController {
 
-    @FXML
-    private Label welcomeLabel;
+    // =========================================================
+    // TOP BAR
+    // =========================================================
 
     @FXML
-    private Label nameLabel;
+    private Label topNameLabel;
 
     @FXML
-    private Label roleLabel;
+    private Label topRoleLabel;
+
+
+    // =========================================================
+    // HOME PAGE
+    // =========================================================
+
+    @FXML
+    private Label welcomeNameLabel;
+
+    @FXML
+    private Label employeeIdLabel;
 
     @FXML
     private Label departmentLabel;
 
-    @FXML
-    private Label contentTitleLabel;
 
-    @FXML
-    private Label contentMessageLabel;
-
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
 
     @FXML
     public void initialize() {
 
-        loadUserInformation();
+        loadCurrentUser();
     }
 
 
@@ -43,7 +52,7 @@ public class EmployeeHomeController {
     // LOAD CURRENT USER
     // =========================================================
 
-    private void loadUserInformation() {
+    private void loadCurrentUser() {
 
         User user =
                 SessionManager.getCurrentUser();
@@ -51,15 +60,19 @@ public class EmployeeHomeController {
 
         if (user == null) {
 
-            welcomeLabel.setText(
-                    "Welcome"
+            topNameLabel.setText(
+                    "Employee"
             );
 
-            nameLabel.setText(
-                    "-"
+            topRoleLabel.setText(
+                    "EMPLOYEE"
             );
 
-            roleLabel.setText(
+            welcomeNameLabel.setText(
+                    "Employee"
+            );
+
+            employeeIdLabel.setText(
                     "-"
             );
 
@@ -71,56 +84,91 @@ public class EmployeeHomeController {
         }
 
 
-        String fullName =
-                user.getFullName() == null
-                        ? "Employee"
-                        : user.getFullName();
+        // =====================================================
+        // DISPLAY NAME
+        // =====================================================
+
+        String displayName =
+                user.getFullName();
 
 
-        welcomeLabel.setText(
-                "Welcome, " + fullName
-        );
+        if (
+                displayName == null
+                        || displayName.isBlank()
+        ) {
 
-
-        nameLabel.setText(
-                fullName
-        );
-
-
-        if (user.getRole() != null) {
-
-            roleLabel.setText(
-                    user.getRole()
-                            .name()
-                            .replace(
-                                    "_",
-                                    " "
-                            )
-            );
-
-        } else {
-
-            roleLabel.setText(
-                    "-"
-            );
+            displayName =
+                    user.getUsername();
         }
 
 
         if (
-                user.getDepartment() != null
-                        && !user.getDepartment().isBlank()
+                displayName == null
+                        || displayName.isBlank()
         ) {
 
-            departmentLabel.setText(
-                    user.getDepartment()
+            displayName =
+                    "Employee";
+        }
+
+
+        // =====================================================
+        // EMPLOYEE ID
+        // =====================================================
+
+        String employeeId =
+                safe(
+                        user.getEmployeeId()
+                );
+
+
+        // =====================================================
+        // DEPARTMENT
+        // =====================================================
+
+        String department =
+                safe(
+                        user.getDepartment()
+                );
+
+
+        // =====================================================
+        // UPDATE UI
+        // =====================================================
+
+        topNameLabel.setText(
+                displayName
+        );
+
+
+        if (!"-".equals(employeeId)) {
+
+            topRoleLabel.setText(
+                    "EMPLOYEE  •  "
+                            + employeeId
             );
 
         } else {
 
-            departmentLabel.setText(
-                    "-"
+            topRoleLabel.setText(
+                    "EMPLOYEE"
             );
         }
+
+
+        welcomeNameLabel.setText(
+                displayName
+        );
+
+
+        employeeIdLabel.setText(
+                employeeId
+        );
+
+
+        departmentLabel.setText(
+                department
+        );
     }
 
 
@@ -131,71 +179,67 @@ public class EmployeeHomeController {
     @FXML
     private void handleHome() {
 
-        contentTitleLabel.setText(
-                "Home"
-        );
-
-        contentMessageLabel.setText(
-                "Welcome to the Adaptive Employee Performance Management System."
-        );
+        // Current page
     }
 
+
+    // =========================================================
     // PROFILE
+    // =========================================================
+
     @FXML
-    private void handleProfile() {
-        Stage stage =
-            (Stage) welcomeLabel
-                    .getScene()
-                    .getWindow();
-            
-        NavigationManager.navigate(
-            stage,
-            "/fxml/employee/employeeProfile.fxml"
-    );
-}
+    private void handleProfile(
+            ActionEvent event
+    ) {
 
-    // TASK
-    @FXML
-    private void handleTasks(ActionEvent event) {
-
-    Stage stage =
-            (Stage) ((Node) event.getSource())
-                    .getScene()
-                    .getWindow();
-
-    NavigationManager.navigate(
-            stage,
-            "/fxml/employee/employeeTask.fxml"
-    );
-}
-
-    // KPI
-    @FXML
-    private void handleKpi() {
-
-        contentTitleLabel.setText(
-                "Performance KPI"
-        );
-
-        contentMessageLabel.setText(
-                "KPI information will be available here."
+        navigate(
+                event,
+                "/fxml/employee/employeeProfile.fxml"
         );
     }
 
 
     // =========================================================
-    // REPORT
+    // TASKS
+    // =========================================================
+
+    @FXML
+    private void handleTasks(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeeTask.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // PERFORMANCE
+    // =========================================================
+
+    @FXML
+    private void handleKpi(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeePerformance.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // REPORTS
     // =========================================================
 
     @FXML
     private void handleReports() {
 
-        contentTitleLabel.setText(
-                "Performance Reports"
-        );
-
-        contentMessageLabel.setText(
-                "Performance reports will be available here."
+        System.out.println(
+                "Employee Reports not implemented yet."
         );
     }
 
@@ -207,12 +251,8 @@ public class EmployeeHomeController {
     @FXML
     private void handleAnonymousReport() {
 
-        contentTitleLabel.setText(
-                "Anonymous Reporting"
-        );
-
-        contentMessageLabel.setText(
-                "Anonymous reporting will be available here."
+        System.out.println(
+                "Anonymous Reporting not implemented yet."
         );
     }
 
@@ -222,20 +262,49 @@ public class EmployeeHomeController {
     // =========================================================
 
     @FXML
-    private void handleLogout() {
+    private void handleLogout(
+            ActionEvent event
+    ) {
 
         SessionManager.clearSession();
 
 
+        navigate(
+                event,
+                "/fxml/auth/login.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
+    private String safe(
+            String value
+    ) {
+
+        return value == null
+                || value.isBlank()
+                ? "-"
+                : value;
+    }
+
+
+    private void navigate(
+            ActionEvent event,
+            String path
+    ) {
+
         Stage stage =
-                (Stage) welcomeLabel
+                (Stage) ((Node) event.getSource())
                         .getScene()
                         .getWindow();
 
 
         NavigationManager.navigate(
                 stage,
-                "/fxml/auth/login.fxml"
+                path
         );
     }
 }
