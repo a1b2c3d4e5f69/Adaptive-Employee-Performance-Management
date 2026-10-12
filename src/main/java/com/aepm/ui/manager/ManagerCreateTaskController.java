@@ -697,9 +697,22 @@ public class ManagerCreateTaskController {
         }
 
 
-    @FXML
-    private void handleReports() {
-    }
+        @FXML
+        private void handleReports(
+                ActionEvent event
+        ) {
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerReport.fxml"
+        );
+        }
 
 
     @FXML

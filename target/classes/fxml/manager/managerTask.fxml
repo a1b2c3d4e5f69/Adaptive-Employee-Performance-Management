@@ -87,106 +87,105 @@
          SIDEBAR
          ===================================================== -->
 
-    <left>
+   <left>
 
-        <VBox
-                prefWidth="240"
-                spacing="10"
-                styleClass="sidebar">
+    <VBox
+            prefWidth="275"
+            minWidth="275"
+            maxWidth="275"
+            spacing="10"
+            styleClass="sidebar">
 
-            <padding>
+        <padding>
+            <Insets
+                    top="28"
+                    right="12"
+                    bottom="20"
+                    left="12"/>
+        </padding>
 
-                <Insets
-                        top="30"
-                        right="18"
-                        bottom="20"
-                        left="18"/>
-
-            </padding>
-
-
-            <VBox spacing="3">
-
-                <Label
-                        text="AEPM"
-                        styleClass="sidebar-logo"/>
-
-                <Label
-                        text="Manager Portal"
-                        styleClass="sidebar-subtitle"/>
-
-            </VBox>
-
-
-            <Region prefHeight="18"/>
-
+        <VBox spacing="3">
 
             <Label
-                    text="MENU"
-                    styleClass="sidebar-section-title"/>
+                    text="AEPM"
+                    styleClass="sidebar-logo"/>
 
-
-            <Button
-                    text="⌂   Home"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleHome"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="●   My Profile"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleProfile"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="✓   Task Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleTaskManagement"
-                    styleClass="sidebar-button-active"/>
-
-
-            <Button
-                    text="★   Performance"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handlePerformance"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="≡   Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleReports"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="▣   Dashboard"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDashboard"
-                    styleClass="sidebar-button"/>
-
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-
-            <Button
-                    text="↪   Logout"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleLogout"
-                    styleClass="logout-button"/>
+            <Label
+                    text="Manager Portal"
+                    styleClass="sidebar-subtitle"/>
 
         </VBox>
 
-    </left>
+        <Region prefHeight="42"/>
+
+        <Label
+                text="MENU"
+                styleClass="sidebar-section-title"/>
+
+        <Region prefHeight="18"/>
+
+
+        <Button
+                text="⌂   Home"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handleHome"
+                styleClass="sidebar-button"/>
+
+
+        <Button
+                text="●   My Profile"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handleProfile"
+                styleClass="sidebar-button"/>
+
+
+        <Button
+                text="✓   Task Management"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handleTasks"
+                styleClass="sidebar-button-active"/>
+
+
+        <Button
+                text="★   Performance"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handlePerformance"
+                styleClass="sidebar-button"/>
+
+
+        <Button
+                text="≡   Reports"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handleReports"
+                styleClass="sidebar-button"/>
+
+
+        <Button
+                text="▣   Dashboard"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handleDashboard"
+                styleClass="sidebar-button"/>
+
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+
+        <Button
+                text="↪   Logout"
+                maxWidth="Infinity"
+                alignment="CENTER_LEFT"
+                onAction="#handleLogout"
+                styleClass="logout-button"/>
+
+    </VBox>
+
+</left>
 
 
     <!-- =====================================================

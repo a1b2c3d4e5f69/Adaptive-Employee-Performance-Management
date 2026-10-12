@@ -1132,12 +1132,14 @@ public class EmployeePerformanceController {
         // Current page
     }
 
-
     @FXML
-    private void handleReports() {
+    private void handleReports(
+            ActionEvent event
+    ) {
 
-        System.out.println(
-                "Employee Reports not implemented yet."
+      navigate(
+            event,
+            "/fxml/employee/employeeReport.fxml"
         );
     }
 

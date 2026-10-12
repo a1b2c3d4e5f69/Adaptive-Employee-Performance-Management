@@ -1,0 +1,1562 @@
+package com.aepm.ui.manager;
+
+import com.aepm.logic.kpi.KpiCalculationService;
+import com.aepm.logic.user.UserService;
+
+import com.aepm.model.KpiResult;
+import com.aepm.model.User;
+
+import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.util.SessionManager;
+
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+
+import javafx.event.ActionEvent;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.net.URL;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+public class ManagerReportController {
+
+    // =========================================================
+    // TOP BAR
+    // =========================================================
+
+    @FXML
+    private Label topNameLabel;
+
+    @FXML
+    private Label topRoleLabel;
+
+
+    // =========================================================
+    // FILTERS
+    // =========================================================
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> departmentFilterComboBox;
+
+    @FXML
+    private ComboBox<String> statusFilterComboBox;
+
+    @FXML
+    private DatePicker startDatePicker;
+
+    @FXML
+    private DatePicker endDatePicker;
+
+
+    // =========================================================
+    // TABLE
+    // =========================================================
+
+    @FXML
+    private TableView<ReportRow> reportTable;
+
+    @FXML
+    private TableColumn<ReportRow, String> employeeColumn;
+
+    @FXML
+    private TableColumn<ReportRow, String> departmentColumn;
+
+    @FXML
+    private TableColumn<ReportRow, String> periodColumn;
+
+    @FXML
+    private TableColumn<ReportRow, Number> productivityColumn;
+
+    @FXML
+    private TableColumn<ReportRow, Number> timelinessColumn;
+
+    @FXML
+    private TableColumn<ReportRow, Number> completionColumn;
+
+    @FXML
+    private TableColumn<ReportRow, Number> attendanceColumn;
+
+    @FXML
+    private TableColumn<ReportRow, Number> overallColumn;
+
+    @FXML
+    private TableColumn<ReportRow, String> statusColumn;
+
+
+    // =========================================================
+    // MESSAGE
+    // =========================================================
+
+    @FXML
+    private Label messageLabel;
+
+    @FXML
+    private Label totalRecordsLabel;
+
+    @FXML
+    private Label averageKpiLabel;
+
+    @FXML
+    private Label atRiskCountLabel;
+
+    @FXML
+    private Label normalGoodCountLabel;
+
+
+    // =========================================================
+    // SERVICES
+    // =========================================================
+
+    private final UserService userService =
+            new UserService();
+
+    private final KpiCalculationService calculationService =
+            new KpiCalculationService();
+
+
+    // =========================================================
+    // DATA
+    // =========================================================
+
+    private final ObservableList<ReportRow> allRows =
+            FXCollections.observableArrayList();
+
+    private FilteredList<ReportRow> filteredRows;
+
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern(
+                    "dd MMM yyyy"
+            );
+
+
+    // =========================================================
+    // INITIALIZE
+    // =========================================================
+
+    @FXML
+    public void initialize() {
+
+        loadCurrentManager();
+
+        setupFilters();
+
+        setupTable();
+
+        setupRowOpening();
+
+        hideMessage();
+
+        loadReportData();
+    }
+
+
+    // =========================================================
+    // CURRENT MANAGER
+    // =========================================================
+
+    private void loadCurrentManager() {
+
+        User manager =
+                SessionManager.getCurrentUser();
+
+
+        if (manager == null) {
+
+            topNameLabel.setText(
+                    "Manager"
+            );
+
+            topRoleLabel.setText(
+                    "MANAGER"
+            );
+
+            return;
+        }
+
+
+        String name =
+                manager.getFullName();
+
+
+        if (
+                name == null
+                        || name.isBlank()
+        ) {
+
+            name =
+                    manager.getUsername();
+        }
+
+
+        if (
+                name == null
+                        || name.isBlank()
+        ) {
+
+            name =
+                    "Manager";
+        }
+
+
+        topNameLabel.setText(
+                name
+        );
+
+
+        String employeeId =
+                manager.getEmployeeId();
+
+
+        if (
+                employeeId != null
+                        && !employeeId.isBlank()
+        ) {
+
+            topRoleLabel.setText(
+                    "MANAGER  •  "
+                            + employeeId
+            );
+
+        } else {
+
+            topRoleLabel.setText(
+                    "MANAGER"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // FILTER SETUP
+    // =========================================================
+
+    private void setupFilters() {
+
+        filteredRows =
+                new FilteredList<>(
+                        allRows,
+                        row -> true
+                );
+
+
+        reportTable.setItems(
+                filteredRows
+        );
+
+
+        departmentFilterComboBox
+                .getItems()
+                .add(
+                        "All Departments"
+                );
+
+
+        departmentFilterComboBox
+                .getSelectionModel()
+                .selectFirst();
+
+
+        statusFilterComboBox
+                .getItems()
+                .setAll(
+                        "All Status",
+                        "At Risk",
+                        "Normal",
+                        "Good"
+                );
+
+
+        statusFilterComboBox
+                .getSelectionModel()
+                .selectFirst();
+
+
+        searchField
+                .textProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        departmentFilterComboBox
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        statusFilterComboBox
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        startDatePicker
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+
+
+        endDatePicker
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> applyFilters()
+                );
+    }
+
+
+    // =========================================================
+    // TABLE SETUP
+    // =========================================================
+
+    private void setupTable() {
+
+        employeeColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleStringProperty(
+                                cellData
+                                        .getValue()
+                                        .getEmployeeDisplay()
+                        )
+        );
+
+
+        departmentColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleStringProperty(
+                                safe(
+                                        cellData
+                                                .getValue()
+                                                .getDepartment()
+                                )
+                        )
+        );
+
+
+        periodColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleStringProperty(
+                                formatPeriod(
+                                        cellData
+                                                .getValue()
+                                                .getResult()
+                                                .getEvaluationStartDate(),
+
+                                        cellData
+                                                .getValue()
+                                                .getResult()
+                                                .getEvaluationEndDate()
+                                )
+                        )
+        );
+
+
+        productivityColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleDoubleProperty(
+                                cellData
+                                        .getValue()
+                                        .getResult()
+                                        .getProductivityScore()
+                        )
+        );
+
+
+        timelinessColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleDoubleProperty(
+                                cellData
+                                        .getValue()
+                                        .getResult()
+                                        .getTimelinessScore()
+                        )
+        );
+
+
+        completionColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleDoubleProperty(
+                                cellData
+                                        .getValue()
+                                        .getResult()
+                                        .getCompletionRate()
+                        )
+        );
+
+
+        attendanceColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleDoubleProperty(
+                                cellData
+                                        .getValue()
+                                        .getResult()
+                                        .getAttendanceScore()
+                        )
+        );
+
+
+        overallColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleDoubleProperty(
+                                cellData
+                                        .getValue()
+                                        .getResult()
+                                        .getOverallKpiScore()
+                        )
+        );
+
+
+        statusColumn.setCellValueFactory(
+                cellData ->
+                        new SimpleStringProperty(
+                                safe(
+                                        cellData
+                                                .getValue()
+                                                .getResult()
+                                                .getPerformanceStatus()
+                                )
+                        )
+        );
+
+
+        setupPercentageColumn(
+                productivityColumn
+        );
+
+        setupPercentageColumn(
+                timelinessColumn
+        );
+
+        setupPercentageColumn(
+                completionColumn
+        );
+
+        setupPercentageColumn(
+                attendanceColumn
+        );
+
+        setupPercentageColumn(
+                overallColumn
+        );
+
+
+        reportTable.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
+        );
+    }
+
+
+    private void setupPercentageColumn(
+            TableColumn<ReportRow, Number> column
+    ) {
+
+        column.setCellFactory(
+                tableColumn ->
+                        new TableCell<>() {
+
+                            @Override
+                            protected void updateItem(
+                                    Number value,
+                                    boolean empty
+                            ) {
+
+                                super.updateItem(
+                                        value,
+                                        empty
+                                );
+
+
+                                if (empty) {
+
+                                    setText(
+                                            null
+                                    );
+
+                                    return;
+                                }
+
+
+                                if (value == null) {
+
+                                    setText(
+                                            "-"
+                                    );
+
+                                    return;
+                                }
+
+
+                                setText(
+                                        String.format(
+                                                "%.2f%%",
+                                                value.doubleValue()
+                                        )
+                                );
+                            }
+                        }
+        );
+    }
+
+
+    // =========================================================
+    // ROW CLICK -> POPUP
+    // =========================================================
+
+    private void setupRowOpening() {
+
+        reportTable.setRowFactory(
+                table -> {
+
+                    TableRow<ReportRow> row =
+                            new TableRow<>();
+
+
+                    row.setOnMouseClicked(
+                            event -> {
+
+                                if (
+                                        !row.isEmpty()
+                                                && event.getClickCount() == 1
+                                ) {
+
+                                    openReportPopup(
+                                            row.getItem()
+                                    );
+                                }
+                            }
+                    );
+
+
+                    return row;
+                }
+        );
+    }
+
+
+    // =========================================================
+    // OPEN REPORT POPUP
+    // =========================================================
+
+    private void openReportPopup(
+            ReportRow reportRow
+    ) {
+
+        if (reportRow == null) {
+            return;
+        }
+
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass()
+                                    .getResource(
+                                            "/fxml/manager/managerReportDetail.fxml"
+                                    )
+                    );
+
+
+            Parent root =
+                    loader.load();
+
+
+            ManagerReportDetailController controller =
+                    loader.getController();
+
+
+            Stage popupStage =
+                    new Stage();
+
+
+            controller.setReportData(
+                    reportRow.getEmployee(),
+                    reportRow.getResult(),
+                    popupStage
+            );
+
+
+            Scene scene =
+                    new Scene(
+                            root
+                    );
+
+
+            URL css =
+                    getClass()
+                            .getResource(
+                                    "/css/app.css"
+                            );
+
+
+            if (css != null) {
+
+                scene
+                        .getStylesheets()
+                        .add(
+                                css.toExternalForm()
+                        );
+            }
+
+
+            popupStage.setScene(
+                    scene
+            );
+
+
+            popupStage.setTitle(
+                    "Performance Summary"
+            );
+
+
+            popupStage.initModality(
+                    Modality.WINDOW_MODAL
+            );
+
+
+            popupStage.initOwner(
+                    reportTable
+                            .getScene()
+                            .getWindow()
+            );
+
+
+            popupStage.setResizable(
+                    false
+            );
+
+
+            popupStage.showAndWait();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+
+            showMessage(
+                    "Unable to open performance summary."
+            );
+        }
+    }
+
+
+    // =========================================================
+    // LOAD REPORT DATA
+    // =========================================================
+
+    private void loadReportData() {
+
+        hideMessage();
+
+
+        User manager =
+                SessionManager.getCurrentUser();
+
+
+        if (
+                manager == null
+                        || manager.getUserId() == null
+                        || manager.getUserId().isBlank()
+        ) {
+
+            showMessage(
+                    "Unable to identify the current manager."
+            );
+
+            return;
+        }
+
+
+        String managerId =
+                manager.getUserId();
+
+
+        javafx.concurrent.Task<List<ReportRow>> task =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected List<ReportRow> call()
+                            throws Exception {
+
+                        List<User> users =
+                                userService
+                                        .getAllUsers();
+
+
+                        List<ReportRow> rows =
+                                new ArrayList<>();
+
+
+                        if (users == null) {
+
+                            return rows;
+                        }
+
+
+                        for (User user : users) {
+
+                            if (user == null) {
+                                continue;
+                            }
+
+
+                            if (user.getRoleId() != 3) {
+                                continue;
+                            }
+
+
+                            if (
+                                    !"Active".equalsIgnoreCase(
+                                            user.getAccountStatus()
+                                    )
+                            ) {
+
+                                continue;
+                            }
+
+
+                            String employeeManagerId =
+                                    String.valueOf(
+                                            user.getManagerId()
+                                    );
+
+
+                            if (
+                                    !managerId.equals(
+                                            employeeManagerId
+                                    )
+                            ) {
+
+                                continue;
+                            }
+
+
+                            List<KpiResult> employeeResults =
+                                    calculationService
+                                            .getEmployeeResults(
+                                                    user.getUserId()
+                                            );
+
+
+                            if (employeeResults == null) {
+                                continue;
+                            }
+
+
+                            for (
+                                    KpiResult result
+                                    : employeeResults
+                            ) {
+
+                                rows.add(
+                                        new ReportRow(
+                                                user,
+                                                result
+                                        )
+                                );
+                            }
+                        }
+
+
+                        return rows;
+                    }
+                };
+
+
+        task.setOnSucceeded(
+                event -> {
+
+                    List<ReportRow> rows =
+                            task.getValue();
+
+
+                    allRows.clear();
+
+
+                    if (rows != null) {
+
+                        allRows.addAll(
+                                rows
+                        );
+                    }
+
+
+                    populateDepartmentFilter();
+
+                    applyFilters();
+
+
+                    if (allRows.isEmpty()) {
+
+                        showMessage(
+                                "No performance report data is available."
+                        );
+
+                    } else {
+
+                        hideMessage();
+                    }
+                }
+        );
+
+
+        task.setOnFailed(
+                event -> {
+
+                    Throwable error =
+                            task.getException();
+
+
+                    if (error != null) {
+
+                        error.printStackTrace();
+                    }
+
+
+                    showMessage(
+                            error == null
+                                    ? "Unable to load performance reports."
+                                    : error.getMessage()
+                    );
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        task
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // DEPARTMENT FILTER
+    // =========================================================
+
+    private void populateDepartmentFilter() {
+
+        Set<String> departments =
+                new LinkedHashSet<>();
+
+
+        for (ReportRow row : allRows) {
+
+            String department =
+                    row.getDepartment();
+
+
+            if (
+                    department != null
+                            && !department.isBlank()
+            ) {
+
+                departments.add(
+                        department
+                );
+            }
+        }
+
+
+        departmentFilterComboBox
+                .getItems()
+                .setAll(
+                        "All Departments"
+                );
+
+
+        departmentFilterComboBox
+                .getItems()
+                .addAll(
+                        departments
+                );
+
+
+        departmentFilterComboBox
+                .getSelectionModel()
+                .selectFirst();
+    }
+
+
+    // =========================================================
+    // APPLY FILTERS
+    // =========================================================
+
+    private void applyFilters() {
+
+        String keyword =
+                searchField.getText() == null
+                        ? ""
+                        : searchField
+                        .getText()
+                        .trim()
+                        .toLowerCase();
+
+
+        String department =
+                departmentFilterComboBox
+                        .getValue();
+
+
+        String status =
+                statusFilterComboBox
+                        .getValue();
+
+
+        LocalDate startDate =
+                startDatePicker
+                        .getValue();
+
+
+        LocalDate endDate =
+                endDatePicker
+                        .getValue();
+
+
+        filteredRows.setPredicate(
+                row -> {
+
+                    if (row == null) {
+                        return false;
+                    }
+
+
+                    User employee =
+                            row.getEmployee();
+
+
+                    KpiResult result =
+                            row.getResult();
+
+
+                    if (
+                            employee == null
+                                    || result == null
+                    ) {
+
+                        return false;
+                    }
+
+
+                    boolean matchesSearch =
+                            keyword.isBlank()
+                                    || contains(
+                                    employee.getEmployeeId(),
+                                    keyword
+                            )
+                                    || contains(
+                                    employee.getFullName(),
+                                    keyword
+                            )
+                                    || contains(
+                                    employee.getUsername(),
+                                    keyword
+                            )
+                                    || contains(
+                                    employee.getDepartment(),
+                                    keyword
+                            );
+
+
+                    boolean matchesDepartment =
+                            department == null
+                                    || department.equals(
+                                    "All Departments"
+                            )
+                                    || department.equalsIgnoreCase(
+                                    safe(
+                                            employee.getDepartment()
+                                    )
+                            );
+
+
+                    boolean matchesStatus =
+                            status == null
+                                    || status.equals(
+                                    "All Status"
+                            )
+                                    || status.equalsIgnoreCase(
+                                    result.getPerformanceStatus()
+                            );
+
+
+                    boolean matchesStartDate =
+                            startDate == null
+                                    || (
+                                    result.getEvaluationEndDate() != null
+                                            && !result
+                                            .getEvaluationEndDate()
+                                            .isBefore(
+                                                    startDate
+                                            )
+                            );
+
+
+                    boolean matchesEndDate =
+                            endDate == null
+                                    || (
+                                    result.getEvaluationStartDate() != null
+                                            && !result
+                                            .getEvaluationStartDate()
+                                            .isAfter(
+                                                    endDate
+                                            )
+                            );
+
+
+                    return matchesSearch
+                            && matchesDepartment
+                            && matchesStatus
+                            && matchesStartDate
+                            && matchesEndDate;
+                }
+        );
+
+
+        updateStatistics();
+
+
+        if (
+                filteredRows.isEmpty()
+                        && !allRows.isEmpty()
+        ) {
+
+            showMessage(
+                    "No report records match the selected filters."
+            );
+
+        } else {
+
+            hideMessage();
+        }
+    }
+
+    private void updateStatistics() {
+
+        if (
+                filteredRows == null
+                        || filteredRows.isEmpty()
+        ) {
+
+            totalRecordsLabel.setText(
+                    "0"
+            );
+
+            averageKpiLabel.setText(
+                    "0.00%"
+            );
+
+            atRiskCountLabel.setText(
+                    "0"
+            );
+
+            normalGoodCountLabel.setText(
+                    "0"
+            );
+
+            return;
+        }
+
+
+        int totalRecords =
+                0;
+
+
+        double totalKpi =
+                0.0;
+
+
+        int atRiskCount =
+                0;
+
+
+        int normalGoodCount =
+                0;
+
+
+        for (
+                ReportRow row
+                : filteredRows
+        ) {
+
+            if (
+                    row == null
+                            || row.getResult() == null
+            ) {
+
+                continue;
+            }
+
+
+            KpiResult result =
+                    row.getResult();
+
+
+            totalRecords++;
+
+
+            totalKpi +=
+                    result.getOverallKpiScore();
+
+
+            String performanceStatus =
+                    result.getPerformanceStatus();
+
+
+            if (
+                    "At Risk".equalsIgnoreCase(
+                            performanceStatus
+                    )
+            ) {
+
+                atRiskCount++;
+
+            } else if (
+                    "Normal".equalsIgnoreCase(
+                            performanceStatus
+                    )
+                            || "Good".equalsIgnoreCase(
+                            performanceStatus
+                    )
+            ) {
+
+                normalGoodCount++;
+            }
+        }
+
+
+        double averageKpi =
+                totalRecords == 0
+                        ? 0.0
+                        : totalKpi / totalRecords;
+
+
+        totalRecordsLabel.setText(
+                String.valueOf(
+                        totalRecords
+                )
+        );
+
+
+        averageKpiLabel.setText(
+                String.format(
+                        "%.2f%%",
+                        averageKpi
+                )
+        );
+
+
+        atRiskCountLabel.setText(
+                String.valueOf(
+                        atRiskCount
+                )
+        );
+
+
+        normalGoodCountLabel.setText(
+                String.valueOf(
+                        normalGoodCount
+                )
+        );
+    }
+
+
+    // =========================================================
+    // CLEAR FILTERS
+    // =========================================================
+
+    @FXML
+    private void handleClearFilters() {
+
+        searchField.clear();
+
+
+        departmentFilterComboBox
+                .getSelectionModel()
+                .select(
+                        "All Departments"
+                );
+
+
+        statusFilterComboBox
+                .getSelectionModel()
+                .select(
+                        "All Status"
+                );
+
+
+        startDatePicker.setValue(
+                null
+        );
+
+
+        endDatePicker.setValue(
+                null
+        );
+
+
+        applyFilters();
+    }
+
+
+    // =========================================================
+    // REFRESH
+    // =========================================================
+
+    @FXML
+    private void handleRefresh() {
+
+        loadReportData();
+    }
+
+
+    // =========================================================
+    // NAVIGATION
+    // =========================================================
+
+    @FXML
+    private void handleHome(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/manager/managerHome.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleProfile(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/manager/managerProfile.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleTasks(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/manager/managerTask.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handlePerformance(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/manager/managerPerformance.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleReports() {
+
+        // Current page
+    }
+
+
+    @FXML
+    private void handleDashboard() {
+
+        System.out.println(
+                "Manager Dashboard not implemented yet."
+        );
+    }
+
+
+    @FXML
+    private void handleLogout(
+            ActionEvent event
+    ) {
+
+        SessionManager.clearSession();
+
+
+        navigate(
+                event,
+                "/fxml/auth/login.fxml"
+        );
+    }
+
+
+    // =========================================================
+    // HELPERS
+    // =========================================================
+
+    private boolean contains(
+            String value,
+            String keyword
+    ) {
+
+        return value != null
+                && value
+                .toLowerCase()
+                .contains(
+                        keyword
+                );
+    }
+
+
+    private String formatPeriod(
+            LocalDate start,
+            LocalDate end
+    ) {
+
+        if (
+                start == null
+                        || end == null
+        ) {
+
+            return "-";
+        }
+
+
+        return start.format(
+                DATE_FORMATTER
+        )
+                + " - "
+                + end.format(
+                DATE_FORMATTER
+        );
+    }
+
+
+    private String safe(
+            String value
+    ) {
+
+        return value == null
+                || value.isBlank()
+                ? "-"
+                : value;
+    }
+
+
+    private void showMessage(
+            String value
+    ) {
+
+        messageLabel.setText(
+                value
+        );
+
+        messageLabel.setVisible(
+                true
+        );
+
+        messageLabel.setManaged(
+                true
+        );
+    }
+
+
+    private void hideMessage() {
+
+        messageLabel.setText(
+                ""
+        );
+
+        messageLabel.setVisible(
+                false
+        );
+
+        messageLabel.setManaged(
+                false
+        );
+    }
+
+
+    private void navigate(
+            ActionEvent event,
+            String path
+    ) {
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                path
+        );
+    }
+
+
+    // =========================================================
+    // REPORT ROW
+    // =========================================================
+
+    public static class ReportRow {
+
+        private final User employee;
+
+        private final KpiResult result;
+
+
+        public ReportRow(
+                User employee,
+                KpiResult result
+        ) {
+
+            this.employee =
+                    employee;
+
+            this.result =
+                    result;
+        }
+
+
+        public User getEmployee() {
+
+            return employee;
+        }
+
+
+        public KpiResult getResult() {
+
+            return result;
+        }
+
+
+        public String getDepartment() {
+
+            if (employee == null) {
+
+                return "-";
+            }
+
+
+            return employee.getDepartment();
+        }
+
+
+        public String getEmployeeDisplay() {
+
+            if (employee == null) {
+
+                return "-";
+            }
+
+
+            String employeeId =
+                    employee.getEmployeeId();
+
+
+            if (
+                    employeeId == null
+                            || employeeId.isBlank()
+            ) {
+
+                employeeId =
+                        "-";
+            }
+
+
+            String name =
+                    employee.getFullName();
+
+
+            if (
+                    name == null
+                            || name.isBlank()
+            ) {
+
+                name =
+                        employee.getUsername();
+            }
+
+
+            if (
+                    name == null
+                            || name.isBlank()
+            ) {
+
+                name =
+                        "Employee";
+            }
+
+
+            return employeeId
+                    + " - "
+                    + name;
+        }
+    }
+}

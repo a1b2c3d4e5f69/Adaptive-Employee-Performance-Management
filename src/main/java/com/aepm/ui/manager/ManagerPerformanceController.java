@@ -1806,10 +1806,19 @@ public class ManagerPerformanceController {
 
 
     @FXML
-    private void handleReports() {
+    private void handleReports(
+            ActionEvent event
+    ) {
 
-        System.out.println(
-                "Manager Reports not implemented yet."
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerReport.fxml"
         );
     }
 

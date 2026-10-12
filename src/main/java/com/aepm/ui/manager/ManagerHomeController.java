@@ -115,13 +115,22 @@ public class ManagerHomeController {
         }
 
 
-    @FXML
-    private void handleReports() {
+        @FXML
+        private void handleReports(
+                ActionEvent event
+        ) {
 
-        System.out.println(
-                "Reports not implemented yet."
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerReport.fxml"
         );
-    }
+        }
 
 
     @FXML

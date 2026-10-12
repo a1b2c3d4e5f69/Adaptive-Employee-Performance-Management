@@ -37,6 +37,8 @@ C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\m
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminHomeController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminKpiController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminProfileController.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminReportController.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminReportDetailController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminTaskCategoryController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminTaskController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminTaskDependencyController.java
@@ -55,6 +57,8 @@ C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\m
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\manager\ManagerHomeController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\manager\ManagerPerformanceController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\manager\ManagerProfileController.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\manager\ManagerReportController.java
+C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\manager\ManagerReportDetailController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\manager\ManagerTaskController.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\navigation\NavigationManager.java
 C:\Users\Sook Li\Documents\GitHub\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\util\ManagerTaskEditContext.java
