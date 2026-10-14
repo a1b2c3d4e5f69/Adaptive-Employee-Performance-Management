@@ -90,6 +90,23 @@ public class AdminProfileController {
     // =========================================================
     // INITIALIZE
     // =========================================================
+   @FXML
+   private void handleSystemConfiguration(ActionEvent event) {
+        navigate(event, "/fxml/admin/systemConfiguration.fxml");
+   }
+
+        @FXML
+        private void handleAttendanceManagement(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAttendance.fxml"
+        );
+        }
 
     @FXML
     public void initialize() {

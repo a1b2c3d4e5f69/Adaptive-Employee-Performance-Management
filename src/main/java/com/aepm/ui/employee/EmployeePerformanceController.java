@@ -157,7 +157,18 @@ public class EmployeePerformanceController {
     @FXML
     private Label messageLabel;
 
+    @FXML
+        private void handleAttendance(ActionEvent event) {
 
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/employee/employeeAttendance.fxml"
+        );
+    }
     // =========================================================
     // SERVICES
     // =========================================================

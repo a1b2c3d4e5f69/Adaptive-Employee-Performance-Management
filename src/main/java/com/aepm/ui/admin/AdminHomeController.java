@@ -10,6 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
+
 public class AdminHomeController {
 
     @FXML
@@ -113,9 +119,7 @@ public class AdminHomeController {
 
 
     @FXML
-    private void handleTaskManagement(
-            ActionEvent event
-    ) {
+    private void handleTaskManagement(ActionEvent event) {
 
         navigate(
                 event,
@@ -132,6 +136,62 @@ public class AdminHomeController {
                 "/fxml/admin/adminKpi.fxml"
         );
     }
+
+   @FXML
+   private void handleSystemConfiguration(ActionEvent event) {
+        navigate(event, "/fxml/admin/systemConfiguration.fxml");
+   }
+        
+        
+
+@FXML
+private void handleAttendanceManagement(ActionEvent event) {
+
+    try {
+
+        String accessToken = SessionManager.getAccessToken();
+
+        if (accessToken == null || accessToken.isBlank()) {
+
+            System.err.println(
+                "Attendance: Login session is missing."
+            );
+
+            return;
+        }
+
+        FXMLLoader loader = new FXMLLoader(
+            getClass().getResource(
+                "/fxml/admin/adminAttendance.fxml"
+            )
+        );
+
+        Parent root = loader.load();
+
+        AdminAttendanceController controller =
+                loader.getController();
+
+        controller.setAccessToken(accessToken);
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        stage.getScene().setRoot(root);
+
+        System.out.println(
+            "Attendance Management opened successfully."
+        );
+
+    } catch (Exception e) {
+
+        System.err.println(
+            "Failed to open Attendance Management:"
+        );
+
+        e.printStackTrace();
+    }
+}
 
 
     @FXML

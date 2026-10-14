@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+
+<BorderPane
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="com.aepm.ui.admin.AdminAttendanceController"
+    styleClass="main-layout">
+
+    <!-- ========================================= -->
+    <!-- TOP BAR -->
+    <!-- ========================================= -->
+
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="topbar">
+
+            <padding>
+                <Insets top="16"
+                        right="28"
+                        bottom="16"
+                        left="28"/>
+            </padding>
+
+            <VBox spacing="2">
+                <Label text="Welcome, Administrator"
+                       styleClass="topbar-title"/>
+
+                <Label
+                    text="Adaptive Employee Performance Management System"
+                    styleClass="topbar-subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label text="Administrator"
+                       styleClass="topbar-user-name"/>
+
+                <Label text="ADMINISTRATOR"
+                       styleClass="topbar-user-role"/>
+            </VBox>
+
+        </HBox>
+    </top>
+
+    <!-- ========================================= -->
+    <!-- LEFT SIDEBAR -->
+    <!-- ========================================= -->
+    <left>
+        <VBox
+                prefWidth="240"
+                spacing="10"
+                styleClass="sidebar">
+
+            <padding>
+                <Insets
+                        top="30"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
+            </padding>
+
+            <VBox spacing="3">
+                <Label
+                        text="AEPM"
+                        styleClass="sidebar-logo"/>
+
+                <Label
+                        text="Administrator Portal"
+                        styleClass="sidebar-subtitle"/>
+            </VBox>
+
+            <Region prefHeight="18"/>
+
+            <Label
+                    text="MENU"
+                    styleClass="sidebar-section-title"/>
+
+            <Button
+                    text="⌂   Home"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleHome"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="●   My Profile"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleProfile"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="♟   User Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleUserManagement"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="✓   Task Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="★   KPI Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleKpiManagement"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="⚙   System Configuration"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleSystemConfiguration"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="▦   Attendance Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAttendanceManagement"
+                    styleClass="sidebar-button-active"/>
+
+            <Button
+                    text="≡   Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleReports"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="!   Anonymous Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnonymousReports"
+                    styleClass="sidebar-button"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button
+                    text="↪   Logout"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
+
+        </VBox>
+    </left>
+
+
+    <!-- ========================================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================= -->
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER">
+
+            <VBox spacing="24"
+                  style="-fx-background-color: #F8F9FD;">
+
+                <padding>
+                    <Insets top="32"
+                            right="35"
+                            bottom="35"
+                            left="35"/>
+                </padding>
+
+                <!-- PAGE HEADER -->
+
+                <VBox spacing="5">
+                    <Label text="Attendance Management"
+                           style="-fx-font-size: 24px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #202035;"/>
+
+                    <Label
+                        text="Generate daily attendance QR codes and monitor employee attendance."
+                        style="-fx-font-size: 13px;
+                               -fx-text-fill: #858599;"/>
+                </VBox>
+
+                <!-- DAILY QR CARD -->
+
+                <VBox spacing="18"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 12;
+                             -fx-padding: 24;
+                             -fx-border-color: #E9E9F0;
+                             -fx-border-radius: 12;">
+
+                    <VBox spacing="5">
+                        <Label text="Daily Attendance QR Code"
+                               style="-fx-font-size: 17px;
+                                      -fx-font-weight: bold;
+                                      -fx-text-fill: #202035;"/>
+
+                        <Label
+                            text="Generate today's QR code for employees to check in and check out."
+                            style="-fx-font-size: 12px;
+                                   -fx-text-fill: #858599;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER"
+                          spacing="15">
+
+                        <StackPane prefWidth="300"
+                                   prefHeight="300"
+                                   maxWidth="300"
+                                   maxHeight="300"
+                                   style="-fx-background-color: #FAFAFD;
+                                          -fx-background-radius: 10;
+                                          -fx-border-color: #E9E9F0;
+                                          -fx-border-radius: 10;">
+
+                            <ImageView fx:id="qrImage"
+                                       fitWidth="280"
+                                       fitHeight="280"
+                                       preserveRatio="true"/>
+
+                        </StackPane>
+
+                        <Label fx:id="expiryLabel"
+                               text="No QR Code generated yet."
+                               style="-fx-font-size: 12px;
+                                      -fx-text-fill: #858599;"/>
+
+                        <Button fx:id="generateButton"
+                                text="Generate Today's QR Code"
+                                onAction="#handleGenerateQr"
+                                prefWidth="240"
+                                prefHeight="40"
+                                style="-fx-background-color: #5B5FEF;
+                                       -fx-text-fill: white;
+                                       -fx-font-size: 13px;
+                                       -fx-background-radius: 8;
+                                       -fx-cursor: hand;"/>
+
+                        <Label fx:id="statusLabel"
+                               text="Ready."
+                               wrapText="true"
+                               style="-fx-font-size: 12px;
+                                      -fx-text-fill: #5B5FEF;"/>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ATTENDANCE SUMMARY -->
+                <VBox spacing="18"
+                    maxWidth="Infinity"
+                    styleClass="modern-card">
+
+                    <padding>
+                        <Insets top="24"
+                                right="24"
+                                bottom="24"
+                                left="24"/>
+                    </padding>
+
+                    <Label text="Attendance Summary"
+                        styleClass="modern-section-title"/>
+
+                    <HBox spacing="14" maxWidth="Infinity">
+
+                        <!-- TOTAL EMPLOYEES -->
+                        <HBox alignment="CENTER_LEFT"
+                            spacing="12"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #FAFBFF; -fx-border-color: #E3E8F2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 16;">
+
+                            <Label text="♙"
+                                style="-fx-background-color: #EEEEFF; -fx-text-fill: #5555EF; -fx-font-size: 23px; -fx-padding: 10; -fx-background-radius: 10;"/>
+
+                            <VBox spacing="4">
+                                <Label text="Total Employees"
+                                    style="-fx-text-fill: #667085; -fx-font-size: 13px;"/>
+
+                                <Label fx:id="totalEmployeesLabel"
+                                    text="--"
+                                    style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #152238;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- PRESENT TODAY -->
+                        <HBox alignment="CENTER_LEFT"
+                            spacing="12"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #FAFBFF; -fx-border-color: #E3E8F2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 16;">
+
+                            <Label text="✓"
+                                style="-fx-background-color: #E1F8EE; -fx-text-fill: #08A66A; -fx-font-size: 23px; -fx-padding: 10; -fx-background-radius: 10;"/>
+
+                            <VBox spacing="4">
+                                <Label text="Present Today"
+                                    style="-fx-text-fill: #667085; -fx-font-size: 13px;"/>
+
+                                <Label fx:id="presentTodayLabel"
+                                    text="0"
+                                    style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #152238;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- LATE TODAY -->
+                        <HBox alignment="CENTER_LEFT"
+                            spacing="12"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #FAFBFF; -fx-border-color: #E3E8F2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 16;">
+
+                            <Label text="◷"
+                                style="-fx-background-color: #FFF0DB; -fx-text-fill: #F59E0B; -fx-font-size: 23px; -fx-padding: 10; -fx-background-radius: 10;"/>
+
+                            <VBox spacing="4">
+                                <Label text="Late Today"
+                                    style="-fx-text-fill: #667085; -fx-font-size: 13px;"/>
+
+                                <Label fx:id="lateTodayLabel"
+                                    text="0"
+                                    style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #152238;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- ABSENT TODAY -->
+                        <HBox alignment="CENTER_LEFT"
+                            spacing="12"
+                            HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #FAFBFF; -fx-border-color: #E3E8F2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 16;">
+
+                            <Label text="×"
+                                style="-fx-background-color: #FFE6EA; -fx-text-fill: #E43F5A; -fx-font-size: 23px; -fx-padding: 10; -fx-background-radius: 10;"/>
+
+                            <VBox spacing="4">
+                                <Label text="Absent Today"
+                                    style="-fx-text-fill: #667085; -fx-font-size: 13px;"/>
+
+                                <Label fx:id="absentTodayLabel"
+                                    text="--"
+                                    style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #152238;"/>
+                            </VBox>
+                        </HBox>
+
+                    </HBox>
+                </VBox>
+
+                <!-- ATTENDANCE RECORDS CARD -->
+                <VBox spacing="18"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 12;
+                             -fx-padding: 24;
+                             -fx-border-color: #E9E9F0;
+                             -fx-border-radius: 12;">
+
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="15">
+
+                        <VBox spacing="5">
+                            <Label text="Attendance Records"
+                                   style="-fx-font-size: 17px;
+                                          -fx-font-weight: bold;
+                                          -fx-text-fill: #202035;"/>
+
+                            <Label
+                                text="View employee attendance history."
+                                style="-fx-font-size: 12px;
+                                       -fx-text-fill: #858599;"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button fx:id="refreshButton"
+                                text="Refresh"
+                                onAction="#handleRefreshRecords"
+                                prefWidth="100"
+                                prefHeight="36"
+                                style="-fx-background-color: #EEEEFF;
+                                       -fx-text-fill: #5B5FEF;
+                                       -fx-background-radius: 8;
+                                       -fx-cursor: hand;"/>
+
+                    </HBox>
+
+                    <!-- ATTENDANCE SEARCH AND DATE FILTER -->
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+
+                        <TextField fx:id="employeeSearchField"
+                                promptText="Search Employee ID (e.g. EMP001)"
+                                prefWidth="260"
+                                styleClass="modern-search-field"/>
+
+                        <DatePicker fx:id="attendanceDatePicker"
+                                    promptText="Select Date"
+                                    prefWidth="180"/>
+
+                        <Button text="Search"
+                                onAction="#handleSearchAttendance"
+                                styleClass="modern-primary-button"/>
+
+                        <Button text="Clear"
+                                onAction="#handleClearAttendanceFilter"
+                                styleClass="modern-secondary-button"/>
+
+                    </HBox>
+
+                    <TableView fx:id="recordsTable" maxWidth="Infinity" prefHeight="320">
+                        <columns>
+                            <TableColumn
+                                fx:id="employeeColumn"
+                                text="Employee ID"
+                                prefWidth="240"/>
+
+                            <TableColumn
+                                fx:id="dateColumn"
+                                text="Date"
+                                prefWidth="120"/>
+
+                            <TableColumn
+                                fx:id="checkInColumn"
+                                text="Check In"
+                                prefWidth="170"/>
+
+                            <TableColumn
+                                fx:id="checkOutColumn"
+                                text="Check Out"
+                                prefWidth="170"/>
+
+                            <TableColumn
+                                fx:id="statusColumn"
+                                text="Status"
+                                prefWidth="120"/>
+
+                            <TableColumn
+                                fx:id="overtimeColumn"
+                                text="OT"
+                                prefWidth="100"/>
+                        </columns>
+
+                    </TableView>
+
+                </VBox>
+
+            </VBox>
+
+        </ScrollPane>
+    </center>
+
+</BorderPane>

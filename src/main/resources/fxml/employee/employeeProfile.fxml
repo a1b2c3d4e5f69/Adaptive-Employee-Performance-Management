@@ -162,6 +162,12 @@
                     onAction="#handleKpi"
                     styleClass="sidebar-button"/>
 
+            <Button
+                    text="▦   My Attendance"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleAttendance"
+                    styleClass="modern-nav-button"/>
 
             <!-- REPORTS -->
 

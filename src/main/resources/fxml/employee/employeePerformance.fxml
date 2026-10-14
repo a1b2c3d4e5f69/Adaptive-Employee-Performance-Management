@@ -132,7 +132,6 @@
                     onAction="#handleTasks"
                     styleClass="modern-nav-button"/>
 
-
             <Button
                     text="▥   Performance"
                     alignment="CENTER_LEFT"
@@ -140,6 +139,12 @@
                     onAction="#handleKpi"
                     styleClass="modern-nav-button-active"/>
 
+            <Button
+                    text="▦   My Attendance"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleAttendance"
+                    styleClass="modern-nav-button"/>
 
             <Button
                     text="▤   Reports"

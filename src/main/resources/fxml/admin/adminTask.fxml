@@ -157,6 +157,19 @@
                     onAction="#handleKpiManagement"
                     styleClass="sidebar-button"/>
 
+            <Button
+                    text="⚙   System Configuration"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleSystemConfiguration"
+                    styleClass="sidebar-button"/>
+
+            <Button
+                    text="▦   Attendance Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAttendanceManagement"
+                    styleClass="sidebar-button"/>
 
             <Button
                     text="≡   Reports"

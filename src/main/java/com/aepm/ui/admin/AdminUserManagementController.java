@@ -128,6 +128,20 @@ public class AdminUserManagementController {
     private Button deleteButton;
 
 
+        @FXML
+        private void handleAttendanceManagement(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAttendance.fxml"
+        );
+        }
+
+
     // =========================================================
     // DATA
     // =========================================================
@@ -148,6 +162,10 @@ public class AdminUserManagementController {
     // =========================================================
     // INITIALIZE
     // =========================================================
+   @FXML
+   private void handleSystemConfiguration(ActionEvent event) {
+        navigate(event, "/fxml/admin/systemConfiguration.fxml");
+   }
 
     @FXML
     public void initialize() {

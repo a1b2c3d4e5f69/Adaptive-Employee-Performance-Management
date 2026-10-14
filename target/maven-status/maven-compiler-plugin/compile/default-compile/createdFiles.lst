@@ -2,12 +2,14 @@ com\aepm\logic\user\UserService.class
 com\aepm\util\ValidationUtil.class
 com\aepm\ui\manager\ManagerEditTaskController$2.class
 com\aepm\logic\kpi\KpiConfigService.class
+com\aepm\model\AttendanceQrCode.class
 com\aepm\logic\task\TaskDependencyService.class
 com\aepm\ui\auth\ChangePasswordController$1.class
 com\aepm\ui\employee\EmployeePerformanceController$1.class
 com\aepm\ui\manager\ManagerTaskController$7.class
 com\aepm\data\kpi\PerformanceFeedbackRepository.class
 com\aepm\ui\admin\AdminKpiController$9.class
+com\aepm\data\repository\HolidayRepository.class
 com\aepm\ui\manager\ManagerCreateTaskController$4.class
 com\aepm\ui\admin\AdminTaskDependencyController$1.class
 com\aepm\ui\components\UIHelper.class
@@ -32,6 +34,7 @@ com\aepm\ui\admin\AdminTaskDependencyController$6.class
 com\aepm\ui\admin\AdminUserManagementController$5.class
 com\aepm\ui\admin\AdminKpiController$11.class
 com\aepm\ui\manager\ManagerTaskController$1.class
+com\aepm\model\WorkingHoursConfig.class
 com\aepm\ui\navigation\NavigationManager.class
 com\aepm\model\TaskProgress.class
 com\aepm\model\KpiComponent.class
@@ -41,9 +44,11 @@ com\aepm\ui\admin\AdminTaskDependencyController$3.class
 com\aepm\ui\admin\AdminTaskCategoryController$2.class
 com\aepm\Main.class
 com\aepm\ui\manager\ManagerTaskController$5.class
+com\aepm\ui\admin\SystemConfigurationController.class
 com\aepm\logic\auth\AuthService.class
 com\aepm\ui\admin\AdminCreateUserController.class
 com\aepm\logic\kpi\KpiComponentService.class
+com\aepm\model\AttendanceRecord.class
 com\aepm\model\PerformanceFeedback.class
 com\aepm\ui\admin\AdminKpiController$4.class
 com\aepm\ui\admin\AdminTaskDependencyController.class
@@ -52,6 +57,7 @@ com\aepm\util\SessionManager.class
 com\aepm\ui\admin\AdminKpiController$10.class
 com\aepm\ui\admin\AdminTaskController$1.class
 com\aepm\ui\employee\EmployeeTaskDetailController$1.class
+com\aepm\config\SystemConfigurationService.class
 com\aepm\ui\auth\LoginController$2.class
 com\aepm\ui\employee\EmployeeTaskController$2.class
 com\aepm\ui\admin\AdminTaskDependencyController$7.class
@@ -65,6 +71,7 @@ com\aepm\ui\manager\ManagerTaskController$6.class
 com\aepm\ui\admin\AdminTaskDependencyController$2.class
 com\aepm\ui\manager\ManagerCreateTaskController$5.class
 com\aepm\util\ManagerTaskEditContext.class
+com\aepm\ui\common\AEPMDialog.class
 com\aepm\ui\admin\AdminKpiController$5.class
 com\aepm\ui\manager\ManagerPerformanceController$5.class
 com\aepm\ui\admin\AdminUserManagementController.class
@@ -74,6 +81,7 @@ com\aepm\ui\admin\AdminTaskCategoryController$1.class
 com\aepm\model\TaskDependency.class
 com\aepm\ui\admin\AdminUserManagementController$3.class
 com\aepm\ui\admin\AdminKpiController$2.class
+com\aepm\data\repository\AttendanceRepository.class
 com\aepm\data\task\TaskRepository.class
 com\aepm\model\KpiConfig.class
 com\aepm\ui\admin\AdminTaskDependencyController$5.class
@@ -82,6 +90,7 @@ com\aepm\ui\employee\EmployeeTaskController$3.class
 com\aepm\ui\admin\AdminTaskCategoryController$4.class
 com\aepm\ui\admin\AdminKpiController.class
 com\aepm\ui\manager\ManagerCreateTaskController.class
+com\aepm\model\AttendanceScanResult.class
 com\aepm\model\Task.class
 com\aepm\ui\manager\ManagerTaskController$3.class
 com\aepm\data\kpi\KpiComponentRepository.class
@@ -90,6 +99,7 @@ com\aepm\logic\kpi\KpiCalculationService.class
 com\aepm\ui\employee\EmployeePerformanceController.class
 com\aepm\ui\manager\ManagerHomeController.class
 com\aepm\model\AuthSession.class
+com\aepm\ui\admin\AdminAttendanceController.class
 com\aepm\ui\employee\EmployeeProfileController$1.class
 com\aepm\ui\employee\EmployeeTaskController.class
 com\aepm\ui\manager\ManagerProfileController.class
@@ -103,6 +113,8 @@ com\aepm\ui\auth\RegisterController.class
 com\aepm\ui\admin\AdminKpiController$7.class
 com\aepm\ui\admin\AdminTaskController$7.class
 com\aepm\ui\admin\AdminKpiController$13.class
+com\aepm\ui\employee\EmployeePerformanceController$3.class
+com\aepm\model\Holiday.class
 com\aepm\ui\manager\ManagerProfileController$2.class
 com\aepm\ui\admin\AdminProfileController$1.class
 com\aepm\ui\admin\AdminUserManagementController$1.class
@@ -117,6 +129,7 @@ com\aepm\ui\manager\ManagerTaskController$2.class
 com\aepm\ui\manager\ManagerTaskController$8.class
 com\aepm\logic\task\TaskProgressService.class
 com\aepm\logic\task\TaskCategoryService.class
+com\aepm\data\repository\SystemConfigurationRepository.class
 com\aepm\logic\auth\RegisterService.class
 com\aepm\ui\admin\AdminKpiController$3.class
 com\aepm\ui\auth\LoginController.class
@@ -124,6 +137,7 @@ com\aepm\ui\admin\AdminTaskCategoryController.class
 com\aepm\ui\manager\ManagerPerformanceController$2.class
 com\aepm\data\kpi\KpiConfigRepository.class
 com\aepm\ui\employee\EmployeeTaskController$4.class
+com\aepm\logic\attendance\AttendanceService.class
 com\aepm\ui\admin\AdminTaskDependencyController$4.class
 com\aepm\ui\admin\AdminKpiController$8.class
 com\aepm\model\User.class
@@ -136,4 +150,5 @@ com\aepm\data\repository\UserRepository.class
 com\aepm\data\task\TaskDependencyRepository.class
 com\aepm\ui\manager\ManagerCreateTaskController$2.class
 com\aepm\ui\manager\ManagerPerformanceController.class
+com\aepm\ui\employee\EmployeeAttendanceController.class
 com\aepm\ui\employee\EmployeePerformanceController$2.class

@@ -141,6 +141,12 @@
                     onAction="#handleKpi"
                     styleClass="modern-nav-button"/>
 
+            <Button
+                    text="▦   My Attendance"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleAttendance"
+                    styleClass="modern-nav-button"/>
 
             <Button
                     text="▤   Reports"
