@@ -183,7 +183,15 @@ public class EmployeeHomeController {
                 department
         );
     }
+        @FXML
+        private void handleEscalationRules(ActionEvent event) {
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
+                NavigationManager.navigate(
+                stage,
+                "/fxml/employee/employeeProfile.fxml"
+                );
+        }
 
     // =========================================================
     // HOME

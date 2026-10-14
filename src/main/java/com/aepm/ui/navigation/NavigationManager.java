@@ -1,3 +1,4 @@
+
 package com.aepm.ui.navigation;
 
 import javafx.fxml.FXMLLoader;
@@ -13,72 +14,47 @@ public final class NavigationManager {
     private NavigationManager() {
     }
 
-
-    public static void navigate(
-            Stage stage,
-            String fxmlPath
-    ) {
-
+    public static void navigate(Stage stage, String fxmlPath) {
         try {
-
-            URL resource =
-                    NavigationManager.class
-                            .getResource(fxmlPath);
-
+            URL resource = NavigationManager.class.getResource(fxmlPath);
 
             if (resource == null) {
-
                 throw new IllegalArgumentException(
-                        "FXML file not found: "
-                                + fxmlPath
+                    "FXML file not found: " + fxmlPath
                 );
             }
 
+            FXMLLoader loader = new FXMLLoader(resource);
+            Parent root = loader.load();
 
-            FXMLLoader loader =
-                    new FXMLLoader(resource);
+            Scene scene = stage.getScene();
 
+            if (scene == null) {
+                scene = new Scene(root, 1200, 750);
 
-            Parent root =
-                    loader.load();
+                URL css = NavigationManager.class.getResource("/css/app.css");
 
+                if (css != null) {
+                    scene.getStylesheets().add(css.toExternalForm());
+                }
 
-            Scene scene =
-                    new Scene(
-                            root,
-                            1200,
-                            750
-                    );
-
-
-            URL css =
-                    NavigationManager.class
-                            .getResource(
-                                    "/css/app.css"
-                            );
-
-
-            if (css != null) {
-
-                scene
-                        .getStylesheets()
-                        .add(
-                                css.toExternalForm()
-                        );
+                stage.setScene(scene);
+            } else {
+                scene.setRoot(root);
             }
 
+            if (!stage.isShowing()) {
+                stage.show();
+            }
 
-            stage.setScene(scene);
-
-            stage.centerOnScreen();
-
+            if (!stage.isMaximized()) {
+                stage.setMaximized(true);
+            }
 
         } catch (IOException e) {
-
             throw new RuntimeException(
-                    "Unable to load page: "
-                            + fxmlPath,
-                    e
+                "Unable to load page: " + fxmlPath,
+                e
             );
         }
     }

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ScrollPane?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.aepm.ui.admin.AdminEscalationRulesController"
+            styleClass="main-layout">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
+            <padding><Insets top="16" right="28" bottom="16" left="28"/></padding>
+            <VBox spacing="2">
+                <Label text="Welcome, Administrator" styleClass="topbar-title"/>
+                <Label text="Adaptive Employee Performance Management System" styleClass="topbar-subtitle"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label text="Administrator" styleClass="topbar-user-name"/>
+                <Label text="ADMINISTRATOR" styleClass="topbar-user-role"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <!-- Sidebar width matches existing 240px VBox + 36px horizontal padding. -->
+    <left>
+        <ScrollPane prefWidth="300" minWidth="300" maxWidth="300"
+                    fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    style="-fx-background: white; -fx-background-color: white;">
+            <content>
+                <VBox spacing="10" styleClass="sidebar" maxWidth="Infinity">
+                    <padding><Insets top="30" right="18" bottom="20" left="18"/></padding>
+                    <VBox spacing="3">
+                        <Label text="AEPM" styleClass="sidebar-logo"/>
+                        <Label text="Administrator Portal" styleClass="sidebar-subtitle"/>
+                    </VBox>
+                    <Region prefHeight="18"/>
+                    <Label text="MENU" styleClass="sidebar-section-title"/>
+                    <Button text="⌂   Home" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleHome" styleClass="sidebar-button"/>
+                    <Button text="●   My Profile" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleProfile" styleClass="sidebar-button"/>
+                    <Button text="♟   User Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleUserManagement" styleClass="sidebar-button"/>
+                    <Button text="✓   Task Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleTaskManagement" styleClass="sidebar-button"/>
+                    <Button text="◷   Escalation Rules" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleEscalationRules" styleClass="sidebar-button-active"/>
+                    <Button text="★   KPI Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleKpiManagement" styleClass="sidebar-button"/>
+                    <Button text="⚙   System Configuration" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleSystemConfiguration" styleClass="sidebar-button"/>
+                    <Button text="▦   Attendance Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAttendanceManagement" styleClass="sidebar-button"/>
+                    <Button text="≡   Reports" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleReports" styleClass="sidebar-button"/>
+                    <Button text="!   Anonymous Reports" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAnonymousReports" styleClass="sidebar-button"/>
+                    <Region prefHeight="12"/>
+                    <Button text="↪   Logout" maxWidth="Infinity" alignment="CENTER_LEFT"
+                            onAction="#handleLogout" styleClass="logout-button"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    styleClass="content-scroll-pane">
+            <content>
+                <VBox spacing="22" styleClass="home-content" fillWidth="true">
+                    <padding><Insets top="32" right="35" bottom="40" left="35"/></padding>
+
+                    <VBox spacing="4">
+                        <Label text="Escalation Rules Management" styleClass="content-title"/>
+                        <Label text="Configure automatic deadline escalation policies." styleClass="content-description"/>
+                    </VBox>
+
+                    <!-- Summary cards: populated by controller after Supabase fetch -->
+                    <HBox spacing="14" maxWidth="Infinity">
+                        <VBox spacing="9" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #E2E7F0; -fx-border-radius: 10; -fx-padding: 18;">
+                            <Label fx:id="totalRulesLabel" text="—" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #202035;"/>
+                            <Label text="Total Rules" styleClass="content-description"/>
+                        </VBox>
+                        <VBox spacing="9" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #E2E7F0; -fx-border-radius: 10; -fx-padding: 18;">
+                            <Label fx:id="activeRulesLabel" text="—" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #202035;"/>
+                            <Label text="Active Rules" styleClass="content-description"/>
+                        </VBox>
+                        <VBox spacing="9" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #E2E7F0; -fx-border-radius: 10; -fx-padding: 18;">
+                            <Label fx:id="inactiveRulesLabel" text="—" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #202035;"/>
+                            <Label text="Inactive Rules" styleClass="content-description"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Rules card -->
+                    <VBox spacing="18" maxWidth="Infinity" styleClass="dashboard-card">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <Label text="Escalation Rules" styleClass="card-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="addButton" text="+ Add Rule" onAction="#handleAdd" styleClass="app-button"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <TextField fx:id="searchField" promptText="Search escalation rules..." prefWidth="340"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh" styleClass="app-button"/>
+                        </HBox>
+                        <TableView
+                            fx:id="rulesTable"
+                            prefHeight="280"
+                            maxWidth="Infinity">
+                            <columns>
+                                <TableColumn fx:id="nameColumn" text="Rule Name" prefWidth="185"/>
+                                <TableColumn fx:id="levelColumn" text="Level" prefWidth="70"/>
+                                <TableColumn fx:id="missedColumn" text="Missed Count" prefWidth="115"/>
+                                <TableColumn fx:id="actionColumn" text="Action Type" prefWidth="145"/>
+                                <TableColumn fx:id="extensionColumn" text="Extension Days" prefWidth="125"/>
+                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="110"/>
+                            </columns>
+                            <placeholder><Label text="No escalation rules configured yet."/></placeholder>
+                        </TableView>
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <Button fx:id="editButton" text="Edit Selected"
+                                    onAction="#handleEdit" styleClass="app-button"/>
+                            <Button fx:id="deleteButton" text="Delete Selected"
+                                    onAction="#handleDelete" styleClass="app-button"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="statusLabel" text="Loading escalation rules..."
+                                styleClass="content-description"/>
+                        </HBox>
+
+                        <Separator/>
+
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <VBox spacing="4">
+                                <Label text="Deadline Escalation Testing"
+                                    styleClass="card-title"/>
+                                <Label text="Preview overdue tasks or manually execute escalation rules."
+                                    styleClass="content-description"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="previewEscalationButton"
+                                    text="Preview Escalations"
+                                    onAction="#handlePreviewEscalations"
+                                    styleClass="app-button"/>
+                            <Button fx:id="runEscalationButton"
+                                    text="Run Escalation"
+                                    onAction="#handleRunEscalation"
+                                    styleClass="app-button"/>
+                        </HBox>
+
+                        <Label fx:id="escalationResultLabel"
+                            text="No escalation test has been run."
+                            wrapText="true"
+                            styleClass="content-description"/>
+                    </VBox>
+
+                    <VBox spacing="8" maxWidth="Infinity" styleClass="dashboard-card">
+                        <Label text="How Escalation Works" styleClass="card-title"/>
+                        <Label wrapText="true" maxWidth="Infinity" styleClass="content-description"
+                               text="Rules define what happens when tasks repeatedly miss deadlines. Automatic execution depends on the deadline monitoring service."/>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

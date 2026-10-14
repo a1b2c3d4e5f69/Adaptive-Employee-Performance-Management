@@ -32,6 +32,19 @@ public class AdminHomeController {
     }
 
 
+        @FXML
+        private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+        }
+
+
     private void loadCurrentUser() {
 
         User user =

@@ -19,6 +19,8 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 
 import javafx.stage.Stage;
+import com.aepm.logic.deadline.DeadlineEscalationScheduler;
+import com.aepm.util.SessionManager;
 
 public class LoginController {
 
@@ -169,44 +171,44 @@ public class LoginController {
     }
 
 
-    private void navigateByRole(
-            User user
-    ) {
+    private void navigateByRole(User user) {
 
-        Stage stage =
-                (Stage) loginButton
-                        .getScene()
-                        .getWindow();
+        Stage stage = (Stage) loginButton
+                .getScene()
+                .getWindow();
 
-
-        Role role =
-                user.getRole();
-
+        Role role = user.getRole();
 
         switch (role) {
 
-            case ADMINISTRATOR ->
+                case ADMINISTRATOR -> {
 
-                    NavigationManager.navigate(
-                            stage,
-                            "/fxml/admin/adminHome.fxml"
-                    );
+                NavigationManager.navigate(
+                        stage,
+                        "/fxml/admin/adminHome.fxml"
+                );
 
+                // Start automatic escalation after Admin login.
+                DeadlineEscalationScheduler.getInstance().start(
+                        SessionManager::getAccessToken
+                );
+                }
 
-            case MANAGER ->
+                case MANAGER -> {
 
-                    NavigationManager.navigate(
-                            stage,
-                            "/fxml/manager/managerHome.fxml"
-                    );
+                NavigationManager.navigate(
+                        stage,
+                        "/fxml/manager/managerHome.fxml"
+                );
+                }
 
+                case EMPLOYEE -> {
 
-            case EMPLOYEE ->
-
-                    NavigationManager.navigate(
-                            stage,
-                            "/fxml/employee/employeeHome.fxml"
-                    );
+                NavigationManager.navigate(
+                        stage,
+                        "/fxml/employee/employeeHome.fxml"
+                );
+                }
         }
     }
 

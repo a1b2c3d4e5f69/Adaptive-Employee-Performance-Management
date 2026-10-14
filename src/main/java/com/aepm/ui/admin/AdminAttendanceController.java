@@ -193,6 +193,20 @@ public class AdminAttendanceController {
         navigate(event, "/fxml/auth/login.fxml");
     }
 
+    
+    @FXML
+    private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+    }
+
+
     private void navigate(ActionEvent event, String path) {
 
         Stage stage = (Stage) ((Node) event.getSource())
@@ -287,7 +301,7 @@ public class AdminAttendanceController {
                                 .getAttendanceStatus()
                 )
         );
-        
+
         overtimeColumn.setCellValueFactory(
                 cell -> new SimpleStringProperty(
                         cell.getValue().getFormattedOvertime()

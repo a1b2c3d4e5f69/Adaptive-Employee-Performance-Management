@@ -259,6 +259,18 @@ public class AdminTaskController {
         loadReferenceDataAndTasks();
     }
 
+        @FXML
+        private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+        }
+
 
     // =========================================================
     // CURRENT USER

@@ -1519,6 +1519,18 @@ public class AdminKpiController {
     }
 
 
+        @FXML
+        private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+        }
+
     // =========================================================
     // DELETE CONFIG
     // =========================================================

@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
@@ -87,124 +88,133 @@
          ===================================================== -->
 
     <left>
+        
+        <ScrollPane
+        prefWidth="294"
+        minWidth="294"
+        maxWidth="294"
+        fitToWidth="true"
+        hbarPolicy="NEVER"
+        vbarPolicy="AS_NEEDED"
+        style="-fx-background-color: white; -fx-background: white;">
 
-        <VBox
-                prefWidth="240"
-                spacing="10"
-                styleClass="sidebar">
+                <VBox
+                        prefWidth="240"
+                        spacing="10"
+                        styleClass="sidebar">
 
-            <padding>
+                <padding>
 
-                <Insets
-                        top="30"
-                        right="18"
-                        bottom="20"
-                        left="18"/>
+                        <Insets
+                                top="30"
+                                right="18"
+                                bottom="20"
+                                left="18"/>
 
-            </padding>
+                </padding>
 
 
-            <VBox spacing="3">
+                <VBox spacing="3">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="sidebar-logo"/>
+
+                        <Label
+                                text="Administrator Portal"
+                                styleClass="sidebar-subtitle"/>
+
+                </VBox>
+
+
+                <Region prefHeight="18"/>
+
 
                 <Label
-                        text="AEPM"
-                        styleClass="sidebar-logo"/>
-
-                <Label
-                        text="Administrator Portal"
-                        styleClass="sidebar-subtitle"/>
-
-            </VBox>
+                        text="MENU"
+                        styleClass="sidebar-section-title"/>
 
 
-            <Region prefHeight="18"/>
+                <Button
+                        text="⌂   Home"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleHome"
+                        styleClass="sidebar-button"/>
 
+                <Button
+                        text="●   My Profile"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleProfile"
+                        styleClass="sidebar-button"/>
 
-            <Label
-                    text="MENU"
-                    styleClass="sidebar-section-title"/>
+                <Button
+                        text="♟   User Management"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleUserManagement"
+                        styleClass="sidebar-button"/>
 
+                <Button
+                        text="✓   Task Management"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleTaskManagement"
+                        styleClass="sidebar-button"/>
+                <Button
+                        text="◷   Escalation Rules"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleEscalationRules"
+                        styleClass="sidebar-button"/>
 
-            <Button
-                    text="⌂   Home"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleHome"
-                    styleClass="sidebar-button"/>
+                <Button
+                        text="★   KPI Management"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleKpiManagement"
+                        styleClass="sidebar-button-active"/>
 
+                <Button
+                        text="⚙   System Configuration"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleSystemConfiguration"
+                        styleClass="sidebar-button"/>
 
-            <Button
-                    text="●   My Profile"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleProfile"
-                    styleClass="sidebar-button"/>
+                <Button
+                        text="▦   Attendance Management"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleAttendanceManagement"
+                        styleClass="sidebar-button"/>
 
+                <Button
+                        text="≡   Reports"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleReports"
+                        styleClass="sidebar-button"/>
 
-            <Button
-                    text="♟   User Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleUserManagement"
-                    styleClass="sidebar-button"/>
+                <Button
+                        text="!   Anonymous Reports"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleAnonymousReports"
+                        styleClass="sidebar-button"/>
 
+                <Region VBox.vgrow="ALWAYS"/>
 
-            <Button
-                    text="✓   Task Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleTaskManagement"
-                    styleClass="sidebar-button"/>
+                <Button
+                        text="↪   Logout"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleLogout"
+                        styleClass="logout-button"/>
 
-
-            <Button
-                    text="★   KPI Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleKpiManagement"
-                    styleClass="sidebar-button-active"/>
-            <Button
-                    text="⚙   System Configuration"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleSystemConfiguration"
-                    styleClass="sidebar-button"/>
-
-            <Button
-                    text="▦   Attendance Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAttendanceManagement"
-                    styleClass="sidebar-button"/>
-
-            <Button
-                    text="≡   Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleReports"
-                    styleClass="sidebar-button"/>
-
-
-            <Button
-                    text="!   Anonymous Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnonymousReports"
-                    styleClass="sidebar-button"/>
-
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-
-            <Button
-                    text="↪   Logout"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleLogout"
-                    styleClass="logout-button"/>
-
-        </VBox>
-
+                </VBox>
+        </ScrollPane>
     </left>
 
 

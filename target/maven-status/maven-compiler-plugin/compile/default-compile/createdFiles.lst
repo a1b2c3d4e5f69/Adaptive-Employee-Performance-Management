@@ -47,10 +47,12 @@ com\aepm\ui\manager\ManagerTaskController$5.class
 com\aepm\ui\admin\SystemConfigurationController.class
 com\aepm\logic\auth\AuthService.class
 com\aepm\ui\admin\AdminCreateUserController.class
+com\aepm\logic\deadline\EscalationRuleService.class
 com\aepm\logic\kpi\KpiComponentService.class
 com\aepm\model\AttendanceRecord.class
 com\aepm\model\PerformanceFeedback.class
 com\aepm\ui\admin\AdminKpiController$4.class
+com\aepm\logic\deadline\DeadlineEscalationPreviewService$Candidate.class
 com\aepm\ui\admin\AdminTaskDependencyController.class
 com\aepm\ui\auth\RegisterController$1.class
 com\aepm\util\SessionManager.class
@@ -65,6 +67,8 @@ com\aepm\ui\employee\EmployeeTaskDetailController$TaskAction.class
 com\aepm\model\TaskCategory.class
 com\aepm\ui\admin\AdminUserManagementController$4.class
 com\aepm\data\task\TaskProgressRepository.class
+com\aepm\logic\deadline\DeadlineEscalationScheduler.class
+com\aepm\logic\deadline\DeadlineEscalationService.class
 com\aepm\ui\auth\ChangePasswordController.class
 com\aepm\data\task\TaskCategoryRepository.class
 com\aepm\ui\manager\ManagerTaskController$6.class
@@ -84,6 +88,7 @@ com\aepm\ui\admin\AdminKpiController$2.class
 com\aepm\data\repository\AttendanceRepository.class
 com\aepm\data\task\TaskRepository.class
 com\aepm\model\KpiConfig.class
+com\aepm\model\EscalationRule.class
 com\aepm\ui\admin\AdminTaskDependencyController$5.class
 com\aepm\ui\auth\LoginController$1.class
 com\aepm\ui\employee\EmployeeTaskController$3.class
@@ -102,6 +107,7 @@ com\aepm\model\AuthSession.class
 com\aepm\ui\admin\AdminAttendanceController.class
 com\aepm\ui\employee\EmployeeProfileController$1.class
 com\aepm\ui\employee\EmployeeTaskController.class
+com\aepm\logic\deadline\DeadlineEscalationPreviewService.class
 com\aepm\ui\manager\ManagerProfileController.class
 com\aepm\ui\admin\AdminTaskController$4.class
 com\aepm\ui\admin\AdminTaskController.class
@@ -116,10 +122,12 @@ com\aepm\ui\admin\AdminKpiController$13.class
 com\aepm\ui\employee\EmployeePerformanceController$3.class
 com\aepm\model\Holiday.class
 com\aepm\ui\manager\ManagerProfileController$2.class
+com\aepm\data\repository\EscalationRuleRepository.class
 com\aepm\ui\admin\AdminProfileController$1.class
 com\aepm\ui\admin\AdminUserManagementController$1.class
 com\aepm\ui\manager\ManagerPerformanceController$1.class
 com\aepm\config\AppConfig.class
+com\aepm\data\repository\TaskEscalationRepository.class
 com\aepm\ui\admin\AdminTaskController$5.class
 com\aepm\ui\employee\EmployeeProfileController.class
 com\aepm\logic\kpi\PerformanceFeedbackService.class
@@ -136,8 +144,10 @@ com\aepm\ui\auth\LoginController.class
 com\aepm\ui\admin\AdminTaskCategoryController.class
 com\aepm\ui\manager\ManagerPerformanceController$2.class
 com\aepm\data\kpi\KpiConfigRepository.class
+com\aepm\ui\admin\AdminEscalationRulesController.class
 com\aepm\ui\employee\EmployeeTaskController$4.class
 com\aepm\logic\attendance\AttendanceService.class
+com\aepm\logic\deadline\DeadlineEscalationService$ExecutionResult.class
 com\aepm\ui\admin\AdminTaskDependencyController$4.class
 com\aepm\ui\admin\AdminKpiController$8.class
 com\aepm\model\User.class

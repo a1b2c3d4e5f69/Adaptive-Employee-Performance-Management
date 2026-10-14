@@ -1,50 +1,29 @@
+
 package com.aepm;
 
+import com.aepm.ui.navigation.NavigationManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception {
-
-        FXMLLoader loader =
-                new FXMLLoader(
-                        getClass().getResource(
-                                "/fxml/auth/login.fxml"
-                        )
-                );
-
-        Parent root = loader.load();
-
-        Scene scene =
-                new Scene(
-                        root,
-                        1200,
-                        750
-                );
-
-        scene.getStylesheets().add(
-                getClass()
-                        .getResource(
-                                "/css/app.css"
-                        )
-                        .toExternalForm()
-        );
-
+    public void start(Stage stage) {
         stage.setTitle(
-                "AEPM - Adaptive Employee Performance Management System"
+            "AEPM - Adaptive Employee Performance Management System"
         );
 
         stage.setMinWidth(900);
         stage.setMinHeight(600);
 
-        stage.setScene(scene);
-        stage.centerOnScreen();
-        stage.show();
+        // Open Login page using the same navigation system.
+        NavigationManager.navigate(
+            stage,
+            "/fxml/auth/login.fxml"
+        );
+
+        // Keep the application maximized.
+        stage.setMaximized(true);
     }
 
     public static void main(String[] args) {

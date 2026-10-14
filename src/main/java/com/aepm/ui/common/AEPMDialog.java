@@ -166,10 +166,17 @@ public final class AEPMDialog {
                  + "Please log in again and retry.";
         }
 
+        if (lower.contains("42501")
+                || lower.contains("row-level security policy")) {
+            return "Unable to save this record because the database "
+                + "security policy does not allow this operation.\n\n"
+                + "Please check the Supabase RLS permissions.";
+        }
+
         if (lower.contains("403")
                 || lower.contains("permission denied")) {
-            return "You do not have permission to perform "
-                 + "this action. Please contact the administrator.";
+            return "You do not have permission to perform this action. "
+                + "Please check your account permissions.";
         }
 
         if (lower.contains("duplicate key")
@@ -186,4 +193,135 @@ public final class AEPMDialog {
 
         return message;
     }
+    
+    public static boolean showConfirmation(
+            Window owner, String title, String message) {
+
+        Stage dialog = new Stage();
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+
+        if (owner != null) {
+            dialog.initOwner(owner);
+        }
+
+        dialog.setResizable(false);
+
+        final boolean[] confirmed = {false};
+
+        Label icon = new Label("?");
+        icon.setAlignment(Pos.CENTER);
+        icon.setMinSize(44, 44);
+        icon.setMaxSize(44, 44);
+        icon.setStyle(
+            "-fx-background-color: #DBEAFE;" +
+            "-fx-background-radius: 14;" +
+            "-fx-text-fill: #2563EB;" +
+            "-fx-font-size: 23px;" +
+            "-fx-font-weight: bold;"
+        );
+
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle(
+            "-fx-font-size: 19px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: #111827;"
+        );
+
+        Label subtitle = new Label(
+            "Adaptive Employee Performance Management System"
+        );
+        subtitle.setStyle(
+            "-fx-font-size: 11px;" +
+            "-fx-text-fill: #94A3B8;"
+        );
+
+        VBox heading = new VBox(4, titleLabel, subtitle);
+        HBox header = new HBox(14, icon, heading);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label messageLabel = new Label(message);
+        messageLabel.setWrapText(true);
+        messageLabel.setStyle(
+            "-fx-font-size: 14px;" +
+            "-fx-text-fill: #475569;"
+        );
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setPrefSize(105, 38);
+        cancelButton.setStyle(
+            "-fx-background-color: #F1F5F9;" +
+            "-fx-background-radius: 9;" +
+            "-fx-text-fill: #475569;" +
+            "-fx-font-weight: bold;" +
+            "-fx-cursor: hand;"
+        );
+        cancelButton.setOnAction(e -> dialog.close());
+
+        boolean isDelete = title != null
+            && title.toLowerCase().contains("delete");
+
+        Button confirmButton = new Button(
+            isDelete ? "Delete Rule" : "Confirm"
+        );
+
+        confirmButton.setPrefSize(120, 38);
+        confirmButton.setDefaultButton(true);
+
+        confirmButton.setStyle(
+            "-fx-background-color: "
+            + (isDelete ? "#DC3545" : "#2563EB") + ";"
+            + "-fx-background-radius: 9;"
+            + "-fx-text-fill: white;"
+            + "-fx-font-size: 13px;"
+            + "-fx-font-weight: bold;"
+            + "-fx-cursor: hand;"
+        );
+
+        confirmButton.setOnAction(e -> {
+            confirmed[0] = true;
+            dialog.close();
+        });
+
+
+        HBox footer = new HBox(10, cancelButton, confirmButton);
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox content = new VBox(22, header, messageLabel, footer);
+        content.setPadding(new Insets(28));
+        content.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 16;" +
+            "-fx-border-color: #E2E8F0;" +
+            "-fx-border-radius: 16;"
+        );
+
+        VBox root = new VBox(content);
+        root.setPadding(new Insets(12));
+        root.setStyle("-fx-background-color: transparent;");
+
+        Scene scene = new Scene(root, 500, 245);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        dialog.setScene(scene);
+
+        dialog.setOnShown(e -> {
+            if (owner != null) {
+                dialog.setX(
+                    owner.getX() +
+                    (owner.getWidth() - dialog.getWidth()) / 2
+                );
+                dialog.setY(
+                    owner.getY() +
+                    (owner.getHeight() - dialog.getHeight()) / 2
+                );
+            } else {
+                dialog.centerOnScreen();
+            }
+        });
+
+        dialog.showAndWait();
+        return confirmed[0];
+    }
+
 }

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.List;
 
+
 public class SystemConfigurationController {
 
     @FXML private Label welcomeLabel;
@@ -73,6 +74,24 @@ public class SystemConfigurationController {
                 stage,
                 "/fxml/admin/adminAttendance.fxml"
         );
+    }
+
+    @FXML
+    private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+    }
+
+    @FXML
+    private void handleSystemConfiguration(ActionEvent event) {
+        // Already on System Configuration page.
+        // No navigation needed.
     }
 
     @FXML

@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ScrollPane?>
 
 <BorderPane
     xmlns:fx="http://javafx.com/fxml"
@@ -43,94 +45,117 @@
     </top>
 
     <left>
-        <VBox prefWidth="240"
-              spacing="10"
-              styleClass="sidebar">
+        
+    <ScrollPane
+        prefWidth="294"
+        minWidth="294"
+        maxWidth="294"
+        fitToWidth="true"
+        hbarPolicy="NEVER"
+        vbarPolicy="AS_NEEDED"
+        style="-fx-background-color: white; -fx-background: white;">
 
-            <padding>
-                <Insets top="30" right="18"
-                        bottom="20" left="18"/>
-            </padding>
+            <VBox prefWidth="240"
+                spacing="10"
+                styleClass="sidebar">
 
-            <VBox spacing="3">
-                <Label text="AEPM"
-                       styleClass="sidebar-logo"/>
+                <padding>
+                    <Insets top="30" right="18"
+                            bottom="20" left="18"/>
+                </padding>
 
-                <Label text="Administrator Portal"
-                       styleClass="sidebar-subtitle"/>
-            </VBox>
+                <VBox spacing="3">
+                    <Label text="AEPM"
+                        styleClass="sidebar-logo"/>
 
-            <Region prefHeight="18"/>
+                    <Label text="Administrator Portal"
+                        styleClass="sidebar-subtitle"/>
+                </VBox>
 
-            <Label text="MENU"
-                   styleClass="sidebar-section-title"/>
+                <Region prefHeight="18"/>
 
-            <Button text="⌂   Home"
+                <Label text="MENU"
+                    styleClass="sidebar-section-title"/>
+
+                <Button
+                    text="⌂   Home"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleHome"
                     styleClass="sidebar-button"/>
 
-            <Button text="●   My Profile"
+                <Button
+                    text="●   My Profile"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleProfile"
                     styleClass="sidebar-button"/>
 
-            <Button text="♟   User Management"
+                <Button
+                    text="♟   User Management"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleUserManagement"
                     styleClass="sidebar-button"/>
 
-            <Button text="✓   Task Management"
+                <Button
+                    text="✓   Task Management"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleTaskManagement"
                     styleClass="sidebar-button"/>
+                <Button
+                    text="◷   Escalation Rules"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleEscalationRules"
+                    styleClass="sidebar-button"/>
 
-            <Button text="★   KPI Management"
+                <Button
+                    text="★   KPI Management"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleKpiManagement"
                     styleClass="sidebar-button"/>
 
-            <Button text="⚙   System Configuration"
+                <Button
+                    text="⚙   System Configuration"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
+                    onAction="#handleSystemConfiguration"
                     styleClass="sidebar-button-active"/>
 
-            <Button
+                <Button
                     text="▦   Attendance Management"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleAttendanceManagement"
                     styleClass="sidebar-button"/>
 
-            <Button
+                <Button
                     text="≡   Reports"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleReports"
                     styleClass="sidebar-button"/>
 
-
-            <Button
+                <Button
                     text="!   Anonymous Reports"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleAnonymousReports"
                     styleClass="sidebar-button"/>
 
+                <Region VBox.vgrow="ALWAYS"/>
 
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <Button text="↪   Logout"
+                <Button
+                    text="↪   Logout"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"
                     onAction="#handleLogout"
                     styleClass="logout-button"/>
-        </VBox>
+            </VBox>
+        </ScrollPane>
     </left>
 
     <center>
@@ -143,7 +168,7 @@
 
                 <padding>
                     <Insets top="32" right="35"
-                            bottom="35" left="35"/>
+                            bottom="40" left="35"/>
                 </padding>
 
                 <VBox spacing="4">
@@ -156,9 +181,8 @@
                 </VBox>
 
                 <VBox spacing="18"
-                      styleClass="dashboard-card"
-                      maxWidth="750">
-
+                    styleClass="dashboard-card"
+                    maxWidth="Infinity">
                     <Label text="WORKING HOURS"
                            styleClass="card-label"/>
 
@@ -248,13 +272,10 @@
                             styleClass="content-description"/>
 
                     </VBox>
-
-
-                    
                     <!-- HOLIDAY MANAGEMENT -->
                     <VBox spacing="18"
                         styleClass="dashboard-card"
-                        maxWidth="750">
+                        maxWidth="Infinity">
 
                         <Label text="HOLIDAY MANAGEMENT"
                             styleClass="card-label"/>
