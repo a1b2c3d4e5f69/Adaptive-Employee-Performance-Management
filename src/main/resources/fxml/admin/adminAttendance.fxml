@@ -18,34 +18,34 @@
     <!-- ========================================= -->
 
     <top>
-        <HBox alignment="CENTER_LEFT"
-              spacing="20"
-              styleClass="topbar">
+        <HBox fx:id="notificationTopBar"
+            alignment="CENTER_LEFT"
+            spacing="20"
+            styleClass="topbar">
 
             <padding>
-                <Insets top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
+                <Insets top="16" right="28" bottom="16" left="28"/>
             </padding>
 
             <VBox spacing="2">
-                <Label text="Welcome, Administrator"
-                       styleClass="topbar-title"/>
+                <Label fx:id="welcomeLabel"
+                    text="Welcome"
+                    styleClass="topbar-title"/>
 
-                <Label
-                    text="Adaptive Employee Performance Management System"
+                <Label text="Adaptive Employee Performance Management System"
                     styleClass="topbar-subtitle"/>
             </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
             <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label text="Administrator"
-                       styleClass="topbar-user-name"/>
+                <Label fx:id="topNameLabel"
+                    text=""
+                    styleClass="topbar-user-name"/>
 
-                <Label text="ADMINISTRATOR"
-                       styleClass="topbar-user-role"/>
+                <Label fx:id="topRoleLabel"
+                    text="ADMINISTRATOR"
+                    styleClass="topbar-user-role"/>
             </VBox>
 
         </HBox>

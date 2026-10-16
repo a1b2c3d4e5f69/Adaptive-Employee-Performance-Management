@@ -1,4 +1,3 @@
-
 package com.aepm.logic.deadline;
 
 import com.aepm.config.AppConfig;
@@ -6,7 +5,6 @@ import com.aepm.data.repository.EscalationRuleRepository;
 import com.aepm.data.repository.TaskEscalationRepository;
 import com.aepm.data.supabase.SupabaseClient;
 import com.aepm.model.EscalationRule;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.Instant;
 import java.util.List;
+import com.aepm.data.repository.NotificationRepository;
 
 public class DeadlineEscalationService {
 
@@ -28,6 +27,9 @@ public class DeadlineEscalationService {
 
     private final EscalationRuleRepository ruleRepository =
         new EscalationRuleRepository();
+
+    private final NotificationRepository notificationRepository =
+        new NotificationRepository();
 
     private final SupabaseClient client =
         SupabaseClient.getInstance();
@@ -76,8 +78,221 @@ public class DeadlineEscalationService {
         return rows.isEmpty() ? null : rows.getJSONObject(0);
     }
 
-    public ExecutionResult execute(String token)
+    private String findManagerId(
+            String token,
+            String employeeId
+    ) throws Exception {
+
+        String encodedId = URLEncoder.encode(
+            employeeId,
+            StandardCharsets.UTF_8
+        );
+
+        String url = AppConfig.REST_URL
+            + "/user_tbl"
+            + "?select=manager_id"
+            + "&user_id=eq." + encodedId
+            + "&limit=1";
+
+        HttpRequest request = client
+            .createAuthenticatedRequest(url, token)
+            .GET()
+            .build();
+
+        HttpResponse<String> response =
+            client.getHttpClient().send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+            );
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+
+            throw new Exception(
+                "Unable to load employee manager: "
+                    + response.body()
+            );
+        }
+
+        JSONArray rows = new JSONArray(response.body());
+
+        if (rows.isEmpty()) {
+            return null;
+        }
+
+        JSONObject employee = rows.getJSONObject(0);
+
+        if (employee.isNull("manager_id")) {
+            return null;
+        }
+
+        return employee.getString("manager_id");
+    }
+
+    private boolean managerNotificationExists(
+            String token,
+            String managerId,
+            long escalationId
+    ) throws Exception {
+
+        String url = AppConfig.REST_URL
+            + "/notification_tbl"
+            + "?select=notification_id"
+            + "&recipient_id=eq."
+            + URLEncoder.encode(managerId, StandardCharsets.UTF_8)
+            + "&related_escalation_id=eq." + escalationId
+            + "&limit=1";
+
+        HttpRequest request = client
+            .createAuthenticatedRequest(url, token)
+            .GET()
+            .build();
+
+        HttpResponse<String> response =
+            client.getHttpClient().send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+            );
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+            throw new Exception(
+                "Unable to check manager notification: "
+                    + response.body()
+            );
+        }
+
+        return !new JSONArray(response.body()).isEmpty();
+    }
+
+    public int recoverManagerNotifications(String token)
             throws Exception {
+
+        String url = AppConfig.REST_URL
+            + "/task_escalation_tbl"
+            + "?select=escalation_id,task_id,employee_id"
+            + "&order=escalation_id.desc"
+            + "&limit=500";
+
+        HttpRequest request = client
+            .createAuthenticatedRequest(url, token)
+            .GET()
+            .build();
+
+        HttpResponse<String> response =
+            client.getHttpClient().send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+            );
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+            throw new Exception(
+                "Unable to load escalation history: "
+                    + response.body()
+            );
+        }
+
+        JSONArray history = new JSONArray(response.body());
+        int recovered = 0;
+
+        for (int i = 0; i < history.length(); i++) {
+
+            JSONObject row = history.getJSONObject(i);
+
+            try {
+                long escalationId = row.getLong("escalation_id");
+                String taskId = row.getString("task_id");
+                String employeeId = row.getString("employee_id");
+
+                JSONObject task = loadTask(token, taskId);
+
+                if (task == null
+                        || !task.isNull("completion_date")) {
+                    continue;
+                }
+
+                String status = task.optString(
+                    "task_status", ""
+                );
+
+                if ("Completed".equalsIgnoreCase(status)
+                        || "Cancelled".equalsIgnoreCase(status)) {
+                    continue;
+                }
+
+                // Only recover notifications for tasks
+                // that are currently overdue.
+                if (task.isNull("due_date")) {
+                    continue;
+                }
+
+                Instant dueInstant = OffsetDateTime.parse(
+                    task.getString("due_date")
+                ).toInstant();
+
+                if (!dueInstant.isBefore(Instant.now())) {
+                    continue;
+                }
+
+                String managerId = findManagerId(
+                    token, employeeId
+                );
+
+                if (managerId == null || managerId.isBlank()) {
+                    continue;
+                }
+
+                if (managerNotificationExists(
+                        token, managerId, escalationId)) {
+                    continue;
+                }
+
+                notificationRepository.create(
+                    token,
+                    managerId,
+                    "Employee Task Escalation",
+                    "An assigned employee has an overdue task. "
+                        + "Please review the task and take action.",
+                    "Deadline Escalation",
+                    taskId,
+                    escalationId
+                );
+
+                recovered++;
+
+                System.out.println(
+                    "[Recovery] Manager notification created: "
+                        + managerId
+                        + " / Escalation " + escalationId
+                );
+
+            } catch (Exception ex) {
+                System.err.println(
+                    "[Recovery] Failed: " + ex.getMessage()
+                );
+            }
+        }
+
+        return recovered;
+    }
+
+    public ExecutionResult execute(String token) throws Exception {
+
+        try {
+            int recovered = recoverManagerNotifications(token);
+
+            System.out.println(
+                "[Escalation] Manager notifications recovered: "
+                    + recovered
+            );
+
+        } catch (Exception ex) {
+            System.err.println(
+                "[Escalation] Recovery failed: "
+                    + ex.getMessage()
+            );
+        }
 
         List<DeadlineEscalationPreviewService.Candidate> candidates =
             previewService.preview(token);
@@ -158,7 +373,7 @@ public class DeadlineEscalationService {
                     continue;
                 }
 
-                historyRepository.create(
+                long escalationId = historyRepository.create(
                     token,
                     candidate.taskId(),
                     task.getString("assigned_employee_id"),
@@ -169,6 +384,81 @@ public class DeadlineEscalationService {
                 );
 
                 created++;
+
+                // Create a notification after escalation succeeds.
+                String employeeId = task.getString("assigned_employee_id");
+                String taskTitle = candidate.taskTitle();
+                // 1. Notify Employee
+                try {
+
+                    notificationRepository.create(
+                        token,
+                        employeeId,
+                        "Task Deadline Missed",
+                        "Your task \"" + taskTitle
+                            + "\" has missed its deadline. "
+                            + "Please review and complete it.",
+                        "Deadline Escalation",
+                        candidate.taskId(),
+                        escalationId
+                    );
+
+                    System.out.println(
+                        "[Notification] Employee notified: "
+                            + employeeId
+                    );
+
+                } catch (Exception ex) {
+
+                    System.err.println(
+                        "[Notification] Employee notification failed: "
+                            + ex.getMessage()
+                    );
+                }
+
+                // 2. Notify Manager
+                try {
+
+                    String managerId = findManagerId(
+                        token,
+                        employeeId
+                    );
+
+                    if (managerId != null && !managerId.isBlank()) {
+
+                        notificationRepository.create(
+                            token,
+                            managerId,
+                            "Employee Task Escalation",
+                            "The task \"" + taskTitle
+                                + "\" assigned to your employee "
+                                + "has missed its deadline. "
+                                + "Please review the task.",
+                            "Deadline Escalation",
+                            candidate.taskId(),
+                            escalationId
+                        );
+
+                        System.out.println(
+                            "[Notification] Manager notified: "
+                                + managerId
+                        );
+
+                    } else {
+
+                        System.out.println(
+                            "[Notification] No manager assigned "
+                                + "to employee: " + employeeId
+                        );
+                    }
+
+                } catch (Exception ex) {
+
+                    System.err.println(
+                        "[Notification] Manager notification failed: "
+                            + ex.getMessage()
+                    );
+                }
 
                 System.out.println(
                     "[Escalation] Created: "

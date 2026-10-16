@@ -8,6 +8,7 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AuthRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\EscalationRuleRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\HolidayRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\NotificationRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\SystemConfigurationRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\TaskEscalationRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\UserRepository.java
@@ -23,10 +24,12 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\DeadlineEscalationScheduler.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\DeadlineEscalationService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\EscalationRuleService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\TaskDeadlineReminderService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\kpi\KpiCalculationService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\kpi\KpiComponentService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\kpi\KpiConfigService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\kpi\PerformanceFeedbackService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\notification\NotificationService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\task\TaskCategoryService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\task\TaskDependencyService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\task\TaskProgressService.java
@@ -42,6 +45,7 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\KpiComponent.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\KpiConfig.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\KpiResult.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\Notification.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\PerformanceFeedback.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\Role.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\Task.java
@@ -65,6 +69,8 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\auth\LoginController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\auth\RegisterController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\common\AEPMDialog.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\NotificationBell.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\TaskDetailsDialog.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\UIHelper.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\employee\EmployeeAttendanceController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\employee\EmployeeHomeController.java

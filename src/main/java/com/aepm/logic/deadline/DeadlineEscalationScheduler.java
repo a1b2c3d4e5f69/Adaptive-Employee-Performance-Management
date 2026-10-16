@@ -81,24 +81,59 @@ public final class DeadlineEscalationScheduler {
                 }
             }
 
-            DeadlineEscalationService service =
-                new DeadlineEscalationService();
+            // 1. Send reminders for tasks due today.
+            try {
+                TaskDeadlineReminderService reminderService =
+                    new TaskDeadlineReminderService();
 
-            var result = service.execute(token);
+                var reminderResult =
+                    reminderService.execute(token);
 
-            System.out.println(
-                "[Escalation] Automatic run: Created="
-                    + result.created()
-                    + ", Skipped=" + result.skipped()
-                    + ", Failed=" + result.failed()
-            );
+                System.out.println(
+                    "[Reminder] Automatic run: Sent="
+                        + reminderResult.sent()
+                        + ", Skipped="
+                        + reminderResult.skipped()
+                        + ", Failed="
+                        + reminderResult.failed()
+                );
+
+            } catch (Exception reminderError) {
+                System.err.println(
+                    "[Reminder] Automatic run failed: "
+                        + reminderError.getMessage()
+                );
+            }
+
+            // 2. Process overdue task escalations.
+            try {
+                DeadlineEscalationService escalationService =
+                    new DeadlineEscalationService();
+
+                var result = escalationService.execute(token);
+
+                System.out.println(
+                    "[Escalation] Automatic run: Created="
+                        + result.created()
+                        + ", Skipped="
+                        + result.skipped()
+                        + ", Failed="
+                        + result.failed()
+                );
+
+            } catch (Exception escalationError) {
+                System.err.println(
+                    "[Escalation] Automatic run failed: "
+                        + escalationError.getMessage()
+                );
+            }
 
         } catch (Exception ex) {
-
             System.err.println(
-                "[Escalation] Automatic run failed: "
+                "[Deadline Scheduler] Error: "
                     + ex.getMessage()
             );
         }
     }
+
 }

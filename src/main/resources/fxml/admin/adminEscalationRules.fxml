@@ -8,23 +8,31 @@
             fx:controller="com.aepm.ui.admin.AdminEscalationRulesController"
             styleClass="main-layout">
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
+        <HBox fx:id="notificationTopBar"
+            alignment="CENTER_LEFT"
+            spacing="20"
+            styleClass="topbar">
             <padding><Insets top="16" right="28" bottom="16" left="28"/></padding>
             <VBox spacing="2">
-                <Label text="Welcome, Administrator" styleClass="topbar-title"/>
+                <Label fx:id="welcomeLabel" text="Welcome" styleClass="topbar-title"/>
                 <Label text="Adaptive Employee Performance Management System" styleClass="topbar-subtitle"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label text="Administrator" styleClass="topbar-user-name"/>
-                <Label text="ADMINISTRATOR" styleClass="topbar-user-role"/>
+                <Label fx:id="topNameLabel"
+                    text=""
+                    styleClass="topbar-user-name"/>
+
+                <Label fx:id="topRoleLabel"
+                    text="ADMINISTRATOR"
+                    styleClass="topbar-user-role"/>
             </VBox>
         </HBox>
     </top>
 
     <!-- Sidebar width matches existing 240px VBox + 36px horizontal padding. -->
     <left>
-        <ScrollPane prefWidth="300" minWidth="300" maxWidth="300"
+        <ScrollPane prefWidth="294" minWidth="294" maxWidth="294"
                     fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
                     style="-fx-background: white; -fx-background-color: white;">
             <content>

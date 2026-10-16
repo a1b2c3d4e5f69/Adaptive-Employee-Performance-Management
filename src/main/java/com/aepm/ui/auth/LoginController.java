@@ -19,8 +19,6 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 
 import javafx.stage.Stage;
-import com.aepm.logic.deadline.DeadlineEscalationScheduler;
-import com.aepm.util.SessionManager;
 
 public class LoginController {
 
@@ -183,31 +181,26 @@ public class LoginController {
 
                 case ADMINISTRATOR -> {
 
-                NavigationManager.navigate(
-                        stage,
-                        "/fxml/admin/adminHome.fxml"
-                );
-
-                // Start automatic escalation after Admin login.
-                DeadlineEscalationScheduler.getInstance().start(
-                        SessionManager::getAccessToken
-                );
+                        NavigationManager.navigate(
+                                stage,
+                                "/fxml/admin/adminHome.fxml"
+                        );
                 }
 
                 case MANAGER -> {
 
-                NavigationManager.navigate(
-                        stage,
-                        "/fxml/manager/managerHome.fxml"
-                );
+                        NavigationManager.navigate(
+                                stage,
+                                "/fxml/manager/managerHome.fxml"
+                        );
                 }
 
                 case EMPLOYEE -> {
 
-                NavigationManager.navigate(
-                        stage,
-                        "/fxml/employee/employeeHome.fxml"
-                );
+                        NavigationManager.navigate(
+                                stage,
+                                "/fxml/employee/employeeHome.fxml"
+                        );
                 }
         }
     }

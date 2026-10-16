@@ -318,6 +318,10 @@ public class TaskRepository {
                                 url,
                                 accessToken
                         )
+                        .header(
+                                "Prefer",
+                                "return=representation"
+                        )
                         .method(
                                 "PATCH",
                                 HttpRequest.BodyPublishers.ofString(
@@ -340,6 +344,12 @@ public class TaskRepository {
                 response,
                 "Unable to update task status"
         );
+        if (new JSONArray(response.body()).isEmpty()) {
+                throw new IllegalStateException(
+                        "Task status was not updated. " +
+                        "Please check task permissions or RLS policies."
+                );
+        }
     }
 
 
@@ -410,6 +420,10 @@ public class TaskRepository {
                                 url,
                                 accessToken
                         )
+                        .header(
+                                "Prefer",
+                                "return=representation"
+                        )
                         .method(
                                 "PATCH",
                                 HttpRequest.BodyPublishers.ofString(
@@ -432,6 +446,13 @@ public class TaskRepository {
                 response,
                 "Unable to update task progress"
         );
+
+        if (new JSONArray(response.body()).isEmpty()) {
+                throw new IllegalStateException(
+                        "Task progress was not updated. " +
+                        "Please check task permissions or RLS policies."
+                );
+        }
     }
 
 

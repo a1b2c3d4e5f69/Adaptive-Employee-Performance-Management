@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import com.aepm.ui.components.NotificationBell;
 
 public class ManagerHomeController {
 
@@ -24,6 +25,8 @@ public class ManagerHomeController {
     @FXML
     private Label roleLabel;
 
+    @FXML
+    private NotificationBell notificationBell;
 
     @FXML
     public void initialize() {

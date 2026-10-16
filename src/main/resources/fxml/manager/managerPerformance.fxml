@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -253,12 +254,31 @@
                                 text="Select Employee"
                                 styleClass="modern-section-title"/>
 
+                        <!-- EMPLOYEE SEARCH -->
+                        <HBox spacing="12" alignment="CENTER_LEFT">
 
+                        <TextField
+                                fx:id="employeeSearchField"
+                                promptText="Search employee by name or ID"
+                                prefWidth="280"/>
+
+                        <ComboBox
+                                fx:id="departmentFilterComboBox"
+                                promptText="All Departments"
+                                prefWidth="200"/>
+
+                        <Button
+                                text="Clear"
+                                onAction="#handleClearEmployeeFilters"
+                                styleClass="modern-nav-button"/>
+
+                        </HBox>
+
+                        <!-- EMPLOYEE SELECTION -->
                         <ComboBox
                                 fx:id="employeeComboBox"
                                 promptText="Select employee"
                                 prefWidth="360"/>
-
 
                         <Label
                                 fx:id="employeeInfoLabel"
@@ -524,7 +544,24 @@
                                     styleClass="modern-page-subtitle"/>
 
                         </VBox>
+                        
+                        <HBox spacing="12" alignment="CENTER_LEFT">
 
+                        <Label
+                                text="Filter by Status:"
+                                styleClass="input-label"/>
+
+                        <ComboBox
+                                fx:id="statusFilterComboBox"
+                                promptText="All Status"
+                                prefWidth="180"/>
+
+                        <Button
+                                text="Clear Filter"
+                                onAction="#handleClearPerformanceFilter"
+                                styleClass="modern-nav-button"/>
+
+                        </HBox>
 
                         <TableView
                                 fx:id="historyTable"

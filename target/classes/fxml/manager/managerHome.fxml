@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import com.aepm.ui.components.NotificationBell?>
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
@@ -50,6 +51,7 @@
 
 
             <Region HBox.hgrow="ALWAYS"/>
+            <NotificationBell fx:id="notificationBell"/>
 
 
             <VBox

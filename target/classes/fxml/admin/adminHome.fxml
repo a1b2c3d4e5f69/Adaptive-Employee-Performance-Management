@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ScrollPane?>
+<?import com.aepm.ui.components.NotificationBell?>
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
@@ -47,12 +48,14 @@
             </VBox>
 
 
-            <Region HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS"/>
 
+                <!-- Notification Bell -->
+                <NotificationBell/>
 
             <VBox
-                    alignment="CENTER_RIGHT"
-                    spacing="2">
+                alignment="CENTER_RIGHT"
+                spacing="2">    
 
                 <Label
                         fx:id="topNameLabel"

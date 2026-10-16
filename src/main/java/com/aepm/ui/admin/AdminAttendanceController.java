@@ -327,6 +327,20 @@ public class AdminAttendanceController {
                 "-fx-cursor: default;"
         );
 
+        Platform.runLater(() -> {
+
+            String token = SessionManager.getAccessToken();
+
+            if (token == null || token.isBlank()) {
+                statusLabel.setText(
+                    "Session expired. Please login again."
+                );
+                return;
+            }
+
+            setAccessToken(token);
+        });
+
     }
 
     // =====================================================
@@ -386,6 +400,8 @@ public class AdminAttendanceController {
         generateButton.setText("Loading...");
         statusLabel.setText("Checking today's QR Code...");
 
+        long startTime = System.currentTimeMillis();
+
         CompletableFuture.supplyAsync(() -> {
             try {
                 return attendanceService.getTodayQrCode(token);
@@ -394,6 +410,12 @@ public class AdminAttendanceController {
             }
         }).whenComplete((qrCode, error) -> {
 
+            long duration = System.currentTimeMillis() - startTime;
+
+            System.out.println(
+                "[Attendance] QR Code query took "
+                    + duration + " ms"
+            );
             Platform.runLater(() -> {
 
                 if (error != null) {
