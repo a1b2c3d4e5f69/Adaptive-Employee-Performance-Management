@@ -170,6 +170,36 @@ public final class TaskDetailsDialog {
                     System.out.println("[DEBUG] Escalation Query Result: " + events);
                 }
 
+                if (isEmployee) {
+                    try {
+                        JSONArray decisions = getRows(
+                            token,
+                            AppConfig.REST_URL + "/task_escalation_tbl"
+                                + "?select=escalation_id,current_level,status,"
+                                + "manager_decision,follow_up_note,decided_at,"
+                                + "previous_deadline,new_deadline"
+                                + "&task_id=eq." + enc(taskId)
+                                + "&order=escalation_id.desc"
+                                + "&limit=1"
+                        );
+
+                        if (!decisions.isEmpty()) {
+                            escalation = decisions.getJSONObject(0);
+                        }
+
+                        System.out.println(
+                            "[Employee Escalation] " + decisions
+                        );
+
+                    } catch (Exception ex) {
+                        System.err.println(
+                            "[Employee Escalation] Lookup failed: "
+                                + ex.getMessage()
+                        );
+                    }
+                }
+
+
                 return new JSONObject[]{task, employee, escalation};
             }
         };
@@ -180,7 +210,12 @@ public final class TaskDetailsDialog {
                 card.getChildren().setAll(label("Task not found or access is not permitted.", 13, MUTED, false));
                 return;
             }
+
             populate(card, result[0], result[1], isManager);
+
+            if (isEmployee && result[2] != null) {
+                addEmployeeDecision(card, result[2]);
+            }
 
             if (isManager) {
                 addManagerActions(
@@ -296,6 +331,104 @@ public final class TaskDetailsDialog {
         }
     }
 
+    private static void addEmployeeDecision(
+            VBox card,
+            JSONObject escalation) {
+
+        int level = escalation.optInt("current_level", 0);
+
+        String decision = escalation.optString(
+            "manager_decision", ""
+        );
+
+        if (decision.isBlank()
+                || "null".equalsIgnoreCase(decision)) {
+            decision = "Pending";
+        }
+
+        String note = escalation.optString(
+            "follow_up_note", ""
+        );
+
+        // Use the same style as the existing Task Details.
+        VBox panel = new VBox(10);
+        panel.setPadding(new Insets(14));
+
+        panel.setStyle(
+            "-fx-background-color: #F0F6FF;"
+            + "-fx-background-radius: 12;"
+            + "-fx-border-color: #D5E4FA;"
+            + "-fx-border-radius: 12;"
+        );
+
+        panel.getChildren().add(
+            sectionLabel("MANAGER ESCALATION REVIEW")
+        );
+
+        GridPane info = grid();
+
+        info.add(
+            infoCard("Escalation Level", "Level " + level),
+            0, 0
+        );
+
+        info.add(
+            infoCard("Manager Decision", decision),
+            1, 0
+        );
+
+        panel.getChildren().add(info);
+
+        if (level == 2) {
+            Label explanation = label(
+                "Adjustment Planned".equalsIgnoreCase(decision)
+                    ? "Your manager has proposed reducing task complexity. "
+                        + "The task has not been automatically modified."
+                    : "Your manager has reviewed the escalation.",
+                12, MUTED, false
+            );
+
+            explanation.setWrapText(true);
+            panel.getChildren().add(explanation);
+        }
+
+        panel.getChildren().add(
+            sectionLabel("MANAGER FOLLOW-UP NOTE")
+        );
+
+        Label noteValue = label(
+            note.isBlank() || "null".equalsIgnoreCase(note)
+                ? "No follow-up note provided."
+                : note,
+            13, "#273D60", false
+        );
+
+        noteValue.setWrapText(true);
+        noteValue.setMaxWidth(Double.MAX_VALUE);
+        noteValue.setPadding(new Insets(12));
+
+        noteValue.setStyle(
+            "-fx-background-color: #FBFCFE;"
+            + "-fx-background-radius: 10;"
+            + "-fx-border-color: #E3EAF4;"
+            + "-fx-border-radius: 10;"
+            + "-fx-text-fill: #273D60;"
+            + "-fx-font-size: 13px;"
+        );
+
+        panel.getChildren().add(noteValue);
+
+        // populate() order:
+        // 0 = Task title
+        // 1 = Description
+        // 2 = Task Information
+        // Insert between Description and Task Information.
+        card.getChildren().add(
+            Math.min(2, card.getChildren().size()),
+            panel
+        );
+    }
+
     private static void addManagerActions( VBox card, JSONObject task, JSONObject employee, JSONObject escalation, Long escalationId, String taskId, String token, Dialog<Void> dialog) {
         if (escalationId == null || escalation == null) {
             card.getChildren().add(notePanel("No linked escalation was found. Manager actions are unavailable."));
@@ -362,6 +495,19 @@ public final class TaskDetailsDialog {
         Button ack = actionButton("Acknowledge", "#E7EEFF");
         Button reject = actionButton("Reject Extension", "#F8EDEB");
         Button approve = actionButton("Approve Extension", "#E5F3EB");
+        Button adjust = actionButton("Apply Adjustment", "#E5F3EB");
+        Button keep = actionButton("Keep Current Task", "#F8EDEB");
+        Button resolveRisk = actionButton(
+            "Resolve Risk Alert", "#E5F3EB"
+        );
+
+        resolveRisk.setStyle(
+            resolveRisk.getStyle()
+                + "-fx-text-fill: #26734D;"
+        );
+
+        adjust.setStyle(adjust.getStyle() + "-fx-text-fill: #26734D;");
+        keep.setStyle(keep.getStyle() + "-fx-text-fill: #A4574C;");
 
         save.setStyle(save.getStyle() + "-fx-text-fill: #334B70;");
         ack.setStyle(ack.getStyle() + "-fx-text-fill: #315DC5;");
@@ -371,6 +517,26 @@ public final class TaskDetailsDialog {
         boolean pendingLevelOne = level == 1 && decision.isBlank()
             && "active".equalsIgnoreCase(status);
 
+        boolean pendingLevelTwo = level == 2
+            && decision.isBlank()
+            && "active".equalsIgnoreCase(status);
+
+        boolean pendingLevelThree =
+            level == 3
+            && "active".equalsIgnoreCase(status);
+
+        resolveRisk.setVisible(pendingLevelThree);
+        resolveRisk.setManaged(pendingLevelThree);
+        resolveRisk.setDisable(!pendingLevelThree);
+
+        adjust.setVisible(pendingLevelTwo);
+        adjust.setManaged(pendingLevelTwo);
+        adjust.setDisable(!pendingLevelTwo);
+
+        keep.setVisible(pendingLevelTwo);
+        keep.setManaged(pendingLevelTwo);
+        keep.setDisable(!pendingLevelTwo);
+
         boolean canApprove = pendingLevelOne && days > 0;
         approve.setVisible(pendingLevelOne);
         approve.setManaged(pendingLevelOne);
@@ -379,7 +545,7 @@ public final class TaskDetailsDialog {
         reject.setManaged(pendingLevelOne);
         ack.setDisable(acknowledged);
 
-        FlowPane actions = new FlowPane(8, 8, save, ack, reject, approve);
+        FlowPane actions = new FlowPane( 8, 8, save, ack, reject, approve, adjust, keep, resolveRisk);
         actions.setAlignment(Pos.CENTER_LEFT);
 
         management.getChildren().addAll(noteTitle, note, feedback, actions);
@@ -422,6 +588,34 @@ public final class TaskDetailsDialog {
             taskName, employeeName, originalDeadline, extensionDays
         ));
 
+        adjust.setOnAction(e -> confirmAndExecute(
+            "Apply Adjustment",
+            "adjust", escalationId,
+            note.getText(), token, feedback, actions, dialog,
+            taskName, employeeName, originalDeadline, extensionDays
+        ));
+
+        keep.setOnAction(e -> confirmAndExecute(
+            "Keep Current Task",
+            "keep", escalationId,
+            note.getText(), token, feedback, actions, dialog,
+            taskName, employeeName, originalDeadline, extensionDays
+        ));
+
+        resolveRisk.setOnAction(e -> confirmAndExecute(
+            "Resolve Performance Risk Alert",
+            "resolve",
+            escalationId,
+            note.getText(),
+            token,
+            feedback,
+            actions,
+            dialog,
+            taskName,
+            employeeName,
+            originalDeadline,
+            extensionDays
+        ));
     }
 
     private static Label notePanel(String text) {
@@ -459,6 +653,14 @@ public final class TaskDetailsDialog {
             return;
         }
 
+        if (("adjust".equals(action) || "keep".equals(action) || "resolve".equals(action)) && (note == null || note.isBlank())) {
+
+            feedback.setText(
+                "Please enter a follow-up note before confirming."
+            );
+            return;
+        }
+
         Dialog<ButtonType> confirm = new Dialog<>();
         confirm.setTitle("Confirm Manager Action");
         confirm.setHeaderText(null);
@@ -476,13 +678,23 @@ public final class TaskDetailsDialog {
         );
 
         String explanation = switch (action) {
+            case "adjust" ->
+                "Record a plan to reduce task complexity. "
+                + "This will resolve Level 2, but will not automatically "
+                + "modify the task.";
+
+            case "keep" ->
+                "Keep the current task unchanged and resolve "
+                + "this Level 2 escalation.";
             case "approve" ->
                 "Approve a " + extensionDays
                 + "-day extension. The new deadline is calculated by Supabase.";
             case "reject" ->
                 "Reject the extension request. The task deadline will remain unchanged.";
             case "acknowledge" ->
-                "Mark this escalation as acknowledged. You can still approve or reject later.";
+                "Mark this escalation as acknowledged. " + "You can still make a manager decision later.";
+            case "resolve" -> 
+                "Confirm that you have reviewed the Level 3 " + "performance risk and recorded your follow-up action. " + "This resolves the risk alert, but does not " + "complete the task or change its deadline.";
             default ->
                 "Save this follow-up note. This will not finalize the extension decision.";
         };
@@ -513,7 +725,7 @@ public final class TaskDetailsDialog {
             );
         }
 
-        if ("approve".equals(action) || "reject".equals(action)) {
+        if ("approve".equals(action)|| "reject".equals(action)|| "adjust".equals(action)|| "keep".equals(action)) {
             Label warning = label(
                 "This decision cannot be changed after confirmation.",
                 12, "#A45B13", true
@@ -582,9 +794,20 @@ public final class TaskDetailsDialog {
                 );
 
                 SupabaseClient client = SupabaseClient.getInstance();
+                boolean isLevelTwoAction =
+                    "adjust".equals(action) || "keep".equals(action);
+
+                String rpcName;
+                if ("resolve".equals(action)) {
+                    rpcName = "manager_handle_level3_escalation";
+                } else if (isLevelTwoAction) {
+                    rpcName = "manager_handle_level2_escalation";
+                } else {
+                    rpcName = "manager_handle_escalation";
+                }
 
                 HttpRequest request = client.createAuthenticatedRequest(
-                    AppConfig.REST_URL + "/rpc/manager_handle_escalation",
+                    AppConfig.REST_URL + "/rpc/" + rpcName,
                     token
                 )
                 .header("Content-Type", "application/json")
@@ -612,7 +835,7 @@ public final class TaskDetailsDialog {
 
                 if (rows.isEmpty()) {
                     throw new Exception(
-                        "No result returned from manager_handle_escalation"
+                        "No result returned from " + rpcName
                     );
                 }
 
@@ -675,9 +898,12 @@ public final class TaskDetailsDialog {
         );
 
         String heading = switch (action) {
+            case "adjust" -> "Adjustment Plan Recorded";
+            case "keep" -> "Task Kept Unchanged";
             case "approve" -> "Extension Approved Successfully";
             case "reject" -> "Extension Rejected Successfully";
             case "acknowledge" -> "Escalation Acknowledged";
+            case "resolve" -> "Performance Risk Alert Resolved";
             default -> "Follow-up Note Saved";
         };
 
@@ -698,6 +924,41 @@ public final class TaskDetailsDialog {
             content.getChildren().add(
                 infoCard("Deadline (Unchanged, MYT)", resultingDeadline)
             );
+        
+        } else if ("adjust".equals(action)) {
+
+            Label message = label(
+                "The Level 2 adjustment plan has been recorded. "
+                + "The employee has been notified.",
+                12, MUTED, false
+            );
+
+            message.setWrapText(true);
+            content.getChildren().add(message);
+
+        } else if ("resolve".equals(action)) {
+
+            Label message = label(
+                "The Level 3 performance risk has been reviewed "
+                + "and resolved. The task remains unchanged.",
+                12, MUTED, false
+            );
+
+            message.setWrapText(true);
+            content.getChildren().add(message);
+            message.setMaxWidth(Double.MAX_VALUE);
+            message.setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+            
+        }else if ("keep".equals(action)) {
+
+            Label message = label(
+                "Level 2 has been resolved without changing the task. "
+                + "The employee has been notified.",
+                12, MUTED, false
+            );
+
+            message.setWrapText(true);
+            content.getChildren().add(message);
 
         } else if ("acknowledge".equals(action)) {
             Label message = label(

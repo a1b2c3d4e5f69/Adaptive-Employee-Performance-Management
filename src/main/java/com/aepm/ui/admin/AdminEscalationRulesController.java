@@ -19,6 +19,19 @@ import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import com.aepm.ui.common.AEPMDialog;
 
+import com.aepm.config.AppConfig;
+import com.aepm.data.supabase.SupabaseClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.net.URLEncoder;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
 public class AdminEscalationRulesController {
     @FXML private TextField searchField;
     @FXML private Label totalRulesLabel;
@@ -39,6 +52,42 @@ public class AdminEscalationRulesController {
     @FXML private Button previewEscalationButton;
     @FXML private Button runEscalationButton;
     @FXML private Label escalationResultLabel;
+
+    @FXML private HBox rulesSummary;
+    @FXML private VBox rulesCard;
+    @FXML private VBox rulesHelpCard;
+    @FXML private VBox riskHistoryCard;
+
+    @FXML private Button rulesTabButton;
+    @FXML private Button riskTabButton;
+
+    @FXML private TextField riskSearchField;
+    @FXML private ComboBox<String> riskStatusFilter;
+    @FXML private Button riskRefreshButton;
+    @FXML private Label riskCountLabel;
+
+    @FXML private TableView<RiskRecord> riskTable;
+
+    @FXML private TableColumn<RiskRecord, Number> riskIdColumn;
+    @FXML private TableColumn<RiskRecord, String> riskTaskColumn;
+    @FXML private TableColumn<RiskRecord, String> riskEmployeeColumn;
+    @FXML private TableColumn<RiskRecord, String> riskDepartmentColumn;
+    @FXML private TableColumn<RiskRecord, String> riskDecisionColumn;
+    @FXML private TableColumn<RiskRecord, String> riskStatusColumn;
+
+    private final ObservableList<RiskRecord> allRisks =
+        FXCollections.observableArrayList();
+
+    private record RiskRecord(
+        long id,
+        String task,
+        String employee,
+        String department,
+        String status,
+        String decision,
+        String note,
+        String decidedAt
+    ) {}
 
 
     private final EscalationRuleService service =
@@ -81,6 +130,42 @@ public class AdminEscalationRulesController {
                 );
             }
         );
+        riskIdColumn.setCellValueFactory(c ->
+            new ReadOnlyObjectWrapper<Number>(c.getValue().id()));
+
+        riskTaskColumn.setCellValueFactory(c ->
+            new ReadOnlyStringWrapper(c.getValue().task()));
+
+        riskEmployeeColumn.setCellValueFactory(c ->
+            new ReadOnlyStringWrapper(c.getValue().employee()));
+
+        riskDepartmentColumn.setCellValueFactory(c ->
+            new ReadOnlyStringWrapper(c.getValue().department()));
+
+        riskDecisionColumn.setCellValueFactory(c ->
+            new ReadOnlyStringWrapper(c.getValue().decision()));
+
+        riskStatusColumn.setCellValueFactory(c ->
+            new ReadOnlyStringWrapper(c.getValue().status()));
+
+        riskTable.setColumnResizePolicy(
+            TableView.CONSTRAINED_RESIZE_POLICY
+        );
+
+        riskStatusFilter.getItems().setAll(
+            "All Status", "Active", "Resolved"
+        );
+        riskStatusFilter.setValue("All Status");
+
+        riskSearchField.textProperty().addListener(
+            (obs, oldValue, newValue) -> applyRiskFilters()
+        );
+
+        riskStatusFilter.valueProperty().addListener(
+            (obs, oldValue, newValue) -> applyRiskFilters()
+        );
+
+        handleRulesTab();
         handleRefresh();
     }
     private void updateRuleCounts() {
@@ -543,6 +628,401 @@ public class AdminEscalationRulesController {
             "Operation Successful",
             message
         );
+    }
+
+    // ===== READ-ONLY PERFORMANCE RISK HISTORY =====
+    @FXML
+    private void handleRulesTab() {
+        setRiskMode(false);
+    }
+
+    @FXML
+    private void handleRiskTab() {
+        setRiskMode(true);
+        handleRiskRefresh();
+    }
+
+    private void setRiskMode(boolean riskMode) {
+
+        rulesSummary.setVisible(!riskMode);
+        rulesSummary.setManaged(!riskMode);
+
+        rulesCard.setVisible(!riskMode);
+        rulesCard.setManaged(!riskMode);
+
+        rulesHelpCard.setVisible(!riskMode);
+        rulesHelpCard.setManaged(!riskMode);
+
+        riskHistoryCard.setVisible(riskMode);
+        riskHistoryCard.setManaged(riskMode);
+
+        String active =
+            "-fx-background-color:#2563EB;" +
+            "-fx-text-fill:white;" +
+            "-fx-font-weight:bold;" +
+            "-fx-background-radius:8;" +
+            "-fx-padding:11 20;";
+
+        String inactive =
+            "-fx-background-color:#F8FAFD;" +
+            "-fx-text-fill:#2563EB;" +
+            "-fx-font-weight:bold;" +
+            "-fx-border-color:#DCE5F2;" +
+            "-fx-border-radius:8;" +
+            "-fx-background-radius:8;" +
+            "-fx-padding:11 20;";
+
+        rulesTabButton.setStyle(riskMode ? inactive : active);
+        riskTabButton.setStyle(riskMode ? active : inactive);
+    }
+
+    private void applyRiskFilters() {
+
+        String query = riskSearchField.getText() == null
+            ? ""
+            : riskSearchField.getText().trim().toLowerCase();
+
+        String status = riskStatusFilter.getValue();
+
+        List<RiskRecord> visible = allRisks.stream()
+
+            .filter(r ->
+                query.isEmpty()
+                || r.task().toLowerCase().contains(query)
+                || r.employee().toLowerCase().contains(query)
+                || r.department().toLowerCase().contains(query)
+            )
+
+            .filter(r ->
+                status == null
+                || "All Status".equals(status)
+                || status.equalsIgnoreCase(r.status())
+            )
+
+            .toList();
+
+        riskTable.setItems(
+            FXCollections.observableArrayList(visible)
+        );
+
+        riskCountLabel.setText(
+            visible.size() + " record(s)"
+        );
+    }
+
+    private JSONArray fetchRiskRows(
+        String token,
+        String path
+    ) throws Exception {
+
+        if (token == null || token.isBlank()) {
+            throw new IllegalStateException(
+                "Please log in again."
+            );
+        }
+
+        HttpRequest request = SupabaseClient.getInstance()
+            .createAuthenticatedRequest(
+                AppConfig.REST_URL + path,
+                token
+            )
+            .GET()
+            .build();
+
+        HttpResponse<String> response =
+            SupabaseClient.getInstance()
+                .getHttpClient()
+                .send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+                );
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+
+            throw new IllegalStateException(
+                "Supabase HTTP "
+                + response.statusCode()
+                + ": "
+                + response.body()
+            );
+        }
+
+        return new JSONArray(response.body());
+    }
+
+    private String encoded(String value) {
+        return URLEncoder.encode(
+            value,
+            StandardCharsets.UTF_8
+        );
+    }
+
+    @FXML
+    private void handleRiskRefresh() {
+
+        riskRefreshButton.setDisable(true);
+        riskCountLabel.setText("Loading...");
+
+        Thread worker = new Thread(() -> {
+
+            try {
+
+                String token =
+                    SessionManager.getAccessToken();
+
+                JSONArray rows = fetchRiskRows(
+                    token,
+                    "/task_escalation_tbl"
+                    + "?select=escalation_id,task_id,employee_id,"
+                    + "current_level,status,manager_decision,"
+                    + "follow_up_note,decided_at"
+                    + "&current_level=eq.3"
+                    + "&order=escalation_id.desc"
+                    + "&limit=500"
+                );
+
+                List<RiskRecord> records =
+                    new ArrayList<>();
+
+                for (int i = 0; i < rows.length(); i++) {
+
+                    JSONObject row = rows.getJSONObject(i);
+
+                    String task = "-";
+                    String employee = "-";
+                    String department = "-";
+
+                    String taskId =
+                        row.optString("task_id", "");
+
+                    if (!taskId.isBlank()) {
+
+                        JSONArray tasks = fetchRiskRows(
+                            token,
+                            "/task_tbl?select=task_title"
+                            + "&task_id=eq."
+                            + encoded(taskId)
+                            + "&limit=1"
+                        );
+
+                        if (tasks.length() > 0) {
+                            task = tasks.getJSONObject(0)
+                                .optString("task_title", "-");
+                        }
+                    }
+
+                    String employeeId =
+                        row.optString("employee_id", "");
+
+                    if (!employeeId.isBlank()) {
+
+                        JSONArray employees = fetchRiskRows(
+                            token,
+                            "/user_tbl"
+                            + "?select=full_name,employee_id,department"
+                            + "&user_id=eq."
+                            + encoded(employeeId)
+                            + "&limit=1"
+                        );
+
+                        if (employees.length() > 0) {
+
+                            JSONObject user =
+                                employees.getJSONObject(0);
+
+                            employee =
+                                user.optString("full_name", "-");
+
+                            String staffId =
+                                user.optString("employee_id", "");
+
+                            if (!staffId.isBlank()) {
+                                employee += " (" + staffId + ")";
+                            }
+
+                            department =
+                                user.optString("department", "-");
+                        }
+                    }
+
+                    records.add(new RiskRecord(
+                        row.getLong("escalation_id"),
+                        task,
+                        employee,
+                        department,
+                        row.optString("status", "-"),
+                        row.optString("manager_decision", "Pending"),
+                        row.optString("follow_up_note", ""),
+                        row.optString("decided_at", "-")
+                    ));
+                }
+
+                Platform.runLater(() -> {
+
+                    allRisks.setAll(records);
+                    applyRiskFilters();
+
+                    riskRefreshButton.setDisable(false);
+                });
+
+            } catch (Exception ex) {
+
+                ex.printStackTrace();
+
+                Platform.runLater(() -> {
+
+                    riskRefreshButton.setDisable(false);
+
+                    riskCountLabel.setText(
+                        "Unable to load risk history."
+                    );
+
+                    AEPMDialog.showError(
+                        riskTable.getScene().getWindow(),
+                        "Performance Risk History",
+                        ex.getMessage()
+                    );
+                });
+            }
+
+        }, "admin-risk-history-load");
+
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    @FXML
+    private void handleRiskDetails() {
+
+        RiskRecord selected =
+            riskTable.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+
+            AEPMDialog.showError(
+                riskTable.getScene().getWindow(),
+                "Performance Risk History",
+                "Please select a risk record."
+            );
+
+            return;
+        }
+
+        Dialog<Void> dialog = new Dialog<>();
+
+        dialog.setTitle(
+            "Performance Risk #" + selected.id()
+        );
+
+        dialog.getDialogPane()
+            .getButtonTypes()
+            .add(ButtonType.CLOSE);
+
+        VBox content = new VBox(14);
+        content.setPadding(new Insets(22));
+
+        content.setStyle(
+            "-fx-background-color:white;"
+        );
+
+        Label heading =
+            new Label("Performance Risk Details");
+
+        heading.setStyle(
+            "-fx-font-size:21px;" +
+            "-fx-font-weight:bold;" +
+            "-fx-text-fill:#10264A;"
+        );
+
+        content.getChildren().add(heading);
+
+        String[][] details = {
+            {"Risk ID", "#" + selected.id()},
+            {"Task", selected.task()},
+            {"Employee", selected.employee()},
+            {"Department", selected.department()},
+            {"Escalation Level", "Level 3"},
+            {"Status", selected.status()},
+            {"Manager Decision", selected.decision()},
+            {"Decision Time", selected.decidedAt()}
+        };
+
+        for (String[] detail : details) {
+
+            VBox field = new VBox(5);
+
+            Label label = new Label(detail[0]);
+
+            label.setStyle(
+                "-fx-text-fill:#647DA3;" +
+                "-fx-font-size:12px;"
+            );
+
+            Label value = new Label(detail[1]);
+
+            value.setWrapText(true);
+
+            value.setStyle(
+                "-fx-text-fill:#10264A;" +
+                "-fx-font-weight:bold;"
+            );
+
+            field.getChildren().addAll(label, value);
+
+            field.setStyle(
+                "-fx-background-color:#F8FAFD;" +
+                "-fx-border-color:#E0E8F5;" +
+                "-fx-border-radius:8;" +
+                "-fx-background-radius:8;" +
+                "-fx-padding:12;"
+            );
+
+            content.getChildren().add(field);
+        }
+
+        Label noteHeading =
+            new Label("MANAGER FOLLOW-UP NOTE");
+
+        noteHeading.setStyle(
+            "-fx-text-fill:#647DA3;" +
+            "-fx-font-weight:bold;"
+        );
+
+        Label note = new Label(
+            selected.note().isBlank()
+                ? "No follow-up note provided."
+                : selected.note()
+        );
+
+        note.setWrapText(true);
+
+        content.getChildren().addAll(
+            noteHeading,
+            note
+        );
+
+        Label policy = new Label(
+            "Risk history only — no automatic score deduction."
+        );
+
+        policy.setWrapText(true);
+
+        policy.setStyle(
+            "-fx-text-fill:#64748B;"
+        );
+
+        content.getChildren().add(policy);
+
+        ScrollPane scroll = new ScrollPane(content);
+
+        scroll.setFitToWidth(true);
+        scroll.setPrefViewportHeight(560);
+
+        dialog.getDialogPane().setContent(scroll);
+        dialog.getDialogPane().setPrefWidth(620);
+
+        dialog.showAndWait();
     }
 
     // ===== SIDEBAR NAVIGATION =====

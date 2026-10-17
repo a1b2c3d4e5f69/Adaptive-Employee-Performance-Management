@@ -64,6 +64,7 @@
                         styleClass="topbar-user-name"/>
 
                 <Label
+                        fx:id="topRoleLabel"
                         text="MANAGER"
                         styleClass="topbar-user-role"/>
 
@@ -149,6 +150,14 @@
                     onAction="#handleTaskManagement"
                     styleClass="sidebar-button"/>
 
+            <!-- DEADLINE ESCALATION -->
+
+            <Button
+                    text="◷   Deadline Escalation"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleDeadlineEscalation"
+                    styleClass="sidebar-button"/>
 
             <!-- PERFORMANCE -->
 

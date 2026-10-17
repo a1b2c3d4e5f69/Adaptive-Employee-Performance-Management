@@ -14,6 +14,9 @@ import com.aepm.ui.components.NotificationBell;
 public class ManagerHomeController {
 
     @FXML
+    private Label topRoleLabel;
+    
+    @FXML
     private Label welcomeLabel;
 
     @FXML
@@ -30,7 +33,7 @@ public class ManagerHomeController {
 
     @FXML
     public void initialize() {
-
+        updateManagerRoleLabel();
         User user =
                 SessionManager.getCurrentUser();
 
@@ -66,6 +69,14 @@ public class ManagerHomeController {
     // =========================================================
     // HOME
     // =========================================================
+    @FXML
+    private void handleDeadlineEscalation() {
+        Stage stage = (Stage) departmentLabel.getScene().getWindow();    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
 
     @FXML
     private void handleHome() {
@@ -172,5 +183,22 @@ public class ManagerHomeController {
                 stage,
                 path
         );
+    }
+
+    private void updateManagerRoleLabel() {
+        User manager = SessionManager.getCurrentUser();
+
+        if (manager == null) {
+                topRoleLabel.setText("MANAGER");
+                return;
+        }
+
+        String managerId = manager.getEmployeeId();
+
+        if (managerId != null && !managerId.isBlank()) {
+                topRoleLabel.setText("MANAGER  •  " + managerId);
+        } else {
+                topRoleLabel.setText("MANAGER");
+        }
     }
 }

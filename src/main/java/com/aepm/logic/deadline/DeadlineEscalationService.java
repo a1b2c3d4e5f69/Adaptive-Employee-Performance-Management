@@ -129,6 +129,116 @@ public class DeadlineEscalationService {
         return employee.getString("manager_id");
     }
 
+    private List<String> findActiveAdminIds(String token) throws Exception {
+
+        // AEPM: Administrator role_id = 1
+        String url = AppConfig.REST_URL
+            + "/user_tbl"
+            + "?select=user_id"
+            + "&role_id=eq.1"
+            + "&account_status=eq.Active";
+
+        HttpRequest request = client
+            .createAuthenticatedRequest(url, token)
+            .GET()
+            .build();
+
+        HttpResponse<String> response =
+            client.getHttpClient().send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+            );
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+
+            throw new Exception(
+                "Unable to load administrators: "
+                    + response.statusCode()
+                    + " " + response.body()
+            );
+        }
+
+        JSONArray rows = new JSONArray(response.body());
+
+        List<String> adminIds = new java.util.ArrayList<>();
+
+        for (int i = 0; i < rows.length(); i++) {
+            String adminId = rows.getJSONObject(i)
+                .optString("user_id", "");
+
+            if (!adminId.isBlank()) {
+                adminIds.add(adminId);
+            }
+        }
+
+        return adminIds;
+    }
+
+
+    private void notifyAdminsForLevel3(
+            String token,
+            String taskId,
+            String taskTitle,
+            String employeeId,
+            long escalationId
+    ) throws Exception {
+
+        List<String> adminIds = findActiveAdminIds(token);
+
+        for (String adminId : adminIds) {
+
+            try {
+                String eventKey =
+                    "escalation:admin:"
+                        + adminId
+                        + ":"
+                        + escalationId;
+
+                String title =
+                    "Level 3 - Employee Performance Risk";
+
+                String message =
+                    "Performance Risk Alert: Task \""
+                        + taskTitle
+                        + "\" has reached Level 3. "
+                        + "The employee has repeatedly missed "
+                        + "the task deadline. "
+                        + "Please review the employee's "
+                        + "performance risk history.";
+
+                boolean inserted = notificationRepository.createOnce(
+                    token,
+                    adminId,
+                    title,
+                    message,
+                    "Deadline Escalation",
+                    taskId,
+                    escalationId,
+                    eventKey
+                );
+
+                if (inserted) {
+                    System.out.println(
+                        "[Notification] Admin notified: "
+                            + adminId
+                            + " / Escalation "
+                            + escalationId
+                    );
+                }
+
+            } catch (Exception ex) {
+
+                System.err.println(
+                    "[Notification] Admin notification failed: "
+                        + adminId
+                        + " / "
+                        + ex.getMessage()
+                );
+            }
+        }
+    }
+
     private boolean managerNotificationExists(
             String token,
             String managerId,
@@ -165,12 +275,13 @@ public class DeadlineEscalationService {
         return !new JSONArray(response.body()).isEmpty();
     }
 
-    public int recoverManagerNotifications(String token)
-            throws Exception {
+    public int recoverManagerNotifications(String token) throws Exception {
 
         String url = AppConfig.REST_URL
             + "/task_escalation_tbl"
-            + "?select=escalation_id,task_id,employee_id"
+            + "?select=escalation_id,task_id,employee_id,"
+            + "current_level,previous_deadline,status"
+            + "&status=eq.Active"
             + "&order=escalation_id.desc"
             + "&limit=500";
 
@@ -235,6 +346,18 @@ public class DeadlineEscalationService {
                     continue;
                 }
 
+                if (row.isNull("previous_deadline")) {
+                    continue;
+                }
+
+                Instant escalationDeadline = OffsetDateTime.parse(
+                    row.getString("previous_deadline")
+                ).toInstant();
+
+                if (!escalationDeadline.equals(dueInstant)) {
+                    continue;
+                }
+
                 String managerId = findManagerId(
                     token, employeeId
                 );
@@ -248,24 +371,41 @@ public class DeadlineEscalationService {
                     continue;
                 }
 
-                notificationRepository.create(
+                boolean isLevel3 = row.optInt("current_level", 0) == 3;
+                String eventKey = "escalation:manager:" + managerId + ":" + escalationId;
+
+                String title = isLevel3
+                    ? "Level 3 - Employee Performance Risk"
+                    : "Employee Task Escalation";
+
+                String message = isLevel3
+                    ? "Performance Risk Alert: An employee's task remains "
+                        + "overdue after the Level 2 follow-up period. "
+                        + "Please review the performance risk."
+                    : "An assigned employee has an overdue task. "
+                        + "Please review the task and take action.";
+
+                boolean inserted = notificationRepository.createOnce(
                     token,
                     managerId,
-                    "Employee Task Escalation",
-                    "An assigned employee has an overdue task. "
-                        + "Please review the task and take action.",
+                    title,
+                    message,
                     "Deadline Escalation",
                     taskId,
-                    escalationId
+                    escalationId,
+                    eventKey
                 );
 
-                recovered++;
 
-                System.out.println(
-                    "[Recovery] Manager notification created: "
-                        + managerId
-                        + " / Escalation " + escalationId
-                );
+                if (inserted) {
+                    recovered++;
+
+                    System.out.println(
+                        "[Recovery] Manager notification created: "
+                            + managerId
+                            + " / Escalation " + escalationId
+                    );
+                }
 
             } catch (Exception ex) {
                 System.err.println(
@@ -307,17 +447,10 @@ public class DeadlineEscalationService {
         for (var candidate : candidates) {
 
             try {
-                // Phase 2 only supports Reminder.
-                if (!"Reminder".equalsIgnoreCase(
-                        candidate.actionType())) {
-                    skipped++;
-                    continue;
-                }
-
                 EscalationRule rule = rules.stream()
                     .filter(r -> r.ruleId() == candidate.ruleId())
                     .filter(r -> "Active".equalsIgnoreCase(r.status()))
-                    .filter(r -> r.missedDeadlineCount() == 1)
+                    .filter(r -> r.missedDeadlineCount() == candidate.level()  && r.escalationLevel() == candidate.level())
                     .findFirst()
                     .orElse(null);
 
@@ -379,7 +512,7 @@ public class DeadlineEscalationService {
                     task.getString("assigned_employee_id"),
                     candidate.ruleId(),
                     rule.escalationLevel(),
-                    1,
+                    candidate.level(),
                     deadline
                 );
 
@@ -390,17 +523,33 @@ public class DeadlineEscalationService {
                 String taskTitle = candidate.taskTitle();
                 // 1. Notify Employee
                 try {
+                    String employeeEventKey =
+                        "escalation:employee:" + escalationId;
 
-                    notificationRepository.create(
+                    boolean isLevel3 = candidate.level() == 3;
+
+                    String employeeTitle = isLevel3
+                        ? "Level 3 Performance Risk Alert"
+                        : "Task Deadline Missed";
+
+                    String employeeMessage = isLevel3
+                        ? "Your task \"" + taskTitle
+                            + "\" remains overdue 48 hours after "
+                            + "the Level 2 manager review. "
+                            + "Please take immediate action."
+                        : "Your task \"" + taskTitle
+                            + "\" has missed its deadline. "
+                            + "Please review and complete it.";
+
+                    notificationRepository.createOnce(
                         token,
                         employeeId,
-                        "Task Deadline Missed",
-                        "Your task \"" + taskTitle
-                            + "\" has missed its deadline. "
-                            + "Please review and complete it.",
+                        employeeTitle,
+                        employeeMessage,
                         "Deadline Escalation",
                         candidate.taskId(),
-                        escalationId
+                        escalationId,
+                        employeeEventKey
                     );
 
                     System.out.println(
@@ -409,34 +558,52 @@ public class DeadlineEscalationService {
                     );
 
                 } catch (Exception ex) {
-
                     System.err.println(
                         "[Notification] Employee notification failed: "
                             + ex.getMessage()
                     );
                 }
 
+                
                 // 2. Notify Manager
                 try {
-
                     String managerId = findManagerId(
-                        token,
-                        employeeId
+                        token, employeeId
                     );
 
                     if (managerId != null && !managerId.isBlank()) {
 
-                        notificationRepository.create(
-                            token,
-                            managerId,
-                            "Employee Task Escalation",
-                            "The task \"" + taskTitle
+                        String managerEventKey =
+                            "escalation:manager:"
+                            + managerId + ":" + escalationId;
+
+                        boolean isLevel3 = candidate.level() == 3;
+
+                        String managerTitle = isLevel3
+                            ? "Level 3 - Employee Performance Risk"
+                            : "Employee Task Escalation";
+
+                        String managerMessage = isLevel3
+                            ? "Performance Risk Alert: The task \""
+                                + taskTitle
+                                + "\" remains overdue 48 hours after "
+                                + "the Level 2 manager decision. "
+                                + "Please review the employee's "
+                                + "performance risk."
+                            : "The task \"" + taskTitle
                                 + "\" assigned to your employee "
                                 + "has missed its deadline. "
-                                + "Please review the task.",
+                                + "Please review the task.";
+
+                        notificationRepository.createOnce(
+                            token,
+                            managerId,
+                            managerTitle,
+                            managerMessage,
                             "Deadline Escalation",
                             candidate.taskId(),
-                            escalationId
+                            escalationId,
+                            managerEventKey
                         );
 
                         System.out.println(
@@ -445,7 +612,6 @@ public class DeadlineEscalationService {
                         );
 
                     } else {
-
                         System.out.println(
                             "[Notification] No manager assigned "
                                 + "to employee: " + employeeId
@@ -453,11 +619,32 @@ public class DeadlineEscalationService {
                     }
 
                 } catch (Exception ex) {
-
                     System.err.println(
                         "[Notification] Manager notification failed: "
                             + ex.getMessage()
                     );
+                }
+
+                // 3. Notify Admin only for Level 3 Performance Risk
+                if (candidate.level() == 3) {
+
+                    try {
+
+                        notifyAdminsForLevel3(
+                            token,
+                            candidate.taskId(),
+                            taskTitle,
+                            employeeId,
+                            escalationId
+                        );
+
+                    } catch (Exception ex) {
+
+                        System.err.println(
+                            "[Notification] Level 3 Admin notification failed: "
+                                + ex.getMessage()
+                        );
+                    }
                 }
 
                 System.out.println(

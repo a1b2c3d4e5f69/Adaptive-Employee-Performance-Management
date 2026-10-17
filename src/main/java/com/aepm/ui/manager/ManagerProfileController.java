@@ -30,6 +30,9 @@ import java.nio.file.Path;
 public class ManagerProfileController {
 
     @FXML
+    private Label topRoleLabel;
+    
+    @FXML
     private Label welcomeLabel;
 
     @FXML
@@ -83,8 +86,20 @@ public class ManagerProfileController {
 
 
     @FXML
-    public void initialize() {
+    private void handleDeadlineEscalation(ActionEvent event) {    
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
 
+    @FXML
+    public void initialize() {
+        updateManagerRoleLabel();
         UIHelper.hideMessage(
                 messageLabel
         );
@@ -103,6 +118,23 @@ public class ManagerProfileController {
         loadProfile();
     }
 
+
+    private void updateManagerRoleLabel() {
+        User manager = SessionManager.getCurrentUser();
+
+        if (manager == null) {
+                topRoleLabel.setText("MANAGER");
+                return;
+        }
+
+        String managerId = manager.getEmployeeId();
+
+        if (managerId != null && !managerId.isBlank()) {
+                topRoleLabel.setText("MANAGER  •  " + managerId);
+        } else {
+                topRoleLabel.setText("MANAGER");
+        }
+    }
 
     private void loadProfile() {
 

@@ -74,8 +74,23 @@
                         <Label text="Configure automatic deadline escalation policies." styleClass="content-description"/>
                     </VBox>
 
+                    <!-- Escalation Tabs -->
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+
+                        <Button fx:id="rulesTabButton"
+                                text="Escalation Rules"
+                                onAction="#handleRulesTab"
+                                styleClass="app-button"/>
+
+                        <Button fx:id="riskTabButton"
+                                text="Performance Risk History"
+                                onAction="#handleRiskTab"
+                                styleClass="app-button"/>
+
+                    </HBox>
+
                     <!-- Summary cards: populated by controller after Supabase fetch -->
-                    <HBox spacing="14" maxWidth="Infinity">
+                    <HBox fx:id="rulesSummary" spacing="14" maxWidth="Infinity">
                         <VBox spacing="9" maxWidth="Infinity" HBox.hgrow="ALWAYS"
                               style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #E2E7F0; -fx-border-radius: 10; -fx-padding: 18;">
                             <Label fx:id="totalRulesLabel" text="—" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #202035;"/>
@@ -94,7 +109,7 @@
                     </HBox>
 
                     <!-- Rules card -->
-                    <VBox spacing="18" maxWidth="Infinity" styleClass="dashboard-card">
+                    <VBox fx:id="rulesCard" spacing="18" maxWidth="Infinity" styleClass="dashboard-card">
                         <HBox alignment="CENTER_LEFT" spacing="12">
                             <Label text="Escalation Rules" styleClass="card-title"/>
                             <Region HBox.hgrow="ALWAYS"/>
@@ -155,10 +170,91 @@
                             styleClass="content-description"/>
                     </VBox>
 
-                    <VBox spacing="8" maxWidth="Infinity" styleClass="dashboard-card">
+                    <VBox fx:id="rulesHelpCard" spacing="8" maxWidth="Infinity" styleClass="dashboard-card">
                         <Label text="How Escalation Works" styleClass="card-title"/>
                         <Label wrapText="true" maxWidth="Infinity" styleClass="content-description"
                                text="Rules define what happens when tasks repeatedly miss deadlines. Automatic execution depends on the deadline monitoring service."/>
+                    </VBox>
+
+                    <!-- PERFORMANCE RISK HISTORY -->
+                    <VBox fx:id="riskHistoryCard"
+                        spacing="16"
+                        maxWidth="Infinity"
+                        styleClass="dashboard-card"
+                        visible="false"
+                        managed="false">
+
+                        <Label text="Performance Risk History"
+                            styleClass="card-title"/>
+
+                        <Label text="Company-wide Level 3 performance risk records. No automatic score deduction."
+                            wrapText="true"
+                            styleClass="content-description"/>
+
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+
+                            <TextField fx:id="riskSearchField"
+                                    promptText="Search task, employee or department..."
+                                    prefWidth="340"/>
+
+                            <ComboBox fx:id="riskStatusFilter"
+                                    prefWidth="155"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Button fx:id="riskRefreshButton"
+                                    text="Refresh"
+                                    onAction="#handleRiskRefresh"
+                                    styleClass="app-button"/>
+                        </HBox>
+
+                        <TableView fx:id="riskTable"
+                                prefHeight="390"
+                                maxWidth="Infinity">
+
+                            <columns>
+                                <TableColumn fx:id="riskIdColumn"
+                                            text="Risk ID"
+                                            prefWidth="80"/>
+
+                                <TableColumn fx:id="riskTaskColumn"
+                                            text="Task"
+                                            prefWidth="195"/>
+
+                                <TableColumn fx:id="riskEmployeeColumn"
+                                            text="Employee"
+                                            prefWidth="165"/>
+
+                                <TableColumn fx:id="riskDepartmentColumn"
+                                            text="Department"
+                                            prefWidth="130"/>
+
+                                <TableColumn fx:id="riskDecisionColumn"
+                                            text="Manager Decision"
+                                            prefWidth="160"/>
+
+                                <TableColumn fx:id="riskStatusColumn"
+                                            text="Status"
+                                            prefWidth="110"/>
+                            </columns>
+
+                            <placeholder>
+                                <Label text="No Level 3 performance risk records found."/>
+                            </placeholder>
+                        </TableView>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+
+                            <Label fx:id="riskCountLabel"
+                                text="0 record(s)"
+                                styleClass="content-description"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Button text="View Details"
+                                    onAction="#handleRiskDetails"
+                                    styleClass="app-button"/>
+                        </HBox>
                     </VBox>
                 </VBox>
             </content>

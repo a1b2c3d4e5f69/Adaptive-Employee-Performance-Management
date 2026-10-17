@@ -25,58 +25,54 @@
 
     <!-- =====================================================
          TOP BAR
+         EXACT SAME STYLE AS EMPLOYEE
          ===================================================== -->
 
     <top>
 
         <HBox
                 alignment="CENTER_LEFT"
-                spacing="16"
-                styleClass="modern-topbar">
+                spacing="20"
+                styleClass="topbar">
 
             <padding>
                 <Insets
-                        top="14"
-                        right="30"
-                        bottom="14"
-                        left="30"/>
+                        top="16"
+                        right="28"
+                        bottom="16"
+                        left="28"/>
             </padding>
 
 
-            <Label
-                    text="AEPM"
-                    styleClass="modern-brand"/>
+            <VBox spacing="2">
+
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome, Manager"
+                        styleClass="topbar-title"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="topbar-subtitle"/>
+
+            </VBox>
 
 
-            <Region
-                    prefWidth="1"
-                    minWidth="1"
-                    maxWidth="1"
-                    prefHeight="28"
-                    styleClass="topbar-divider"/>
+           <Region HBox.hgrow="ALWAYS"/>
 
-
-            <Label
-                    text="Adaptive Employee Performance Management System"
-                    styleClass="modern-system-name"/>
-
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-
-            <VBox
-                    spacing="2"
-                    alignment="CENTER_RIGHT">
+                <VBox
+                        alignment="CENTER_RIGHT"
+                        spacing="2">
 
                 <Label
                         fx:id="topNameLabel"
                         text="Manager"
-                        styleClass="modern-user-name"/>
+                        styleClass="topbar-user-name"/>
 
                 <Label
                         fx:id="topRoleLabel"
                         text="MANAGER"
-                        styleClass="modern-user-role"/>
+                        styleClass="topbar-user-role"/>
 
             </VBox>
 
@@ -87,88 +83,129 @@
 
     <!-- =====================================================
          SIDEBAR
+         EXACT SAME STYLE AS EMPLOYEE
          ===================================================== -->
 
     <left>
 
         <VBox
-                prefWidth="245"
-                minWidth="245"
-                maxWidth="245"
-                spacing="8"
-                styleClass="modern-sidebar">
+                prefWidth="240"
+                spacing="10"
+                styleClass="sidebar">
 
             <padding>
                 <Insets
-                        top="28"
+                        top="30"
                         right="18"
                         bottom="20"
                         left="18"/>
             </padding>
 
 
+            <!-- LOGO -->
+
+            <VBox spacing="3">
+
+                <Label
+                        text="AEPM"
+                        styleClass="sidebar-logo"/>
+
+                <Label
+                        text="Manager Portal"
+                        styleClass="sidebar-subtitle"/>
+
+            </VBox>
+
+
+            <Region prefHeight="18"/>
+
+
+            <!-- MENU TITLE -->
+
             <Label
                     text="MENU"
-                    styleClass="modern-sidebar-section"/>
+                    styleClass="sidebar-section-title"/>
 
+
+            <!-- HOME ACTIVE -->
 
             <Button
                     text="⌂   Home"
-                    alignment="CENTER_LEFT"
                     maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
                     onAction="#handleHome"
-                    styleClass="modern-nav-button"/>
+                    styleClass="sidebar-button"/>
 
+
+            <!-- PROFILE -->
 
             <Button
-                    text="○   My Profile"
-                    alignment="CENTER_LEFT"
+                    text="●   My Profile"
                     maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
                     onAction="#handleProfile"
-                    styleClass="modern-nav-button"/>
+                    styleClass="sidebar-button"/>
 
+
+            <!-- TASK -->
 
             <Button
                     text="✓   Task Management"
-                    alignment="CENTER_LEFT"
                     maxWidth="Infinity"
-                    onAction="#handleTasks"
-                    styleClass="modern-nav-button"/>
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
 
+            <!-- DEADLINE ESCALATION -->
 
             <Button
-                    text="▥   Performance"
-                    alignment="CENTER_LEFT"
+                    text="◷   Deadline Escalation"
                     maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleDeadlineEscalation"
+                    styleClass="sidebar-button"/>
+
+            <!-- PERFORMANCE -->
+
+            <Button
+                    text="★   Performance"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
                     onAction="#handlePerformance"
-                    styleClass="modern-nav-button-active"/>
+                    styleClass="sidebar-button-active"/>
 
+
+            <!-- REPORTS -->
 
             <Button
-                    text="▤   Reports"
-                    alignment="CENTER_LEFT"
+                    text="≡   Reports"
                     maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
                     onAction="#handleReports"
-                    styleClass="modern-nav-button"/>
+                    styleClass="sidebar-button"/>
 
+
+            <!-- DASHBOARD -->
 
             <Button
-                    text="◫   Dashboard"
-                    alignment="CENTER_LEFT"
+                    text="▣   Dashboard"
                     maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
                     onAction="#handleDashboard"
-                    styleClass="modern-nav-button"/>
+                    styleClass="sidebar-button"/>
 
 
             <Region VBox.vgrow="ALWAYS"/>
 
 
+            <!-- LOGOUT -->
+
             <Button
                     text="↪   Logout"
-                    alignment="CENTER_LEFT"
                     maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
                     onAction="#handleLogout"
-                    styleClass="modern-logout-button"/>
+                    styleClass="logout-button"/>
 
         </VBox>
 
@@ -206,9 +243,11 @@
 
                     <!-- PAGE HEADER -->
 
-                    <HBox
-                            alignment="CENTER_LEFT"
-                            spacing="20">
+                <HBox
+                        fx:id="notificationTopBar"
+                        alignment="CENTER_LEFT"
+                        spacing="20"
+                        styleClass="topbar">
 
                         <VBox
                                 spacing="5"

@@ -1,6 +1,6 @@
-
 package com.aepm.logic.deadline;
 
+import java.time.Instant;
 import com.aepm.config.AppConfig;
 import com.aepm.data.repository.EscalationRuleRepository;
 import com.aepm.data.supabase.SupabaseClient;
@@ -8,7 +8,7 @@ import com.aepm.model.EscalationRule;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import java.time.Duration;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -117,32 +117,155 @@ public final class DeadlineEscalationPreviewService {
             JSONArray history = getRows(
                 token,
                 base + "/task_escalation_tbl"
-                    + "?select=rule_id,previous_deadline"
+                    + "?select=escalation_id,rule_id,current_level,"
+                    + "previous_deadline,new_deadline,"
+                    + "manager_decision,status,decided_at"
                     + "&task_id=eq." + encodedId
+                    + "&order=escalation_id.desc"
             );
 
+            // Find the highest escalation level already recorded.
+            int highestLevel = 0;
+            JSONObject latestEscalation = null;
+
+            for (int j = 0; j < history.length(); j++) {
+                JSONObject event = history.getJSONObject(j);
+
+                int eventLevel = event.optInt("current_level", 0);
+
+                if (eventLevel > highestLevel) {
+                    highestLevel = eventLevel;
+                    latestEscalation = event;
+                }
+            }
+
+            int nextLevel = highestLevel + 1;
+
+            // First missed deadline -> Level 1.
+            if (highestLevel == 0) {
+                nextLevel = 1;
+            } else {
+                // An unresolved escalation must not create a new level.
+                if (latestEscalation == null ||
+                    !"Resolved".equalsIgnoreCase(
+                        latestEscalation.optString("status", "")
+                    )) {
+                    continue;
+                }
+
+                // For now, Level 2 requires an approved Level 1 extension.
+                // The task's current deadline must match that extension.
+                if (highestLevel == 1) {
+                    if (!"Approved".equalsIgnoreCase(
+                            latestEscalation.optString("manager_decision", "")
+                        ) ||
+                        latestEscalation.isNull("new_deadline")) {
+                        continue;
+                    }
+
+                    boolean matchesApprovedDeadline =
+                        OffsetDateTime.parse(
+                            latestEscalation.getString("new_deadline")
+                        ).toInstant().equals(
+                            OffsetDateTime.parse(dueDate).toInstant()
+                        );
+
+                    if (!matchesApprovedDeadline) {
+                        continue;
+                    }
+                
+                } else if (highestLevel == 2) {
+
+                    // Level 3: wait 48 hours after Level 2 resolution.
+                    // No new deadline is required.
+
+                    if (latestEscalation.isNull("decided_at")) {
+                        continue;
+                    }
+
+                    Instant resolvedTime = OffsetDateTime.parse(
+                        latestEscalation.getString("decided_at")
+                    ).toInstant();
+
+                    Instant eligibleTime = resolvedTime.plus(
+                        Duration.ofHours(48)
+                    );
+
+                    // Wait until the 48-hour follow-up period ends.
+                    if (Instant.now().isBefore(eligibleTime)) {
+                        continue;
+                    }
+
+                    // Level 3 should only be triggered once per task.
+                    boolean level3Exists = false;
+
+                    for (int j = 0; j < history.length(); j++) {
+                        JSONObject event = history.getJSONObject(j);
+
+                        if (event.optInt("current_level", 0) >= 3) {
+                            level3Exists = true;
+                            break;
+                        }
+                    }
+
+                    if (level3Exists) {
+                        continue;
+                    }
+
+                } else {
+                    // Stop after Level 3.
+                    continue;
+                }
+            }
+
+            // Select only the rule for the next level.
             for (EscalationRule rule : active) {
 
-                // Phase 2: first missed deadline only.
-                if (rule.missedDeadlineCount() != 1) {
+                if (rule.escalationLevel() != nextLevel ||
+                    rule.missedDeadlineCount() != nextLevel) {
+                    continue;
+                }
+
+                // One deadline event must not be counted twice,
+                // even if different escalation rules are involved.
+                boolean deadlineAlreadyCounted = false;
+
+                for (int j = 0; j < history.length(); j++) {
+
+                    JSONObject event = history.getJSONObject(j);
+
+                    if (event.isNull("previous_deadline")) {
+                        continue;
+                    }
+
+                    boolean sameDeadline =
+                        OffsetDateTime.parse(
+                            event.getString("previous_deadline")
+                        ).toInstant().equals(
+                            OffsetDateTime.parse(dueDate).toInstant()
+                        );
+
+                    if (sameDeadline) {
+                        deadlineAlreadyCounted = true;
+                        break;
+                    }
+                }
+
+                if (deadlineAlreadyCounted && nextLevel != 3) {
                     continue;
                 }
 
                 boolean alreadyTriggered = false;
 
                 for (int j = 0; j < history.length(); j++) {
+                    JSONObject event = history.getJSONObject(j);
 
-                    JSONObject event =
-                        history.getJSONObject(j);
-
-                    if (event.optLong("rule_id", -1)
-                            == rule.ruleId()
+                    if (event.optLong("rule_id", -1) == rule.ruleId()
                         && !event.isNull("previous_deadline")
                         && OffsetDateTime.parse(
                             event.getString("previous_deadline")
                         ).toInstant().equals(
-                            OffsetDateTime.parse(dueDate)
-                                .toInstant()
+                            OffsetDateTime.parse(dueDate).toInstant()
                         )) {
 
                         alreadyTriggered = true;
@@ -160,9 +283,11 @@ public final class DeadlineEscalationPreviewService {
                         rule.actionType()
                     ));
                 }
-            }
-        }
+            } 
+
+        } 
 
         return candidates;
-    }
-}
+    } 
+
+} 

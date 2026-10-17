@@ -36,6 +36,9 @@ import java.util.List;
 public class ManagerEditTaskController {
 
     @FXML
+    private Label topRoleLabel; 
+    
+    @FXML
     private Label welcomeLabel;
 
     @FXML
@@ -80,6 +83,18 @@ public class ManagerEditTaskController {
 
     private Task task;
 
+    @FXML
+    private void handleDeadlineEscalation(ActionEvent event) {    
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
+
 
     @FXML
     public void initialize() {
@@ -88,7 +103,7 @@ public class ManagerEditTaskController {
                 messageLabel
         );
 
-
+        updateManagerRoleLabel();
         loadCurrentUser();
 
         configureOptions();
@@ -629,5 +644,22 @@ public class ManagerEditTaskController {
                 stage,
                 path
         );
+    }
+
+    private void updateManagerRoleLabel() {
+        User manager = SessionManager.getCurrentUser();
+
+        if (manager == null) {
+                topRoleLabel.setText("MANAGER");
+                return;
+        }
+
+        String managerId = manager.getEmployeeId();
+
+        if (managerId != null && !managerId.isBlank()) {
+                topRoleLabel.setText("MANAGER  •  " + managerId);
+        } else {
+                topRoleLabel.setText("MANAGER");
+        }
     }
 }

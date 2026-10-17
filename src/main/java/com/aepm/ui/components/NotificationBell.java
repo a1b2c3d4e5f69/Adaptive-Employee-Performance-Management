@@ -21,6 +21,17 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import com.aepm.util.SessionManager;
+import com.aepm.model.User;
+import java.net.URLEncoder;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+
+import com.aepm.config.AppConfig;
+import com.aepm.data.supabase.SupabaseClient;
+import java.net.URLEncoder;
+
 public class NotificationBell extends StackPane {
     private static final ZoneId MALAYSIA = ZoneId.of("Asia/Kuala_Lumpur");
 
@@ -230,10 +241,542 @@ public class NotificationBell extends StackPane {
                 catch (Exception ignored) { }
             }
 
-            TaskDetailsDialog.show(getScene() == null ? null : getScene().getWindow(), taskId, escalationId);
+            String notificationTitle = data.optString("title", "");
+            String notificationType = data.optString("notification_type", "");
+
+            boolean isPerformanceRisk =
+                    notificationTitle.toLowerCase().contains("performance risk")
+                    || notificationType.toLowerCase().contains("performance risk");
+
+            boolean isAdmin =
+                    SessionManager.getCurrentUser() != null
+                    && SessionManager.getCurrentUser().getRole() != null
+                    && "ADMINISTRATOR".equalsIgnoreCase(
+                            SessionManager.getCurrentUser().getRole().name()
+                    );
+
+            if (isAdmin && isPerformanceRisk) {
+
+                showPerformanceRiskDetails(data, escalationId);
+
+            } else {
+
+                TaskDetailsDialog.show(
+                    getScene() == null ? null : getScene().getWindow(),
+                    taskId,
+                    escalationId
+                );
+            }
         });
 
         return item;
+    }
+
+    private void showPerformanceRiskDetails(
+            JSONObject data,
+            Long escalationId
+    ) {
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Performance Risk Details");
+
+        if (getScene() != null && getScene().getWindow() != null) {
+            dialog.initOwner(getScene().getWindow());
+        }
+
+        DialogPane pane = dialog.getDialogPane();
+        pane.getButtonTypes().add(ButtonType.CLOSE);
+        pane.setPrefWidth(850);
+        pane.setPrefHeight(680);
+        pane.setStyle("-fx-background-color: #F5F7FC;");
+
+        Label heading = new Label("Performance Risk Details");
+        heading.setStyle(
+            "-fx-font-size: 24px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: #10264A;"
+        );
+
+        Label subtitle = new Label(
+            "Level 3 employee performance risk review."
+        );
+        subtitle.setStyle(
+            "-fx-font-size: 13px;" +
+            "-fx-text-fill: #7187AC;"
+        );
+
+        VBox header = new VBox(6, heading, subtitle);
+
+        VBox details = new VBox(12);
+        details.getChildren().add(
+            riskDetailField("Loading", "Loading risk information...")
+        );
+
+        VBox card = new VBox(14, details);
+        card.setPadding(new Insets(20));
+        card.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 14;" +
+            "-fx-border-color: #DDE6F4;" +
+            "-fx-border-radius: 14;"
+        );
+
+        VBox content = new VBox(20, header, card);
+        content.setPadding(new Insets(24));
+
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setStyle("-fx-background-color: transparent;");
+
+        pane.setContent(scroll);
+
+        Button close = (Button) pane.lookupButton(ButtonType.CLOSE);
+        close.setText("Close");
+        close.setStyle(
+            "-fx-background-color: #2563EB;" +
+            "-fx-text-fill: white;" +
+            "-fx-font-weight: bold;" +
+            "-fx-background-radius: 9;" +
+            "-fx-padding: 10 28;"
+        );
+
+        if (escalationId == null) {
+            details.getChildren().setAll(
+                riskDetailField(
+                    "Unable to Load",
+                    "This notification has no escalation ID."
+                ),
+                riskDetailField(
+                    "Notification Message",
+                    data.optString("message", "-")
+                )
+            );
+
+        } else {
+
+            String accessToken = token();
+            String expectedUserId = userId();
+
+            Task<JSONObject> loadTask = new Task<>() {
+                @Override
+                protected JSONObject call() throws Exception {
+                    return loadPerformanceRiskData(
+                        accessToken,
+                        escalationId
+                    );
+                }
+            };
+
+            loadTask.setOnSucceeded(event -> {
+
+                if (!java.util.Objects.equals(
+                        expectedUserId, userId())) {
+                    dialog.close();
+                    return;
+                }
+
+                JSONObject result = loadTask.getValue();
+
+                JSONObject escalation =
+                    result.getJSONObject("escalation");
+
+                JSONObject task =
+                    result.optJSONObject("task");
+
+                JSONObject employee =
+                    result.optJSONObject("employee");
+
+                String taskName = task == null
+                    ? "-"
+                    : task.optString("task_title", "-");
+
+                String employeeName = "-";
+
+                if (employee != null) {
+                    employeeName =
+                        employee.optString("full_name", "-")
+                        + " ("
+                        + employee.optString("employee_id", "-")
+                        + ")";
+                }
+
+                String status =
+                    escalation.optString("status", "-");
+
+                String decision =
+                    escalation.optString("manager_decision", "-");
+
+                if (decision.isBlank()) {
+                    decision = "Pending";
+                }
+
+                String note =
+                    escalation.optString("follow_up_note", "-");
+
+                if (note.isBlank()) {
+                    note = "-";
+                }
+
+                String previousDeadline =
+                    escalation.optString("previous_deadline", "");
+
+                String reviewedAt =
+                    escalation.optString("decided_at", "");
+
+                details.getChildren().setAll(
+
+                // 1. Task & Employee Information
+                riskSection(
+                    "Task & Employee Information",
+
+                    riskInfoRow(
+                        riskInfoCard("Task Name", taskName),
+                        riskInfoCard("Employee", employeeName)
+                    )
+                ),
+
+                // 2. Escalation Information
+                riskSection(
+                    "Escalation Information",
+
+                    riskInfoRow(
+                        riskInfoCard(
+                            "Escalation ID",
+                            "#" + escalationId
+                        ),
+
+                        riskInfoCard(
+                            "Escalation Level",
+                            "Level " + escalation.optInt("current_level", 3)
+                        ),
+
+                        riskInfoCard(
+                            "Risk Status",
+                            status
+                        )
+                    )
+                ),
+
+                // 3. Manager Review
+                riskSection(
+                    "Manager Review",
+
+                    riskInfoRow(
+                        riskInfoCard(
+                            "Manager Decision",
+                            decision
+                        ),
+
+                        riskInfoCard(
+                            "Manager Follow-up Note",
+                            note
+                        )
+                    )
+                ),
+
+                // 4. Timeline
+                riskSection(
+                    "Timeline",
+
+                    riskInfoRow(
+                        riskInfoCard(
+                            "Previous Deadline",
+                            previousDeadline.isBlank()
+                                ? "-"
+                                : formatDate(previousDeadline)
+                        ),
+
+                        riskInfoCard(
+                            "Reviewed At",
+                            reviewedAt.isBlank()
+                                ? "-"
+                                : formatDate(reviewedAt)
+                        )
+                    )
+                ),
+
+                // 5. Additional Information
+                riskSection(
+                    "Additional Information",
+
+                    riskInfoRow(
+                        riskInfoCard(
+                            "Performance Score Impact",
+                            "No automatic score deduction"
+                        ),
+
+                        riskInfoCard(
+                            "Notification Message",
+                            data.optString("message", "-")
+                        )
+                    )
+                )
+            );
+            });
+
+            loadTask.setOnFailed(event -> {
+
+                Throwable error = loadTask.getException();
+
+                details.getChildren().setAll(
+                    riskDetailField(
+                        "Unable to Load Risk Details",
+                        error == null
+                            ? "Unknown error"
+                            : error.getMessage()
+                    ),
+                    riskDetailField(
+                        "Notification Message",
+                        data.optString("message", "-")
+                    )
+                );
+            });
+
+            Thread thread = new Thread(
+                loadTask,
+                "performance-risk-details"
+            );
+
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+        dialog.showAndWait();
+    }
+
+    private Label riskDetailField(String title, String value) {
+
+        Label label = new Label(title + "\n" + value);
+
+        label.setWrapText(true);
+        label.setMaxWidth(Double.MAX_VALUE);
+
+        label.setStyle(
+            "-fx-background-color: #F8FAFD;" +
+            "-fx-background-radius: 9;" +
+            "-fx-border-color: #E1E9F5;" +
+            "-fx-border-radius: 9;" +
+            "-fx-padding: 12;" +
+            "-fx-font-size: 13px;" +
+            "-fx-text-fill: #10264A;"
+        );
+
+        return label;
+    }
+
+    private VBox riskInfoCard(String title, String value) {
+
+        Label titleLabel = new Label(title);
+        titleLabel.setWrapText(true);
+        titleLabel.setMaxWidth(Double.MAX_VALUE);
+
+        titleLabel.setStyle(
+            "-fx-font-size: 12px;" +
+            "-fx-text-fill: #64748B;"
+        );
+
+        Label valueLabel = new Label(
+            value == null || value.isBlank() ? "-" : value
+        );
+
+        valueLabel.setWrapText(true);
+        valueLabel.setMaxWidth(Double.MAX_VALUE);
+
+        valueLabel.setStyle(
+            "-fx-font-size: 13px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: #10264A;"
+        );
+
+        VBox card = new VBox(7, titleLabel, valueLabel);
+
+        card.setPadding(new Insets(15));
+        card.setMinWidth(0);
+        card.setMinHeight(Region.USE_PREF_SIZE);
+        card.setMaxWidth(Double.MAX_VALUE);
+
+        card.setStyle(
+            "-fx-background-color: #F5F8FD;" +
+            "-fx-background-radius: 10;" +
+            "-fx-border-color: #E4ECF7;" +
+            "-fx-border-radius: 10;"
+        );
+
+        return card;
+    }
+
+    private VBox riskSection(String title, javafx.scene.Node... fields) {
+
+        Label heading = new Label(title);
+
+        heading.setStyle(
+            "-fx-font-size: 15px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: #10264A;"
+        );
+
+        VBox body = new VBox(12, fields);
+
+        VBox section = new VBox(14, heading, body);
+
+        section.setPadding(new Insets(18));
+
+        section.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 12;" +
+            "-fx-border-color: #DDE7F5;" +
+            "-fx-border-radius: 12;"
+        );
+
+        return section;
+    }
+
+    private HBox riskInfoRow(VBox... cards) {
+
+        HBox row = new HBox(12);
+        row.setAlignment(Pos.TOP_LEFT);
+        row.setFillHeight(false);
+        row.setMaxWidth(Double.MAX_VALUE);
+
+        for (VBox card : cards) {
+
+            card.setMinWidth(0);
+            card.setPrefWidth(0);
+            card.setMaxWidth(Double.MAX_VALUE);
+
+            HBox.setHgrow(card, Priority.ALWAYS);
+            row.getChildren().add(card);
+        }
+
+        return row;
+    }
+
+    private JSONArray getRiskRows(
+            String accessToken,
+            String url
+    ) throws Exception {
+
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new IllegalStateException(
+                "Session expired. Please log in again."
+            );
+        }
+
+        SupabaseClient client =
+            SupabaseClient.getInstance();
+
+        HttpRequest request = client
+            .createAuthenticatedRequest(url, accessToken)
+            .GET()
+            .build();
+
+        HttpResponse<String> response =
+            client.getHttpClient().send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+            );
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+
+            throw new IllegalStateException(
+                "Supabase HTTP "
+                    + response.statusCode()
+                    + ": "
+                    + response.body()
+            );
+        }
+
+        return new JSONArray(response.body());
+    }
+
+    private JSONObject loadPerformanceRiskData(
+            String accessToken,
+            long escalationId
+    ) throws Exception {
+
+        String base = AppConfig.REST_URL;
+
+        // 1. Load Level 3 escalation.
+        JSONArray escalationRows = getRiskRows(
+            accessToken,
+            base + "/task_escalation_tbl"
+                + "?select=escalation_id,task_id,employee_id,"
+                + "current_level,status,manager_decision,"
+                + "follow_up_note,previous_deadline,decided_at"
+                + "&escalation_id=eq." + escalationId
+                + "&current_level=eq.3"
+                + "&limit=1"
+        );
+
+        if (escalationRows.isEmpty()) {
+            throw new IllegalStateException(
+                "Level 3 escalation not found or access denied."
+            );
+        }
+
+        JSONObject escalation =
+            escalationRows.getJSONObject(0);
+
+        String taskId =
+            escalation.optString("task_id", "");
+
+        String employeeId =
+            escalation.optString("employee_id", "");
+
+        JSONObject result = new JSONObject();
+        result.put("escalation", escalation);
+
+        // 2. Load task information.
+        if (!taskId.isBlank()) {
+
+            String encodedTaskId = URLEncoder.encode(
+                taskId,
+                StandardCharsets.UTF_8
+            );
+
+            JSONArray taskRows = getRiskRows(
+                accessToken,
+                base + "/task_tbl"
+                    + "?select=task_id,task_title"
+                    + "&task_id=eq." + encodedTaskId
+                    + "&limit=1"
+            );
+
+            if (!taskRows.isEmpty()) {
+                result.put(
+                    "task",
+                    taskRows.getJSONObject(0)
+                );
+            }
+        }
+
+        // 3. Load employee information.
+        if (!employeeId.isBlank()) {
+
+            String encodedEmployeeId = URLEncoder.encode(
+                employeeId,
+                StandardCharsets.UTF_8
+            );
+
+            JSONArray employeeRows = getRiskRows(
+                accessToken,
+                base + "/user_tbl"
+                    + "?select=user_id,full_name,employee_id"
+                    + "&user_id=eq." + encodedEmployeeId
+                    + "&limit=1"
+            );
+
+            if (!employeeRows.isEmpty()) {
+                result.put(
+                    "employee",
+                    employeeRows.getJSONObject(0)
+                );
+            }
+        }
+
+        return result;
     }
 
     private String formatDate(String raw) {

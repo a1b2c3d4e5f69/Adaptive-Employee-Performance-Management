@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.aepm.ui.components.NotificationBell?>
+
+<BorderPane
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="com.aepm.ui.manager.ManagerDeadlineEscalationController"
+    styleClass="main-layout">
+
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="topbar">
+
+            <padding>
+                <Insets top="16" right="28"
+                        bottom="16" left="28"/>
+            </padding>
+
+            <VBox spacing="2">
+                <Label fx:id="welcomeLabel"
+                       text="Welcome, Manager"
+                       styleClass="topbar-title"/>
+
+                <Label
+                    text="Adaptive Employee Performance Management System"
+                    styleClass="topbar-subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <NotificationBell/>
+
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel"
+                       text="Manager"
+                       styleClass="topbar-user-name"/>
+
+                <Label
+                        fx:id="topRoleLabel"
+                        text="MANAGER"
+                        styleClass="topbar-user-role"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefWidth="240"
+              spacing="10"
+              styleClass="sidebar">
+
+            <padding>
+                <Insets top="30" right="18"
+                        bottom="20" left="18"/>
+            </padding>
+
+            <VBox spacing="3">
+                <Label text="AEPM"
+                       styleClass="sidebar-logo"/>
+                <Label text="Manager Portal"
+                       styleClass="sidebar-subtitle"/>
+            </VBox>
+
+            <Region prefHeight="18"/>
+
+            <Label text="MENU"
+                   styleClass="sidebar-section-title"/>
+
+            <Button text="⌂   Home"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleHome"
+                    styleClass="sidebar-button"/>
+
+            <Button text="●   My Profile"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleProfile"
+                    styleClass="sidebar-button"/>
+
+            <Button text="✓   Task Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
+
+            <Button text="◷   Deadline Escalation"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleDeadlineEscalation"
+                    styleClass="sidebar-button-active"/>
+
+            <Button text="★   Performance"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handlePerformance"
+                    styleClass="sidebar-button"/>
+
+            <Button text="≡   Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleReports"
+                    styleClass="sidebar-button"/>
+
+            <Button text="▣   Dashboard"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleDashboard"
+                    styleClass="sidebar-button"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="↪   Logout"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    style="-fx-background-color: transparent;">
+
+            <VBox spacing="24"
+                  styleClass="home-content">
+
+                <padding>
+                    <Insets top="32" right="35"
+                            bottom="35" left="35"/>
+                </padding>
+
+                <VBox spacing="4">
+                    <Label text="Deadline Escalation"
+                           styleClass="content-title"/>
+
+                    <Label
+                        text="Monitor overdue employee tasks and review escalation history."
+                        styleClass="content-description"/>
+                </VBox>
+
+                <HBox spacing="18">
+
+                    <VBox spacing="9"
+                          HBox.hgrow="ALWAYS"
+                          styleClass="info-card">
+                        <Label text="Total Escalations"
+                               styleClass="card-label"/>
+                        <Label fx:id="totalLabel"
+                               text="0"
+                               styleClass="card-value"/>
+                    </VBox>
+
+                    <VBox spacing="9"
+                          HBox.hgrow="ALWAYS"
+                          styleClass="info-card">
+                        <Label text="Active Escalations"
+                               styleClass="card-label"/>
+                        <Label fx:id="activeLabel"
+                               text="0"
+                               styleClass="card-value"/>
+                    </VBox>
+
+                    <VBox spacing="9"
+                          HBox.hgrow="ALWAYS"
+                          styleClass="info-card">
+                        <Label text="Resolved Escalations"
+                               styleClass="card-label"/>
+                        <Label fx:id="resolvedLabel"
+                               text="0"
+                               styleClass="card-value"/>
+                    </VBox>
+
+                </HBox>
+
+                <VBox spacing="16"
+                      styleClass="section-card">
+
+                    <!-- Escalation / Performance Risk Tabs -->
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+
+                        <Button fx:id="escalationTabButton"
+                                text="Escalation Records"
+                                onAction="#handleEscalationTab"
+                                styleClass="quick-button"/>
+
+                        <Button fx:id="riskTabButton"
+                                text="Performance Risk History"
+                                onAction="#handleRiskTab"
+                                styleClass="quick-button"/>
+
+                    </HBox>
+
+                    <Label fx:id="recordsTitleLabel"
+                        text="Escalation Records"
+                        styleClass="section-title"/>
+
+                    <HBox spacing="12"
+                          alignment="CENTER_LEFT">
+
+                        <TextField fx:id="searchField"
+                                   promptText="Search task or employee..."
+                                   prefWidth="320"/>
+
+                        <ComboBox fx:id="levelFilter"
+                                  promptText="All Levels"
+                                  prefWidth="150"/>
+
+                        <ComboBox fx:id="statusFilter"
+                                  promptText="All Status"
+                                  prefWidth="150"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Refresh"
+                                onAction="#handleRefresh"
+                                styleClass="quick-button"/>
+                    </HBox>
+
+                    <TableView
+                        fx:id="escalationTable"
+                        prefHeight="400">
+
+                        <columns>
+                            <TableColumn fx:id="taskColumn"
+                                         text="Task"
+                                         prefWidth="210"/>
+
+                            <TableColumn fx:id="employeeColumn"
+                                         text="Employee"
+                                         prefWidth="150"/>
+
+                            <TableColumn fx:id="levelColumn"
+                                         text="Level"
+                                         prefWidth="85"/>
+
+                            <TableColumn fx:id="decisionColumn"
+                                         text="Manager Decision"
+                                         prefWidth="170"/>
+
+                            <TableColumn fx:id="statusColumn"
+                                         text="Status"
+                                         prefWidth="120"/>
+
+                            <TableColumn fx:id="dateColumn"
+                                         text="Escalated At"
+                                         prefWidth="170"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="12"
+                          alignment="CENTER_RIGHT">
+
+                        <Button text="View Details"
+                                onAction="#handleViewDetails"
+                                styleClass="quick-button"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

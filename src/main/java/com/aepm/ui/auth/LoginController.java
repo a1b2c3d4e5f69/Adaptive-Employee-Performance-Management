@@ -19,6 +19,8 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 
 import javafx.stage.Stage;
+import com.aepm.logic.deadline.DeadlineEscalationScheduler;
+import com.aepm.util.SessionManager;
 
 public class LoginController {
 
@@ -117,14 +119,19 @@ public class LoginController {
         loginTask.setOnSucceeded(
                 event -> {
 
-                    setLoading(false);
+                setLoading(false);
 
-                    User user =
-                            loginTask.getValue();
+                User user = loginTask.getValue();
 
-                    navigateByRole(
-                            user
-                    );
+                navigateByRole(user);
+
+                // Start automatic deadline monitoring for Admin only.
+                if (user.getRole() == Role.ADMINISTRATOR) {
+
+                        DeadlineEscalationScheduler
+                        .getInstance()
+                        .start(SessionManager::getAccessToken);
+                }
                 }
         );
 

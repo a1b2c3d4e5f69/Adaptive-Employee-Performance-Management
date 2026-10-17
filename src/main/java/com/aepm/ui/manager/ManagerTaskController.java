@@ -56,7 +56,9 @@ public class ManagerTaskController {
     // =========================================================
     // TOP BAR
     // =========================================================
-
+    @FXML
+    private Label topRoleLabel;
+    
     @FXML
     private Label welcomeLabel;
 
@@ -163,6 +165,17 @@ public class ManagerTaskController {
     @FXML
     private Label historyMessageLabel;
 
+    @FXML
+    private void handleDeadlineEscalation(ActionEvent event) {    
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
 
     // =========================================================
     // SERVICES
@@ -221,7 +234,7 @@ public class ManagerTaskController {
 
     @FXML
     public void initialize() {
-
+        updateManagerRoleLabel();
         loadCurrentUser();
 
         setupTaskTable();
@@ -238,6 +251,22 @@ public class ManagerTaskController {
     }
 
 
+    private void updateManagerRoleLabel() {
+        User manager = SessionManager.getCurrentUser();
+
+        if (manager == null) {
+                topRoleLabel.setText("MANAGER");
+                return;
+        }
+
+        String managerId = manager.getEmployeeId();
+
+        if (managerId != null && !managerId.isBlank()) {
+                topRoleLabel.setText("MANAGER  •  " + managerId);
+        } else {
+                topRoleLabel.setText("MANAGER");
+        }
+    }
     // =========================================================
     // CURRENT USER
     // =========================================================

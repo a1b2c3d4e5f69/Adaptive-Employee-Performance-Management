@@ -59,6 +59,9 @@ public class ManagerPerformanceController {
     @FXML
     private Label topRoleLabel;
 
+    @FXML
+    private Label welcomeLabel;
+
 
     // =========================================================
     // EMPLOYEE SEARCH / FILTER
@@ -75,7 +78,6 @@ public class ManagerPerformanceController {
 
     @FXML
     private Label employeeInfoLabel;
-
 
     // =========================================================
     // PERFORMANCE FILTER
@@ -236,6 +238,30 @@ public class ManagerPerformanceController {
                     "dd MMM yyyy HH:mm"
             );
 
+    @FXML
+    private void handleDeadlineEscalation(ActionEvent event) {    
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
+
+    @FXML
+    private void handleTaskManagement(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerTask.fxml"
+        );
+    }
 
     // =========================================================
     // INITIALIZE
@@ -315,6 +341,8 @@ public class ManagerPerformanceController {
         topNameLabel.setText(
                 name
         );
+
+        welcomeLabel.setText("Welcome, " + name);
 
 
         String staffId =
