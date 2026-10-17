@@ -15,7 +15,7 @@ import javafx.stage.Popup;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import com.aepm.ui.common.AEPMDialog;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -266,48 +266,88 @@ public class NotificationBell extends StackPane {
             + "; -fx-background-radius: 11; -fx-border-color: " + (read ? "#E6EBF3" : "#D2E4FF")
             + "; -fx-border-radius: 11; -fx-cursor: hand;");
 
-        item.setOnMouseClicked(e -> {
-            String taskId = data.optString("related_task_id", "");
+            item.setOnMouseClicked(e -> {
 
-            if (!read) markAsRead(notificationId);
+                String taskId = data.optString("related_task_id", "");
 
-            popup.hide();
+                if (!read) {
+                    markAsRead(notificationId);
+                }
 
-            Long escalationId = null;
+                popup.hide();
 
-            if (data.has("related_escalation_id") && !data.isNull("related_escalation_id")) {
-                try { escalationId = data.getLong("related_escalation_id"); }
-                catch (Exception ignored) { }
-            }
+                Long escalationId = null;
 
-            String notificationTitle = data.optString("title", "");
-            String notificationType = data.optString("notification_type", "");
+                if (data.has("related_escalation_id")
+                        && !data.isNull("related_escalation_id")) {
+                    try {
+                        escalationId = data.getLong("related_escalation_id");
+                    } catch (Exception ignored) {
+                    }
+                }
 
-            boolean isPerformanceRisk =
-                    notificationTitle.toLowerCase().contains("performance risk")
-                    || notificationType.toLowerCase().contains("performance risk");
+                String notificationTitle =
+                        data.optString("title", "");
 
-            boolean isAdmin =
-                    SessionManager.getCurrentUser() != null
-                    && SessionManager.getCurrentUser().getRole() != null
-                    && "ADMINISTRATOR".equalsIgnoreCase(
-                            SessionManager.getCurrentUser().getRole().name()
+                String notificationType =
+                        data.optString("notification_type", "");
+
+                // System Configuration notifications
+                boolean isConfigurationNotification =
+                        "HOLIDAY_ADDED".equalsIgnoreCase(notificationType)
+                        || "HOLIDAY_UPDATED".equalsIgnoreCase(notificationType)
+                        || "HOLIDAY_DELETED".equalsIgnoreCase(notificationType)
+                        || "WORKING_HOURS_UPDATED".equalsIgnoreCase(notificationType);
+
+                if (isConfigurationNotification) {
+
+                    AEPMDialog.showNotice(
+                            getScene() == null
+                                    ? null
+                                    : getScene().getWindow(),
+                            notificationTitle,
+                            data.optString("message", "")
                     );
 
-            if (isAdmin && isPerformanceRisk) {
-                showPerformanceRiskDetails(data, escalationId);
-            } else {
+                    return;
+                }
 
-                boolean isNormalTaskNotification = "TASK_ASSIGNED".equalsIgnoreCase(notificationType) || "TASK_UPDATED".equalsIgnoreCase(notificationType) || "TASK_COMPLETED".equalsIgnoreCase(notificationType);
+                // Existing performance risk notifications
+                boolean isPerformanceRisk =
+                        notificationTitle.toLowerCase()
+                                .contains("performance risk")
+                        || notificationType.toLowerCase()
+                                .contains("performance risk");
+
+                boolean isAdmin =
+                        SessionManager.getCurrentUser() != null
+                        && SessionManager.getCurrentUser().getRole() != null
+                        && "ADMINISTRATOR".equalsIgnoreCase(
+                                SessionManager.getCurrentUser()
+                                        .getRole().name()
+                        );
+
+                if (isAdmin && isPerformanceRisk) {
+                    showPerformanceRiskDetails(data, escalationId);
+                    return;
+                }
+
+                // Existing Task and Escalation notifications
+                boolean isNormalTaskNotification =
+                        "TASK_ASSIGNED".equalsIgnoreCase(notificationType)
+                        || "TASK_UPDATED".equalsIgnoreCase(notificationType)
+                        || "TASK_COMPLETED".equalsIgnoreCase(notificationType);
+
                 TaskDetailsDialog.show(
-                    getScene() == null ? null : getScene().getWindow(),
-                    taskId,
-                    escalationId,
-                    !isNormalTaskNotification && escalationId != null
+                        getScene() == null
+                                ? null
+                                : getScene().getWindow(),
+                        taskId,
+                        escalationId,
+                        !isNormalTaskNotification && escalationId != null
                 );
-            }
-        });
 
+            });
         return item;
     }
 

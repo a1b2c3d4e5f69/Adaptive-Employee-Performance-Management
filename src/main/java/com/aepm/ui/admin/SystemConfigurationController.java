@@ -954,14 +954,16 @@ public class SystemConfigurationController {
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        boolean confirmed = AEPMDialog.showConfirmation(
+            welcomeLabel.getScene().getWindow(),
+            "Delete Holiday",
+            "Are you sure you want to delete \""
+                    + selected.getHolidayName()
+                    + "\"?\n\n"
+                    + "This action cannot be undone."
+        );
 
-        confirm.setTitle("Delete Holiday");
-        confirm.setHeaderText("Delete " + selected.getHolidayName() + "?");
-        confirm.setContentText("This action cannot be undone.");
-
-        if (confirm.showAndWait().orElse(ButtonType.CANCEL)
-                != ButtonType.OK) {
+        if (!confirmed) {
             return;
         }
 

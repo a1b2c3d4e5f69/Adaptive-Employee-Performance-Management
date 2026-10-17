@@ -84,7 +84,9 @@ public final class AEPMDialog {
             friendlyMessage(message, error)
         );
         messageLabel.setWrapText(true);
-        messageLabel.setMaxWidth(Double.MAX_VALUE);
+        messageLabel.setPrefWidth(430);
+        messageLabel.setMinHeight(Region.USE_PREF_SIZE);
+        messageLabel.setMaxHeight(Double.MAX_VALUE);
         messageLabel.setStyle(
             "-fx-font-size: 14px;" +
             "-fx-text-fill: #475569;" +
@@ -262,7 +264,7 @@ public final class AEPMDialog {
             && title.toLowerCase().contains("delete");
 
         Button confirmButton = new Button(
-            isDelete ? "Delete Rule" : "Confirm"
+            isDelete ? "Delete" : "Confirm"
         );
 
         confirmButton.setPrefSize(120, 38);
@@ -300,7 +302,7 @@ public final class AEPMDialog {
         root.setPadding(new Insets(12));
         root.setStyle("-fx-background-color: transparent;");
 
-        Scene scene = new Scene(root, 500, 245);
+        Scene scene = new Scene(root, 500, 300);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
         dialog.setScene(scene);
@@ -323,5 +325,134 @@ public final class AEPMDialog {
         dialog.showAndWait();
         return confirmed[0];
     }
+
+    
+    public static void showNotice(
+            Window owner,
+            String title,
+            String message) {
+
+        Stage dialog = new Stage();
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+
+        if (owner != null) {
+            dialog.initOwner(owner);
+        }
+
+        Label icon = new Label("i");
+        icon.setAlignment(Pos.CENTER);
+        icon.setMinSize(48, 48);
+        icon.setMaxSize(48, 48);
+        icon.setStyle(
+                "-fx-background-color: #DBEAFE;" +
+                "-fx-background-radius: 14;" +
+                "-fx-text-fill: #2563EB;" +
+                "-fx-font-size: 25px;" +
+                "-fx-font-weight: bold;"
+        );
+
+        Label heading = new Label(
+                title == null ? "Notification" : title
+        );
+        heading.setWrapText(true);
+        heading.setMaxWidth(380);
+        heading.setStyle(
+                "-fx-font-size: 20px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: #10264A;"
+        );
+
+        Label subtitle = new Label("System Configuration");
+        subtitle.setStyle(
+                "-fx-font-size: 12px;" +
+                "-fx-text-fill: #7187AC;"
+        );
+
+        VBox headingBox = new VBox(6, heading, subtitle);
+        headingBox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox header = new HBox(16, icon, headingBox);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label messageLabel = new Label(
+                message == null ? "" : message
+        );
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(Double.MAX_VALUE);
+        messageLabel.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-text-fill: #475569;" +
+                "-fx-line-spacing: 5px;"
+        );
+
+        VBox messageCard = new VBox(messageLabel);
+        messageCard.setPadding(new Insets(20));
+        messageCard.setMinHeight(Region.USE_PREF_SIZE);
+        messageCard.setMaxWidth(Double.MAX_VALUE);
+        messageCard.setStyle(
+                "-fx-background-color: #F5F8FD;" +
+                "-fx-background-radius: 12;" +
+                "-fx-border-color: #E4ECF7;" +
+                "-fx-border-radius: 12;"
+        );
+
+        Button closeButton = new Button("Close");
+        closeButton.setPrefSize(120, 40);
+        closeButton.setDefaultButton(true);
+        closeButton.setStyle(
+                "-fx-background-color: #2563EB;" +
+                "-fx-background-radius: 9;" +
+                "-fx-text-fill: white;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-cursor: hand;"
+        );
+        closeButton.setOnAction(e -> dialog.close());
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox footer = new HBox(spacer, closeButton);
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox content = new VBox(22, header, messageCard, footer);
+        content.setPadding(new Insets(28));
+        content.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 16;" +
+                "-fx-border-color: #E2E8F0;" +
+                "-fx-border-radius: 16;"
+        );
+
+        VBox root = new VBox(content);
+        root.setPadding(new Insets(12));
+        root.setStyle("-fx-background-color: transparent;");
+
+        Scene scene = new Scene(root, 540, Region.USE_COMPUTED_SIZE);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        dialog.setScene(scene);
+        dialog.sizeToScene();
+        dialog.setResizable(false);
+
+        dialog.setOnShown(e -> {
+            if (owner != null) {
+                dialog.setX(
+                        owner.getX() +
+                        (owner.getWidth() - dialog.getWidth()) / 2
+                );
+                dialog.setY(
+                        owner.getY() +
+                        (owner.getHeight() - dialog.getHeight()) / 2
+                );
+            } else {
+                dialog.centerOnScreen();
+            }
+        });
+
+        dialog.showAndWait();
+    }
+
 
 }

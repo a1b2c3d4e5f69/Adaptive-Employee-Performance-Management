@@ -125,13 +125,23 @@ public class LoginController {
 
                 navigateByRole(user);
 
-                // Start automatic deadline monitoring for Admin only.
-                if (user.getRole() == Role.ADMINISTRATOR) {
+                        // Only Admin starts the automatic deadline scheduler.
+                        if (user.getRole() == Role.ADMINISTRATOR) {
 
-                        DeadlineEscalationScheduler
-                        .getInstance()
-                        .start(SessionManager::getAccessToken);
-                }
+                        DeadlineEscalationScheduler.getInstance()
+                                .start(SessionManager::getAccessToken);
+
+                        System.out.println(
+                                "[Deadline Scheduler] Started for Admin."
+                        );
+
+                        } else {
+
+                        System.out.println(
+                                "[Deadline Scheduler] Not started for role: "
+                                        + user.getRole()
+                        );
+                        }
                 }
         );
 
