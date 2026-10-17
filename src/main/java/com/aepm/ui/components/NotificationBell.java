@@ -31,6 +31,9 @@ import java.nio.charset.StandardCharsets;
 import com.aepm.config.AppConfig;
 import com.aepm.data.supabase.SupabaseClient;
 import java.net.URLEncoder;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 public class NotificationBell extends StackPane {
     private static final ZoneId MALAYSIA = ZoneId.of("Asia/Kuala_Lumpur");
@@ -40,7 +43,16 @@ public class NotificationBell extends StackPane {
     private final Label badge = new Label("0");
     private final Popup popup = new Popup();
     private final VBox notificationList = new VBox(10);
+    private ScrollPane notificationScroll;
     private boolean loading;
+    private static final int REFRESH_SECONDS = 15;
+
+    private final Timeline autoRefresh = new Timeline(
+            new KeyFrame(
+                    Duration.seconds(REFRESH_SECONDS),
+                    event -> refresh()
+            )
+    );
 
     public NotificationBell() {
         setAlignment(Pos.CENTER);
@@ -72,9 +84,22 @@ public class NotificationBell extends StackPane {
             else showPopup();
         });
 
+        autoRefresh.setCycleCount(Timeline.INDEFINITE);
+
         sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null) Platform.runLater(this::refresh);
-            else popup.hide();
+
+            if (newScene != null) {
+
+                Platform.runLater(() -> {
+                    refresh();
+                    autoRefresh.play();
+                });
+
+            } else {
+
+                autoRefresh.stop();
+                popup.hide();
+            }
         });
     }
 
@@ -107,7 +132,8 @@ public class NotificationBell extends StackPane {
         notificationList.setPadding(new Insets(14));
         notificationList.setFillWidth(true);
 
-        ScrollPane scroll = new ScrollPane(notificationList);
+        notificationScroll = new ScrollPane(notificationList);
+        ScrollPane scroll = notificationScroll;
         scroll.setFitToWidth(true);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll.setPrefHeight(330);
@@ -150,7 +176,9 @@ public class NotificationBell extends StackPane {
         task.setOnSucceeded(e -> {
             loading = false;
 
-            if (recipientId.equals(userId())) updateNotifications(task.getValue());
+            if (getScene() != null && recipientId.equals(userId())) {
+                updateNotifications(task.getValue());
+            }
         });
 
         task.setOnFailed(e -> {
@@ -166,6 +194,12 @@ public class NotificationBell extends StackPane {
     }
 
     private void updateNotifications(JSONArray array) {
+
+        double previousScrollPosition =
+                notificationScroll == null
+                        ? 0
+                        : notificationScroll.getVvalue();
+
         notificationList.getChildren().clear();
 
         int unread = 0;
@@ -180,6 +214,11 @@ public class NotificationBell extends StackPane {
         badge.setVisible(unread > 0);
         badge.setManaged(unread > 0);
         if (array.isEmpty()) notificationList.getChildren().add(messageLabel("No notifications yet."));
+        if (popup.isShowing() && notificationScroll != null) {
+        Platform.runLater(() ->
+                notificationScroll.setVvalue(previousScrollPosition)
+        );
+    }
     }
 
     private Label messageLabel(String text) {
@@ -256,15 +295,15 @@ public class NotificationBell extends StackPane {
                     );
 
             if (isAdmin && isPerformanceRisk) {
-
                 showPerformanceRiskDetails(data, escalationId);
-
             } else {
 
+                boolean isNormalTaskNotification = "TASK_ASSIGNED".equalsIgnoreCase(notificationType) || "TASK_UPDATED".equalsIgnoreCase(notificationType) || "TASK_COMPLETED".equalsIgnoreCase(notificationType);
                 TaskDetailsDialog.show(
                     getScene() == null ? null : getScene().getWindow(),
                     taskId,
-                    escalationId
+                    escalationId,
+                    !isNormalTaskNotification && escalationId != null
                 );
             }
         });

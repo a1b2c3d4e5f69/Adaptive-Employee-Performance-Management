@@ -37,10 +37,14 @@ public final class TaskDetailsDialog {
     }
 
     public static void show(Window owner, String taskId) {
-        show(owner, taskId, null);
+        show(owner, taskId, null, false);
     }
 
     public static void show(Window owner, String taskId, Long escalationId) {
+        show(owner, taskId, escalationId, escalationId != null);
+    }
+
+    public static void show( Window owner, String taskId, Long escalationId, boolean escalationMode) {
         if (taskId == null || taskId.isBlank()) {
             warning(owner, "This notification has no linked task.");
             return;
@@ -55,27 +59,30 @@ public final class TaskDetailsDialog {
         User current = SessionManager.getCurrentUser();
         boolean isManager = current != null && current.getRoleId() == 2;
         boolean isEmployee = current != null && current.getRoleId() == 3;
+        boolean showManagerEscalation = isManager && escalationMode;
 
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle(isManager ? "Task Escalation Details" : "Task Details");
+        dialog.setTitle(showManagerEscalation ? "Task Escalation Details" : "Task Details");
         dialog.setHeaderText(null);
 
         if (owner != null) dialog.initOwner(owner);
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().add(ButtonType.CLOSE);
-        pane.setPrefSize(isManager ? 760 : 680, 700);
-        pane.setMinWidth(isManager ? 720 : 650);
-        pane.setStyle("-fx-background-color: #F6F8FC; -fx-padding: 0;");
-
+        pane.setPrefSize(showManagerEscalation ? 760 : 680, 700);
+        pane.setMinWidth(showManagerEscalation ? 720 : 650);
+        
         Button defaultClose = (Button) pane.lookupButton(ButtonType.CLOSE);
         defaultClose.setVisible(false);
         defaultClose.setManaged(false);
 
-        Label heading = label(isManager ? "Task Escalation Details" : "Task Details", 22, NAVY, true);
+        Label heading = label(showManagerEscalation ? "Task Escalation Details" : "Task Details",22, NAVY, true);
 
-        Label subtitle = label(isManager
-            ? "Review the deadline escalation and record your decision."
-            : "Review your task information and progress.", 12, MUTED, false);
+        Label subtitle = label(
+                showManagerEscalation
+                        ? "Review the deadline escalation and record your decision."
+                        : "Review your task information and progress.",
+                12, MUTED, false
+        );
 
         VBox headerText = new VBox(4, heading, subtitle);
 
@@ -217,7 +224,7 @@ public final class TaskDetailsDialog {
                 addEmployeeDecision(card, result[2]);
             }
 
-            if (isManager) {
+            if (showManagerEscalation) {
                 addManagerActions(
                     card, result[0], result[1], result[2],
                     escalationId, taskId, token, dialog

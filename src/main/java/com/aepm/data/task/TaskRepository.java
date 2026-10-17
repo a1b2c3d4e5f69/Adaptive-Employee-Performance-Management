@@ -26,7 +26,7 @@ public class TaskRepository {
     // CREATE TASK
     // =========================================================
 
-    public void createTask(
+    public UUID createTask(
             Task task,
             String accessToken
     ) throws Exception {
@@ -157,6 +157,22 @@ public class TaskRepository {
                 response,
                 "Unable to create task"
         );
+
+        JSONArray createdRows = new JSONArray(response.body());
+
+        if (createdRows.isEmpty()) {
+                throw new IllegalStateException(
+                        "Task was not created or access was denied."
+                );
+                }
+
+                JSONObject createdTask = createdRows.getJSONObject(0);
+
+                UUID createdTaskId = UUID.fromString(
+                createdTask.getString("task_id")
+        );
+
+        return createdTaskId;
     }
 
 
@@ -254,6 +270,49 @@ public class TaskRepository {
         );
     }
 
+
+// =========================================================
+// GET TASK BY ID
+// =========================================================
+
+public Task getTaskById(
+        UUID taskId,
+        String accessToken
+) throws Exception {
+
+    String url = AppConfig.REST_URL
+            + "/task_tbl"
+            + "?select=*"
+            + "&task_id=eq." + taskId
+            + "&limit=1";
+
+    HttpRequest request = supabaseClient
+            .createAuthenticatedRequest(url, accessToken)
+            .GET()
+            .build();
+
+    HttpResponse<String> response = supabaseClient
+            .getHttpClient()
+            .send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+
+    validateResponse(
+            response,
+            "Unable to load task details"
+    );
+
+    JSONArray rows = new JSONArray(response.body());
+
+    if (rows.isEmpty()) {
+        throw new IllegalStateException(
+                "Task not found or access denied."
+        );
+    }
+
+    return mapTask(rows.getJSONObject(0));
+}
 
     // =========================================================
     // UPDATE TASK STATUS
