@@ -8,175 +8,73 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-
+<?import com.aepm.ui.components.NotificationBell?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
+<?import com.aepm.ui.components.EmployeeRoleLabel?>
 
-<BorderPane
-        xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.aepm.ui.employee.EmployeePerformanceController"
-        styleClass="main-layout">
-
-
-    <!-- =====================================================
-         TOP BAR
-         ===================================================== -->
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.aepm.ui.employee.EmployeePerformanceController"
+            styleClass="main-layout">
 
     <top>
-
-        <HBox
-                alignment="CENTER_LEFT"
-                spacing="16"
-                styleClass="modern-topbar">
-
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
             <padding>
-                <Insets
-                        top="14"
-                        right="30"
-                        bottom="14"
-                        left="30"/>
+                <Insets top="16" right="28" bottom="16" left="28"/>
             </padding>
-
-
-            <Label
-                    text="AEPM"
-                    styleClass="modern-brand"/>
-
-
-            <Region
-                    prefWidth="1"
-                    minWidth="1"
-                    maxWidth="1"
-                    prefHeight="28"
-                    styleClass="topbar-divider"/>
-
-
-            <Label
-                    text="Adaptive Employee Performance Management System"
-                    styleClass="modern-system-name"/>
-
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-
-            <VBox
-                    spacing="2"
-                    alignment="CENTER_RIGHT">
-
-                <Label
-                        fx:id="topNameLabel"
-                        text="Employee"
-                        styleClass="modern-user-name"/>
-
-                <Label
-                        fx:id="topRoleLabel"
-                        text="EMPLOYEE"
-                        styleClass="modern-user-role"/>
-
+            <VBox spacing="2">
+                <EmployeeWelcomeLabel styleClass="topbar-title"/>
+                <Label text="Adaptive Employee Performance Management System"
+                       styleClass="topbar-subtitle"/>
             </VBox>
-
+            <Region HBox.hgrow="ALWAYS"/>
+            <NotificationBell/>
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel" text="Employee"
+                       styleClass="topbar-user-name"/>
+                <EmployeeRoleLabel fx:id="topRoleLabel"
+                                   styleClass="topbar-user-role"/>
+            </VBox>
         </HBox>
-
     </top>
 
-
-    <!-- =====================================================
-         SIDEBAR
-         ===================================================== -->
-
     <left>
-
-        <VBox
-                prefWidth="245"
-                minWidth="245"
-                maxWidth="245"
-                spacing="8"
-                styleClass="modern-sidebar">
-
+        <VBox prefWidth="245" minWidth="245" maxWidth="245"
+              spacing="8" styleClass="modern-sidebar">
             <padding>
-                <Insets
-                        top="28"
-                        right="18"
-                        bottom="20"
-                        left="18"/>
+                <Insets top="28" right="18" bottom="20" left="18"/>
             </padding>
-
-
-            <Label
-                    text="MENU"
-                    styleClass="modern-sidebar-section"/>
-
-
-            <Button
-                    text="⌂   Home"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleHome"
+            <Label text="MENU" styleClass="modern-sidebar-section"/>
+            <Button text="⌂   Home" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleHome"
                     styleClass="modern-nav-button"/>
-
-
-            <Button
-                    text="○   My Profile"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleProfile"
+            <Button text="○   My Profile" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleProfile"
                     styleClass="modern-nav-button"/>
-
-
-            <Button
-                    text="✓   My Tasks"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleTasks"
+            <Button text="✓   My Tasks" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleTasks"
                     styleClass="modern-nav-button"/>
-
-            <Button
-                    text="▥   Performance"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleKpi"
+            <Button text="▥   Performance" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleKpi"
                     styleClass="modern-nav-button-active"/>
-
-            <Button
-                    text="▦   My Attendance"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleAttendance"
+            <Button text="▦   My Attendance" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleAttendance"
                     styleClass="modern-nav-button"/>
-
-            <Button
-                    text="▤   Reports"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleReports"
+            <Button text="▤   Reports" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleReports"
                     styleClass="modern-nav-button"/>
-
-
-            <Button
-                    text="!   Anonymous Report"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleAnonymousReport"
+            <Button text="!   Anonymous Report" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleAnonymousReport"
                     styleClass="modern-nav-button"/>
-
-
             <Region VBox.vgrow="ALWAYS"/>
-
-
-            <Button
-                    text="↪   Logout"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleLogout"
+            <Button text="↪   Logout" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleLogout"
                     styleClass="modern-logout-button"/>
-
         </VBox>
-
     </left>
-
-
     <!-- =====================================================
          CONTENT
          ===================================================== -->

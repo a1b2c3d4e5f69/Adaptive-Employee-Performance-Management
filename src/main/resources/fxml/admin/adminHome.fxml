@@ -3,318 +3,822 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.shape.Circle?>
 <?import com.aepm.ui.components.NotificationBell?>
 
 <BorderPane
-        xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.aepm.ui.admin.AdminHomeController"
-        styleClass="main-layout">
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="com.aepm.ui.admin.AdminHomeController"
+    styleClass="main-layout">
 
-
+    <!-- ================================================== -->
     <!-- TOP BAR -->
+    <!-- ================================================== -->
 
     <top>
-
         <HBox
-                alignment="CENTER_LEFT"
-                spacing="20"
-                styleClass="topbar">
+            alignment="CENTER_LEFT"
+            spacing="20"
+            styleClass="topbar">
 
             <padding>
                 <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
+                    top="16"
+                    right="28"
+                    bottom="16"
+                    left="28"/>
             </padding>
 
-
             <VBox spacing="2">
+                <Label
+                    fx:id="welcomeLabel"
+                    text="Welcome, Administrator"
+                    styleClass="topbar-title"/>
 
                 <Label
-                        fx:id="welcomeLabel"
-                        text="Welcome, Administrator"
-                        styleClass="topbar-title"/>
-
-                <Label
-                        text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
-
+                    text="Adaptive Employee Performance Management System"
+                    styleClass="topbar-subtitle"/>
             </VBox>
 
+            <Region HBox.hgrow="ALWAYS"/>
 
-        <Region HBox.hgrow="ALWAYS"/>
-
-                <!-- Notification Bell -->
-                <NotificationBell/>
+            <NotificationBell/>
 
             <VBox
                 alignment="CENTER_RIGHT"
-                spacing="2">    
+                spacing="2">
 
                 <Label
-                        fx:id="topNameLabel"
-                        text="Administrator"
-                        styleClass="topbar-user-name"/>
+                    fx:id="topNameLabel"
+                    text="Administrator"
+                    styleClass="topbar-user-name"/>
 
                 <Label
-                        text="ADMINISTRATOR"
-                        styleClass="topbar-user-role"/>
-
+                    text="ADMINISTRATOR"
+                    styleClass="topbar-user-role"/>
             </VBox>
 
         </HBox>
-
     </top>
 
-
+    <!-- ================================================== -->
     <!-- SIDEBAR -->
+    <!-- ================================================== -->
 
     <left>
         <ScrollPane
-        prefWidth="294"
-        minWidth="294"
-        maxWidth="294"
-        fitToWidth="true"
-        hbarPolicy="NEVER"
-        vbarPolicy="AS_NEEDED"
-        style="-fx-background-color: white; -fx-background: white;">
-                <VBox
-                        prefWidth="240"
-                        spacing="10"
-                        styleClass="sidebar">
+            prefWidth="294"
+            minWidth="294"
+            maxWidth="294"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            style="-fx-background-color: white; -fx-background: white;">
+
+            <VBox
+                prefWidth="240"
+                spacing="10"
+                styleClass="sidebar">
 
                 <padding>
-                        <Insets
-                                top="30"
-                                right="18"
-                                bottom="20"
-                                left="18"/>
+                    <Insets
+                        top="30"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
                 </padding>
 
-
                 <VBox spacing="3">
+                    <Label
+                        text="AEPM"
+                        styleClass="sidebar-logo"/>
 
-                        <Label
-                                text="AEPM"
-                                styleClass="sidebar-logo"/>
-
-                        <Label
-                                text="Administrator Portal"
-                                styleClass="sidebar-subtitle"/>
-
+                    <Label
+                        text="Administrator Portal"
+                        styleClass="sidebar-subtitle"/>
                 </VBox>
-
 
                 <Region prefHeight="18"/>
 
-
                 <Label
-                        text="MENU"
-                        styleClass="sidebar-section-title"/>
-
-
-                <Button
-                        text="⌂   Home"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleHome"
-                        styleClass="sidebar-button-active"/>
+                    text="MENU"
+                    styleClass="sidebar-section-title"/>
 
                 <Button
-                        text="●   My Profile"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleProfile"
-                        styleClass="sidebar-button"/>
+                    text="⌂   Home"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleHome"
+                    styleClass="sidebar-button-active"/>
 
                 <Button
-                        text="♟   User Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleUserManagement"
-                        styleClass="sidebar-button"/>
+                    text="●   My Profile"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleProfile"
+                    styleClass="sidebar-button"/>
 
                 <Button
-                        text="✓   Task Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleTaskManagement"
-                        styleClass="sidebar-button"/>
-                <Button
-                        text="◷   Escalation Rules"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleEscalationRules"
-                        styleClass="sidebar-button"/>
+                    text="♟   User Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleUserManagement"
+                    styleClass="sidebar-button"/>
 
                 <Button
-                        text="★   KPI Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleKpiManagement"
-                        styleClass="sidebar-button"/>
+                    text="✓   Task Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleTaskManagement"
+                    styleClass="sidebar-button"/>
 
                 <Button
-                        text="⚙   System Configuration"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleSystemConfiguration"
-                        styleClass="sidebar-button"/>
+                    text="◷   Escalation Rules"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleEscalationRules"
+                    styleClass="sidebar-button"/>
 
                 <Button
-                        text="▦   Attendance Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAttendanceManagement"
-                        styleClass="sidebar-button"/>
+                    text="★   KPI Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleKpiManagement"
+                    styleClass="sidebar-button"/>
 
                 <Button
-                        text="≡   Reports"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleReports"
-                        styleClass="sidebar-button"/>
+                    text="⚙   System Configuration"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleSystemConfiguration"
+                    styleClass="sidebar-button"/>
 
                 <Button
-                        text="!   Anonymous Reports"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAnonymousReports"
-                        styleClass="sidebar-button"/>
+                    text="▦   Attendance Management"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAttendanceManagement"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    text="≡   Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleReports"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    text="!   Anonymous Reports"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnonymousReports"
+                    styleClass="sidebar-button"/>
 
                 <Region VBox.vgrow="ALWAYS"/>
 
                 <Button
-                        text="↪   Logout"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleLogout"
-                        styleClass="logout-button"/>
-
-                </VBox>
-        </ScrollPane>
-
-    </left>
-
-
-    <!-- CONTENT -->
-
-    <center>
-
-        <VBox
-                spacing="24"
-                styleClass="home-content">
-
-            <padding>
-                <Insets
-                        top="32"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-            </padding>
-
-
-            <VBox spacing="4">
-
-                <Label
-                        text="Administrator Home"
-                        styleClass="content-title"/>
-
-                <Label
-                        text="Manage users and system functions from here."
-                        styleClass="content-description"/>
+                    text="↪   Logout"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
 
             </VBox>
+        </ScrollPane>
+    </left>
 
+    <!-- ================================================== -->
+    <!-- ADMIN DASHBOARD -->
+    <!-- ================================================== -->
 
-            <HBox spacing="22">
+    <center>
+        <ScrollPane
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            styleClass="content-scroll-pane">
 
+            <VBox
+                spacing="20"
+                styleClass="modern-dashboard">
 
-                <!-- IAM -->
+                <padding>
+                    <Insets
+                        top="26"
+                        right="26"
+                        bottom="32"
+                        left="26"/>
+                </padding>
 
-                <VBox
-                        spacing="10"
-                        styleClass="dashboard-card"
-                        HBox.hgrow="ALWAYS">
+                <!-- DASHBOARD HEADER -->
 
-                    <Label
-                            text="IAM"
-                            styleClass="card-label"/>
+                <HBox
+                    alignment="CENTER_LEFT"
+                    spacing="12">
 
-                    <Label
-                            text="User Management"
-                            styleClass="card-title"/>
+                    <VBox spacing="6">
+                        <Label
+                            text="Dashboard Overview"
+                            styleClass="modern-page-title"/>
 
-                    <Label
-                            text="Manage employee and manager accounts."
-                            styleClass="content-description"/>
+                        <Label
+                            text="A live overview of your organisation's performance"
+                            styleClass="modern-page-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
 
                     <Button
-                            text="Manage Users"
+                        text="⟳  Refresh"
+                        onAction="#handleRefreshDashboard"
+                        styleClass="modern-refresh"
+                        prefWidth="120"
+                        prefHeight="40"
+                        alignment="CENTER"/>
+
+                </HBox>
+
+                <Label
+                    fx:id="dashboardStatusLabel"
+                    text="Loading dashboard..."
+                    styleClass="modern-status"/>
+
+                <!-- ================================================== -->
+                <!-- SUMMARY CARDS - ROW 1 -->
+                <!-- ================================================== -->
+
+                <GridPane
+                    hgap="14"
+                    vgap="14">
+
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                    </columnConstraints>
+
+                    <!-- TOTAL EMPLOYEES -->
+
+                    <VBox
+                        GridPane.columnIndex="0"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-blue"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="👥"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="TOTAL EMPLOYEES"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="employeeCountLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                    <!-- MANAGERS -->
+
+                    <VBox
+                        GridPane.columnIndex="1"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-purple"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="◆"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="MANAGERS"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="managerCountLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                    <!-- TOTAL TASKS -->
+
+                    <VBox
+                        GridPane.columnIndex="2"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-green"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="▣"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="TOTAL TASKS"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="taskCountLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                    <!-- OVERDUE TASKS -->
+
+                    <VBox
+                        GridPane.columnIndex="3"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-rose"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="◷"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="OVERDUE TASKS"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="overdueCountLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                </GridPane>
+
+                <!-- ================================================== -->
+                <!-- SUMMARY CARDS - ROW 2 -->
+                <!-- ================================================== -->
+
+                <GridPane
+                    hgap="14"
+                    vgap="14">
+
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.333"/>
+                        <ColumnConstraints percentWidth="33.333"/>
+                        <ColumnConstraints percentWidth="33.334"/>
+                    </columnConstraints>
+
+                    <!-- COMPLETED TASKS -->
+
+                    <VBox
+                        GridPane.columnIndex="0"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-amber"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="✓"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="COMPLETED TASKS"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="completedCountLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                    <!-- ACTIVE ESCALATIONS -->
+
+                    <VBox
+                        GridPane.columnIndex="1"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-cyan"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="⚠"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="ACTIVE ESCALATIONS"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="escalationCountLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                    <!-- COMPLETION RATE -->
+
+                    <VBox
+                        GridPane.columnIndex="2"
+                        spacing="10"
+                        styleClass="modern-metric-card,dash-lavender"
+                        maxWidth="Infinity">
+
+                        <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="10">
+
+                            <Label
+                                text="◉"
+                                styleClass="modern-metric-icon"/>
+
+                            <Label
+                                text="TASK COMPLETION RATE"
+                                wrapText="true"
+                                styleClass="modern-metric-title"/>
+                        </HBox>
+
+                        <Label
+                            fx:id="completionRateLabel"
+                            text="—"
+                            styleClass="modern-metric-number"/>
+
+                        <Label
+                            text="Live system data"
+                            styleClass="modern-metric-note"/>
+                    </VBox>
+
+                </GridPane>
+
+                <!-- ORGANISATION PERFORMANCE SUMMARY -->
+                <VBox spacing="16" styleClass="modern-panel">
+
+                <Label
+                        text="Organisation Performance Summary"
+                        styleClass="modern-panel-title"/>
+
+                <GridPane hgap="14" vgap="14">
+
+                        <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox GridPane.columnIndex="0"
+                        spacing="10"
+                        maxWidth="Infinity"
+                        styleClass="modern-metric-card,dash-blue">
+
+                        <Label text="PENDING TASKS"
+                                styleClass="modern-metric-title"/>
+
+                        <Label fx:id="pendingCountLabel"
+                                text="—"
+                                styleClass="modern-metric-number"/>
+
+                        <Label text="Tasks awaiting progress"
+                                wrapText="true"
+                                styleClass="modern-metric-note"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="1"
+                        spacing="10"
+                        maxWidth="Infinity"
+                        styleClass="modern-metric-card,dash-purple">
+
+                        <Label text="AVERAGE KPI SCORE"
+                                styleClass="modern-metric-title"/>
+
+                        <Label fx:id="averageKpiLabel"
+                                text="—"
+                                styleClass="modern-metric-number"/>
+
+                        <Label text="Organisation-wide employee average"
+                                wrapText="true"
+                                styleClass="modern-metric-note"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="2"
+                        spacing="10"
+                        maxWidth="Infinity"
+                        styleClass="modern-metric-card,dash-green">
+
+                        <Label text="EVALUATED EMPLOYEES"
+                                styleClass="modern-metric-title"/>
+
+                        <Label fx:id="evaluatedCountLabel"
+                                text="—"
+                                styleClass="modern-metric-number"/>
+
+                        <Label text="Employees with KPI results"
+                                wrapText="true"
+                                styleClass="modern-metric-note"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="3"
+                        spacing="10"
+                        maxWidth="Infinity"
+                        styleClass="modern-metric-card,dash-rose">
+
+                        <Label text="AT-RISK EMPLOYEES"
+                                styleClass="modern-metric-title"/>
+
+                        <Label fx:id="atRiskCountLabel"
+                                text="—"
+                                styleClass="modern-metric-number"/>
+
+                        <Label text="Latest KPI status: At Risk"
+                                wrapText="true"
+                                styleClass="modern-metric-note"/>
+                        </VBox>
+
+                </GridPane>
+                </VBox>
+
+                <!-- ================================================== -->
+                <!-- CHARTS -->
+                <!-- ================================================== -->
+
+                <GridPane
+                    hgap="16"
+                    vgap="16">
+
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="55"/>
+                        <ColumnConstraints percentWidth="45"/>
+                    </columnConstraints>
+
+                    <!-- TASK STATUS BAR CHART -->
+
+                    <VBox
+                        GridPane.columnIndex="0"
+                        spacing="16"
+                        minWidth="0"
+                        maxWidth="Infinity"
+                        styleClass="modern-panel">
+
+                        <Label
+                            text="▥  Task Status Overview"
+                            styleClass="modern-panel-title"/>
+
+                        <BarChart
+                            fx:id="taskStatusChart"
+                            animated="false"
+                            legendVisible="false"
+                            categoryGap="14"
+                            prefHeight="300"
+                            minHeight="270"
+                            minWidth="0"
+                            styleClass="modern-chart">
+
+                            <xAxis>
+                                <CategoryAxis label="Status"/>
+                            </xAxis>
+
+                            <yAxis>
+                                <NumberAxis
+                                    label="Tasks"
+                                    forceZeroInRange="true"
+                                    tickUnit="1"/>
+                            </yAxis>
+
+                        </BarChart>
+
+                    </VBox>
+
+                    <!-- ESCALATION DONUT CHART -->
+
+                    <VBox
+                        GridPane.columnIndex="1"
+                        spacing="16"
+                        minWidth="0"
+                        maxWidth="Infinity"
+                        styleClass="modern-panel">
+
+                        <Label
+                            text="◉  Escalations by Level"
+                            styleClass="modern-panel-title"/>
+
+                        <StackPane
+                            alignment="CENTER"
+                            prefHeight="300"
+                            minWidth="0">
+
+                            <PieChart
+                                fx:id="escalationChart"
+                                animated="false"
+                                labelsVisible="false"
+                                legendVisible="false"
+                                prefHeight="280"
+                                minWidth="0"/>
+
+                            <Circle
+                                radius="51"
+                                fill="WHITE"
+                                mouseTransparent="true"/>
+
+                            <VBox
+                                alignment="CENTER"
+                                spacing="2"
+                                mouseTransparent="true">
+
+                                <Label
+                                    fx:id="donutTotalLabel"
+                                    text="—"
+                                    styleClass="modern-donut-number"/>
+
+                                <Label
+                                    text="Total Active"
+                                    styleClass="modern-donut-caption"/>
+                            </VBox>
+
+                        </StackPane>
+
+                        <HBox
+                            alignment="CENTER"
+                            spacing="20">
+
+                            <Label
+                                text="●  Level 1"
+                                styleClass="modern-level-blue"/>
+
+                            <Label
+                                text="●  Level 2"
+                                styleClass="modern-level-amber"/>
+
+                            <Label
+                                text="●  Level 3"
+                                styleClass="modern-level-rose"/>
+                        </HBox>
+
+                    </VBox>
+
+                </GridPane>
+
+                <!-- ================================================== -->
+                <!-- MODULE OVERVIEW -->
+                <!-- ================================================== -->
+
+                <VBox
+                    spacing="18"
+                    minWidth="0"
+                    styleClass="modern-panel">
+
+                    <Label
+                        text="Module Overview"
+                        styleClass="modern-panel-title"/>
+
+                    <GridPane
+                        hgap="14"
+                        vgap="14">
+
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33.333"/>
+                            <ColumnConstraints percentWidth="33.333"/>
+                            <ColumnConstraints percentWidth="33.334"/>
+                        </columnConstraints>
+
+                        <!-- ROW 1 -->
+
+                        <Button
+                            GridPane.columnIndex="0"
+                            GridPane.rowIndex="0"
+                            text="♟  User Management  ›"
                             onAction="#handleUserManagement"
-                            styleClass="app-button"/>
+                            styleClass="modern-module"
+                            maxWidth="Infinity"/>
 
-                </VBox>
-
-
-                <!-- TASK -->
-
-                <VBox
-                        spacing="10"
-                        styleClass="dashboard-card"
-                        HBox.hgrow="ALWAYS">
-
-                    <Label
-                            text="TASK"
-                            styleClass="card-label"/>
-
-                    <Label
-                            text="Task Management"
-                            styleClass="card-title"/>
-
-                    <Label
-                            text="Monitor tasks across the organisation."
-                            styleClass="content-description"/>
-
-                    <Button
-                            text="View Tasks"
+                        <Button
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="0"
+                            text="✓  Task Management  ›"
                             onAction="#handleTaskManagement"
-                            styleClass="app-button"/>
+                            styleClass="modern-module"
+                            maxWidth="Infinity"/>
+
+                        <Button
+                            GridPane.columnIndex="2"
+                            GridPane.rowIndex="0"
+                            text="◷  Escalation Rules  ›"
+                            onAction="#handleEscalationRules"
+                            styleClass="modern-module"
+                            maxWidth="Infinity"/>
+
+                        <!-- ROW 2 -->
+
+                        <Button
+                            GridPane.columnIndex="0"
+                            GridPane.rowIndex="1"
+                            text="★  KPI Management  ›"
+                            onAction="#handleKpiManagement"
+                            styleClass="modern-module"
+                            maxWidth="Infinity"/>
+
+                        <Button
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="1"
+                            text="▦  Attendance  ›"
+                            onAction="#handleAttendanceManagement"
+                            styleClass="modern-module"
+                            maxWidth="Infinity"/>
+
+                        <Button
+                            GridPane.columnIndex="2"
+                            GridPane.rowIndex="1"
+                            text="⚙  Configuration  ›"
+                            onAction="#handleSystemConfiguration"
+                            styleClass="modern-module"
+                            maxWidth="Infinity"/>
+
+                    </GridPane>
 
                 </VBox>
 
-
-                <!-- KPI -->
+                <!-- ================================================== -->
+                <!-- RECENT ACTIVITIES -->
+                <!-- ================================================== -->
 
                 <VBox
-                        spacing="10"
-                        styleClass="dashboard-card"
-                        HBox.hgrow="ALWAYS">
+                    spacing="12"
+                    minWidth="0"
+                    styleClass="modern-panel">
 
                     <Label
-                            text="KPI"
-                            styleClass="card-label"/>
+                        text="Recent Activities"
+                        styleClass="modern-panel-title"/>
 
                     <Label
-                            text="Performance KPI"
-                            styleClass="card-title"/>
-
-                    <Label
-                            text="KPI configuration will be added later."
-                            styleClass="content-description"/>
+                        text="Activity feed will appear when an audit log source is connected."
+                        wrapText="true"
+                        styleClass="modern-empty-state"/>
 
                 </VBox>
 
-            </HBox>
-
-        </VBox>
-
+            </VBox>
+        </ScrollPane>
     </center>
 
 </BorderPane>

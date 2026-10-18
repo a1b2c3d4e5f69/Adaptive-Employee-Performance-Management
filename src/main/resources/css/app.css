@@ -1264,3 +1264,469 @@
 
     -fx-border-width: 1px 0 0 0;
 }
+
+
+/* Admin Dashboard */
+.dashboard-stat-value {
+    -fx-font-size: 29px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.chart-plot-background {
+    -fx-background-color: #FFFFFF;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #E8EDF5;
+}
+
+.default-color0.chart-bar {
+    -fx-bar-fill: #2563EB;
+}
+
+
+/* ============================================================
+   ADMIN DASHBOARD - LAYOUT REFINEMENT
+   Only affects the Admin Dashboard
+   ============================================================ */
+
+/* Dashboard background */
+.modern-dashboard {
+    -fx-background-color: #F5F7FD;
+    -fx-spacing: 20px;
+}
+
+/* Dashboard title */
+.modern-dashboard .modern-page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #122044;
+}
+
+.modern-dashboard .modern-page-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7483A2;
+}
+
+/* Summary cards */
+.modern-dashboard .modern-metric-card {
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #E6ECF6;
+    -fx-border-width: 1px;
+
+    -fx-padding: 20px;
+    -fx-min-width: 0;
+    -fx-min-height: 145px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(31, 57, 108, 0.06),
+        12, 0, 0, 3
+    );
+}
+
+/* Summary card text */
+.modern-dashboard .modern-metric-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #304266;
+}
+
+.modern-dashboard .modern-metric-number {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0C1D41;
+}
+
+.modern-dashboard .modern-metric-note {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7D8CA8;
+}
+
+/* Main panels */
+.modern-dashboard .modern-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #E7ECF5;
+    -fx-border-width: 1px;
+
+    -fx-padding: 22px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(31, 57, 108, 0.05),
+        12, 0, 0, 3
+    );
+}
+
+/* Panel titles */
+.modern-dashboard .modern-panel-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11254C;
+}
+
+/* Bar chart */
+.modern-dashboard .modern-chart {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+.modern-dashboard .modern-chart .chart-plot-background {
+    -fx-background-color: #FFFFFF;
+}
+
+.modern-dashboard .modern-chart .chart-horizontal-grid-lines {
+    -fx-stroke: #E8EDF6;
+}
+
+.modern-dashboard .modern-chart .chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+/* Donut chart center */
+.modern-dashboard .modern-donut-number {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #122044;
+}
+
+.modern-dashboard .modern-donut-caption {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7B8AA4;
+}
+
+/* Module overview buttons */
+.modern-dashboard .modern-module {
+    -fx-background-color: #F9FBFF;
+    -fx-background-radius: 12px;
+    -fx-border-color: #E5ECF8;
+    -fx-border-radius: 12px;
+
+    -fx-padding: 16px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E3763;
+
+    -fx-min-height: 65px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+}
+
+.modern-dashboard .modern-module:hover {
+    -fx-background-color: #EDF4FF;
+    -fx-border-color: #B7CFF9;
+}
+
+/* Recent activities empty state */
+.modern-dashboard .modern-empty-state {
+    -fx-font-size: 13px;
+    -fx-text-fill: #8090AA;
+    -fx-padding: 20px 0 0 0;
+}
+
+
+/* ===================================================
+   ADMIN DASHBOARD - ALIGNMENT AND BUTTON REFINEMENT
+   =================================================== */
+
+/* Dashboard panel */
+.modern-dashboard .modern-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: #E6ECF6;
+    -fx-border-width: 1;
+    -fx-padding: 22;
+}
+
+/* Module buttons */
+.modern-dashboard .modern-module {
+    -fx-background-color: #F7F9FE;
+    -fx-background-radius: 12;
+    -fx-border-color: #E4EAF5;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #20345D;
+
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 18;
+
+    -fx-min-width: 0;
+    -fx-pref-height: 62;
+    -fx-min-height: 62;
+    -fx-max-height: 62;
+
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Module hover */
+.modern-dashboard .modern-module:hover {
+    -fx-background-color: #EAF2FF;
+    -fx-border-color: #AFC7F5;
+    -fx-text-fill: #1D4ED8;
+}
+
+/* Refresh button */
+.modern-dashboard .modern-refresh {
+    -fx-background-color: #2563EB;
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+
+    -fx-padding: 0 20;
+    -fx-min-height: 40;
+    -fx-pref-height: 40;
+    -fx-min-width: 116;
+
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.modern-dashboard .modern-refresh:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+.modern-dashboard .modern-refresh:pressed {
+    -fx-background-color: #1E40AF;
+}
+
+/* Chart spacing */
+.modern-dashboard .modern-chart {
+    -fx-padding: 0;
+}
+
+/* Recent activities */
+.modern-dashboard .modern-empty-state {
+    -fx-padding: 8 0 8 0;
+}
+
+
+/* ============================================================
+   MANAGER DASHBOARD
+   ============================================================ */
+
+.manager-dashboard {
+    -fx-background-color: #F5F7FC;
+    -fx-spacing: 20;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.manager-dashboard .manager-dashboard-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14254A;
+}
+
+.manager-dashboard .manager-dashboard-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #8290A8;
+}
+
+.manager-dashboard .manager-dashboard-status {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7183A3;
+}
+
+/* ============================================================
+   REFRESH BUTTON
+   ============================================================ */
+
+.manager-dashboard .manager-refresh-button {
+    -fx-background-color: #2563EB;
+    -fx-background-radius: 10;
+
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+
+    -fx-border-color: transparent;
+    -fx-padding: 0 20;
+
+    -fx-min-height: 40;
+    -fx-pref-height: 40;
+
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-dashboard .manager-refresh-button:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+/* ============================================================
+   METRIC CARDS
+   ============================================================ */
+
+.manager-dashboard .manager-stat-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+
+    -fx-border-color: #E6ECF5;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+
+    -fx-padding: 22;
+
+    -fx-min-width: 0;
+    -fx-min-height: 145;
+    -fx-pref-height: 145;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(31, 57, 108, 0.05),
+        12,
+        0,
+        0,
+        3
+    );
+}
+
+.manager-dashboard .manager-stat-heading {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3A4B6B;
+}
+
+.manager-dashboard .manager-stat-number {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #10254B;
+}
+
+.manager-dashboard .manager-stat-description {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8290A8;
+}
+
+/* CARD COLOURS */
+
+.manager-dashboard .manager-stat-blue {
+    -fx-background-color: #EFF6FF;
+}
+
+.manager-dashboard .manager-stat-purple {
+    -fx-background-color: #F5F1FF;
+}
+
+.manager-dashboard .manager-stat-green {
+    -fx-background-color: #EFFBF5;
+}
+
+.manager-dashboard .manager-stat-rose {
+    -fx-background-color: #FFF2F5;
+}
+
+.manager-dashboard .manager-stat-amber {
+    -fx-background-color: #FFFAEE;
+}
+
+.manager-dashboard .manager-stat-cyan {
+    -fx-background-color: #EDFAFC;
+}
+
+/* ============================================================
+   PANELS
+   ============================================================ */
+
+.manager-dashboard .manager-dashboard-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+
+    -fx-border-color: #E6ECF5;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+
+    -fx-padding: 22;
+
+    -fx-min-width: 0;
+    -fx-min-height: 220;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(31, 57, 108, 0.05),
+        12,
+        0,
+        0,
+        3
+    );
+}
+
+.manager-dashboard .manager-panel-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14254A;
+}
+
+.manager-dashboard .manager-placeholder-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #8290A8;
+    -fx-alignment: CENTER;
+}
+
+/* ============================================================
+   QUICK ACCESS BUTTONS
+   ============================================================ */
+
+.manager-dashboard .manager-quick-button {
+    -fx-background-color: #F8FAFE;
+    -fx-background-radius: 12;
+
+    -fx-border-color: #E3EAF5;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+
+    -fx-text-fill: #20375F;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 18;
+
+    -fx-min-width: 0;
+    -fx-min-height: 64;
+    -fx-pref-height: 64;
+    -fx-max-height: 64;
+
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-dashboard .manager-quick-button:hover {
+    -fx-background-color: #EDF4FF;
+    -fx-border-color: #B8CDF5;
+    -fx-text-fill: #1D4ED8;
+}
+
+.manager-dashboard .manager-quick-button:pressed {
+    -fx-background-color: #DBEAFE;
+}
+

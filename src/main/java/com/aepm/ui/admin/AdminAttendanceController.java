@@ -116,6 +116,10 @@ public class AdminAttendanceController {
 
     private final AttendanceService attendanceService =
             new AttendanceService();
+    
+    
+    private int totalEmployeeCount = -1;
+    private int todayPresentCount = 0;
 
     private String accessToken;
 
@@ -737,11 +741,12 @@ public class AdminAttendanceController {
     // LOAD TOTAL EMPLOYEES
     // =====================================================
     private void loadTotalEmployees() {
-
         String token = getValidAccessToken();
 
         if (token == null) {
+            totalEmployeeCount = -1;
             totalEmployeesLabel.setText("--");
+            absentTodayLabel.setText("--");
             return;
         }
 
@@ -752,15 +757,20 @@ public class AdminAttendanceController {
                 throw new RuntimeException(e);
             }
         }).whenComplete((total, error) -> {
-
             Platform.runLater(() -> {
-
                 if (error != null) {
+                    totalEmployeeCount = -1;
                     totalEmployeesLabel.setText("--");
+                    absentTodayLabel.setText("--");
                     return;
                 }
 
-                totalEmployeesLabel.setText(String.valueOf(total));
+                totalEmployeeCount = total;
+                totalEmployeesLabel.setText(
+                        String.valueOf(totalEmployeeCount)
+                );
+
+                updateAbsentToday();
             });
         });
     }
@@ -790,7 +800,6 @@ public class AdminAttendanceController {
     private void updateAttendanceSummary(
             List<AttendanceRecord> records
     ) {
-
         LocalDate today = LocalDate.now(MALAYSIA_ZONE);
 
         Set<String> presentEmployees = new HashSet<>();
@@ -803,31 +812,71 @@ public class AdminAttendanceController {
                 continue;
             }
 
-            if (record.getCheckInTime() == null) {
+            if (record.getCheckInTime() == null
+                    || record.getEmployeeId() == null) {
                 continue;
             }
 
-            String employeeId = record.getEmployeeId().toString();
+            String employeeId =
+                    record.getEmployeeId().toString();
 
             presentEmployees.add(employeeId);
 
             if ("Late".equalsIgnoreCase(
                     record.getAttendanceStatus())) {
-
                 lateEmployees.add(employeeId);
             }
         }
 
+        todayPresentCount = presentEmployees.size();
+
         presentTodayLabel.setText(
-                String.valueOf(presentEmployees.size())
+                String.valueOf(todayPresentCount)
         );
 
         lateTodayLabel.setText(
                 String.valueOf(lateEmployees.size())
         );
 
-        // Requires employee count and working-day rules.
-        absentTodayLabel.setText("--");
+        updateAbsentToday();
+    }
+
+    private void updateAbsentToday() {
+
+        if (totalEmployeeCount < 0) {
+            absentTodayLabel.setText("--");
+            return;
+        }
+
+        java.time.ZonedDateTime now =
+                java.time.ZonedDateTime.now(MALAYSIA_ZONE);
+
+        java.time.DayOfWeek day = now.getDayOfWeek();
+
+        if (day == java.time.DayOfWeek.SATURDAY
+                || day == java.time.DayOfWeek.SUNDAY) {
+            absentTodayLabel.setText("---");
+            return;
+        }
+
+        // Temporary cut-off: 10 PM Malaysia time.
+        // Replace with configured working hours later.
+        java.time.LocalTime cutoff =
+                java.time.LocalTime.of(22, 0);
+
+        if (now.toLocalTime().isBefore(cutoff)) {
+            absentTodayLabel.setText("Pending");
+            return;
+        }
+
+        int absent = Math.max(
+                0,
+                totalEmployeeCount - todayPresentCount
+        );
+
+        absentTodayLabel.setText(
+                String.valueOf(absent)
+        );
     }
 
     // =====================================================

@@ -184,17 +184,6 @@
                     onAction="#handleReports"
                     styleClass="sidebar-button"/>
 
-
-            <!-- DASHBOARD -->
-
-            <Button
-                    text="▣   Dashboard"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDashboard"
-                    styleClass="sidebar-button"/>
-
-
             <Region VBox.vgrow="ALWAYS"/>
 
 

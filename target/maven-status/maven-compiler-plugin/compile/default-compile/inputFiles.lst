@@ -20,6 +20,11 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\attendance\AttendanceService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\auth\AuthService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\auth\RegisterService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\dashboard\AdminDashboardService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\dashboard\DashboardDataService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\dashboard\DashboardKpiService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\dashboard\EmployeeDashboardService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\dashboard\ManagerDashboardService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\DeadlineEscalationPreviewService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\DeadlineEscalationScheduler.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\deadline\DeadlineEscalationService.java
@@ -69,6 +74,8 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\auth\LoginController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\auth\RegisterController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\common\AEPMDialog.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\EmployeeRoleLabel.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\EmployeeWelcomeLabel.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\NotificationBell.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\TaskDetailsDialog.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\UIHelper.java

@@ -7,204 +7,76 @@
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.image.ImageView?>
-
+<?import com.aepm.ui.components.NotificationBell?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
+<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
+<?import com.aepm.ui.components.EmployeeRoleLabel?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane
-        xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.aepm.ui.employee.EmployeeProfileController"
-        styleClass="main-layout">
-
-
-    <!-- =====================================================
-         TOP BAR
-         SAME AS EMPLOYEE HOME
-         ===================================================== -->
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.aepm.ui.employee.EmployeeProfileController"
+            styleClass="main-layout">
 
     <top>
-
-        <HBox
-                alignment="CENTER_LEFT"
-                spacing="20"
-                styleClass="topbar">
-
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
             <padding>
-                <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
+                <Insets top="16" right="28" bottom="16" left="28"/>
             </padding>
-
-
             <VBox spacing="2">
-
-                <Label
-                        fx:id="welcomeLabel"
-                        text="Welcome, Employee"
-                        styleClass="topbar-title"/>
-
-                <Label
-                        text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
-
+                <Label fx:id="welcomeLabel" text="Welcome, Employee"
+                       styleClass="topbar-title"/>
+                <Label text="Adaptive Employee Performance Management System"
+                       styleClass="topbar-subtitle"/>
             </VBox>
-
-
             <Region HBox.hgrow="ALWAYS"/>
-
-
-            <VBox
-                    alignment="CENTER_RIGHT"
-                    spacing="2">
-
-                <Label
-                        fx:id="topNameLabel"
-                        text="Employee"
-                        styleClass="topbar-user-name"/>
-
-                <Label
-                        text="EMPLOYEE"
-                        styleClass="topbar-user-role"/>
-
+            <NotificationBell/>
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel" text="Employee"
+                       styleClass="topbar-user-name"/>
+                <EmployeeRoleLabel styleClass="topbar-user-role"/>
             </VBox>
-
         </HBox>
-
     </top>
 
-
-    <!-- =====================================================
-         SIDEBAR
-         EXACT SAME AS EMPLOYEE HOME
-         ===================================================== -->
-
     <left>
-
-        <VBox
-                prefWidth="240"
-                spacing="10"
-                styleClass="sidebar">
-
+        <VBox prefWidth="245" minWidth="245" maxWidth="245"
+              spacing="8" styleClass="modern-sidebar">
             <padding>
-                <Insets
-                        top="30"
-                        right="18"
-                        bottom="20"
-                        left="18"/>
+                <Insets top="28" right="18" bottom="20" left="18"/>
             </padding>
-
-
-            <VBox spacing="3">
-
-                <Label
-                        text="AEPM"
-                        styleClass="sidebar-logo"/>
-
-                <Label
-                        text="Employee Portal"
-                        styleClass="sidebar-subtitle"/>
-
-            </VBox>
-
-
-            <Region prefHeight="18"/>
-
-
-            <Label
-                    text="MENU"
-                    styleClass="sidebar-section-title"/>
-
-
-            <!-- HOME NORMAL -->
-
-            <Button
-                    text="⌂   Home"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleHome"
-                    styleClass="sidebar-button"/>
-
-
-            <!-- PROFILE ACTIVE -->
-
-            <Button
-                    text="●   My Profile"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleProfile"
-                    styleClass="sidebar-button-active"/>
-
-
-            <!-- MY TASKS -->
-
-            <Button
-                    text="✓   My Tasks"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleTasks"
-                    styleClass="sidebar-button"/>
-
-
-            <!-- KPI -->
-
-            <Button
-                    text="★   Performance KPI"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleKpi"
-                    styleClass="sidebar-button"/>
-
-            <Button
-                    text="▦   My Attendance"
-                    alignment="CENTER_LEFT"
-                    maxWidth="Infinity"
-                    onAction="#handleAttendance"
+            <Label text="MENU" styleClass="modern-sidebar-section"/>
+            <Button text="⌂   Home" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleHome"
                     styleClass="modern-nav-button"/>
-
-            <!-- REPORTS -->
-
-            <Button
-                    text="≡   Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleReports"
-                    styleClass="sidebar-button"/>
-
-
-            <!-- ANONYMOUS REPORT -->
-
-            <Button
-                    text="!   Anonymous Report"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnonymousReport"
-                    styleClass="sidebar-button"/>
-
-
+            <Button text="○   My Profile" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleProfile"
+                    styleClass="modern-nav-button-active"/>
+            <Button text="✓   My Tasks" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleTasks"
+                    styleClass="modern-nav-button"/>
+            <Button text="▥   Performance" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleKpi"
+                    styleClass="modern-nav-button"/>
+            <Button text="▦   My Attendance" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleAttendance"
+                    styleClass="modern-nav-button"/>
+            <Button text="▤   Reports" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleReports"
+                    styleClass="modern-nav-button"/>
+            <Button text="!   Anonymous Report" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleAnonymousReport"
+                    styleClass="modern-nav-button"/>
             <Region VBox.vgrow="ALWAYS"/>
-
-
-            <!-- LOGOUT -->
-
-            <Button
-                    text="↪   Logout"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleLogout"
-                    styleClass="logout-button"/>
-
+            <Button text="↪   Logout" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleLogout"
+                    styleClass="modern-logout-button"/>
         </VBox>
-
     </left>
-
 
     <!-- =====================================================
          PROFILE CONTENT

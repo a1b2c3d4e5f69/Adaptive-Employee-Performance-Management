@@ -718,9 +718,13 @@ public class ManagerCreateTaskController {
 
 
     @FXML
-    private void handleDashboard() {
+    private void handleDashboard(ActionEvent event) {
+    
+        navigate(
+                event,
+                "/fxml/manager/managerDashboard.fxml"
+        );
     }
-
 
     @FXML
     private void handleLogout(
