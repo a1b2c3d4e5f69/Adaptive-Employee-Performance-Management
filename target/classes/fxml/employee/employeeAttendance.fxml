@@ -7,6 +7,7 @@
 <?import com.aepm.ui.components.EmployeeWelcomeLabel?>
 <?import com.aepm.ui.components.EmployeeRoleLabel?>
 <?import com.aepm.ui.components.NotificationBell?>
+<?import javafx.scene.shape.Rectangle?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.aepm.ui.employee.EmployeeAttendanceController"
@@ -174,6 +175,15 @@
                                 styleClass="modern-page-subtitle"/>
 
                         </StackPane>
+                        <Rectangle
+                            fx:id="qrScanLine"
+                            width="380"
+                            height="3"
+                            arcWidth="3"
+                            arcHeight="3"
+                            fill="#2563EB"
+                            mouseTransparent="true"
+                            visible="false"/>
 
                         <HBox spacing="12" alignment="CENTER">
 

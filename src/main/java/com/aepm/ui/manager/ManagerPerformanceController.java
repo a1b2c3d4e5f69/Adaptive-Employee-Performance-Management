@@ -47,6 +47,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.aepm.logic.ai.AIPerformanceRecommendationService;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import com.aepm.ui.common.AEPMDialog;
+
+import java.util.UUID;
 public class ManagerPerformanceController {
 
     // =========================================================
@@ -78,6 +88,9 @@ public class ManagerPerformanceController {
 
     @FXML
     private Label employeeInfoLabel;
+
+    @FXML
+    private Button generateAiButton;
 
     // =========================================================
     // PERFORMANCE FILTER
@@ -165,6 +178,8 @@ public class ManagerPerformanceController {
     @FXML
     private TableColumn<KpiResult, String> calculatedColumn;
 
+    @FXML
+    private javafx.scene.control.Button aiHistoryButton;
 
     // =========================================================
     // FEEDBACK
@@ -198,6 +213,11 @@ public class ManagerPerformanceController {
 
     private final PerformanceFeedbackService feedbackService =
             new PerformanceFeedbackService();
+
+    private PerformanceFeedback loadedFeedback;
+    private boolean editingFeedback;
+    private long feedbackViewVersion;
+    private long performanceViewVersion;
 
 
     // =========================================================
@@ -289,6 +309,431 @@ public class ManagerPerformanceController {
         loadEmployees();
     }
 
+    @FXML
+    private void handleGenerateAi() {
+        if (generateAiButton.isDisabled()) {
+                return;
+        }
+
+        if (selectedEmployee == null
+                || selectedResult == null
+                || selectedResult.getResultId() == null) {
+                showMessage("Select an employee and a KPI evaluation first.");
+                return;
+        }
+
+        var user = SessionManager.getCurrentUser();
+        String token = SessionManager.getAccessToken();
+
+        if (user == null || token == null || token.isBlank()) {
+                showMessage("Please sign in again.");
+                return;
+        }
+
+        final UUID employeeId;
+
+        try {
+                employeeId = UUID.fromString(selectedEmployee.getUserId());
+
+                if (!employeeId.equals(
+                        UUID.fromString(selectedResult.getEmployeeId()))) {
+                showMessage(
+                        "The selected evaluation belongs to another employee."
+                );
+                return;
+                }
+        } catch (RuntimeException ex) {
+                showMessage("The selected employee or evaluation has an invalid ID.");
+                return;
+        }
+
+        final Long resultId = selectedResult.getResultId();
+
+        if (resultId <= 0) {
+                showMessage("The selected KPI result ID is invalid.");
+                return;
+        }
+
+        final String requestingUserId = user.getUserId();
+        final var originalScene = generateAiButton.getScene();
+        final String accessToken = token;
+
+        generateAiButton.setDisable(true);
+        showMessage("Checking existing AI recommendations...");
+
+        javafx.concurrent.Task<Boolean> check =
+                new javafx.concurrent.Task<>() {
+                        @Override
+                        protected Boolean call() throws Exception {
+                        return new com.aepm.data.repository
+                                .AIRecommendationRepository()
+                                .hasRecommendation(
+                                        employeeId,
+                                        resultId,
+                                        accessToken
+                                );
+                        }
+                };
+
+        check.setOnSucceeded(event -> {
+                generateAiButton.setDisable(false);
+
+                if (!isAiViewActive(originalScene, requestingUserId)) {
+                return;
+                }
+
+                if (!isSameAiSelection(employeeId, resultId)) {
+                showMessage(
+                        "Selection changed. Click Generate again "
+                        + "for the selected evaluation."
+                );
+                return;
+                }
+
+                if (!Boolean.TRUE.equals(check.getValue())) {
+                generateAiNow();
+                return;
+                }
+
+                var choice = com.aepm.ui.common.AEPMDialog
+                        .showRecommendationChoice(originalScene.getWindow());
+
+                // Recheck after the modal closes.
+                if (!isAiViewActive(originalScene, requestingUserId)
+                        || !isSameAiSelection(employeeId, resultId)) {
+                return;
+                }
+
+                switch (choice) {
+                case VIEW_HISTORY -> {
+                        showMessage("Opening saved recommendation history.");
+                        handleAiHistory();
+                }
+                case GENERATE_NEW -> generateAiNow();
+                case CANCEL -> showMessage(
+                        "Generation cancelled. No AI request was sent."
+                );
+                }
+        });
+
+        check.setOnFailed(event -> {
+                generateAiButton.setDisable(false);
+
+                if (!isAiViewActive(originalScene, requestingUserId)
+                        || !isSameAiSelection(employeeId, resultId)) {
+                return;
+                }
+
+                String message =
+                        "Unable to check existing recommendations. "
+                        + "No AI request was sent. Please try again.";
+
+                showMessage(message);
+
+                com.aepm.ui.common.AEPMDialog.showError(
+                        originalScene.getWindow(),
+                        "Unable to Check Recommendations",
+                        message
+                );
+        });
+
+        Thread worker = new Thread(check, "aepm-ai-duplicate-check");
+        worker.setDaemon(true);
+        worker.start();
+        }
+
+        private boolean isSameAiSelection(
+                UUID employeeId,
+                Long resultId
+        ) {
+        return selectedEmployee != null
+                && selectedResult != null
+                && employeeId.toString().equals(
+                        selectedEmployee.getUserId())
+                && resultId.equals(selectedResult.getResultId());
+    }
+
+    private void generateAiNow() {
+
+        if (generateAiButton.isDisabled()) {
+                return;
+        }
+
+        if (selectedEmployee == null || selectedResult == null) {
+                showMessage(
+                        "Select an employee and a KPI evaluation first."
+                );
+                return;
+        }
+
+        final UUID employeeId;
+
+        try {
+                employeeId = UUID.fromString(
+                        selectedEmployee.getUserId()
+                );
+
+                UUID resultEmployeeId = UUID.fromString(
+                        selectedResult.getEmployeeId()
+                );
+
+                if (!employeeId.equals(resultEmployeeId)) {
+                showMessage(
+                        "The selected evaluation belongs to another employee."
+                );
+                return;
+                }
+        } catch (IllegalArgumentException | NullPointerException ex) {
+                showMessage(
+                        "The selected employee or evaluation has an invalid ID."
+                );
+                return;
+        }
+
+        final Long selectedKpiResultId = selectedResult.getResultId();
+
+        if (selectedKpiResultId == null || selectedKpiResultId <= 0) {
+        showMessage("The selected KPI evaluation has an invalid result ID.");
+        return;
+        }
+
+        final LocalDate start =
+                selectedResult.getEvaluationStartDate();
+
+        final LocalDate end =
+                selectedResult.getEvaluationEndDate();
+
+        if (start == null || end == null || end.isBefore(start)) {
+                showMessage(
+                        "The selected evaluation has invalid reporting dates."
+                );
+                return;
+        }
+
+        User currentUser = SessionManager.getCurrentUser();
+
+        if (currentUser == null) {
+                showMessage("Please sign in again.");
+                return;
+        }
+
+        final String requestingUserId = currentUser.getUserId();
+        final var originalScene = generateAiButton.getScene();
+        final String aiEmployeeName = selectedEmployee.getFullName();
+        final String aiEmployeeCode = selectedEmployee.getEmployeeId();
+        final String aiDepartment = selectedEmployee.getDepartment();
+
+        generateAiButton.setDisable(true);
+        showMessage(
+                "Checking performance data and generating recommendations..."
+        );
+
+        Task<AIPerformanceRecommendationService.RecommendationResult> task =
+                new Task<>() {
+                        @Override
+                        protected AIPerformanceRecommendationService
+                                .RecommendationResult call() throws Exception {
+
+                        return new AIPerformanceRecommendationService()
+                                .generate(
+                                        employeeId,
+                                        start,
+                                        end,
+                                        selectedKpiResultId,
+                                        null,
+                                        null
+                                );
+                        }
+                };
+
+        task.setOnSucceeded(event -> {
+                generateAiButton.setDisable(false);
+
+                if (!isAiViewActive(originalScene, requestingUserId)) {
+                        return;
+                }
+
+                showMessage("AI recommendations generated and saved.");
+
+                var generated = task.getValue();
+
+                com.aepm.ui.common.AIRecommendationDialog.show(
+                        originalScene.getWindow(),
+                        aiEmployeeName,
+                        aiEmployeeCode,
+                        aiDepartment,
+                        start,
+                        end,
+                        generated.recommendation(),
+                        generated.snapshot(),
+                        generated.savedRecord().get("generated_at").getAsString(),
+                        generated.savedRecord().get("model_name").getAsString()
+                );
+        });
+
+        task.setOnFailed(event -> {
+        generateAiButton.setDisable(false);
+
+        if (!isAiViewActive(originalScene, requestingUserId)) {
+                return;
+        }
+
+        Throwable error = task.getException();
+        String message;
+
+        if (error instanceof java.net.http.HttpTimeoutException) {
+                message = "The AI request timed out. Please try again later.";
+
+        } else if (error instanceof java.io.IOException) {
+                message = "Unable to connect to the AI service. "
+                        + "Please check your connection and try again.";
+
+        } else if (error instanceof InterruptedException) {
+                message = "AI generation was interrupted. Please try again.";
+
+        } else {
+                message = error == null
+                        || error.getMessage() == null
+                        || error.getMessage().isBlank()
+                        ? "Unable to generate AI recommendations."
+                        : error.getMessage();
+        }
+
+        showMessage(message);
+
+        com.aepm.ui.common.AEPMDialog.showError(
+                originalScene.getWindow(),
+                "Unable to Generate AI Recommendations",
+                message
+        );
+        });
+
+        Thread worker = new Thread(task, "aepm-ai-recommendation");
+        worker.setDaemon(true);
+        worker.start();
+        }
+
+        private boolean isAiViewActive(
+                javafx.scene.Scene originalScene,
+                String requestingUserId
+        ) {
+        User currentUser = SessionManager.getCurrentUser();
+
+        return currentUser != null
+                && requestingUserId != null
+                && requestingUserId.equals(currentUser.getUserId())
+                && originalScene != null
+                && generateAiButton.getScene() == originalScene
+                && originalScene.getWindow() != null
+                && originalScene.getWindow().isShowing()
+                && originalScene.getWindow().getScene() == originalScene;
+        }
+
+        private void showAiRecommendations(
+                UUID employeeId,
+                LocalDate start,
+                LocalDate end,
+                JsonObject recommendation
+        ) {
+        StringBuilder text = new StringBuilder();
+
+        text.append("Scope: aggregate KPI only\n\n");
+
+        text.append("Assessment\n")
+                .append(recommendation
+                        .get("overall_assessment").getAsString())
+                .append("\n\n");
+
+        appendAiList(text, "Strengths", recommendation, "strengths");
+
+        appendAiList(
+                text,
+                "Areas for improvement",
+                recommendation,
+                "areas_for_improvement"
+        );
+
+        text.append("Recommendations\n");
+
+        int number = 1;
+
+        for (JsonElement element :
+                recommendation.getAsJsonArray("recommendations")) {
+
+                JsonObject item = element.getAsJsonObject();
+
+                text.append(number++).append(". ")
+                        .append(item.get("suggested_action").getAsString())
+                        .append("\nReason: ")
+                        .append(item.get("reason").getAsString())
+                        .append("\nEvidence: ")
+                        .append(item.get("evidence").getAsString())
+                        .append("\n\n");
+        }
+
+        if (number == 1) {
+                text.append("None provided.\n\n");
+        }
+
+        appendAiList(
+                text,
+                "Suggested training",
+                recommendation,
+                "suggested_training"
+        );
+
+        appendAiList(
+                text,
+                "Manager coaching",
+                recommendation,
+                "manager_interventions"
+        );
+
+        TextArea output = new TextArea(text.toString());
+        output.setEditable(false);
+        output.setWrapText(true);
+        output.setPrefSize(680, 480);
+
+        Alert dialog = new Alert(
+                Alert.AlertType.INFORMATION,
+                "",
+                ButtonType.CLOSE
+        );
+
+        dialog.initOwner(generateAiButton.getScene().getWindow());
+        dialog.setTitle("AI Performance Recommendations");
+        dialog.setHeaderText(
+                "Employee: " + employeeId
+                + "\nPeriod: " + start + " to " + end
+        );
+
+        dialog.getDialogPane().setContent(output);
+        dialog.setResizable(true);
+        dialog.show();
+        }
+
+        private void appendAiList(
+                StringBuilder text,
+                String heading,
+                JsonObject recommendation,
+                String key
+        ) {
+        text.append(heading).append("\n");
+
+        var items = recommendation.getAsJsonArray(key);
+
+        if (items.isEmpty()) {
+                text.append("None provided.\n");
+        } else {
+                for (JsonElement item : items) {
+                text.append("• ")
+                        .append(item.getAsString())
+                        .append("\n");
+                }
+        }
+
+        text.append("\n");
+    }
 
     // =========================================================
     // CURRENT MANAGER
@@ -1118,144 +1563,89 @@ public class ManagerPerformanceController {
     // LOAD PERFORMANCE
     // =========================================================
 
-    private void loadEmployeePerformance(
-            User employee
-    ) {
+    private void loadEmployeePerformance(User employee) {
 
         clearPerformance();
-
         clearFeedback();
-
         hideMessage();
 
+        final long requestVersion = performanceViewVersion;
 
-        if (
-                employee == null
-                        || employee.getUserId() == null
-                        || employee.getUserId().isBlank()
-        ) {
-
-            return;
+        if (employee == null
+                || employee.getUserId() == null
+                || employee.getUserId().isBlank()) {
+                return;
         }
 
-
-        String employeeUserId =
-                employee.getUserId();
-
+        final String employeeUserId = employee.getUserId();
 
         javafx.concurrent.Task<List<KpiResult>> task =
                 new javafx.concurrent.Task<>() {
-
-                    @Override
-                    protected List<KpiResult> call()
-                            throws Exception {
-
-                        return calculationService
-                                .getEmployeeResults(
-                                        employeeUserId
-                                );
-                    }
+                        @Override
+                        protected List<KpiResult> call() throws Exception {
+                        return calculationService.getEmployeeResults(
+                                employeeUserId
+                        );
+                        }
                 };
 
-
-        task.setOnSucceeded(
-                event -> {
-
-                    List<KpiResult> loadedResults =
-                            task.getValue();
-
-
-                    allResults.clear();
-
-
-                    if (
-                            loadedResults == null
-                                    || loadedResults.isEmpty()
-                    ) {
-
-                        showMessage(
-                                "Insufficient data is available to evaluate this employee's performance."
-                        );
-
-                        return;
-                    }
-
-
-                    allResults.addAll(
-                            loadedResults
-                    );
-
-
-                    applyPerformanceFilter();
-
-
-                    KpiResult latest =
-                            loadedResults.get(0);
-
-
-                    selectedResult =
-                            latest;
-
-
-                    displayPerformance(
-                            latest
-                    );
-
-
-                    if (
-                            filteredResults.contains(
-                                    latest
-                            )
-                    ) {
-
-                        historyTable
-                                .getSelectionModel()
-                                .select(
-                                        latest
-                                );
-                    }
-
-
-                    loadFeedback(
-                            latest
-                    );
+        task.setOnSucceeded(event -> {
+                if (requestVersion != performanceViewVersion) {
+                return;
                 }
-        );
 
-
-        task.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            task.getException();
-
-
-                    if (error != null) {
-                        error.printStackTrace();
-                    }
-
-
-                    showMessage(
-                            error == null
-                                    ? "Unable to load employee performance."
-                                    : error.getMessage()
-                    );
+                if (selectedEmployee == null
+                        || !employeeUserId.equals(
+                                selectedEmployee.getUserId())) {
+                return;
                 }
-        );
 
+                List<KpiResult> loadedResults = task.getValue();
 
-        Thread thread =
-                new Thread(
-                        task
+                allResults.clear();
+
+                if (loadedResults == null || loadedResults.isEmpty()) {
+                showMessage(
+                        "No KPI results are available for this employee."
                 );
+                return;
+                }
 
+                allResults.addAll(loadedResults);
+                applyPerformanceFilter();
 
-        thread.setDaemon(
-                true
-        );
+                KpiResult latest = loadedResults.get(0);
 
+                if (filteredResults.contains(latest)) {
+                // The selection listener displays the KPI
+                // and calls loadFeedback().
+                historyTable.getSelectionModel().select(latest);
+                } else {
+                // Preserve the existing behaviour of displaying
+                // the latest KPI even when the history filter hides it.
+                selectedResult = latest;
+                displayPerformance(latest);
+                loadFeedback(latest);
+                }
+        });
 
-        thread.start();
+        task.setOnFailed(event -> {
+                if (requestVersion != performanceViewVersion) {
+                return;
+                }
+
+                Throwable error = task.getException();
+
+                showMessage(
+                        error == null || error.getMessage() == null
+                                ? "Unable to load employee performance."
+                                : error.getMessage()
+                );
+        });
+
+        Thread worker = new Thread(task, "load-employee-performance");
+        worker.setDaemon(true);
+        worker.start();
     }
 
 
@@ -1386,136 +1776,77 @@ public class ManagerPerformanceController {
     // LOAD FEEDBACK
     // =========================================================
 
-    private void loadFeedback(
-            KpiResult result
-    ) {
+    private void loadFeedback(KpiResult result) {
 
         clearFeedback();
 
-
-        if (
-                result == null
-                        || result.getResultId() == null
-        ) {
-
-            return;
+        if (result == null || result.getResultId() == null) {
+                return;
         }
 
+        if (selectedEmployee == null
+                || selectedEmployee.getUserId() == null
+                || !selectedEmployee.getUserId()
+                        .equals(result.getEmployeeId())) {
+                return;
+        }
+
+        // clearFeedback() resets selectedResult, so restore it here.
+        selectedResult = result;
+
+        final long viewVersion = feedbackViewVersion;
+        final Long resultId = result.getResultId();
 
         selectedResultLabel.setText(
                 "Selected evaluation: "
-                        + formatPeriod(
+                + formatPeriod(
                         result.getEvaluationStartDate(),
                         result.getEvaluationEndDate()
                 )
         );
 
-
         javafx.concurrent.Task<PerformanceFeedback> task =
                 new javafx.concurrent.Task<>() {
-
-                    @Override
-                    protected PerformanceFeedback call()
-                            throws Exception {
-
-                        return feedbackService
-                                .getLatestFeedbackByResult(
-                                        result.getResultId()
-                                );
-                    }
+                        @Override
+                        protected PerformanceFeedback call() throws Exception {
+                        return feedbackService.getLatestFeedbackByResult(
+                                resultId
+                        );
+                        }
                 };
 
-
-        task.setOnSucceeded(
-                event -> {
-
-                    PerformanceFeedback feedback =
-                            task.getValue();
-
-
-                    if (feedback == null) {
-
-                        existingFeedbackLabel.setText(
-                                "No feedback has been submitted for this evaluation."
-                        );
-
-
-                        feedbackTextArea.setDisable(
-                                false
-                        );
-
-
-                        submitFeedbackButton.setDisable(
-                                false
-                        );
-
-                        return;
-                    }
-
-
-                    String date =
-                            feedback.getCreatedAt() == null
-                                    ? ""
-                                    : " • "
-                                    + formatDateTime(
-                                    feedback.getCreatedAt()
-                            );
-
-
-                    existingFeedbackLabel.setText(
-                            feedback.getFeedbackText()
-                                    + date
-                    );
-
-
-                    feedbackTextArea.setText(
-                            feedback.getFeedbackText()
-                    );
-
-
-                    feedbackTextArea.setDisable(
-                            true
-                    );
-
-
-                    submitFeedbackButton.setDisable(
-                            true
-                    );
+        task.setOnSucceeded(event -> {
+                if (viewVersion != feedbackViewVersion) {
+                return;
                 }
-        );
 
+                displayFeedbackState(task.getValue());
+        });
 
-        task.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            task.getException();
-
-
-                    if (error != null) {
-                        error.printStackTrace();
-                    }
-
-
-                    existingFeedbackLabel.setText(
-                            "Unable to load feedback."
-                    );
+        task.setOnFailed(event -> {
+                if (viewVersion != feedbackViewVersion) {
+                return;
                 }
-        );
 
-
-        Thread thread =
-                new Thread(
-                        task
+                existingFeedbackLabel.setText(
+                        "Unable to load feedback."
                 );
 
+                feedbackTextArea.setDisable(true);
+                submitFeedbackButton.setDisable(true);
 
-        thread.setDaemon(
-                true
-        );
+                Throwable error = task.getException();
 
+                showMessage(
+                        error == null || error.getMessage() == null
+                                ? "Unable to load feedback."
+                                : error.getMessage()
+                );
+        });
 
-        thread.start();
+        Thread worker = new Thread(task, "load-performance-feedback");
+        worker.setDaemon(true);
+        worker.start();
     }
 
 
@@ -1526,146 +1857,123 @@ public class ManagerPerformanceController {
     @FXML
     private void handleSubmitFeedback() {
 
-        if (selectedEmployee == null) {
-
-            showMessage(
-                    "Please select an employee."
-            );
-
-            return;
+        if (submitFeedbackButton.isDisabled()) {
+                return;
         }
 
-
-        if (selectedResult == null) {
-
-            showMessage(
-                    "Please select a performance result."
-            );
-
-            return;
+        if (selectedEmployee == null || selectedResult == null) {
+                showMessage("Select an employee and a KPI result first.");
+                return;
         }
 
+        final String employeeId = selectedEmployee.getUserId();
+        final Long resultId = selectedResult.getResultId();
 
-        String feedbackText =
-                feedbackTextArea
-                        .getText()
-                        .trim();
-
-
-        if (feedbackText.isBlank()) {
-
-            showMessage(
-                    "Please enter performance feedback before submitting."
-            );
-
-            return;
+        if (employeeId == null
+                || resultId == null
+                || !employeeId.equals(selectedResult.getEmployeeId())) {
+                showMessage("The selected employee and KPI result do not match.");
+                return;
         }
 
+        final PerformanceFeedback existing = loadedFeedback;
 
-        submitFeedbackButton.setDisable(
-                true
-        );
+        if (existing != null
+                && (!resultId.equals(existing.getResultId())
+                        || !employeeId.equals(existing.getEmployeeId()))) {
+                showMessage("Refresh the feedback before editing.");
+                return;
+        }
 
+        if (existing != null && !editingFeedback) {
+                editingFeedback = true;
+                feedbackTextArea.setEditable(true);
+                feedbackTextArea.requestFocus();
+                submitFeedbackButton.setText("Save Changes");
+
+                showMessage(
+                        "Edit the feedback, then click Save Changes. "
+                        + "The employee can read the saved changes after refreshing."
+                );
+                return;
+        }
+
+        final String text = feedbackTextArea.getText().trim();
+
+        if (text.isBlank()) {
+                showMessage("Feedback cannot be empty.");
+                return;
+        }
+
+        if (existing != null && text.equals(existing.getFeedbackText())) {
+                displayFeedbackState(existing);
+                showMessage("No changes to save.");
+                return;
+        }
+
+        final long viewVersion = feedbackViewVersion;
+
+        submitFeedbackButton.setDisable(true);
+        feedbackTextArea.setEditable(false);
 
         javafx.concurrent.Task<PerformanceFeedback> task =
                 new javafx.concurrent.Task<>() {
-
-                    @Override
-                    protected PerformanceFeedback call()
-                            throws Exception {
-
-                        return feedbackService
-                                .submitFeedback(
-                                        selectedResult.getResultId(),
-                                        selectedEmployee.getUserId(),
-                                        feedbackText
+                        @Override
+                        protected PerformanceFeedback call() throws Exception {
+                        if (existing == null) {
+                                return feedbackService.submitFeedback(
+                                        resultId,
+                                        employeeId,
+                                        text
                                 );
-                    }
+                        }
+
+                        return feedbackService.updateFeedback(
+                                existing,
+                                text
+                        );
+                        }
                 };
 
-
-        task.setOnSucceeded(
-                event -> {
-
-                    PerformanceFeedback feedback =
-                            task.getValue();
-
-
-                    String date =
-                            feedback.getCreatedAt() == null
-                                    ? ""
-                                    : " • "
-                                    + formatDateTime(
-                                    feedback.getCreatedAt()
-                            );
-
-
-                    existingFeedbackLabel.setText(
-                            feedback.getFeedbackText()
-                                    + date
-                    );
-
-
-                    feedbackTextArea.setText(
-                            feedback.getFeedbackText()
-                    );
-
-
-                    feedbackTextArea.setDisable(
-                            true
-                    );
-
-
-                    submitFeedbackButton.setDisable(
-                            true
-                    );
-
-
-                    showMessage(
-                            "Performance feedback submitted successfully."
-                    );
+        task.setOnSucceeded(event -> {
+                if (viewVersion != feedbackViewVersion) {
+                return;
                 }
-        );
 
+                displayFeedbackState(task.getValue());
 
-        task.setOnFailed(
-                event -> {
+                showMessage(existing == null
+                        ? "Feedback submitted successfully."
+                        : "Feedback changes saved successfully.");
+        });
 
-                    submitFeedbackButton.setDisable(
-                            false
-                    );
-
-
-                    Throwable error =
-                            task.getException();
-
-
-                    if (error != null) {
-                        error.printStackTrace();
-                    }
-
-
-                    showMessage(
-                            error == null
-                                    ? "Unable to submit performance feedback."
-                                    : error.getMessage()
-                    );
+        task.setOnFailed(event -> {
+                if (viewVersion != feedbackViewVersion) {
+                        return;
                 }
-        );
 
+                feedbackTextArea.setEditable(true);
+                submitFeedbackButton.setDisable(false);
 
-        Thread thread =
-                new Thread(
-                        task
+                Throwable error = task.getException();
+
+                String message =
+                        error == null || error.getMessage() == null
+                                ? "Unable to save feedback."
+                                : error.getMessage();
+
+                showMessage(message);
+
+                AEPMDialog.showError(
+                        submitFeedbackButton.getScene().getWindow(),
+                        "Unable to Save Feedback",
+                        message
                 );
+        });
 
-
-        thread.setDaemon(
-                true
-        );
-
-
-        thread.start();
+        Thread worker = new Thread(task, "performance-feedback-save");
+        worker.setDaemon(true);
+        worker.start();
     }
 
 
@@ -1693,7 +2001,7 @@ public class ManagerPerformanceController {
         performanceStatusLabel.setText("-");
         evaluationPeriodLabel.setText("-");
         calculatedAtLabel.setText("-");
-
+        performanceViewVersion++;
         productivityLabel.setText("-");
         timelinessLabel.setText("-");
         completionLabel.setText("-");
@@ -1707,6 +2015,13 @@ public class ManagerPerformanceController {
 
 
     private void clearFeedback() {
+
+        feedbackViewVersion++;
+        loadedFeedback = null;
+        editingFeedback = false;
+
+        feedbackTextArea.setEditable(true);
+        submitFeedbackButton.setText("Submit Feedback");
 
         selectedResult =
                 null;
@@ -1786,6 +2101,98 @@ public class ManagerPerformanceController {
         }
     }
 
+    @FXML
+    private void handleAiHistory() {
+        if (aiHistoryButton.isDisabled()) {
+                return;
+        }
+
+        if (selectedEmployee == null) {
+                showMessage("Select an employee first.");
+                return;
+        }
+
+        var currentUser = SessionManager.getCurrentUser();
+
+        if (currentUser == null) {
+                showMessage("Please sign in again.");
+                return;
+        }
+
+        final UUID employeeId;
+
+        try {
+                employeeId = UUID.fromString(selectedEmployee.getUserId());
+        } catch (RuntimeException ex) {
+                showMessage("The selected employee has an invalid ID.");
+                return;
+        }
+
+        final String requestingUserId = currentUser.getUserId();
+        final String accessToken = SessionManager.getAccessToken();
+        final var originalScene = generateAiButton.getScene();
+
+        final String employeeName = selectedEmployee.getFullName();
+        final String employeeCode = selectedEmployee.getEmployeeId();
+        final String department = selectedEmployee.getDepartment();
+
+        aiHistoryButton.setDisable(true);
+
+        javafx.concurrent.Task<com.google.gson.JsonArray> task =
+                new javafx.concurrent.Task<>() {
+                        @Override
+                        protected com.google.gson.JsonArray call()
+                                throws Exception {
+                        return new com.aepm.data.repository
+                                .AIRecommendationRepository()
+                                .getHistory(employeeId, accessToken);
+                        }
+                };
+
+        task.setOnSucceeded(event -> {
+                aiHistoryButton.setDisable(false);
+
+                if (!isAiViewActive(originalScene, requestingUserId)
+                        || selectedEmployee == null
+                        || !employeeId.toString().equals(
+                                selectedEmployee.getUserId())) {
+                return;
+                }
+
+                com.aepm.ui.common.AIRecommendationHistoryDialog.show(
+                        originalScene.getWindow(),
+                        employeeName,
+                        employeeCode,
+                        department,
+                        task.getValue()
+                );
+        });
+
+        task.setOnFailed(event -> {
+                aiHistoryButton.setDisable(false);
+
+                if (!isAiViewActive(originalScene, requestingUserId)
+                        || selectedEmployee == null
+                        || !employeeId.toString().equals(
+                                selectedEmployee.getUserId())) {
+                return;
+                }
+
+                Throwable error = task.getException();
+
+                com.aepm.ui.common.AEPMDialog.showError(
+                        originalScene.getWindow(),
+                        "Unable to Load History",
+                        error == null || error.getMessage() == null
+                                ? "Please try loading the history again."
+                                : error.getMessage()
+                );
+        });
+
+        Thread worker = new Thread(task, "aepm-ai-history");
+        worker.setDaemon(true);
+        worker.start();
+    }
 
     // =========================================================
     // NAVIGATION
@@ -2001,5 +2408,47 @@ public class ManagerPerformanceController {
                 stage,
                 path
         );
+    }
+
+    private void displayFeedbackState(PerformanceFeedback feedback) {
+        loadedFeedback = feedback;
+        editingFeedback = false;
+
+        if (feedback == null) {
+                existingFeedbackLabel.setText(
+                        "No feedback has been submitted for this evaluation."
+                );
+
+                feedbackTextArea.clear();
+                feedbackTextArea.setDisable(false);
+                feedbackTextArea.setEditable(true);
+
+                submitFeedbackButton.setText("Submit Feedback");
+                submitFeedbackButton.setDisable(false);
+                return;
+        }
+
+        String created = feedback.getCreatedAt() == null
+                ? ""
+                : "\nOriginally submitted: "
+                        + formatDateTime(feedback.getCreatedAt());
+
+        existingFeedbackLabel.setText(
+                feedback.getFeedbackText() + created
+        );
+
+        feedbackTextArea.setText(feedback.getFeedbackText());
+        feedbackTextArea.setDisable(false);
+        feedbackTextArea.setEditable(false);
+
+        User manager = SessionManager.getCurrentUser();
+
+        boolean canEdit = manager != null
+                && manager.getRoleId() == 2
+                && manager.getUserId() != null
+                && manager.getUserId().equals(feedback.getManagerId());
+
+        submitFeedbackButton.setText("Edit Feedback");
+        submitFeedbackButton.setDisable(!canEdit);
     }
 }

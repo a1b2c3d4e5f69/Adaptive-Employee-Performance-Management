@@ -982,7 +982,16 @@ public class SystemConfigurationController {
         }
     }
 
-
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
+    
     @FXML
     private void handleRefreshHolidays() {
 

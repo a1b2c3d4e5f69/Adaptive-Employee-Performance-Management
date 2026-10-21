@@ -132,7 +132,11 @@
                                 text="↻  Refresh"
                                 onAction="#handleRefresh"
                                 styleClass="modern-primary-button"/>
-
+                        <Button
+                                fx:id="aiRecommendationsButton"
+                                text="AI Recommendations"
+                                onAction="#handleAiRecommendations"
+                                styleClass="modern-primary-button"/>
                     </HBox>
 
 

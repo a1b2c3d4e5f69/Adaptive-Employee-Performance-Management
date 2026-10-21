@@ -163,6 +163,13 @@
                         styleClass="sidebar-button"/>
 
                 <Button
+                        text="✦   AI Recommendation"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleAIConfiguration"
+                        styleClass="sidebar-button"/>
+
+                <Button
                         text="▦   Attendance Management"
                         maxWidth="Infinity"
                         alignment="CENTER_LEFT"

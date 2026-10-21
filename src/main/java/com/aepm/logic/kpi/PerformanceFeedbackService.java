@@ -256,4 +256,46 @@ public class PerformanceFeedbackService {
 
         return token;
     }
+
+    public PerformanceFeedback updateFeedback(
+                PerformanceFeedback existing,
+                String newText
+        ) throws Exception {
+
+        User manager = SessionManager.getCurrentUser();
+
+        if (manager == null
+                || manager.getRoleId() != 2
+                || manager.getUserId() == null) {
+                throw new SecurityException(
+                        "A manager account is required."
+                );
+        }
+
+        if (existing == null
+                || existing.getFeedbackId() == null
+                || existing.getResultId() == null) {
+                throw new IllegalArgumentException(
+                        "Select an existing feedback record."
+                );
+        }
+
+        if (!manager.getUserId().equals(existing.getManagerId())) {
+                throw new SecurityException(
+                        "You can only edit feedback you submitted."
+                );
+        }
+
+        if (newText == null || newText.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Feedback cannot be empty."
+                );
+        }
+
+        return repository.updateFeedback(
+                existing,
+                newText.trim(),
+                requireAccessToken()
+        );
+     }
 }

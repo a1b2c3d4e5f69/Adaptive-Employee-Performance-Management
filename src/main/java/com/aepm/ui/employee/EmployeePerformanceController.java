@@ -37,6 +37,15 @@ import java.time.format.DateTimeFormatter;
 
 import java.util.List;
 
+import com.aepm.data.repository.AIRecommendationRepository;
+import com.aepm.ui.common.AEPMDialog;
+import com.aepm.ui.common.AIRecommendationHistoryDialog;
+import com.google.gson.JsonArray;
+import javafx.concurrent.Task;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import java.util.UUID;
+
 public class EmployeePerformanceController {
 
     // =========================================================
@@ -153,6 +162,10 @@ public class EmployeePerformanceController {
     // =========================================================
     // MESSAGE
     // =========================================================
+    @FXML
+    private Button aiRecommendationsButton;
+
+    private boolean aiHistoryLoading;
 
     @FXML
     private Label messageLabel;
@@ -1302,5 +1315,139 @@ public class EmployeePerformanceController {
                 stage,
                 path
         );
+    }
+
+    @FXML
+    private void handleAiRecommendations() {
+
+        if (aiHistoryLoading) {
+                return;
+        }
+
+        Scene scene = aiRecommendationsButton.getScene();
+
+        if (scene == null || scene.getWindow() == null) {
+                return;
+        }
+
+        User user = SessionManager.getCurrentUser();
+        String token = SessionManager.getAccessToken();
+
+        if (user == null
+                || user.getRoleId() != 3L
+                || user.getUserId() == null
+                || token == null
+                || token.isBlank()) {
+
+                AEPMDialog.showError(
+                        scene.getWindow(),
+                        "Unable to Load Recommendations",
+                        "Please sign in with your employee account."
+                );
+                return;
+        }
+
+        final UUID employeeId;
+
+        try {
+                employeeId = UUID.fromString(user.getUserId());
+        } catch (IllegalArgumentException ex) {
+
+                AEPMDialog.showError(
+                        scene.getWindow(),
+                        "Unable to Load Recommendations",
+                        "Your employee account has an invalid user ID."
+                );
+                return;
+        }
+
+        // Capture this session and identity before starting the request.
+        final var signedInSession = SessionManager.getAuthSession();
+
+        final String employeeName =
+                user.getFullName() == null
+                        || user.getFullName().isBlank()
+                        ? user.getUsername()
+                        : user.getFullName();
+
+        final String employeeCode = user.getEmployeeId();
+        final String department = user.getDepartment();
+
+        aiHistoryLoading = true;
+        aiRecommendationsButton.setDisable(true);
+        aiRecommendationsButton.setText("Loading...");
+
+        Task<JsonArray> task = new Task<>() {
+                @Override
+                protected JsonArray call() throws Exception {
+                return new AIRecommendationRepository()
+                        .getHistory(employeeId, token);
+                }
+        };
+
+        task.setOnSucceeded(event -> {
+
+                aiHistoryLoading = false;
+                aiRecommendationsButton.setDisable(false);
+                aiRecommendationsButton.setText("AI Recommendations");
+
+                // Ignore results after logout, account switch or navigation.
+                if (SessionManager.getAuthSession() != signedInSession
+                        || !isEmployeeAiViewActive(
+                                scene, employeeId.toString())) {
+                return;
+                }
+
+                AIRecommendationHistoryDialog.show(
+                        scene.getWindow(),
+                        employeeName,
+                        employeeCode,
+                        department,
+                        task.getValue()
+                );
+        });
+
+        task.setOnFailed(event -> {
+
+                aiHistoryLoading = false;
+                aiRecommendationsButton.setDisable(false);
+                aiRecommendationsButton.setText("AI Recommendations");
+
+                if (SessionManager.getAuthSession() != signedInSession
+                        || !isEmployeeAiViewActive(
+                                scene, employeeId.toString())) {
+                return;
+                }
+
+                AEPMDialog.showError(
+                        scene.getWindow(),
+                        "Unable to Load Recommendations",
+                        "Your AI recommendations could not be loaded. "
+                                + "Please check your connection and try again."
+                );
+        });
+
+        Thread worker = new Thread(
+                task, "employee-ai-history"
+        );
+
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private boolean isEmployeeAiViewActive(
+                Scene expectedScene,
+                String expectedUserId
+        ) {
+
+        User current = SessionManager.getCurrentUser();
+
+        return current != null
+                && current.getRoleId() == 3L
+                && expectedUserId.equals(current.getUserId())
+                && aiRecommendationsButton.getScene() == expectedScene
+                && expectedScene.getWindow() != null
+                && expectedScene.getWindow().isShowing()
+                && expectedScene.getWindow().getScene() == expectedScene;
     }
 }

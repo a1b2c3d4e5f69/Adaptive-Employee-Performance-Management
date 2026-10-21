@@ -258,6 +258,12 @@
                                 onAction="#handleRefresh"
                                 styleClass="modern-primary-button"/>
 
+                        <Button
+                                fx:id="generateAiButton"
+                                text="Generate AI Recommendations"
+                                onAction="#handleGenerateAi"
+                                styleClass="modern-primary-button"/>
+
                     </HBox>
 
 
@@ -312,6 +318,11 @@
                                 fx:id="employeeInfoLabel"
                                 text="Loading employees..."
                                 styleClass="modern-page-subtitle"/>
+                        <Button
+                                fx:id="aiHistoryButton"
+                                text="View AI Recommendation History"
+                                onAction="#handleAiHistory"
+                                styleClass="modern-primary-button"/>
 
                     </VBox>
 

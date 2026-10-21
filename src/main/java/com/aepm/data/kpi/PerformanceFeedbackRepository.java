@@ -538,4 +538,87 @@ public class PerformanceFeedbackRepository {
 
         return feedback;
     }
+
+    public PerformanceFeedback updateFeedback(
+                PerformanceFeedback existing,
+                String newText,
+                String accessToken
+        ) throws Exception {
+
+        if (existing == null || existing.getFeedbackId() == null) {
+                throw new IllegalArgumentException(
+                        "An existing feedback record is required."
+                );
+        }
+
+        if (newText == null || newText.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Feedback cannot be empty."
+                );
+        }
+
+        if (accessToken == null || accessToken.isBlank()) {
+                throw new IllegalStateException(
+                        "Please sign in again."
+                );
+        }
+
+        JSONObject body = new JSONObject();
+
+        body.put("p_feedback_id", existing.getFeedbackId());
+
+        body.put(
+                "p_original_text",
+                existing.getFeedbackText() == null
+                        ? JSONObject.NULL
+                        : existing.getFeedbackText()
+        );
+
+        body.put("p_new_text", newText.trim());
+
+        HttpRequest request = supabaseClient
+                .createAuthenticatedRequest(
+                        AppConfig.REST_URL
+                                + "/rpc/update_own_performance_feedback",
+                        accessToken
+                )
+                .header("Content-Type", "application/json")
+                .timeout(java.time.Duration.ofSeconds(30))
+                .POST(
+                        HttpRequest.BodyPublishers.ofString(
+                                body.toString()
+                        )
+                )
+                .build();
+
+        HttpResponse<String> response = send(request);
+
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+
+                String message =
+                        "Unable to update feedback (HTTP "
+                        + response.statusCode() + ").";
+
+                try {
+                message = new JSONObject(response.body())
+                        .optString("message", message);
+                } catch (org.json.JSONException ignored) {
+                // Keep the HTTP error when the response is not JSON.
+                }
+
+                throw new IllegalStateException(message);
+        }
+
+        JSONArray rows = new JSONArray(response.body());
+
+        if (rows.length() != 1) {
+                throw new IllegalStateException(
+                        "Unexpected save response. Refresh to verify "
+                        + "the saved feedback before retrying."
+                );
+        }
+
+        return mapFeedback(rows.getJSONObject(0));
+    }
 }

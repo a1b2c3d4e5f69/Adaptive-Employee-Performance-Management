@@ -72,6 +72,14 @@ public class EmployeeAttendanceController {
     @FXML private TableColumn<AttendanceRecord, String> checkOutColumn;
     @FXML private TableColumn<AttendanceRecord, String> statusColumn;
     @FXML private TableColumn<AttendanceRecord, String> overtimeColumn;
+    
+    @FXML
+    private void handleLateCheckOut(ActionEvent event) {
+        recordAttendance(null, true);
+    }
+
+        
+    @FXML private javafx.scene.shape.Rectangle qrScanLine;
 
     private final AttendanceService attendanceService =
             new AttendanceService();
@@ -96,6 +104,15 @@ public class EmployeeAttendanceController {
             new AtomicBoolean(false);
 
     private Webcam webcam;
+
+    private boolean readingQrImage = false;
+
+    private javafx.animation.TranslateTransition qrScanAnimation;
+
+    private record AttendanceUiResult(
+            AttendanceScanResult result,
+            Integer overtimeMinutes
+    ) {}
 
     @FXML
     public void initialize() {
@@ -191,7 +208,7 @@ public class EmployeeAttendanceController {
     @FXML
     private void handleStartCamera() {
 
-        if (scanning.get() || submitting.get()) {
+        if (scanning.get() || submitting.get() || readingQrImage) {
             return;
         }
 
@@ -261,7 +278,9 @@ public class EmployeeAttendanceController {
                 LocalTime.of(22, 0)
         );
 
-        lateCheckOutButton.setDisable(!after10PM);
+        lateCheckOutButton.setDisable(
+                !after10PM || submitting.get() || readingQrImage
+        );
     }
 
     private void startLateCheckOutTimer() {
@@ -323,10 +342,6 @@ public class EmployeeAttendanceController {
 
                 Result result = reader.decode(bitmap);
 
-                System.out.println(
-                    "[QR SCANNER] QR detected: " + result.getText()
-                );
-
                 if (result != null
                         && result.getText() != null
                         && !result.getText().isBlank()) {
@@ -361,58 +376,69 @@ public class EmployeeAttendanceController {
 
     @FXML
     private void handleUploadQrImage() {
-
-        if (scanning.get() || submitting.get()) {
+        if (scanning.get() || submitting.get() || readingQrImage) {
             scanStatusLabel.setText(
-                    "Please stop the camera or wait for attendance submission."
+                    "Stop the camera or wait for the current operation."
             );
             return;
         }
 
-        FileChooser fileChooser = new FileChooser();
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select Attendance QR Code");
 
-        fileChooser.setTitle("Select Attendance QR Code");
-
-        fileChooser.getExtensionFilters().add(
+        chooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(
-                        "Image Files (*.png, *.jpg, *.jpeg)",
+                        "QR Images (*.png, *.jpg, *.jpeg)",
                         "*.png", "*.jpg", "*.jpeg"
                 )
         );
 
-        Stage stage = (Stage) uploadQrButton
-                .getScene()
-                .getWindow();
+        File file = chooser.showOpenDialog(
+                uploadQrButton.getScene().getWindow()
+        );
 
-        File selectedFile = fileChooser.showOpenDialog(stage);
-
-        if (selectedFile == null) {
+        if (file == null) {
             return;
         }
 
-        uploadQrButton.setDisable(true);
+        User user = SessionManager.getCurrentUser();
 
-        scanStatusLabel.setText(
-                "Reading QR Code from image..."
-        );
+        if (user == null) {
+            showAttendanceError("Please sign in again.");
+            return;
+        }
+
+        final String userId = user.getUserId();
+        final var scene = uploadQrButton.getScene();
+
+        readingQrImage = true;
+        updateAttendanceButtons();
+
+        cameraPreview.setImage(null);
+        cameraPlaceholder.setText("Reading QR image...");
+        cameraPlaceholder.setVisible(true);
+        scanStatusLabel.setText("Reading QR image...");
+        startQrAnimation();
 
         CompletableFuture.supplyAsync(() -> {
-
             try {
-
-                BufferedImage image = ImageIO.read(selectedFile);
+                BufferedImage image = ImageIO.read(file);
 
                 if (image == null) {
                     throw new IllegalArgumentException(
-                            "Unable to read the selected image."
+                            "The selected file is not a readable image."
                     );
                 }
 
-                BinaryBitmap bitmap = new BinaryBitmap(
-                        new HybridBinarizer(
-                                new BufferedImageLuminanceSource(image)
-                        )
-                );
+                Image preview = toFxImage(image);
+
+                Platform.runLater(() -> {
+                    if (attendanceViewActive(scene, userId)
+                            && readingQrImage) {
+                        cameraPreview.setImage(preview);
+                        cameraPlaceholder.setVisible(false);
+                    }
+                });
 
                 MultiFormatReader reader = new MultiFormatReader();
 
@@ -425,51 +451,65 @@ public class EmployeeAttendanceController {
                         Boolean.TRUE
                 ));
 
-                Result result = reader.decode(bitmap);
-
-                if (result == null ||
-                        result.getText() == null ||
-                        result.getText().isBlank()) {
-
-                    throw new IllegalArgumentException(
-                            "No valid QR Code found in the image."
-                    );
-                }
-
-                return result.getText().trim();
-
-            } catch (Exception e) {
-
-                throw new RuntimeException(e);
-
-            }
-
-        }).whenComplete((qrToken, error) -> {
-
-            Platform.runLater(() -> {
-
-                uploadQrButton.setDisable(false);
-
-                if (error != null) {
-
-                    scanStatusLabel.setText(
-                            "Unable to read QR Code: "
-                                    + rootMessage(error)
-                    );
-
-                    return;
-                }
-
-                scanStatusLabel.setText(
-                        "QR Code detected. Submitting attendance..."
+                BinaryBitmap bitmap = new BinaryBitmap(
+                        new HybridBinarizer(
+                                new BufferedImageLuminanceSource(image)
+                        )
                 );
 
-                submitAttendance(qrToken);
+                Result decoded = reader.decode(bitmap);
 
-            });
+                if (decoded.getText() == null
+                        || decoded.getText().isBlank()) {
+                    throw new IllegalArgumentException(
+                            "The QR Code contains no usable text."
+                    );
+                }
 
-        });
+                return decoded.getText().trim();
+
+            } catch (NotFoundException ex) {
+                throw new java.util.concurrent.CompletionException(
+                        new IllegalArgumentException(
+                                "No QR Code was found. Upload a clear image "
+                                + "containing the complete attendance QR Code."
+                        )
+                );
+            } catch (Exception ex) {
+                throw new java.util.concurrent.CompletionException(ex);
+            }
+        }).whenComplete((qrToken, error) ->
+                Platform.runLater(() -> {
+                    readingQrImage = false;
+
+                    if (!attendanceViewActive(scene, userId)) {
+                        stopQrAnimation();
+                        return;
+                    }
+
+                    if (error != null) {
+                        stopQrAnimation();
+                        updateAttendanceButtons();
+                        cameraPlaceholder.setText("QR image could not be read");
+                        cameraPlaceholder.setVisible(
+                                cameraPreview.getImage() == null
+                        );
+
+                        showAttendanceError(rootMessage(error));
+                        return;
+                    }
+
+                    // Keep the animation running while the server validates
+                    // the QR and records attendance.
+                    scanStatusLabel.setText(
+                            "QR detected. Validating and saving attendance..."
+                    );
+
+                    submitAttendance(qrToken);
+                })
+        );
     }
+
     // =====================================================
     // STOP CAMERA
     // =====================================================
@@ -490,168 +530,125 @@ public class EmployeeAttendanceController {
             webcam = null;
         }
     }
-
-    // =====================================================
-    // SUBMIT CHECK IN / CHECK OUT
-    // =====================================================
-
+    
     private void submitAttendance(String qrToken) {
-
-        if (!submitting.compareAndSet(false, true)) {
+        // Camera decoding currently calls this from a worker thread.
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> submitAttendance(qrToken));
             return;
         }
 
-        String token = SessionManager.getAccessToken();
-
-        if (token == null || token.isBlank()) {
-            submitting.set(false);
-
-            Platform.runLater(() ->
-                    scanStatusLabel.setText(
-                            "Session missing. Please login again."
-                    )
-            );
-            return;
-        }
-
-        CompletableFuture.supplyAsync(() -> {
-            try {
-                return attendanceService.scanAttendance(
-                        qrToken,
-                        token
-                );
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }).whenComplete((result, error) -> {
-
-            submitting.set(false);
-
-            Platform.runLater(() -> {
-
-                if (error != null) {
-
-                    String message = rootMessage(error);
-
-                    if (message.contains("Already checked out today")) {
-                        scanStatusLabel.setText("Already checked out today.");
-
-                    } else if (message.contains("Already checked in")) {
-                        scanStatusLabel.setText("Already checked in today.");
-
-                    } else if (message.contains("Invalid or expired QR Code")) {
-                        scanStatusLabel.setText("QR Code is invalid or expired.");
-
-                    } else if (message.contains("Today is not a configured working day")) {
-                        scanStatusLabel.setText("Today is not a working day.");
-
-                    } else {
-                        scanStatusLabel.setText("Unable to record attendance. Please try again.");
-                    }
-
-                    return;
-                }
-
-                scanStatusLabel.setText(
-                        "Attendance successful: "
-                                + result.getActionType()
-                );
-
-                refreshAttendanceHistory();
-            });
-        });
+        recordAttendance(qrToken, false);
     }
 
-    
-    // =====================================================
-    // LATE CHECK OUT - AFTER 10 PM
-    // =====================================================
-
-    @FXML
-    private void handleLateCheckOut(ActionEvent event) {
-
-        if (!submitting.compareAndSet(false, true)) {
+    private void recordAttendance(
+            String qrToken,
+            boolean checkoutWithoutQr
+    ) {
+        if (readingQrImage
+                || !submitting.compareAndSet(false, true)) {
             return;
         }
 
         String token = SessionManager.getAccessToken();
+        User user = SessionManager.getCurrentUser();
 
-        if (token == null || token.isBlank()) {
+        if (user == null || token == null || token.isBlank()) {
             submitting.set(false);
-            scanStatusLabel.setText(
-                    "Session missing. Please login again."
-            );
+            stopQrAnimation();
+            updateAttendanceButtons();
+            showAttendanceError("Please sign in again.");
             return;
         }
 
-        // Stop camera before submitting check out.
-        stopScanner();
+        final String userId = user.getUserId();
+        final var scene = scanStatusLabel.getScene();
 
-        lateCheckOutButton.setDisable(true);
+        scanning.set(false);
+        updateAttendanceButtons();
+
         scanStatusLabel.setText(
-                "Submitting late check out..."
+                checkoutWithoutQr
+                        ? "Saving check-out..."
+                        : "QR detected. Saving attendance..."
         );
 
         CompletableFuture.supplyAsync(() -> {
-
             try {
-                return attendanceService.checkoutAttendance(token);
+                AttendanceScanResult result =
+                        checkoutWithoutQr
+                                ? attendanceService.checkoutAttendance(token)
+                                : attendanceService.scanAttendance(qrToken, token);
 
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        }).whenComplete((result, error) -> {
-
-            Platform.runLater(() -> {
-
-                submitting.set(false);
-                lateCheckOutButton.setDisable(false);
-
-                if (error != null) {
-
-                    String message = rootMessage(error);
-
-                    if (message != null
-                            && message.contains("Already checked out today")) {
-
-                        scanStatusLabel.setText(
-                                "Already checked out today."
-                        );
-
-                    } else if (message != null
-                            && message.contains("No check-in record found")) {
-
-                        scanStatusLabel.setText(
-                                "Please check in before checking out."
-                        );
-
-                    } else if (message != null
-                            && message.contains("before 10 PM")) {
-
-                        scanStatusLabel.setText(
-                                "Please scan the QR Code to check out before 10 PM."
-                        );
-
-                    } else {
-
-                        scanStatusLabel.setText(
-                                "Unable to check out. Please try again."
-                        );
-                    }
-
-                    return;
+                if (result == null
+                        || result.getAttendanceId() <= 0
+                        || result.getCheckInTime() == null) {
+                    throw new IllegalStateException(
+                            "The server did not return a confirmed attendance "
+                            + "record. Refresh Attendance History before retrying."
+                    );
                 }
 
-                scanStatusLabel.setText(
-                        "Check Out successful!"
-                );
+                Integer overtime = null;
 
-                refreshAttendanceHistory();
-            });
-        });
+                if (result.getCheckOutTime() != null) {
+                    try {
+                        List<AttendanceRecord> records =
+                                attendanceService.getAttendanceRecords(token);
+
+                        for (AttendanceRecord record : records) {
+                            if (record.getAttendanceId()
+                                    == result.getAttendanceId()
+                                    && record.getEmployeeId() != null
+                                    && userId.equals(
+                                            record.getEmployeeId().toString())
+                                    && record.getCheckOutTime() != null) {
+                                overtime = record.getOvertimeMinutes();
+                                break;
+                            }
+                        }
+                    } catch (Exception ignored) {
+                        // Attendance was saved. Failure to load OT must not
+                        // turn a successful checkout into a submission failure.
+                    }
+                }
+
+                return new AttendanceUiResult(result, overtime);
+
+            } catch (Exception ex) {
+                throw new java.util.concurrent.CompletionException(ex);
+            }
+        }).whenComplete((saved, error) ->
+                Platform.runLater(() -> {
+                    submitting.set(false);
+                    stopQrAnimation();
+
+                    if (!attendanceViewActive(scene, userId)) {
+                        return;
+                    }
+
+                    updateAttendanceButtons();
+
+                    if (error != null) {
+                        String message = rootMessage(error);
+
+                        if (message != null
+                                && message.toLowerCase(java.util.Locale.ROOT)
+                                        .contains("timed out")) {
+                            message = "The request timed out. Attendance may "
+                                    + "already have been saved. Refresh "
+                                    + "Attendance History before trying again.";
+                        }
+
+                        showAttendanceError(message);
+                        return;
+                    }
+
+                    refreshAttendanceHistory();
+                    showAttendanceResult(saved);
+                })
+        );
     }
-
     // =====================================================
     // ATTENDANCE HISTORY
     // =====================================================
@@ -846,5 +843,163 @@ public class EmployeeAttendanceController {
 
     private void stopScanner() {
         scanning.set(false);
+        stopQrAnimation();
+    }
+
+    private void startQrAnimation() {
+        stopQrAnimation();
+
+        qrScanLine.setVisible(true);
+
+        qrScanAnimation = new javafx.animation.TranslateTransition(
+                Duration.seconds(1.2),
+                qrScanLine
+        );
+
+        qrScanAnimation.setFromY(-110);
+        qrScanAnimation.setToY(110);
+        qrScanAnimation.setAutoReverse(true);
+        qrScanAnimation.setCycleCount(
+                javafx.animation.Animation.INDEFINITE
+        );
+        qrScanAnimation.play();
+    }
+
+    private void stopQrAnimation() {
+        if (qrScanAnimation != null) {
+            qrScanAnimation.stop();
+            qrScanAnimation = null;
+        }
+
+        if (qrScanLine != null) {
+            qrScanLine.setVisible(false);
+            qrScanLine.setTranslateY(0);
+        }
+    }
+
+    private boolean attendanceViewActive(
+            javafx.scene.Scene scene,
+            String userId
+    ) {
+        User current = SessionManager.getCurrentUser();
+
+        return current != null
+                && userId.equals(current.getUserId())
+                && scene != null
+                && scanStatusLabel.getScene() == scene
+                && scene.getWindow() != null
+                && scene.getWindow().isShowing()
+                && scene.getWindow().getScene() == scene;
+    }
+
+    private void updateAttendanceButtons() {
+        boolean busy = submitting.get() || readingQrImage;
+
+        startCameraButton.setDisable(busy || scanning.get());
+        uploadQrButton.setDisable(busy || scanning.get());
+        stopCameraButton.setDisable(!scanning.get());
+
+        updateLateCheckOutButton();
+    }
+
+    private void showAttendanceError(String message) {
+        String title = "Attendance Not Confirmed";
+
+        if (message == null || message.isBlank()) {
+            message = "Attendance could not be confirmed. "
+                    + "Refresh Attendance History before trying again.";
+        }
+
+        String lower = message.toLowerCase(java.util.Locale.ROOT);
+
+        if (lower.contains("check-in is unavailable on a holiday")) {
+            title = "Check-in Unavailable";
+            message = "Today is configured as a holiday. "
+                    + "Check-in is not available. "
+                    + "Contact your administrator if this is incorrect.";
+
+        } else if (lower.contains("not a configured working day")) {
+            title = "Non-working Day";
+            message = "Today is not configured as a working day. "
+                    + "Attendance cannot be recorded.";
+
+        } else if (lower.contains("invalid or expired qr")) {
+            title = "Invalid QR Code";
+            message = "This QR Code is invalid or has expired. "
+                    + "Use the current attendance QR Code from Admin.";
+
+        } else if (lower.contains("already checked out")) {
+            title = "Already Checked Out";
+            message = "Your check-out has already been recorded today.";
+
+        } else if (lower.contains("already checked in")) {
+            title = "Already Checked In";
+            message = "Your check-in has already been recorded today.";
+
+        } else if (lower.contains("no check-in record")) {
+            title = "Check-in Required";
+            message = "Please check in before checking out.";
+        }
+
+        scanStatusLabel.setText(message);
+
+        com.aepm.ui.common.AEPMDialog.showError(
+                scanStatusLabel.getScene().getWindow(),
+                title,
+                message
+        );
+    }
+
+    private void showAttendanceResult(AttendanceUiResult saved) {
+        AttendanceScanResult result = saved.result();
+
+        boolean checkedOut = result.getCheckOutTime() != null;
+        boolean late = "Late".equalsIgnoreCase(
+                result.getAttendanceStatus()
+        );
+
+        String title;
+        String message;
+
+        if (checkedOut) {
+            title = "Check-out Recorded";
+
+            message = "Check-out: "
+                    + formatTime(result.getCheckOutTime());
+
+            Integer overtime = saved.overtimeMinutes();
+
+            if (overtime == null) {
+                message += "\nOT details are unavailable. "
+                        + "Refresh Attendance History to check.";
+            } else if (overtime > 0) {
+                message += "\nRecorded overtime: "
+                        + (overtime / 60) + " hr "
+                        + (overtime % 60) + " min.";
+            } else {
+                message += "\nRecorded overtime: 0 minutes.";
+            }
+        } else {
+            title = late
+                    ? "Check-in Recorded — Late"
+                    : "Check-in Recorded";
+
+            message = "Check-in: "
+                    + formatTime(result.getCheckInTime());
+
+            String status = result.getAttendanceStatus();
+
+            if (status != null && !status.isBlank()) {
+                message += "\nAttendance status: " + status;
+            }
+        }
+
+        scanStatusLabel.setText(title);
+
+        com.aepm.ui.common.AEPMDialog.showSuccess(
+                scanStatusLabel.getScene().getWindow(),
+                title,
+                message
+        );
     }
 }

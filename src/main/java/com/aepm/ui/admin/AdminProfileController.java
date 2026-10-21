@@ -86,8 +86,17 @@ public class AdminProfileController {
 
     private User currentUser;
 
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
 
-        @FXML
+    @FXML
         private void handleEscalationRules(ActionEvent event) {
 
         Stage stage = (Stage) ((Node) event.getSource())
@@ -97,7 +106,7 @@ public class AdminProfileController {
                 stage,
                 "/fxml/admin/adminEscalationRules.fxml"
         );
-        }
+    }
 
     // =========================================================
     // INITIALIZE

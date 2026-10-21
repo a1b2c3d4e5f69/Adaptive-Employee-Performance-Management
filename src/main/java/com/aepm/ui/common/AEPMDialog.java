@@ -60,6 +60,9 @@ public final class AEPMDialog {
 
         Label titleLabel = new Label(title);
         titleLabel.setWrapText(true);
+        titleLabel.setMinWidth(0);
+        titleLabel.setMaxWidth(Double.MAX_VALUE);
+        titleLabel.setMinHeight(Region.USE_PREF_SIZE);
         titleLabel.setStyle(
             "-fx-font-size: 19px;" +
             "-fx-font-weight: bold;" +
@@ -74,8 +77,15 @@ public final class AEPMDialog {
             "-fx-text-fill: #94A3B8;"
         );
 
+        subtitle.setWrapText(true);
+        subtitle.setMinHeight(Region.USE_PREF_SIZE);
+
         VBox heading = new VBox(4, titleLabel, subtitle);
         heading.setAlignment(Pos.CENTER_LEFT);
+        heading.setMinWidth(0);
+        heading.setMaxWidth(Double.MAX_VALUE);
+
+        HBox.setHgrow(heading, Priority.ALWAYS);
 
         HBox header = new HBox(14, icon, heading);
         header.setAlignment(Pos.CENTER_LEFT);
@@ -84,7 +94,8 @@ public final class AEPMDialog {
             friendlyMessage(message, error)
         );
         messageLabel.setWrapText(true);
-        messageLabel.setPrefWidth(430);
+        messageLabel.setMinWidth(0);
+        messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.setMinHeight(Region.USE_PREF_SIZE);
         messageLabel.setMaxHeight(Double.MAX_VALUE);
         messageLabel.setStyle(
@@ -127,7 +138,9 @@ public final class AEPMDialog {
         root.setPadding(new Insets(12));
         root.setStyle("-fx-background-color: transparent;");
 
-        Scene scene = new Scene(root, 460, 245);
+        // Keep a readable width and let the height fit wrapped content.
+        root.setPrefWidth(520);
+        Scene scene = new Scene(root);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
         dialog.setScene(scene);
@@ -454,5 +467,150 @@ public final class AEPMDialog {
         dialog.showAndWait();
     }
 
+    public enum RecommendationChoice {
+        VIEW_HISTORY,
+        GENERATE_NEW,
+        CANCEL
+    }
 
+    public static RecommendationChoice showRecommendationChoice(
+            Window owner
+    ) {
+        Stage dialog = new Stage(StageStyle.TRANSPARENT);
+        dialog.setTitle("Recommendations Already Exist");
+
+        if (owner != null) {
+            dialog.initOwner(owner);
+            dialog.initModality(Modality.WINDOW_MODAL);
+        } else {
+            dialog.initModality(Modality.APPLICATION_MODAL);
+        }
+
+        RecommendationChoice[] result = {
+                RecommendationChoice.CANCEL
+        };
+
+        Label icon = new Label("AI");
+        icon.setAlignment(Pos.CENTER);
+        icon.setMinSize(48, 48);
+        icon.setStyle(
+                "-fx-background-color: #DBEAFE;"
+                + "-fx-background-radius: 14;"
+                + "-fx-text-fill: #2563EB;"
+                + "-fx-font-size: 18px;"
+                + "-fx-font-weight: bold;"
+        );
+
+        Label title = new Label("Recommendations Already Exist");
+        title.setWrapText(true);
+        title.setStyle(
+                "-fx-font-size: 20px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-text-fill: #0F172A;"
+        );
+
+        HBox header = new HBox(14, icon, title);
+        header.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(title, Priority.ALWAYS);
+
+        Label message = new Label(
+                "Saved recommendations are available for this KPI result.\n\n"
+                + "View existing history, or generate and save a new version. "
+                + "Generating again uses another AI request."
+        );
+        message.setWrapText(true);
+        message.setMinHeight(Region.USE_PREF_SIZE);
+        message.setStyle(
+                "-fx-font-size: 14px;"
+                + "-fx-text-fill: #475569;"
+        );
+
+        Button cancel = new Button("Cancel");
+        Button history = new Button("View History");
+        Button generate = new Button("Generate New Version");
+
+        String base =
+                "-fx-background-radius: 10;"
+                + "-fx-border-radius: 10;"
+                + "-fx-padding: 11 16;"
+                + "-fx-font-size: 13px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-cursor: hand;";
+
+        cancel.setStyle(base
+                + "-fx-background-color: white;"
+                + "-fx-border-color: #CBD5E1;"
+                + "-fx-text-fill: #334155;");
+
+        history.setStyle(base
+                + "-fx-background-color: #2563EB;"
+                + "-fx-text-fill: white;");
+
+        generate.setStyle(base
+                + "-fx-background-color: #EFF6FF;"
+                + "-fx-text-fill: #2563EB;");
+
+        cancel.setCancelButton(true);
+        history.setDefaultButton(true);
+
+        cancel.setOnAction(event -> dialog.close());
+
+        history.setOnAction(event -> {
+            result[0] = RecommendationChoice.VIEW_HISTORY;
+            dialog.close();
+        });
+
+        generate.setOnAction(event -> {
+            result[0] = RecommendationChoice.GENERATE_NEW;
+            dialog.close();
+        });
+
+        javafx.scene.layout.FlowPane buttons =
+                new javafx.scene.layout.FlowPane(10, 10);
+        buttons.setAlignment(Pos.CENTER_RIGHT);
+        buttons.getChildren().addAll(cancel, history, generate);
+
+        VBox panel = new VBox(22, header, message, buttons);
+        panel.setPadding(new Insets(26));
+        panel.setStyle(
+                "-fx-font-family: 'Segoe UI';"
+                + "-fx-background-color: white;"
+                + "-fx-background-radius: 18;"
+                + "-fx-border-color: #DBE4F0;"
+                + "-fx-border-radius: 18;"
+        );
+
+        var screens = owner == null
+                ? java.util.List.of(javafx.stage.Screen.getPrimary())
+                : javafx.stage.Screen.getScreensForRectangle(
+                        owner.getX(), owner.getY(),
+                        owner.getWidth(), owner.getHeight()
+                );
+
+        var screen = screens.isEmpty()
+                ? javafx.stage.Screen.getPrimary() : screens.get(0);
+        var bounds = screen.getVisualBounds();
+
+        double width = Math.min(640, bounds.getWidth() - 32);
+        panel.setPrefWidth(width - 16);
+
+        VBox root = new VBox(panel);
+        root.setPadding(new Insets(8));
+        root.setStyle("-fx-background-color: transparent;");
+
+        Scene scene = new Scene(root);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+        dialog.setScene(scene);
+        dialog.setResizable(false);
+        dialog.setOnShown(event -> {
+            dialog.setX(bounds.getMinX()
+                    + (bounds.getWidth() - dialog.getWidth()) / 2);
+            dialog.setY(bounds.getMinY()
+                    + (bounds.getHeight() - dialog.getHeight()) / 2);
+        });
+
+        dialog.showAndWait();
+        return result[0];
+    }
 }

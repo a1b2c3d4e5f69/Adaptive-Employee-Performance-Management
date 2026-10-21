@@ -4,6 +4,12 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\kpi\KpiConfigRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\kpi\KpiResultRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\kpi\PerformanceFeedbackRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AIConfigurationRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AIHistoricalProgressRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AIPerformanceRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AIPerformanceSnapshotRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AIRecommendationRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AITaskMetricsRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AttendanceRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\AuthRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\repository\EscalationRuleRepository.java
@@ -17,6 +23,15 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\task\TaskDependencyRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\task\TaskProgressRepository.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\data\task\TaskRepository.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIConfigurationService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIDeadlineEvidenceService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIHistoricalKpiService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIPerformanceAnalysisService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIPerformanceDataValidator.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIPerformanceRecommendationService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\AIValidationSmokeTest.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\AI\GeminiAIService.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\attendance\AttendanceKpiService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\attendance\AttendanceService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\auth\AuthService.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\logic\auth\RegisterService.java
@@ -59,6 +74,7 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\TaskProgress.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\User.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\model\WorkingHoursConfig.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminAIConfigurationController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminAttendanceController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminCreateUserController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\admin\AdminEscalationRulesController.java
@@ -74,6 +90,8 @@ C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employ
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\auth\LoginController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\auth\RegisterController.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\common\AEPMDialog.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\common\AIRecommendationDialog.java
+C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\common\AIRecommendationHistoryDialog.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\EmployeeRoleLabel.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\EmployeeWelcomeLabel.java
 C:\Users\PRICILLA LAWRENCE\OneDrive\Documents\Mobile application\Adaptive-Employee-Performance-Management\src\main\java\com\aepm\ui\components\NotificationBell.java

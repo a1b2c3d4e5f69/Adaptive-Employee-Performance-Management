@@ -134,8 +134,17 @@ public class AdminTaskCategoryController {
 
     private TaskCategory selectedCategory;
 
-
-        @FXML
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
+    
+    @FXML
         private void handleEscalationRules(ActionEvent event) {
 
         Stage stage = (Stage) ((Node) event.getSource())
@@ -145,7 +154,7 @@ public class AdminTaskCategoryController {
                 stage,
                 "/fxml/admin/adminEscalationRules.fxml"
         );
-        }
+    }
 
 
     // =========================================================

@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="com.aepm.ui.admin.AdminAIConfigurationController"
+    styleClass="main-layout">
+
+    <!-- ========================================= -->
+    <!-- TOP BAR -->
+    <!-- ========================================= -->
+
+    <top>
+        <HBox fx:id="notificationTopBar"
+            alignment="CENTER_LEFT"
+            spacing="20"
+            styleClass="topbar">
+
+            <padding>
+                <Insets top="16" right="28" bottom="16" left="28"/>
+            </padding>
+
+            <VBox spacing="2">
+                <Label fx:id="welcomeLabel"
+                    text="Welcome"
+                    styleClass="topbar-title"/>
+
+                <Label text="Adaptive Employee Performance Management System"
+                    styleClass="topbar-subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel"
+                    text=""
+                    styleClass="topbar-user-name"/>
+
+                <Label fx:id="topRoleLabel"
+                    text="ADMINISTRATOR"
+                    styleClass="topbar-user-role"/>
+            </VBox>
+
+        </HBox>
+    </top>
+
+    <!-- ========================================= -->
+    <!-- LEFT SIDEBAR                              -->
+    <!-- ========================================= -->
+    <left>
+        <ScrollPane prefWidth="294" minWidth="294" maxWidth="294"
+                    fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    style="-fx-background: white; -fx-background-color: white;">
+            <content>
+                <VBox spacing="10" styleClass="sidebar" maxWidth="Infinity">
+                    <padding><Insets top="30" right="18" bottom="20" left="18"/></padding>
+                    <VBox spacing="3">
+                        <Label text="AEPM" styleClass="sidebar-logo"/>
+                        <Label text="Administrator Portal" styleClass="sidebar-subtitle"/>
+                    </VBox>
+                    <Region prefHeight="18"/>
+                    <Label text="MENU" 
+                        styleClass="sidebar-section-title"/>
+
+                    <Button text="⌂   Home" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleHome" 
+                        styleClass="sidebar-button"/>
+
+                    <Button text="●   My Profile" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleProfile" 
+                        styleClass="sidebar-button"/>
+
+                    <Button text="♟   User Management" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleUserManagement" 
+                        styleClass="sidebar-button"/>
+
+                    <Button text="✓   Task Management" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleTaskManagement" 
+                        styleClass="sidebar-button"/>
+
+                    <Button text="◷   Escalation Rules" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleEscalationRules" 
+                        styleClass="sidebar-button"/>
+
+                    <Button text="★   KPI Management" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleKpiManagement" 
+                        styleClass="sidebar-button"/>
+
+                    <Button text="⚙   System Configuration" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleSystemConfiguration" 
+                        styleClass="sidebar-button"/>
+
+                    <Button
+                        text="✦   AI Recommendation"
+                        maxWidth="Infinity"
+                        alignment="CENTER_LEFT"
+                        onAction="#handleAIConfiguration"
+                        styleClass="sidebar-button-active"/>
+
+                    <Button text="▦   Attendance Management"   
+                        maxWidth="Infinity"   
+                        alignment="CENTER_LEFT"   
+                        onAction="#handleAttendanceManagement"    
+                        styleClass="sidebar-button"/>  
+
+                    <Button text="≡   Reports" 
+                        maxWidth="Infinity" 
+                        alignment="CENTER_LEFT" 
+                        onAction="#handleReports"   
+                        styleClass="sidebar-button"/> 
+
+                    <Button text="!   Anonymous Reports"   
+                        maxWidth="Infinity"   
+                        alignment="CENTER_LEFT"   
+                        onAction="#handleAnonymousReports"    
+                        styleClass="sidebar-button"/>  
+
+                    <Region prefHeight="12"/>
+
+                    <Button text="↪   Logout"  
+                        maxWidth="Infinity"  
+                        alignment="CENTER_LEFT"
+                        onAction="#handleLogout" 
+                        styleClass="logout-button"/>  
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </left>
+
+    <!-- ========================================= -->
+    <!-- MAIN CONTENT                              -->
+    <!-- ========================================= -->
+    <center>
+        <ScrollPane
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            style="-fx-background-color: transparent;
+                   -fx-background: transparent;">
+
+            <VBox spacing="24"
+                  maxWidth="1100">
+
+                <padding>
+                    <Insets top="30"
+                            right="35"
+                            bottom="45"
+                            left="35"/>
+                </padding>
+
+                <!-- PAGE HEADER -->
+                <VBox spacing="8">
+
+                    <Label
+                        text="AI Performance Recommendation"
+                        wrapText="true"
+                        style="-fx-font-size: 25px;
+                               -fx-font-weight: bold;
+                               -fx-text-fill: #0F172A;"/>
+
+                    <Label
+                        text="Configure AI recommendation settings, performance indicators and analysis parameters."
+                        wrapText="true"
+                        style="-fx-font-size: 13px;
+                               -fx-text-fill: #64748B;"/>
+
+                </VBox>
+
+                <!-- ================================= -->
+                <!-- GENERAL SETTINGS                  -->
+                <!-- ================================= -->
+                <VBox
+                    spacing="18"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: white;
+                           -fx-background-radius: 12;
+                           -fx-border-color: #E2E8F0;
+                           -fx-border-radius: 12;
+                           -fx-padding: 25;">
+
+                    <VBox spacing="6">
+                        <Label
+                            text="General Settings"
+                            style="-fx-font-size: 17px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1E293B;"/>
+
+                        <Label
+                            text="Control AI availability and the Gemini model used for recommendations."
+                            wrapText="true"
+                            style="-fx-font-size: 12px;
+                                   -fx-text-fill: #64748B;"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <CheckBox
+                        fx:id="enabledCheck"
+                        text="Enable AI Performance Recommendation"
+                        selected="true"
+                        style="-fx-font-size: 14px;
+                               -fx-text-fill: #1E293B;"/>
+
+                    <Label
+                        text="When disabled, new AI recommendations cannot be generated. Existing recommendations remain available."
+                        wrapText="true"
+                        style="-fx-font-size: 12px;
+                               -fx-text-fill: #64748B;"/>
+
+                    <VBox spacing="8">
+                        <Label
+                            text="Gemini Model"
+                            style="-fx-font-size: 13px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #334155;"/>
+
+                        <TextField
+                            fx:id="modelField"
+                            text="gemini-2.5-flash"
+                            promptText="Enter Gemini model name"
+                            prefHeight="40"
+                            maxWidth="Infinity"
+                            style="-fx-background-radius: 7;
+                                   -fx-border-radius: 7;
+                                   -fx-border-color: #CBD5E1;
+                                   -fx-background-color: white;
+                                   -fx-font-size: 13px;"/>
+                    </VBox>
+
+                </VBox>
+
+                <!-- ================================= -->
+                <!-- PERFORMANCE INDICATORS            -->
+                <!-- ================================= -->
+                <VBox
+                    spacing="20"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: white;
+                           -fx-background-radius: 12;
+                           -fx-border-color: #E2E8F0;
+                           -fx-border-radius: 12;
+                           -fx-padding: 25;">
+
+                    <VBox spacing="6">
+
+                        <Label
+                            text="Performance Indicators"
+                            style="-fx-font-size: 17px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1E293B;"/>
+
+                        <Label
+                            text="Select which employee performance data should be included in the AI analysis."
+                            wrapText="true"
+                            style="-fx-font-size: 12px;
+                                   -fx-text-fill: #64748B;"/>
+
+                    </VBox>
+
+                    <Separator/>
+
+                    <GridPane hgap="30" vgap="20">
+
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <CheckBox
+                            fx:id="kpiCheck"
+                            text="KPI Performance"
+                            selected="true"
+                            style="-fx-text-fill: #334155;
+                                -fx-font-size: 13px;"
+                            GridPane.rowIndex="0"
+                            GridPane.columnIndex="0"/>
+
+                        <CheckBox
+                            fx:id="taskCheck"
+                            text="Task Completion Rate"
+                            selected="true"
+                            style="-fx-text-fill: #334155;
+                                -fx-font-size: 13px;"
+                            GridPane.rowIndex="0"
+                            GridPane.columnIndex="1"/>
+
+                        <CheckBox
+                            fx:id="attendanceCheck"
+                            text="Attendance Records"
+                            selected="true"
+                            style="-fx-text-fill: #334155;
+                                -fx-font-size: 13px;"
+                            GridPane.rowIndex="1"
+                            GridPane.columnIndex="0"/>
+
+                        <CheckBox
+                            fx:id="deadlineCheck"
+                            text="Missed Deadlines"
+                            selected="true"
+                            style="-fx-text-fill: #334155;
+                                -fx-font-size: 13px;"
+                            GridPane.rowIndex="1"
+                            GridPane.columnIndex="1"/>
+
+                        <CheckBox
+                            fx:id="historyCheck"
+                            text="Historical Performance"
+                            selected="true"
+                            style="-fx-text-fill: #334155;
+                                -fx-font-size: 13px;"
+                            GridPane.rowIndex="2"
+                            GridPane.columnIndex="0"/>
+
+                    </GridPane>
+
+                    <Label
+                        text="The selected indicators will be used to calculate performance metrics and generate evidence-based AI recommendations."
+                        wrapText="true"
+                        style="-fx-font-size: 12px;
+                               -fx-text-fill: #64748B;"/>
+
+                </VBox>
+
+                <!-- ================================= -->
+                <!-- ANALYSIS PARAMETERS               -->
+                <!-- ================================= -->
+                <VBox
+                    spacing="20"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: white;
+                           -fx-background-radius: 12;
+                           -fx-border-color: #E2E8F0;
+                           -fx-border-radius: 12;
+                           -fx-padding: 25;">
+
+                    <VBox spacing="6">
+
+                        <Label
+                            text="Analysis Parameters"
+                            style="-fx-font-size: 17px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1E293B;"/>
+
+                        <Label
+                            text="Configure how much performance history is analysed and how many recommendations are generated."
+                            wrapText="true"
+                            style="-fx-font-size: 12px;
+                                   -fx-text-fill: #64748B;"/>
+
+                    </VBox>
+
+                    <Separator/>
+
+                    <GridPane hgap="20" vgap="12">
+
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33"/>
+                        <ColumnConstraints percentWidth="33"/>
+                        <ColumnConstraints percentWidth="34"/>
+                    </columnConstraints>
+
+                    <Label
+                        text="Analysis Period Days"
+                        wrapText="true"
+                        style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #334155;"
+                        GridPane.rowIndex="0"
+                        GridPane.columnIndex="0"/>
+
+                    <Label
+                        text="Minimum Data Points"
+                        wrapText="true"
+                        style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #334155;"
+                        GridPane.rowIndex="0"
+                        GridPane.columnIndex="1"/>
+
+                    <Label
+                        text="Maximum Recommendations"
+                        wrapText="true"
+                        style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #334155;"
+                        GridPane.rowIndex="0"
+                        GridPane.columnIndex="2"/>
+
+                    <TextField
+                        fx:id="periodField"
+                        text="90"
+                        promptText="7 - 365"
+                        prefHeight="40"
+                        GridPane.rowIndex="1"
+                        GridPane.columnIndex="0"/>
+
+                    <TextField
+                        fx:id="minimumField"
+                        text="1"
+                        promptText="1 - 13"
+                        prefHeight="40"
+                        GridPane.rowIndex="1"
+                        GridPane.columnIndex="1"/>
+
+                    <TextField
+                        fx:id="maximumField"
+                        text="5"
+                        promptText="1 - 10"
+                        prefHeight="40"
+                        GridPane.rowIndex="1"
+                        GridPane.columnIndex="2"/>
+
+                </GridPane>
+
+                <Label
+                    text="Analysis Period Days limits the length of the selected evaluation period. Minimum Data Points counts one current KPI plus eligible historical KPI periods when Historical Performance is enabled, up to 13 in total. Maximum Recommendations limits the number of recommended actions."
+                    wrapText="true"
+                    maxWidth="Infinity"
+                    style="-fx-font-size: 12px; -fx-text-fill: #64748B;"/>
+
+                    <VBox spacing="8">
+
+                        <Label
+                            text="Additional AI Instructions"
+                            style="-fx-font-size: 13px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #334155;"/>
+
+                        <TextArea
+                            fx:id="promptArea"
+                            prefRowCount="4"
+                            wrapText="true"
+                            maxWidth="Infinity"
+                            promptText="Optional instructions for generating employee performance improvement recommendations..."/>
+
+                        <Label
+                            text="Example: Focus on practical improvements, employee coaching, training needs and workload adjustments."
+                            wrapText="true"
+                            style="-fx-font-size: 12px;
+                                   -fx-text-fill: #64748B;"/>
+
+                    </VBox>
+
+                </VBox>
+
+                <!-- ================================= -->
+                <!-- ACTION BUTTONS                    -->
+                <!-- ================================= -->
+                <HBox
+                    alignment="CENTER_RIGHT"
+                    spacing="12">
+
+                    <Button
+                        fx:id="refreshButton"
+                        text="Refresh"
+                        onAction="#handleRefresh"
+                        prefWidth="125"
+                        prefHeight="42"
+                        style="-fx-background-color: white;
+                               -fx-text-fill: #334155;
+                               -fx-border-color: #CBD5E1;
+                               -fx-border-radius: 7;
+                               -fx-background-radius: 7;
+                               -fx-font-size: 13px;"/>
+
+                    <Button
+                        fx:id="saveButton"
+                        text="Save Configuration"
+                        onAction="#handleSave"
+                        prefWidth="185"
+                        prefHeight="42"
+                        style="-fx-background-color: #2563EB;
+                               -fx-text-fill: white;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 7;
+                               -fx-font-size: 13px;"/>
+
+                </HBox>
+
+                <!-- STATUS -->
+                <Label
+                    fx:id="statusLabel"
+                    text="Loading AI configuration..."
+                    wrapText="true"
+                    style="-fx-font-size: 12px;
+                           -fx-text-fill: #64748B;"/>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

@@ -182,7 +182,15 @@ public class AdminTaskController {
     @FXML
     private Label historyMessageLabel;
 
-
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
     // =========================================================
     // SERVICES
     // =========================================================
