@@ -771,6 +771,13 @@ public class AdminEscalationRulesController {
     }
 
     @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
+    @FXML
     private void handleRiskRefresh() {
 
         riskRefreshButton.setDisable(true);

@@ -563,14 +563,15 @@ public class ManagerProfileController {
         }
 
     @FXML
-    private void handleReports() {
+        private void handleReports(javafx.event.ActionEvent event) {
+        javafx.stage.Window owner =
+                ((javafx.scene.Node) event.getSource())
+                        .getScene()
+                        .getWindow();
 
-        System.out.println(
-                "Reports not implemented yet."
-        );
+        ManagerReportsPage.show(owner);
     }
-
-
+    
     @FXML
     private void handleDashboard() {
 

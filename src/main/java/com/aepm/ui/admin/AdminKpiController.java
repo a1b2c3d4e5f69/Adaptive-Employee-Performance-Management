@@ -227,6 +227,14 @@ public class AdminKpiController {
                 "/fxml/admin/adminAIConfiguration.fxml"
         );
     }
+
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
     // =========================================================
     // SERVICES
     // =========================================================

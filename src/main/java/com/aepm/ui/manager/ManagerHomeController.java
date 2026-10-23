@@ -376,10 +376,13 @@ public class ManagerHomeController {
     }
 
     @FXML
-    private void handleReports() {
-        System.out.println(
-                "Reports not implemented yet."
-        );
+        private void handleReports(javafx.event.ActionEvent event) {
+        javafx.stage.Window owner =
+                ((javafx.scene.Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        ManagerReportsPage.show(owner);
     }
 
     @FXML

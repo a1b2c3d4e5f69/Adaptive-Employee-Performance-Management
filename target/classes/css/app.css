@@ -1730,3 +1730,167 @@
     -fx-background-color: #DBEAFE;
 }
 
+#systemAnnouncementsPage .announcement-tabs .tab {
+    -fx-background-color: #F1F5F9;
+    -fx-background-insets: 0 6 0 0;
+    -fx-background-radius: 10;
+    -fx-padding: 11 26;
+    -fx-border-color: transparent;
+}
+
+#systemAnnouncementsPage .announcement-tabs .tab .tab-label {
+    -fx-text-fill: #64748B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+#systemAnnouncementsPage .announcement-tabs .tab:hover {
+    -fx-background-color: #E2EAFA;
+}
+
+#systemAnnouncementsPage .announcement-tabs .tab:selected {
+    -fx-background-color: #2563EB;
+}
+
+#systemAnnouncementsPage .announcement-tabs .tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+/* White tab header */
+#systemAnnouncementsPage .announcement-tabs .tab-header-area {
+    -fx-padding: 16 20 12 20;
+}
+
+#systemAnnouncementsPage .announcement-tabs .tab-header-background {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 16 16 0 0;
+    -fx-border-color: transparent transparent #E8EEF7 transparent;
+    -fx-effect: null;
+}
+
+/* Recipient selector */
+#systemAnnouncementsPage .titled-pane {
+    -fx-text-fill: #334155;
+    -fx-font-size: 14px;
+}
+
+#systemAnnouncementsPage .titled-pane > .title {
+    -fx-background-color: #F1F5F9;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-border-color: #DCE4F0;
+    -fx-border-radius: 10;
+    -fx-padding: 12 16;
+    -fx-cursor: hand;
+}
+
+#systemAnnouncementsPage .titled-pane > .title:hover {
+    -fx-background-color: #EAF2FF;
+}
+
+#systemAnnouncementsPage .titled-pane > .content {
+    -fx-background-color: white;
+    -fx-border-color: #DCE4F0;
+    -fx-border-radius: 0 0 10 10;
+}
+
+#systemAnnouncementsPage .titled-pane > .title > .arrow-button > .arrow {
+    -fx-background-color: #2563EB;
+}
+
+/* Message editor */
+#systemAnnouncementsPage .text-area {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 12;
+    -fx-border-color: #DCE4F0;
+    -fx-border-radius: 12;
+    -fx-padding: 8;
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+#systemAnnouncementsPage .text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+
+#systemAnnouncementsPage .text-area:focused {
+    -fx-border-color: #2563EB;
+}
+
+#systemAnnouncementsPage .announcement-tabs .tab .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-effect: null;
+}
+
+/* Manager Reports tabs */
+.report-tabs {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: #E1E6EF;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+
+    -fx-tab-min-height: 24;
+    -fx-tab-max-height: 24;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.report-tabs > .tab-header-area {
+    -fx-padding: 12 16 10 16;
+}
+
+.report-tabs > .tab-header-area > .tab-header-background {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 14 14 0 0;
+    -fx-border-color: transparent transparent #E8EEF7 transparent;
+    -fx-effect: null;
+}
+
+.report-tabs .tab {
+    -fx-background-color: #F1F5F9;
+    -fx-background-insets: 0 5 0 0;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-padding: 4 16;
+    -fx-cursor: hand;
+}
+
+.report-tabs .tab .tab-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748B;
+}
+
+.report-tabs .tab:hover {
+    -fx-background-color: #E2EAFA;
+}
+
+.report-tabs .tab:selected {
+    -fx-background-color: #2563EB;
+}
+
+.report-tabs .tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+.report-tabs > .tab-content-area {
+    -fx-padding: 12;
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 14 14;
+}
+
+/* Remove the light-blue frame inside the selected tab */
+.report-tabs .tab .focus-indicator,
+.report-tabs:focused .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-effect: null;
+}

@@ -116,6 +116,13 @@ public class AdminAIConfigurationController {
 
         startTask(task);
     }
+    
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
 
     @FXML
     private void handleSave() {

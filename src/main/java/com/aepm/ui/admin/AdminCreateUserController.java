@@ -84,19 +84,24 @@ public class AdminCreateUserController {
         );
     }
 
-        
-        @FXML
+    @FXML
+        private void handleAnnouncements(ActionEvent event) {
+            AdminAnnouncementsDialog.show(
+                ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+ 
+    @FXML
         private void handleEscalationRules(ActionEvent event) {
                 Stage stage = (Stage) ((Node) event.getSource())
                         .getScene().getWindow();
-
                 NavigationManager.navigate(
                         stage,
                         "/fxml/admin/adminEscalationRules.fxml"
                 );
-        }
+    }
 
-        @FXML
+    @FXML
         private void handleAIConfiguration(ActionEvent event) {
                 Stage stage = (Stage) ((Node) event.getSource())
                         .getScene().getWindow();
@@ -105,7 +110,7 @@ public class AdminCreateUserController {
                         stage,
                         "/fxml/admin/adminAIConfiguration.fxml"
                 );
-        }
+    }
 
 
     // =========================================================

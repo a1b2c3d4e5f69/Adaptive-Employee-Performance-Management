@@ -911,15 +911,34 @@ public class ManagerTaskController {
                     // =================================================
                     // STATUS
                     // =================================================
+                    String taskStatus = task.getTaskStatus() == null
+                            ? ""
+                            : task.getTaskStatus().trim();
 
-                    boolean matchesStatus =
-                            selectedStatus == null
-                                    || "All Status".equals(
-                                    selectedStatus
-                            )
-                                    || selectedStatus.equals(
-                                    task.getTaskStatus()
-                            );
+                    boolean completed =
+                            "Completed".equalsIgnoreCase(taskStatus)
+                            || task.getCompletionDate() != null;
+
+                    boolean cancelled =
+                            "Cancelled".equalsIgnoreCase(taskStatus)
+                            || "Canceled".equalsIgnoreCase(taskStatus);
+
+                    boolean overdue =
+                            !completed
+                            && !cancelled
+                            && task.getDueDate() != null
+                            && task.getDueDate().toInstant()
+                                    .isBefore(java.time.Instant.now());
+    
+                    boolean matchesStatus;
+
+                    if (selectedStatus == null || "All Status".equals(selectedStatus)) {
+                    matchesStatus = true;
+                    } else if ("Overdue".equals(selectedStatus)) {
+                    matchesStatus = overdue;
+                    } else {
+                    matchesStatus = selectedStatus.equalsIgnoreCase(taskStatus);
+                    }
 
 
                     // =================================================
@@ -1772,9 +1791,14 @@ public class ManagerTaskController {
         }
 
     @FXML
-    private void handleReports() {
-    }
+        private void handleReports(javafx.event.ActionEvent event) {
+        javafx.stage.Window owner =
+                ((javafx.scene.Node) event.getSource())
+                        .getScene()
+                        .getWindow();
 
+        ManagerReportsPage.show(owner);
+    }
 
     @FXML
     private void handleDashboard() {

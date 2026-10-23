@@ -209,6 +209,13 @@ public class AdminAttendanceController {
                 "/fxml/admin/adminEscalationRules.fxml"
         );
     }
+    
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
 
     @FXML
     private void handleAIConfiguration(ActionEvent event) {

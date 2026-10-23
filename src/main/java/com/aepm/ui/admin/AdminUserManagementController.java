@@ -128,6 +128,13 @@ public class AdminUserManagementController {
     private Button deleteButton;
 
     @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
+    @FXML
         private void handleAttendanceManagement(ActionEvent event) {
 
         Stage stage = (Stage) ((Node) event.getSource())

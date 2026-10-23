@@ -105,6 +105,46 @@ public final class DeadlineEscalationScheduler {
                 );
             }
 
+            synchronized (this) {
+                if (generation != sessionGeneration) {
+                    return;
+                }
+            }
+
+            try {
+                AutomatedNotificationRuleService ruleService =
+                        new AutomatedNotificationRuleService();
+
+                var ruleResult = ruleService.execute(token);
+
+                if (ruleResult.busy()) {
+                    System.out.println(
+                            "[Notification Rules] Another execution is already running."
+                    );
+                } else {
+                    System.out.println(
+                            "[Notification Rules] Automatic run: Sent="
+                                    + ruleResult.sent()
+                                    + ", Skipped="
+                                    + ruleResult.skipped()
+                                    + ", Failed="
+                                    + ruleResult.failed()
+                    );
+                }
+
+            } catch (Exception ruleError) {
+                System.err.println(
+                        "[Notification Rules] Automatic run failed: "
+                                + ruleError.getMessage()
+                );
+            }
+
+            synchronized (this) {
+                if (generation != sessionGeneration) {
+                    return;
+                }
+            }
+
             // 2. Process overdue task escalations.
             try {
                 DeadlineEscalationService escalationService =

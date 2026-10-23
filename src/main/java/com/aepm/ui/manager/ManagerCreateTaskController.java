@@ -711,11 +711,15 @@ public class ManagerCreateTaskController {
         );
         }
 
-
     @FXML
-    private void handleReports() {
-    }
+        private void handleReports(javafx.event.ActionEvent event) {
+        javafx.stage.Window owner =
+                ((javafx.scene.Node) event.getSource())
+                        .getScene()
+                        .getWindow();
 
+        ManagerReportsPage.show(owner);
+    }
 
     @FXML
     private void handleDashboard(ActionEvent event) {

@@ -121,6 +121,13 @@ public class AdminTaskDependencyController {
         );
     }
 
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
     // =========================================================
     // SERVICES
     // =========================================================

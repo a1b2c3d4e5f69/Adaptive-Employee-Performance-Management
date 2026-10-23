@@ -34,6 +34,7 @@ import java.net.URLEncoder;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import com.aepm.ui.common.AnnouncementDetailsDialog;
 
 public class NotificationBell extends StackPane {
     private static final ZoneId MALAYSIA = ZoneId.of("Asia/Kuala_Lumpur");
@@ -299,8 +300,15 @@ public class NotificationBell extends StackPane {
                         || "HOLIDAY_DELETED".equalsIgnoreCase(notificationType)
                         || "WORKING_HOURS_UPDATED".equalsIgnoreCase(notificationType);
 
-                if (isConfigurationNotification) {
+                if ("SYSTEM_ANNOUNCEMENT".equalsIgnoreCase(notificationType)) {
+                    AnnouncementDetailsDialog.showNotification(
+                            getScene() == null ? null : getScene().getWindow(),
+                            data.optString("notification_id", "")
+                    );
+                    return;
+                }
 
+                if (isConfigurationNotification) {
                     AEPMDialog.showNotice(
                             getScene() == null
                                     ? null

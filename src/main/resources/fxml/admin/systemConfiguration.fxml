@@ -126,6 +126,13 @@
                     styleClass="sidebar-button-active"/>
 
                 <Button
+                    text="✉   Notification/Announcements"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnnouncements"
+                    styleClass="sidebar-button"/>
+                    
+                <Button
                     text="✦   AI Recommendation"
                     maxWidth="Infinity"
                     alignment="CENTER_LEFT"

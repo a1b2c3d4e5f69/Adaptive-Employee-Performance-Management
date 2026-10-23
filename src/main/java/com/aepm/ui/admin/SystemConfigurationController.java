@@ -993,6 +993,13 @@ public class SystemConfigurationController {
     }
     
     @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
+    @FXML
     private void handleRefreshHolidays() {
 
         if (hasHolidayChanges()) {

@@ -63,6 +63,13 @@ public class AdminHomeController {
         );
     }
 
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
     private void loadCurrentUser() {
 
         User user = SessionManager.getCurrentUser();
@@ -309,8 +316,13 @@ public class AdminHomeController {
     }
 
     @FXML
-    private void handleHome() {
-        // Already on Home.
+        private void handleHome() {
+        Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminHome.fxml"
+        );
     }
 
     @FXML

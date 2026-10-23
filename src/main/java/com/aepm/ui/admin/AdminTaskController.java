@@ -191,6 +191,14 @@ public class AdminTaskController {
                 "/fxml/admin/adminAIConfiguration.fxml"
         );
     }
+
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
     // =========================================================
     // SERVICES
     // =========================================================
@@ -982,14 +990,34 @@ public class AdminTaskController {
 
 
                     // STATUS
-                    boolean matchesStatus =
-                            selectedStatus == null
-                                    || "All Status".equals(
-                                    selectedStatus
-                            )
-                                    || selectedStatus.equals(
-                                    task.getTaskStatus()
-                            );
+                    String taskStatus = task.getTaskStatus() == null
+                            ? ""
+                            : task.getTaskStatus().trim();
+
+                    boolean completed =
+                            "Completed".equalsIgnoreCase(taskStatus)
+                            || task.getCompletionDate() != null;
+
+                    boolean cancelled =
+                            "Cancelled".equalsIgnoreCase(taskStatus)
+                            || "Canceled".equalsIgnoreCase(taskStatus);
+
+                    boolean overdue =
+                            !completed
+                            && !cancelled
+                            && task.getDueDate() != null
+                            && task.getDueDate().toInstant()
+                                    .isBefore(java.time.Instant.now());
+    
+                    boolean matchesStatus;
+
+                    if (selectedStatus == null || "All Status".equals(selectedStatus)) {
+                    matchesStatus = true;
+                    } else if ("Overdue".equals(selectedStatus)) {
+                    matchesStatus = overdue;
+                    } else {
+                    matchesStatus = selectedStatus.equalsIgnoreCase(taskStatus);
+                    }
 
 
                     // DUE DATE

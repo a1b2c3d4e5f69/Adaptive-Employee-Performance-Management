@@ -161,7 +161,12 @@
                         alignment="CENTER_LEFT"
                         onAction="#handleSystemConfiguration"
                         styleClass="sidebar-button"/>
-
+                <Button
+                    text="✉   Notification/Announcements"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleAnnouncements"
+                    styleClass="sidebar-button"/>
                 <Button
                         text="✦   AI Recommendation"
                         maxWidth="Infinity"

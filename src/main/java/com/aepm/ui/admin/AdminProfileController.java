@@ -108,6 +108,13 @@ public class AdminProfileController {
         );
     }
 
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
+
     // =========================================================
     // INITIALIZE
     // =========================================================
