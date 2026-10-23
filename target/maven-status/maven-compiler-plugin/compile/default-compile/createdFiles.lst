@@ -43,6 +43,7 @@ com\aepm\ui\manager\ManagerReportsPage.class
 com\aepm\ui\components\TaskDetailsDialog$2.class
 com\aepm\ui\manager\ManagerPerformanceController$5.class
 com\aepm\ui\admin\AdminUserManagementController.class
+com\aepm\ui\components\DashboardAttentionPanel.class
 com\aepm\ui\admin\AdminTaskCategoryController$1.class
 com\aepm\ui\admin\AdminUserManagementController$3.class
 com\aepm\ui\employee\EmployeeAIRecommendationController$LoadedData.class
@@ -54,6 +55,7 @@ com\aepm\ui\manager\ManagerCreateTaskController.class
 com\aepm\ui\employee\EmployeeTaskDetailController.class
 com\aepm\ui\components\NotificationBell.class
 com\aepm\ui\employee\EmployeePerformanceController.class
+com\aepm\ui\components\DashboardTaskChart.class
 com\aepm\ui\employee\EmployeeTaskController.class
 com\aepm\ui\components\TaskDetailsDialog.class
 com\aepm\ui\manager\ManagerProfileController.class
@@ -136,6 +138,7 @@ com\aepm\ui\manager\ManagerReportsPage$Choice.class
 com\aepm\ui\manager\ManagerPerformanceController$4.class
 com\aepm\ui\employee\EmployeeHomeController.class
 com\aepm\ui\components\EmployeeRoleLabel.class
+com\aepm\ui\components\DashboardAttentionPanel$1.class
 com\aepm\ui\admin\AdminEscalationRulesController$RiskRecord.class
 com\aepm\ui\admin\AdminKpiController$7.class
 com\aepm\ui\admin\AdminTaskController$7.class

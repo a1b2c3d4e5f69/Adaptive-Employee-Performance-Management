@@ -304,7 +304,7 @@
 
                         <CheckBox
                             fx:id="kpiCheck"
-                            text="KPI Performance"
+                            text="KPI Performance (Required)"
                             selected="true"
                             style="-fx-text-fill: #334155;
                                 -fx-font-size: 13px;"
@@ -350,7 +350,7 @@
                     </GridPane>
 
                     <Label
-                        text="The selected indicators will be used to calculate performance metrics and generate evidence-based AI recommendations."
+                        text="KPI Performance is required when AI recommendations are enabled. Task completion, attendance, missed deadlines and historical performance are optional supporting indicators."
                         wrapText="true"
                         style="-fx-font-size: 12px;
                                -fx-text-fill: #64748B;"/>

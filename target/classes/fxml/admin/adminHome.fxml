@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import com.aepm.ui.components.NotificationBell?>
+<?import com.aepm.ui.components.DashboardAttentionPanel?>
 
 <BorderPane
     xmlns:fx="http://javafx.com/fxml"
@@ -809,25 +810,7 @@
 
                 </VBox>
 
-                <!-- ================================================== -->
-                <!-- RECENT ACTIVITIES -->
-                <!-- ================================================== -->
-
-                <VBox
-                    spacing="12"
-                    minWidth="0"
-                    styleClass="modern-panel">
-
-                    <Label
-                        text="Recent Activities"
-                        styleClass="modern-panel-title"/>
-
-                    <Label
-                        text="Activity feed will appear when an audit log source is connected."
-                        wrapText="true"
-                        styleClass="modern-empty-state"/>
-
-                </VBox>
+                <DashboardAttentionPanel fx:id="attentionPanel"/>
 
             </VBox>
         </ScrollPane>

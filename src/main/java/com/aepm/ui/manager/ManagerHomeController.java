@@ -16,7 +16,8 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
+import com.aepm.ui.components.DashboardAttentionPanel;
+import com.aepm.ui.components.DashboardTaskChart;
 import java.util.Locale;
 
 public class ManagerHomeController {
@@ -37,7 +38,7 @@ public class ManagerHomeController {
     @FXML private Label escalationCountLabel;
     @FXML private Label completionRateLabel;
     @FXML private Label donutTotalLabel;
-
+    @FXML private DashboardAttentionPanel attentionPanel;
     // New Dashboard fields
     @FXML private Label pendingCountLabel;
     @FXML private Label averageKpiLabel;
@@ -232,65 +233,14 @@ public class ManagerHomeController {
             ManagerDashboardService.Summary s
     ) {
 
-        XYChart.Series<String, Number> series =
-                new XYChart.Series<>();
-
-        series.getData().add(
-                new XYChart.Data<>("Completed", s.completed())
+                DashboardTaskChart.update(
+                taskStatusChart,
+                s.completed(),
+                s.inProgress(),
+                s.overdue(),
+                s.pending(),
+                s.otherTasks()
         );
-
-        series.getData().add(
-                new XYChart.Data<>("In Progress", s.inProgress())
-        );
-
-        series.getData().add(
-                new XYChart.Data<>("Overdue", s.overdue())
-        );
-
-        series.getData().add(
-                new XYChart.Data<>("Pending", s.pending())
-        );
-
-        series.getData().add(
-                new XYChart.Data<>("Other", s.otherTasks())
-        );
-
-        taskStatusChart.setAnimated(false);
-        taskStatusChart.setLegendVisible(false);
-        taskStatusChart.getData().setAll(series);
-
-        String[] barColors = {
-                "#2563EB",
-                "#F59E0B",
-                "#FB7185",
-                "#8B5CF6",
-                "#64748B"
-        };
-
-        for (int i = 0; i < series.getData().size(); i++) {
-
-            final String color = barColors[i];
-
-            XYChart.Data<String, Number> item =
-                    series.getData().get(i);
-
-            if (item.getNode() != null) {
-                item.getNode().setStyle(
-                        "-fx-bar-fill: " + color + ";"
-                );
-            }
-
-            item.nodeProperty().addListener(
-                    (obs, oldNode, node) -> {
-                        if (node != null) {
-                            node.setStyle(
-                                    "-fx-bar-fill: "
-                                            + color + ";"
-                            );
-                        }
-                    }
-            );
-        }
 
         var pieData = FXCollections.observableArrayList(
                 new PieChart.Data("Level 1", s.level1()),
@@ -334,8 +284,9 @@ public class ManagerHomeController {
     }
 
     @FXML
-    private void handleRefreshDashboard() {
+        private void handleRefreshDashboard() {
         loadTeamDashboard();
+        attentionPanel.reload();
     }
 
     @FXML

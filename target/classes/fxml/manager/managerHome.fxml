@@ -17,6 +17,7 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.shape.Circle?>
 <?import com.aepm.ui.components.NotificationBell?>
+<?import com.aepm.ui.components.DashboardAttentionPanel?>
 
 <BorderPane
     xmlns:fx="http://javafx.com/fxml"
@@ -741,19 +742,7 @@
                         </GridPane>
                     </VBox>
 
-                    <!-- RECENT ACTIVITIES -->
-
-                    <VBox spacing="12" styleClass="modern-panel">
-
-                        <Label
-                            text="Recent Activities"
-                            styleClass="modern-panel-title"/>
-
-                        <Label
-                            text="Team activity feed will appear when an audit log source is connected."
-                            wrapText="true"
-                            styleClass="modern-empty-state"/>
-                    </VBox>
+                    <DashboardAttentionPanel fx:id="attentionPanel"/>
 
                 </VBox>
 

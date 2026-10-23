@@ -145,8 +145,8 @@ public final class AdminNotificationRulesPage {
 
         Label implementationNote = label(
             "Active rules are checked approximately every 5 minutes "
-            + "while an administrator is signed in and the application is running. "
-            + "The existing due-today reminders continue independently."
+            + "by the server, including when the application is closed. "
+            + "Due-today reminders remain enabled."
         );
         implementationNote.setStyle(
                 "-fx-background-color: #FFF7DB;"

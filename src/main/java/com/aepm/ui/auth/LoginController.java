@@ -116,34 +116,19 @@ public class LoginController {
                 };
 
 
-        loginTask.setOnSucceeded(
-                event -> {
-
+        loginTask.setOnSucceeded(event -> {
                 setLoading(false);
 
                 User user = loginTask.getValue();
 
                 navigateByRole(user);
 
-                        // Only Admin starts the automatic deadline scheduler.
-                        if (user.getRole() == Role.ADMINISTRATOR) {
+                DeadlineEscalationScheduler.getInstance().stop();
 
-                        DeadlineEscalationScheduler.getInstance()
-                                .start(SessionManager::getAccessToken);
-
-                        System.out.println(
-                                "[Deadline Scheduler] Started for Admin."
-                        );
-
-                        } else {
-
-                        System.out.println(
-                                "[Deadline Scheduler] Not started for role: "
-                                        + user.getRole()
-                        );
-                        }
-                }
-        );
+                System.out.println(
+                        "[Deadline Scheduler] Automatic processing is handled by Supabase."
+                );
+        });
 
 
         loginTask.setOnFailed(
