@@ -56,7 +56,9 @@ public class ManagerTaskController {
     // =========================================================
     // TOP BAR
     // =========================================================
-
+    @FXML
+    private Label topRoleLabel;
+    
     @FXML
     private Label welcomeLabel;
 
@@ -163,6 +165,17 @@ public class ManagerTaskController {
     @FXML
     private Label historyMessageLabel;
 
+    @FXML
+    private void handleDeadlineEscalation(ActionEvent event) {    
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
 
     // =========================================================
     // SERVICES
@@ -221,7 +234,7 @@ public class ManagerTaskController {
 
     @FXML
     public void initialize() {
-
+        updateManagerRoleLabel();
         loadCurrentUser();
 
         setupTaskTable();
@@ -238,6 +251,22 @@ public class ManagerTaskController {
     }
 
 
+    private void updateManagerRoleLabel() {
+        User manager = SessionManager.getCurrentUser();
+
+        if (manager == null) {
+                topRoleLabel.setText("MANAGER");
+                return;
+        }
+
+        String managerId = manager.getEmployeeId();
+
+        if (managerId != null && !managerId.isBlank()) {
+                topRoleLabel.setText("MANAGER  •  " + managerId);
+        } else {
+                topRoleLabel.setText("MANAGER");
+        }
+    }
     // =========================================================
     // CURRENT USER
     // =========================================================
@@ -882,15 +911,34 @@ public class ManagerTaskController {
                     // =================================================
                     // STATUS
                     // =================================================
+                    String taskStatus = task.getTaskStatus() == null
+                            ? ""
+                            : task.getTaskStatus().trim();
 
-                    boolean matchesStatus =
-                            selectedStatus == null
-                                    || "All Status".equals(
-                                    selectedStatus
-                            )
-                                    || selectedStatus.equals(
-                                    task.getTaskStatus()
-                            );
+                    boolean completed =
+                            "Completed".equalsIgnoreCase(taskStatus)
+                            || task.getCompletionDate() != null;
+
+                    boolean cancelled =
+                            "Cancelled".equalsIgnoreCase(taskStatus)
+                            || "Canceled".equalsIgnoreCase(taskStatus);
+
+                    boolean overdue =
+                            !completed
+                            && !cancelled
+                            && task.getDueDate() != null
+                            && task.getDueDate().toInstant()
+                                    .isBefore(java.time.Instant.now());
+    
+                    boolean matchesStatus;
+
+                    if (selectedStatus == null || "All Status".equals(selectedStatus)) {
+                    matchesStatus = true;
+                    } else if ("Overdue".equals(selectedStatus)) {
+                    matchesStatus = overdue;
+                    } else {
+                    matchesStatus = selectedStatus.equalsIgnoreCase(taskStatus);
+                    }
 
 
                     // =================================================
@@ -1742,22 +1790,15 @@ public class ManagerTaskController {
         );
         }
 
-        @FXML
-        private void handleReports(
-                ActionEvent event
-        ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
+    @FXML
+        private void handleReports(javafx.event.ActionEvent event) {
+        javafx.stage.Window owner =
+                ((javafx.scene.Node) event.getSource())
                         .getScene()
                         .getWindow();
 
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/manager/managerReport.fxml"
-        );
-        }
+        ManagerReportsPage.show(owner);
+    }
 
     @FXML
     private void handleDashboard() {

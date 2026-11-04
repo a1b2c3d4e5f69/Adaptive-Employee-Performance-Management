@@ -86,10 +86,55 @@ public class AdminProfileController {
 
     private User currentUser;
 
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
+
+    @FXML
+        private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+    }
+
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
 
     // =========================================================
     // INITIALIZE
     // =========================================================
+   @FXML
+   private void handleSystemConfiguration(ActionEvent event) {
+        navigate(event, "/fxml/admin/systemConfiguration.fxml");
+   }
+
+        @FXML
+        private void handleAttendanceManagement(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAttendance.fxml"
+        );
+        }
 
     @FXML
     public void initialize() {

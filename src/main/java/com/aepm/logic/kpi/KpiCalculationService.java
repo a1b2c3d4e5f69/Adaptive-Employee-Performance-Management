@@ -192,10 +192,13 @@ public class KpiCalculationService {
                         employeeTasks
                 );
 
-
-        // Temporary until attendance module is connected.
         double attendanceScore =
-                0;
+        new com.aepm.logic.attendance.AttendanceKpiService()
+                .calculateScore(
+                        employeeId,
+                        startDate,
+                        endDate
+                );
 
 
         // =====================================================

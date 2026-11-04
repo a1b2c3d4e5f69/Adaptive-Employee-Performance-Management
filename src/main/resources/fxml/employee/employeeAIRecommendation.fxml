@@ -1,0 +1,336 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.employee.EmployeeAIRecommendationController"
+        styleClass="main-layout">
+
+    <!-- ================= TOP BAR ================= -->
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
+            <padding>
+                <Insets top="16" right="28" bottom="16" left="28"/>
+            </padding>
+            <VBox spacing="2">
+                <EmployeeWelcomeLabel styleClass="topbar-title"/>
+                <Label text="Adaptive Employee Performance Management System"
+                       styleClass="topbar-subtitle"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <NotificationBell/>
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel" text="Employee"
+                       styleClass="topbar-user-name"/>
+                <EmployeeRoleLabel fx:id="topRoleLabel"
+                                   styleClass="topbar-user-role"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefWidth="245" minWidth="245" maxWidth="245"
+              spacing="8" styleClass="modern-sidebar">
+            <padding>
+                <Insets top="28" right="18" bottom="20" left="18"/>
+            </padding>
+            <Label text="MENU" styleClass="modern-sidebar-section"/>
+            <Button text="⌂   Home" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleHome"
+                    styleClass="modern-nav-button"/>
+
+            <Button text="○   My Profile" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleProfile"
+                    styleClass="modern-nav-button"/>
+
+            <Button text="✓   My Tasks" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleTasks"
+                    styleClass="modern-nav-button"/>
+
+            <Button text="▥   Performance" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleKpi"
+                    styleClass="modern-nav-button"/>
+
+            <Button text="▦   My Attendance" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleAttendance"
+                    styleClass="modern-nav-button"/>
+
+            <Button text="▤   Reports" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleReports"
+                    styleClass="modern-nav-button"/>
+
+            <Button text="!   Anonymous Report" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleAnonymousReport"
+                    styleClass="modern-nav-button"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="↪   Logout" alignment="CENTER_LEFT"
+                    maxWidth="Infinity" onAction="#handleLogout"
+                    styleClass="modern-logout-button"/>
+        </VBox>
+    </left>
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="modern-content-scroll">
+
+            <content>
+
+                <VBox spacing="22"
+                      maxWidth="Infinity"
+                      styleClass="modern-content">
+
+                    <padding>
+                        <Insets top="30" right="32"
+                                bottom="40" left="32"/>
+                    </padding>
+
+                    <!-- PAGE TITLE -->
+
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="16">
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS">
+
+                            <Label
+                                text="My AI Recommendations"
+                                styleClass="modern-page-title"/>
+
+                            <Label
+                                text="Review your performance insights and personalized improvement suggestions."
+                                wrapText="true"
+                                styleClass="modern-page-subtitle"/>
+
+                        </VBox>
+
+                        <Button fx:id="refreshButton"
+                                text="↻  Refresh"
+                                onAction="#handleRefresh"
+                                styleClass="modern-nav-button"/>
+
+                    </HBox>
+
+                    <!-- EMPLOYEE INFORMATION -->
+
+                    <VBox spacing="12"
+                          styleClass="modern-card">
+
+                        <padding>
+                            <Insets top="22" right="24"
+                                    bottom="22" left="24"/>
+                        </padding>
+
+                        <Label text="Employee Information"
+                               styleClass="modern-section-title"/>
+
+                        <Label fx:id="employeeNameLabel"
+                               text="Employee"
+                               styleClass="modern-card-value"/>
+
+                        <Label fx:id="employeeDetailsLabel"
+                               text="Employee ID  •  Department"
+                               styleClass="modern-page-subtitle"/>
+
+                    </VBox>
+
+                    <!-- STATUS MESSAGE -->
+
+                    <Label fx:id="statusLabel"
+                           text=""
+                           wrapText="true"
+                           styleClass="modern-message"/>
+
+                    <!-- KPI SUMMARY -->
+
+                    <HBox spacing="18"
+                          alignment="CENTER_LEFT"
+                          maxWidth="Infinity">
+
+                        <VBox spacing="10"
+                              HBox.hgrow="ALWAYS"
+                              maxWidth="Infinity"
+                              styleClass="modern-card">
+
+                            <padding>
+                                <Insets top="22" right="24"
+                                        bottom="22" left="24"/>
+                            </padding>
+
+                            <Label text="Overall KPI"
+                                   styleClass="modern-card-label"/>
+
+                            <Label fx:id="overallKpiLabel"
+                                   text="-"
+                                   styleClass="modern-kpi-value"/>
+
+                        </VBox>
+
+                        <VBox spacing="10"
+                              HBox.hgrow="ALWAYS"
+                              maxWidth="Infinity"
+                              styleClass="modern-card">
+
+                            <padding>
+                                <Insets top="22" right="24"
+                                        bottom="22" left="24"/>
+                            </padding>
+
+                            <Label text="Evaluation Period"
+                                   styleClass="modern-card-label"/>
+
+                            <Label fx:id="evaluationPeriodLabel"
+                                   text="-"
+                                   wrapText="true"
+                                   styleClass="modern-card-value"/>
+
+                        </VBox>
+
+                    </HBox>
+
+                    <!-- LATEST AI RECOMMENDATION -->
+
+                    <VBox spacing="18"
+                          styleClass="modern-card">
+
+                        <padding>
+                            <Insets top="24" right="24"
+                                    bottom="24" left="24"/>
+                        </padding>
+
+                        <HBox spacing="14"
+                              alignment="CENTER_LEFT">
+
+                            <VBox spacing="5"
+                                  HBox.hgrow="ALWAYS">
+
+                                <Label
+                                    text="Latest AI Recommendation"
+                                    styleClass="modern-section-title"/>
+
+                                <Label
+                                    text="Your most recently generated performance insights."
+                                    styleClass="modern-page-subtitle"/>
+
+                            </VBox>
+
+                            <Label text="✦ AI"
+                                   styleClass="modern-status-badge"/>
+
+                        </HBox>
+
+                        <Region prefHeight="1"
+                                styleClass="card-divider"/>
+
+                        <VBox spacing="7">
+
+                            <Label text="Overall Assessment"
+                                   styleClass="modern-card-label"/>
+
+                            <Label fx:id="assessmentLabel"
+                                   text="No AI recommendation available yet."
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   styleClass="modern-card-value"/>
+
+                        </VBox>
+
+                        <HBox spacing="35"
+                              alignment="CENTER_LEFT">
+
+                            <VBox spacing="6"
+                                  HBox.hgrow="ALWAYS">
+
+                                <Label text="Generated At (MYT)"
+                                       styleClass="modern-card-label"/>
+
+                                <Label fx:id="generatedAtLabel"
+                                       text="-"
+                                       styleClass="modern-card-value"/>
+
+                            </VBox>
+
+                            <VBox spacing="6"
+                                  HBox.hgrow="ALWAYS">
+
+                                <Label text="AI Model"
+                                       styleClass="modern-card-label"/>
+
+                                <Label fx:id="modelLabel"
+                                       text="-"
+                                       styleClass="modern-card-value"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                        <Button fx:id="latestButton"
+                                text="View Recommendation Details"
+                                onAction="#handleViewLatest"
+                                maxWidth="Infinity"
+                                styleClass="modern-primary-button"/>
+
+                    </VBox>
+
+                    <!-- ACTIONS -->
+
+                    <VBox spacing="16"
+                          styleClass="modern-card">
+
+                        <padding>
+                            <Insets top="24" right="24"
+                                    bottom="24" left="24"/>
+                        </padding>
+
+                        <Label text="AI Recommendation Actions"
+                               styleClass="modern-section-title"/>
+
+                        <Label
+                            text="Generate new performance suggestions or view your previous recommendations."
+                            wrapText="true"
+                            styleClass="modern-page-subtitle"/>
+
+                        <HBox spacing="14"
+                              alignment="CENTER_LEFT">
+
+                            <Button fx:id="generateButton"
+                                    text="✦  Generate New Recommendation"
+                                    onAction="#handleGenerate"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="modern-primary-button"/>
+
+                            <Button fx:id="historyButton"
+                                    text="◷  View Recommendation History"
+                                    onAction="#handleHistory"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="modern-nav-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+                    <Region prefHeight="12"/>
+
+                </VBox>
+
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

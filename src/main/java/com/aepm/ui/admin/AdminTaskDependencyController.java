@@ -110,7 +110,23 @@ public class AdminTaskDependencyController {
 
     @FXML
     private Label messageLabel;
+    
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
 
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
 
     // =========================================================
     // SERVICES
@@ -172,10 +188,40 @@ public class AdminTaskDependencyController {
         loadTasksAndDependencies();
     }
 
+        @FXML
+        private void handleEscalationRules(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+        }
 
     // =========================================================
     // CURRENT USER
     // =========================================================
+   @FXML
+   private void handleSystemConfiguration(ActionEvent event) {
+        navigate(event, "/fxml/admin/systemConfiguration.fxml");
+   } 
+
+        
+        @FXML
+        private void handleAttendanceManagement(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAttendance.fxml"
+        );
+        }
+
 
     private void loadCurrentUser() {
 

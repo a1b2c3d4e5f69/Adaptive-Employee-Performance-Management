@@ -1,0 +1,232 @@
+
+/* ==========================================
+   AI RECOMMENDATION HISTORY DIALOG
+   ========================================== */
+
+.ai-history-overlay {
+    -fx-background-color: rgba(15, 23, 42, 0.38);
+    -fx-font-family: "Segoe UI";
+}
+
+/* MAIN CARD */
+
+.ai-history-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 18;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+}
+
+/* HEADER ICON */
+
+.ai-history-icon-box {
+    -fx-background-color: #EAF1FF;
+    -fx-background-radius: 50%;
+}
+
+.ai-history-icon {
+    -fx-text-fill: #2563EB;
+    -fx-font-size: 29px;
+    -fx-font-weight: bold;
+}
+
+/* HEADER TEXT */
+
+.ai-history-title {
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.ai-history-employee {
+    -fx-text-fill: #536785;
+    -fx-font-size: 14px;
+}
+
+.ai-history-hint {
+    -fx-text-fill: #64748B;
+    -fx-font-size: 13px;
+}
+
+/* TOP CLOSE ICON */
+
+.ai-history-close-icon {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+}
+
+.ai-history-close-icon:hover {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #334155;
+}
+
+/* ==========================================
+   HISTORY TABLE
+   ========================================== */
+
+.ai-history-table {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9E3F0;
+    -fx-border-width: 1;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: #E7EDF5;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* TABLE HEADER */
+
+.ai-history-table .column-header-background {
+    -fx-background-color: #EFF4FB;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.ai-history-table .column-header {
+    -fx-background-color: #EFF4FB;
+    -fx-border-color: transparent #DDE6F2 #DDE6F2 transparent;
+    -fx-border-width: 0 1 1 0;
+    -fx-size: 49px;
+}
+
+.ai-history-table .column-header .label {
+    -fx-text-fill: #183153;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 12;
+}
+
+.ai-history-table .filler {
+    -fx-background-color: #EFF4FB;
+    -fx-border-color: #DDE6F2;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* TABLE ROWS */
+
+.ai-history-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+}
+
+.ai-history-table .table-row-cell:odd {
+    -fx-background-color: #F8FAFD;
+}
+
+.ai-history-table .table-row-cell:hover:filled {
+    -fx-background-color: #EEF5FF;
+}
+
+.ai-history-table .table-row-cell:selected {
+    -fx-background-color: #E7F0FF;
+}
+
+.ai-history-table .table-row-cell:selected:focused {
+    -fx-background-color: #DDEAFF;
+}
+
+/* TABLE CELLS */
+
+.ai-history-table .table-cell {
+    -fx-text-fill: #334155;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 12;
+    -fx-border-color: transparent #EDF2F7 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.ai-history-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #1D4ED8;
+}
+
+/* EMPTY STATE */
+
+.ai-history-empty-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+}
+
+.ai-history-empty-description {
+    -fx-font-size: 13px;
+    -fx-text-fill: #94A3B8;
+}
+
+/* SCROLLBAR */
+
+.ai-history-table .scroll-bar:vertical,
+.ai-history-table .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.ai-history-table .scroll-bar .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-radius: 8;
+}
+
+.ai-history-table .scroll-bar .thumb:hover {
+    -fx-background-color: #94A3B8;
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+
+.ai-history-footer-hint {
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 12px;
+}
+
+/* BUTTON BASE */
+
+.ai-history-button {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 11 20;
+}
+
+/* CLOSE BUTTON */
+
+.ai-history-secondary-button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1.2;
+    -fx-text-fill: #183153;
+}
+
+.ai-history-secondary-button:hover {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #94A3B8;
+}
+
+/* VIEW DETAILS BUTTON */
+
+.ai-history-primary-button {
+    -fx-background-color: #2563EB;
+    -fx-border-color: transparent;
+    -fx-text-fill: #FFFFFF;
+}
+
+.ai-history-primary-button:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+.ai-history-primary-button:pressed {
+    -fx-background-color: #1E40AF;
+}
+
+.ai-history-primary-button:disabled {
+    -fx-opacity: 0.50;
+    -fx-cursor: default;
+}

@@ -25,6 +25,39 @@ public class TaskProgressRepository {
             String accessToken
     ) throws Exception {
 
+        if (progress == null) {
+            throw new IllegalArgumentException(
+                "Progress record is required."
+            );
+        }
+
+        if (progress.getTaskId() == null) {
+            throw new IllegalArgumentException(
+                "Task ID is required."
+            );
+        }
+
+        if (progress.getEmployeeId() == null) {
+            throw new IllegalArgumentException(
+                "Employee ID is required."
+            );
+        }
+
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new IllegalStateException(
+                "Your session has expired. Please sign in again."
+            );
+        }
+
+        double percentage = progress.getProgressPercentage();
+
+        if (!Double.isFinite(percentage)
+                || percentage < 0
+                || percentage > 100) {
+            throw new IllegalArgumentException(
+                "Progress must be a finite number between 0 and 100."
+            );
+        }
         JSONObject body =
                 new JSONObject();
 
@@ -83,15 +116,80 @@ public class TaskProgressRepository {
                         );
 
 
-        if (
-                response.statusCode() < 200
-                        || response.statusCode() >= 300
-        ) {
+        if (response.statusCode() < 200
+                || response.statusCode() >= 300) {
+        throw new IllegalStateException(
+                "Unable to save progress history (HTTP "
+                + response.statusCode() + ")."
+        );
+        }
 
-            throw new RuntimeException(
-                    "Unable to save progress history: "
-                            + response.body()
-            );
+        JSONArray savedRows;
+
+        try {
+        savedRows = new JSONArray(response.body());
+        } catch (org.json.JSONException ex) {
+        throw new IllegalStateException(
+                "Progress save response was invalid. "
+                + "Reload history before retrying.",
+                ex
+        );
+        }
+
+        if (savedRows.length() != 1) {
+        throw new IllegalStateException(
+                "Expected one saved progress record. "
+                + "Reload history before retrying."
+        );
+        }
+
+        try {
+        JSONObject saved = savedRows.getJSONObject(0);
+
+        UUID savedTaskId = UUID.fromString(
+                saved.getString("task_id")
+        );
+
+        UUID savedEmployeeId = UUID.fromString(
+                saved.getString("employee_id")
+        );
+
+        double savedPercentage = saved.getDouble(
+                "progress_percentage"
+        );
+
+        OffsetDateTime savedAt = OffsetDateTime.parse(
+                saved.getString("updated_at")
+        );
+
+        if (!progress.getTaskId().equals(savedTaskId)
+                || !progress.getEmployeeId().equals(savedEmployeeId)) {
+                throw new IllegalStateException(
+                        "Saved progress belongs to a different task "
+                        + "or employee. Reload history before retrying."
+                );
+        }
+
+        if (!Double.isFinite(savedPercentage)
+                || Math.abs(savedPercentage - percentage) > 0.000001) {
+                throw new IllegalStateException(
+                        "Saved progress differs from the submitted value. "
+                        + "Reload history before retrying."
+                );
+        }
+
+        // Copy the database-generated identity and timestamp.
+        progress.setProgressId(saved.getLong("progress_id"));
+        progress.setUpdatedAt(savedAt);
+
+        } catch (org.json.JSONException
+                | IllegalArgumentException
+                | java.time.format.DateTimeParseException ex) {
+        throw new IllegalStateException(
+                "Saved progress response contains invalid fields. "
+                + "Reload history before retrying.",
+                ex
+        );
         }
     }
 

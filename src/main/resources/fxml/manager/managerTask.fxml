@@ -73,6 +73,7 @@
                         styleClass="topbar-user-name"/>
 
                 <Label
+                        fx:id="topRoleLabel"
                         text="MANAGER"
                         styleClass="topbar-user-role"/>
 
@@ -148,6 +149,12 @@
                 onAction="#handleTasks"
                 styleClass="sidebar-button-active"/>
 
+            <Button
+                    text="◷   Deadline Escalation"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleDeadlineEscalation"
+                    styleClass="sidebar-button"/>
 
         <Button
                 text="★   Performance"
@@ -165,15 +172,15 @@
                 styleClass="sidebar-button"/>
 
 
-        <Button
-                text="▣   Dashboard"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleDashboard"
-                styleClass="sidebar-button"/>
+            <Button
+                    text="▣   Dashboard"
+                    maxWidth="Infinity"
+                    alignment="CENTER_LEFT"
+                    onAction="#handleDashboard"
+                    styleClass="sidebar-button"/>
 
 
-        <Region VBox.vgrow="ALWAYS"/>
+            <Region VBox.vgrow="ALWAYS"/>
 
 
         <Button

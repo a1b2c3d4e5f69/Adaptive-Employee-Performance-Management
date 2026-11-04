@@ -1,138 +1,360 @@
 package com.aepm.ui.admin;
 
+import com.aepm.logic.dashboard.AdminDashboardService;
 import com.aepm.model.User;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import com.aepm.ui.components.DashboardAttentionPanel;
+import com.aepm.ui.components.DashboardTaskChart;
+import java.util.Locale;
 
 public class AdminHomeController {
 
-    @FXML
-    private Label welcomeLabel;
+    @FXML private Label welcomeLabel;
+    @FXML private Label topNameLabel;
+    @FXML private Label dashboardStatusLabel;
 
-    @FXML
-    private Label topNameLabel;
+    @FXML private Label employeeCountLabel;
+    @FXML private Label managerCountLabel;
+    @FXML private Label taskCountLabel;
+    @FXML private Label overdueCountLabel;
+    @FXML private Label completedCountLabel;
+    @FXML private Label escalationCountLabel;
+    @FXML private Label completionRateLabel;
+    @FXML private Label donutTotalLabel;
 
+    // New Dashboard fields
+    @FXML private Label pendingCountLabel;
+    @FXML private Label averageKpiLabel;
+    @FXML private Label evaluatedCountLabel;
+    @FXML private Label atRiskCountLabel;
+
+    @FXML private BarChart<String, Number> taskStatusChart;
+    @FXML private PieChart escalationChart;
+    @FXML private DashboardAttentionPanel attentionPanel; 
+
+    private final AdminDashboardService dashboardService =
+            new AdminDashboardService();
 
     @FXML
     public void initialize() {
-
         loadCurrentUser();
+        loadDashboard();
     }
 
+    @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();        
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
+
+    @FXML
+    private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+            ((Node) event.getSource()).getScene().getWindow()
+        );
+    }
 
     private void loadCurrentUser() {
 
-        User user =
-                SessionManager.getCurrentUser();
+        User user = SessionManager.getCurrentUser();
 
+        String name = user == null
+                ? "Administrator"
+                : user.getFullName();
 
-        if (user == null) {
+        if (name == null || name.isBlank()) {
+            name = user == null
+                    ? "Administrator"
+                    : user.getUsername();
+        }
 
-            welcomeLabel.setText(
-                    "Welcome, Administrator"
+        if (name == null || name.isBlank()) {
+            name = "Administrator";
+        }
+
+        welcomeLabel.setText("Welcome, " + name);
+        topNameLabel.setText(name);
+    }
+
+    private void loadDashboard() {
+
+        String token = SessionManager.getAccessToken();
+
+        if (token == null || token.isBlank()) {
+            dashboardStatusLabel.setText(
+                    "Login session is missing."
             );
-
-            topNameLabel.setText(
-                    "Administrator"
-            );
-
             return;
         }
 
-
-        String name =
-                user.getFullName();
-
-
-        if (
-                name == null
-                        || name.isBlank()
-        ) {
-
-            name =
-                    user.getUsername();
-        }
-
-
-        if (
-                name == null
-                        || name.isBlank()
-        ) {
-
-            name =
-                    "Administrator";
-        }
-
-
-        welcomeLabel.setText(
-                "Welcome, " + name
+        dashboardStatusLabel.setText(
+                "Loading dashboard..."
         );
 
+        Thread worker = new Thread(() -> {
 
-        topNameLabel.setText(
-                name
-        );
+            try {
+
+                AdminDashboardService.Summary summary =
+                        dashboardService.load(token);
+
+                Platform.runLater(() -> {
+
+                    updateSummary(summary);
+                    updateCharts(summary);
+
+                    dashboardStatusLabel.setText(
+                            "Dashboard updated."
+                    );
+                });
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+                Platform.runLater(() ->
+                        dashboardStatusLabel.setText(
+                                "Unable to load dashboard: "
+                                        + e.getMessage()
+                        )
+                );
+            }
+
+        }, "admin-dashboard-loader");
+
+        worker.setDaemon(true);
+        worker.start();
     }
 
-
-    @FXML
-    private void handleHome() {
-
-        // Already on Home page.
-    }
-
-
-    @FXML
-    private void handleProfile(
-            ActionEvent event
+    private void updateSummary(
+            AdminDashboardService.Summary s
     ) {
 
-        navigate(
-                event,
-                "/fxml/admin/adminProfile.fxml"
+        employeeCountLabel.setText(
+                String.valueOf(s.employees())
+        );
+
+        managerCountLabel.setText(
+                String.valueOf(s.managers())
+        );
+
+        taskCountLabel.setText(
+                String.valueOf(s.totalTasks())
+        );
+
+        overdueCountLabel.setText(
+                String.valueOf(s.overdue())
+        );
+
+        completedCountLabel.setText(
+                String.valueOf(s.completed())
+        );
+
+        escalationCountLabel.setText(
+                String.valueOf(s.activeEscalations())
+        );
+
+        completionRateLabel.setText(
+                String.format(
+                        Locale.US,
+                        "%.1f%%",
+                        s.completionRate()
+                )
+        );
+
+        donutTotalLabel.setText(
+                String.valueOf(s.activeEscalations())
+        );
+
+        pendingCountLabel.setText(
+                String.valueOf(s.pending())
+        );
+
+        averageKpiLabel.setText(
+                s.averageKpi() == null
+                        ? "—"
+                        : String.format(
+                                Locale.US,
+                                "%.1f",
+                                s.averageKpi()
+                        )
+        );
+
+        evaluatedCountLabel.setText(
+                String.valueOf(s.evaluatedEmployees())
+        );
+
+        atRiskCountLabel.setText(
+                String.valueOf(s.atRiskEmployees())
         );
     }
 
-
-    @FXML
-    private void handleUserManagement(
-            ActionEvent event
+    private void updateCharts(
+            AdminDashboardService.Summary s
     ) {
 
+        DashboardTaskChart.update(
+                taskStatusChart,
+                s.completed(),
+                s.inProgress(),
+                s.overdue(),
+                s.pending(),
+                s.otherTasks()
+        );
+
+        var pieData = FXCollections.observableArrayList(
+                new PieChart.Data("Level 1", s.level1()),
+                new PieChart.Data("Level 2", s.level2()),
+                new PieChart.Data("Level 3", s.level3())
+        );
+
+        escalationChart.setAnimated(false);
+        escalationChart.setLegendVisible(false);
+        escalationChart.setLabelsVisible(false);
+        escalationChart.setData(pieData);
+
+        String[] pieColors = {
+                "#2563EB",
+                "#F59E0B",
+                "#FB7185"
+        };
+
+        for (int i = 0; i < pieData.size(); i++) {
+
+            final String color = pieColors[i];
+            PieChart.Data item = pieData.get(i);
+
+            if (item.getNode() != null) {
+                item.getNode().setStyle(
+                        "-fx-pie-color: " + color + ";"
+                );
+            }
+
+            item.nodeProperty().addListener(
+                    (obs, oldNode, node) -> {
+                        if (node != null) {
+                            node.setStyle(
+                                    "-fx-pie-color: "
+                                            + color + ";"
+                            );
+                        }
+                    }
+            );
+        }
+    }
+
+    @FXML
+        private void handleRefreshDashboard() {
+        loadDashboard();
+        attentionPanel.reload();
+    }
+
+    @FXML
+        private void handleHome() {
+        Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminHome.fxml"
+        );
+    }
+
+    @FXML
+    private void handleProfile(ActionEvent event) {
+        navigate(event, "/fxml/admin/adminProfile.fxml");
+    }
+
+    @FXML
+    private void handleUserManagement(ActionEvent event) {
         navigate(
                 event,
                 "/fxml/admin/adminUserManagement.fxml"
         );
     }
 
-
     @FXML
-    private void handleTaskManagement(
-            ActionEvent event
-    ) {
-
-        navigate(
-                event,
-                "/fxml/admin/adminTask.fxml"
-        );
+    private void handleTaskManagement(ActionEvent event) {
+        navigate(event, "/fxml/admin/adminTask.fxml");
     }
 
+    @FXML
+    private void handleEscalationRules(ActionEvent event) {
+        navigate(
+                event,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+    }
 
     @FXML
     private void handleKpiManagement(ActionEvent event) {
+        navigate(event, "/fxml/admin/adminKpi.fxml");
+    }
 
+    @FXML
+    private void handleSystemConfiguration(ActionEvent event) {
         navigate(
                 event,
-                "/fxml/admin/adminKpi.fxml"
+                "/fxml/admin/systemConfiguration.fxml"
         );
     }
 
+    @FXML
+    private void handleAttendanceManagement(ActionEvent event) {
+
+        try {
+
+            String token = SessionManager.getAccessToken();
+
+            if (token == null || token.isBlank()) {
+                System.err.println(
+                        "Attendance: Login session is missing."
+                );
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/fxml/admin/adminAttendance.fxml"
+                    )
+            );
+
+            Parent root = loader.load();
+
+            AdminAttendanceController controller =
+                    loader.getController();
+
+            controller.setAccessToken(token);
+
+            Stage stage = (Stage) ((Node) event.getSource())
+                    .getScene().getWindow();
+
+            stage.getScene().setRoot(root);
+
+        } catch (Exception e) {
+            System.err.println(
+                    "Failed to open Attendance Management."
+            );
+            e.printStackTrace();
+        }
+    }
 
         @FXML
         private void handleReports(
@@ -165,39 +387,26 @@ public class AdminHomeController {
         NavigationManager.navigate(
                 stage,
                 "/fxml/admin/adminAnonymousReport.fxml"
+        
         );
     }
 
-
     @FXML
-    private void handleLogout(
-            ActionEvent event
-    ) {
+    private void handleLogout(ActionEvent event) {
 
         SessionManager.clearSession();
 
-
-        navigate(
-                event,
-                "/fxml/auth/login.fxml"
-        );
+        navigate(event, "/fxml/auth/login.fxml");
     }
-
 
     private void navigate(
             ActionEvent event,
             String path
     ) {
 
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene().getWindow();
 
-
-        NavigationManager.navigate(
-                stage,
-                path
-        );
+        NavigationManager.navigate(stage, path);
     }
 }

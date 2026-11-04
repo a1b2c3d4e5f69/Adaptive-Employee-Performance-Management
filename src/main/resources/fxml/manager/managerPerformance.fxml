@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -24,58 +25,54 @@
 
     <!-- =====================================================
          TOP BAR
+         EXACT SAME STYLE AS EMPLOYEE
          ===================================================== -->
 
     <top>
 
         <HBox
                 alignment="CENTER_LEFT"
-                spacing="16"
-                styleClass="modern-topbar">
+                spacing="20"
+                styleClass="topbar">
 
             <padding>
                 <Insets
-                        top="14"
-                        right="30"
-                        bottom="14"
-                        left="30"/>
+                        top="16"
+                        right="28"
+                        bottom="16"
+                        left="28"/>
             </padding>
 
 
-            <Label
-                    text="AEPM"
-                    styleClass="modern-brand"/>
+            <VBox spacing="2">
+
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome, Manager"
+                        styleClass="topbar-title"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="topbar-subtitle"/>
+
+            </VBox>
 
 
-            <Region
-                    prefWidth="1"
-                    minWidth="1"
-                    maxWidth="1"
-                    prefHeight="28"
-                    styleClass="topbar-divider"/>
+           <Region HBox.hgrow="ALWAYS"/>
 
-
-            <Label
-                    text="Adaptive Employee Performance Management System"
-                    styleClass="modern-system-name"/>
-
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-
-            <VBox
-                    spacing="2"
-                    alignment="CENTER_RIGHT">
+                <VBox
+                        alignment="CENTER_RIGHT"
+                        spacing="2">
 
                 <Label
                         fx:id="topNameLabel"
                         text="Manager"
-                        styleClass="modern-user-name"/>
+                        styleClass="topbar-user-name"/>
 
                 <Label
                         fx:id="topRoleLabel"
                         text="MANAGER"
-                        styleClass="modern-user-role"/>
+                        styleClass="topbar-user-role"/>
 
             </VBox>
 
@@ -86,103 +83,100 @@
 
     <!-- =====================================================
          SIDEBAR
+         EXACT SAME STYLE AS EMPLOYEE
          ===================================================== -->
 
     <left>
 
-    <VBox
-            prefWidth="275"
-            minWidth="275"
-            maxWidth="275"
-            spacing="10"
-            styleClass="sidebar">
+        <VBox
+                prefWidth="245"
+                minWidth="245"
+                maxWidth="245"
+                spacing="8"
+                styleClass="modern-sidebar">
 
-        <padding>
-            <Insets
-                    top="28"
-                    right="12"
-                    bottom="20"
-                    left="12"/>
-        </padding>
+            <padding>
+                <Insets
+                        top="28"
+                        right="18"
+                        bottom="20"
+                        left="18"/>
+            </padding>
 
-        <VBox spacing="3">
 
             <Label
-                    text="AEPM"
-                    styleClass="sidebar-logo"/>
-
-            <Label
-                    text="Manager Portal"
-                    styleClass="sidebar-subtitle"/>
-
-        </VBox>
-
-        <Region prefHeight="42"/>
-
-        <Label
-                text="MENU"
-                styleClass="sidebar-section-title"/>
-
-        <Region prefHeight="18"/>
+                    text="MENU"
+                    styleClass="modern-sidebar-section"/>
 
 
-        <Button
-                text="⌂   Home"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleHome"
-                styleClass="sidebar-button"/>
+            <!-- HOME ACTIVE -->
+
+            <Button
+                    text="⌂   Home"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleHome"
+                    styleClass="modern-nav-button"/>
 
 
-        <Button
-                text="●   My Profile"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleProfile"
-                styleClass="sidebar-button"/>
+            <!-- PROFILE -->
+
+            <Button
+                    text="○   My Profile"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleProfile"
+                    styleClass="modern-nav-button"/>
 
 
-        <Button
-                text="✓   Task Management"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleTasks"
-                styleClass="sidebar-button"/>
+            <!-- TASK -->
+
+            <Button
+                    text="✓   Task Management"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleTasks"
+                    styleClass="modern-nav-button"/>
+
+            <!-- PERFORMANCE -->
+
+            <Button
+                    text="▥   Performance"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handlePerformance"
+                    styleClass="modern-nav-button-active"/>
 
 
-        <Button
-                text="★   Performance"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handlePerformance"
-                styleClass="sidebar-button-active"/>
+            <!-- REPORTS -->
+
+            <Button
+                    text="▤   Reports"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleReports"
+                    styleClass="modern-nav-button"/>
 
 
-        <Button
-                text="≡   Reports"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleReports"
-                styleClass="sidebar-button"/>
-
-
-        <Button
-                text="▣   Dashboard"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleDashboard"
-                styleClass="sidebar-button"/>
+            <Button
+                    text="◫   Dashboard"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleDashboard"
+                    styleClass="modern-nav-button"/>
 
 
         <Region VBox.vgrow="ALWAYS"/>
 
 
-        <Button
-                text="↪   Logout"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleLogout"
-                styleClass="logout-button"/>
+            <!-- LOGOUT -->
+
+            <Button
+                    text="↪   Logout"
+                    alignment="CENTER_LEFT"
+                    maxWidth="Infinity"
+                    onAction="#handleLogout"
+                    styleClass="modern-logout-button"/>
 
     </VBox>
 
@@ -220,9 +214,11 @@
 
                     <!-- PAGE HEADER -->
 
-                    <HBox
-                            alignment="CENTER_LEFT"
-                            spacing="20">
+                <HBox
+                        fx:id="notificationTopBar"
+                        alignment="CENTER_LEFT"
+                        spacing="20"
+                        styleClass="topbar">
 
                         <VBox
                                 spacing="5"
@@ -242,6 +238,12 @@
                         <Button
                                 text="↻  Refresh"
                                 onAction="#handleRefresh"
+                                styleClass="modern-primary-button"/>
+
+                        <Button
+                                fx:id="generateAiButton"
+                                text="Generate AI Recommendations"
+                                onAction="#handleGenerateAi"
                                 styleClass="modern-primary-button"/>
 
                     </HBox>
@@ -268,17 +270,41 @@
                                 text="Select Employee"
                                 styleClass="modern-section-title"/>
 
+                        <!-- EMPLOYEE SEARCH -->
+                        <HBox spacing="12" alignment="CENTER_LEFT">
 
+                        <TextField
+                                fx:id="employeeSearchField"
+                                promptText="Search employee by name or ID"
+                                prefWidth="280"/>
+
+                        <ComboBox
+                                fx:id="departmentFilterComboBox"
+                                promptText="All Departments"
+                                prefWidth="200"/>
+
+                        <Button
+                                text="Clear"
+                                onAction="#handleClearEmployeeFilters"
+                                styleClass="modern-nav-button"/>
+
+                        </HBox>
+
+                        <!-- EMPLOYEE SELECTION -->
                         <ComboBox
                                 fx:id="employeeComboBox"
                                 promptText="Select employee"
                                 prefWidth="360"/>
 
-
                         <Label
                                 fx:id="employeeInfoLabel"
                                 text="Loading employees..."
                                 styleClass="modern-page-subtitle"/>
+                        <Button
+                                fx:id="aiHistoryButton"
+                                text="View AI Recommendation History"
+                                onAction="#handleAiHistory"
+                                styleClass="modern-primary-button"/>
 
                     </VBox>
 
@@ -539,7 +565,24 @@
                                     styleClass="modern-page-subtitle"/>
 
                         </VBox>
+                        
+                        <HBox spacing="12" alignment="CENTER_LEFT">
 
+                        <Label
+                                text="Filter by Status:"
+                                styleClass="input-label"/>
+
+                        <ComboBox
+                                fx:id="statusFilterComboBox"
+                                promptText="All Status"
+                                prefWidth="180"/>
+
+                        <Button
+                                text="Clear Filter"
+                                onAction="#handleClearPerformanceFilter"
+                                styleClass="modern-nav-button"/>
+
+                        </HBox>
 
                         <TableView
                                 fx:id="historyTable"

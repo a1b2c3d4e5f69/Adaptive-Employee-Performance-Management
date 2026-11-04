@@ -36,6 +36,9 @@ import java.util.List;
 public class ManagerEditTaskController {
 
     @FXML
+    private Label topRoleLabel; 
+    
+    @FXML
     private Label welcomeLabel;
 
     @FXML
@@ -80,6 +83,18 @@ public class ManagerEditTaskController {
 
     private Task task;
 
+    @FXML
+    private void handleDeadlineEscalation(ActionEvent event) {    
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+    
+        NavigationManager.navigate(
+                stage,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+    }
+
 
     @FXML
     public void initialize() {
@@ -88,7 +103,7 @@ public class ManagerEditTaskController {
                 messageLabel
         );
 
-
+        updateManagerRoleLabel();
         loadCurrentUser();
 
         configureOptions();
@@ -558,89 +573,145 @@ public class ManagerEditTaskController {
         );
     }
 
+// =========================================================
+// PERFORMANCE
+// =========================================================
 
-        @FXML
-        private void handlePerformance(
-                ActionEvent event
-        ) {
+@FXML
+private void handlePerformance(
+        ActionEvent event
+) {
 
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
+    ManagerTaskEditContext.clear();
+
+    navigate(
+            event,
+            "/fxml/manager/managerPerformance.fxml"
+    );
+}
 
 
-        NavigationManager.navigate(
-                stage,
-                "/fxml/manager/managerPerformance.fxml"
+// =========================================================
+// REPORTS
+// =========================================================
+
+@FXML
+private void handleReports(
+        ActionEvent event
+) {
+
+    ManagerTaskEditContext.clear();
+
+    navigate(
+            event,
+            "/fxml/manager/managerReport.fxml"
+    );
+}
+
+
+// =========================================================
+// DASHBOARD
+// =========================================================
+
+@FXML
+private void handleDashboard(
+        ActionEvent event
+) {
+
+    ManagerTaskEditContext.clear();
+
+    navigate(
+            event,
+            "/fxml/manager/managerHome.fxml"
+    );
+}
+
+
+// =========================================================
+// LOGOUT
+// =========================================================
+
+@FXML
+private void handleLogout(
+        ActionEvent event
+) {
+
+    ManagerTaskEditContext.clear();
+
+    SessionManager.clearSession();
+
+    navigate(
+            event,
+            "/fxml/auth/login.fxml"
+    );
+}
+
+
+// =========================================================
+// HELPERS
+// =========================================================
+
+private String safe(
+        String value
+) {
+
+    return value == null
+            ? ""
+            : value;
+}
+
+
+private void navigate(
+        ActionEvent event,
+        String path
+) {
+
+    Stage stage =
+            (Stage) ((Node) event.getSource())
+                    .getScene()
+                    .getWindow();
+
+    NavigationManager.navigate(
+            stage,
+            path
+    );
+}
+
+
+private void updateManagerRoleLabel() {
+
+    User manager =
+            SessionManager.getCurrentUser();
+
+    if (manager == null) {
+
+        topRoleLabel.setText(
+                "MANAGER"
         );
-        }
 
-
-        @FXML
-        private void handleReports(
-                ActionEvent event
-        ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/manager/managerReport.fxml"
-        );
-        }
-
-
-    @FXML
-    private void handleDashboard() {
+        return;
     }
 
 
-    @FXML
-    private void handleLogout(
-            ActionEvent event
+    String managerId =
+            manager.getEmployeeId();
+
+
+    if (
+            managerId != null
+                    && !managerId.isBlank()
     ) {
 
-        ManagerTaskEditContext.clear();
+        topRoleLabel.setText(
+                "MANAGER  •  " + managerId
+        );
 
-        SessionManager.clearSession();
+    } else {
 
-
-        navigate(
-                event,
-                "/fxml/auth/login.fxml"
+        topRoleLabel.setText(
+                "MANAGER"
         );
     }
+}
 
-
-    private String safe(
-            String value
-    ) {
-
-        return value == null
-                ? ""
-                : value;
-    }
-
-
-    private void navigate(
-            ActionEvent event,
-            String path
-    ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-
-        NavigationManager.navigate(
-                stage,
-                path
-        );
-    }
 }

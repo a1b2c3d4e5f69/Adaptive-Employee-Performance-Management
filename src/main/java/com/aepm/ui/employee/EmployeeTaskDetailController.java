@@ -21,6 +21,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import com.aepm.ui.navigation.NavigationManager;
+
 public class EmployeeTaskDetailController {
 
     // =========================================================
@@ -110,7 +114,18 @@ public class EmployeeTaskDetailController {
     @FXML
     private Label messageLabel;
 
+    @FXML
+        private void handleAttendance(ActionEvent event) {
 
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/employee/employeeAttendance.fxml"
+        );
+    }
     // =========================================================
     // SERVICE
     // =========================================================
