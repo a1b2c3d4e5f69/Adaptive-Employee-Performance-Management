@@ -374,21 +374,8 @@ public class AdminHomeController {
         }
 
     @FXML
-    private void handleAnonymousReports(
-            ActionEvent event
-    ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/admin/adminAnonymousReport.fxml"
-        
-        );
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
     @FXML

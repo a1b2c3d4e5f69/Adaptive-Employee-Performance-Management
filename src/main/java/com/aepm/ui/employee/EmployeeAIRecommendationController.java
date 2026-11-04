@@ -861,6 +861,11 @@ public class EmployeeAIRecommendationController {
         );
     }
 
+    @FXML
+    private void handleAnonymousReport() {
+        navigate("/fxml/employee/employeeAnonymousReport.fxml");
+    }
+
     private void navigateToExisting(String... paths) {
 
         for (String path : paths) {

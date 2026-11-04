@@ -1169,11 +1169,8 @@ public class EmployeePerformanceController {
 
 
     @FXML
-    private void handleAnonymousReport() {
-
-        System.out.println(
-                "Anonymous Reporting not implemented yet."
-        );
+    private void handleAnonymousReport(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/employee/employeeAnonymousReport.fxml");
     }
 
 

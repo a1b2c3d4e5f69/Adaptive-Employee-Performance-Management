@@ -377,8 +377,8 @@ public class AdminAIConfigurationController {
     }
 
     @FXML
-    private void handleAnonymousReports(ActionEvent e) {
-        navigate(e, "/fxml/admin/adminAnonymousReports.fxml");
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
     @FXML

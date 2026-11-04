@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
+<?import com.aepm.ui.components.EmployeeRoleLabel?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="com.aepm.ui.admin.AdminAnonymousReportsController" styleClass="main-layout" stylesheets="@../../css/app.css">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
+            <padding>
+                <Insets top="16" right="28" bottom="16" left="28" />
+            </padding>
+            <VBox spacing="2">
+                <Label fx:id="welcomeLabel" text="Welcome, Administrator" styleClass="topbar-title" />
+                <Label text="Adaptive Employee Performance Management System" styleClass="topbar-subtitle" />
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel" text="Administrator" styleClass="topbar-user-name" />
+                <Label text="ADMINISTRATOR" styleClass="topbar-user-role" />
+            </VBox>
+        </HBox>
+    </top>
+    <left>
+        <ScrollPane prefWidth="294" minWidth="294" maxWidth="294" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: white; -fx-background: white;">
+            <VBox prefWidth="240" spacing="10" styleClass="sidebar">
+                <padding>
+                    <Insets top="30" right="18" bottom="20" left="18" />
+                </padding>
+                <VBox spacing="3">
+                    <Label text="AEPM" styleClass="sidebar-logo" />
+                    <Label text="Administrator Portal" styleClass="sidebar-subtitle" />
+                </VBox>
+                <Region prefHeight="18" />
+                <Label text="MENU" styleClass="sidebar-section-title" />
+                <Button text="⌂   Home" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleHome" styleClass="sidebar-button" />
+                <Button text="●   My Profile" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleProfile" styleClass="sidebar-button" />
+                <Button text="♟   User Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleUserManagement" styleClass="sidebar-button" />
+                <Button text="✓   Task Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleTaskManagement" styleClass="sidebar-button" />
+                <Button text="◷   Escalation Rules" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleEscalationRules" styleClass="sidebar-button" />
+                <Button text="★   KPI Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleKpiManagement" styleClass="sidebar-button" />
+                <Button text="⚙   System Configuration" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleSystemConfiguration" styleClass="sidebar-button" />
+                <Button text="✉   Notification/Announcements" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAnnouncements" styleClass="sidebar-button" />
+                <Button text="✦   AI Recommendation" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAIConfiguration" styleClass="sidebar-button" />
+                <Button text="▦   Attendance Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAttendanceManagement" styleClass="sidebar-button" />
+                <Button text="≡   Reports" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleReports" styleClass="sidebar-button" />
+                <Button text="!   Anonymous Reports" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAnonymousReports" styleClass="sidebar-button-active" />
+                <Region VBox.vgrow="ALWAYS" />
+                <Button text="↪   Logout" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleLogout" styleClass="logout-button" />
+            </VBox>
+        </ScrollPane>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" styleClass="modern-content-scroll">
+            <content>
+                <VBox fx:id="pageContent" spacing="20" styleClass="modern-content">
+                    <padding>
+                        <Insets top="26" right="28" bottom="32" left="28" />
+                    </padding>
+                    <Label text="Anonymous Reports" styleClass="modern-page-title" />
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ProgressIndicator fx:id="busyIndicator" prefWidth="24" prefHeight="24" visible="false" />
+                        <Label fx:id="messageLabel" wrapText="true" minHeight="22" />
+                    </HBox>
+                    <VBox spacing="12" styleClass="section-card">
+                        <Label text="Filters" styleClass="section-title" />
+                        <FlowPane hgap="14" vgap="12">
+                            <VBox spacing="5">
+                                <Label text="Status" styleClass="card-label" />
+                                <ComboBox fx:id="statusFilter" prefWidth="180" />
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Category" styleClass="card-label" />
+                                <ComboBox fx:id="categoryFilter" editable="true" prefWidth="200" />
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Submitted from" styleClass="card-label" />
+                                <DatePicker fx:id="startDate" />
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Submitted through" styleClass="card-label" />
+                                <DatePicker fx:id="endDate" />
+                            </VBox>
+                        </FlowPane>
+                        <HBox spacing="10">
+                            <Button fx:id="applyFiltersButton" text="Apply Filters" onAction="#handleApplyFilters" styleClass="modern-primary-button" />
+                            <Button fx:id="clearFiltersButton" text="Clear Filter" onAction="#handleClearFilters" styleClass="secondary-button" />
+                            <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh" styleClass="secondary-button" />
+                        </HBox>
+                    </VBox>
+                    <VBox spacing="12" styleClass="section-card">
+                        <Label text="Report List" styleClass="section-title" />
+                        <TableView fx:id="reportsTable" prefHeight="380" minHeight="220" />
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Button fx:id="previousButton" text="Previous" onAction="#handlePrevious" styleClass="secondary-button" />
+                            <Label fx:id="pageLabel" text="Loading reports..." styleClass="modern-card-value" maxWidth="Infinity" />
+                            <Button fx:id="nextButton" text="Next" onAction="#handleNext" styleClass="secondary-button" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button fx:id="detailButton" text="View Detail" onAction="#handleViewDetail" styleClass="modern-primary-button" />
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

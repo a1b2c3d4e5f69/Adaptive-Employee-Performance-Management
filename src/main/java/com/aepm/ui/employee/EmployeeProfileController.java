@@ -648,11 +648,8 @@ public class EmployeeProfileController {
     // =========================================================
 
     @FXML
-    private void handleAnonymousReport() {
-
-        System.out.println(
-                "Anonymous Report not implemented yet."
-        );
+    private void handleAnonymousReport(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/employee/employeeAnonymousReport.fxml");
     }
 
 

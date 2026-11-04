@@ -1203,7 +1203,8 @@ public class AdminTaskCategoryController {
 
 
     @FXML
-    private void handleAnonymousReports() {
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
 

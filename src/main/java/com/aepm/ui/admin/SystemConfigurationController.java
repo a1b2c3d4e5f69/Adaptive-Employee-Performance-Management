@@ -672,8 +672,8 @@ public class SystemConfigurationController {
     }
 
     @FXML
-    private void handleAnonymousReports(ActionEvent event) {
-        System.out.println("Anonymous Reports page not implemented yet.");
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
     @FXML

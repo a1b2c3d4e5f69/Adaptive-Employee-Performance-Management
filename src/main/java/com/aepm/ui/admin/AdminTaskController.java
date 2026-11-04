@@ -1759,11 +1759,8 @@ public class AdminTaskController {
 
 
     @FXML
-    private void handleAnonymousReports() {
-
-        System.out.println(
-                "Anonymous Reports not implemented yet."
-        );
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
 

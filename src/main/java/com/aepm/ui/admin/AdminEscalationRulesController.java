@@ -1097,9 +1097,8 @@ public class AdminEscalationRulesController {
     }
 
     @FXML
-    private void handleAnonymousReports() {
-        statusLabel.setText(
-                "Anonymous Reports page is not available yet.");
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
     @FXML

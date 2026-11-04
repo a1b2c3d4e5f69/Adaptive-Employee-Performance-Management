@@ -206,9 +206,10 @@ public final class ManagerReportExporter {
                             : "evaluation_end_date";
 
                     Cell cell = row.createCell(5 + i);
-                    cell.setCellValue(
-                            LocalDate.parse(text(record, key))
-                    );
+                    String date = text(record, key);
+                    if (!date.isBlank()) {
+                        cell.setCellValue(LocalDate.parse(date));
+                    }
                     cell.setCellStyle(dateStyle);
                 }
 
@@ -613,7 +614,7 @@ public final class ManagerReportExporter {
         void finishPage() throws IOException {
             if (stream != null) {
                 draw(
-                        "Manager report | Page " + pageNumber,
+                        "Performance report | Page " + pageNumber,
                         margin,
                         24,
                         9,

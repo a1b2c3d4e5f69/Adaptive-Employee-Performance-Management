@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
+<?import com.aepm.ui.components.EmployeeRoleLabel?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="com.aepm.ui.employee.EmployeeAnonymousChatController" styleClass="main-layout" stylesheets="@../../css/app.css">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
+            <padding>
+                <Insets top="16" right="28" bottom="16" left="28" />
+            </padding>
+            <VBox spacing="2">
+                <EmployeeWelcomeLabel styleClass="topbar-title" />
+                <Label text="Adaptive Employee Performance Management System" styleClass="topbar-subtitle" />
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                <Label fx:id="topNameLabel" text="Employee" styleClass="topbar-user-name" />
+                <EmployeeRoleLabel fx:id="topRoleLabel" styleClass="topbar-user-role" />
+            </VBox>
+        </HBox>
+    </top>
+    <left>
+        <VBox prefWidth="245" minWidth="245" maxWidth="245" spacing="8" styleClass="modern-sidebar">
+            <padding>
+                <Insets top="28" right="18" bottom="20" left="18" />
+            </padding>
+            <Label text="MENU" styleClass="modern-sidebar-section" />
+            <Button text="⌂   Home" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleHome" styleClass="modern-nav-button" />
+            <Button text="○   My Profile" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleProfile" styleClass="modern-nav-button" />
+            <Button text="✓   My Tasks" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleTasks" styleClass="modern-nav-button" />
+            <Button text="▥   Performance" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleKpi" styleClass="modern-nav-button" />
+            <Button text="▦   My Attendance" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleAttendance" styleClass="modern-nav-button" />
+            <Button text="▤   Reports" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleReports" styleClass="modern-nav-button" />
+            <Button text="!   Anonymous Report" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleAnonymousReport" styleClass="modern-nav-button-active" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="↪   Logout" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleLogout" styleClass="modern-logout-button" />
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" styleClass="modern-content-scroll">
+            <content>
+                <VBox fx:id="pageContent" spacing="20" styleClass="modern-content">
+                    <padding>
+                        <Insets top="26" right="28" bottom="32" left="28" />
+                    </padding>
+                    <Label text="Anonymous Chat" styleClass="modern-page-title" />
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ProgressIndicator fx:id="busyIndicator" prefWidth="24" prefHeight="24" visible="false" />
+                        <Label fx:id="messageLabel" wrapText="true" minHeight="22" />
+                    </HBox>
+                    <VBox spacing="12" styleClass="section-card">
+                        <Label text="Conversation" styleClass="section-title" />
+                        <HBox spacing="10">
+                            <TextField fx:id="referenceField" promptText="Secret reference" HBox.hgrow="ALWAYS" />
+                            <Button fx:id="refreshButton" text="Load / Refresh" onAction="#handleRefresh" styleClass="secondary-button" />
+                        </HBox>
+                        <Label fx:id="caseLabel" text="Enter your report reference." wrapText="true" styleClass="modern-card-value" maxWidth="Infinity" />
+                        <TableView fx:id="conversationTable" prefHeight="360" minHeight="180" />
+                        <VBox spacing="5">
+                            <Label text="Message" styleClass="card-label" />
+                            <TextArea fx:id="messageArea" wrapText="true" prefRowCount="3" />
+                        </VBox>
+                        <HBox spacing="10">
+                            <Button fx:id="sendButton" text="Send" onAction="#handleSend" styleClass="modern-primary-button" />
+                            <Button fx:id="backButton" text="Back" onAction="#handleBack" styleClass="secondary-button" />
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

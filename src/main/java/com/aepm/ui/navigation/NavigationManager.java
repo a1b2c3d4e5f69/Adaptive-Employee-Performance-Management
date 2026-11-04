@@ -25,13 +25,19 @@ public final class NavigationManager {
     }
 
     public static void navigate(Stage stage, String fxmlPath) {
+        navigate(stage, fxmlPath, controller -> {});
+    }
+
+    public static <T> void navigate(Stage stage, String fxmlPath, java.util.function.Consumer<T> configure) {
         try {
             URL resource = NavigationManager.class.getResource(fxmlPath);
             if (resource == null) {
                 throw new IllegalArgumentException("FXML file not found: " + fxmlPath);
             }
 
-            Parent root = FXMLLoader.load(resource);
+            FXMLLoader loader = new FXMLLoader(resource);
+            Parent root = loader.load();
+            configure.accept(loader.getController());
             updateTopBarUser(root);
             installNotificationBell(root, fxmlPath);
 

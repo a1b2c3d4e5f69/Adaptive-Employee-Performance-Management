@@ -703,7 +703,53 @@ public class AdminReportController {
     // LOAD ALL EMPLOYEE REPORTS
     // =========================================================
 
+    /** Call on the JavaFX thread to capture the current filter state. No UI changes. */
+    public void exportPdf(java.nio.file.Path destination) throws java.io.IOException {
+        exportFilteredReport(destination, true);
+    }
+
+    public void exportExcel(java.nio.file.Path destination) throws java.io.IOException {
+        exportFilteredReport(destination, false);
+    }
+
+    private void exportFilteredReport(java.nio.file.Path destination, boolean pdf)
+            throws java.io.IOException {
+        if (!javafx.application.Platform.isFxApplicationThread()) {
+            throw new IllegalStateException("Capture report filters on the JavaFX thread.");
+        }
+        var current = SessionManager.getCurrentUser();
+        if (current == null || current.getRoleId() != 1) {
+            throw new IllegalStateException("Sign in with a admin account to export reports.");
+        }
+        if (reportLoading || filteredRows == null) {
+            throw new IllegalStateException("Wait for the report data to finish loading.");
+        }
+        LocalDate start = startDatePicker.getValue();
+        LocalDate end = endDatePicker.getValue();
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must not be after end date.");
+        }
+        applyFilters();
+        var rows = filteredRows.stream()
+                .map(row -> com.aepm.logic.report.ReportExportService.record(
+                        row.getEmployee(), row.getResult()))
+                .toList();
+        var metadata = List.of(
+                "Admin report",
+                "Employee search: " + java.util.Objects.toString(searchField.getText(), ""),
+                "Department: " + departmentFilterComboBox.getValue(),
+                "Performance: " + statusFilterComboBox.getValue(),
+                "Period overlap: " + java.util.Objects.toString(start, "Any")
+                        + " to " + java.util.Objects.toString(end, "Any"),
+                "Generated: " + java.time.OffsetDateTime.now(),
+                "Scope: current filtered records; active employees.");
+        com.aepm.logic.report.ReportExportService.write(destination, rows, metadata, pdf);
+    }
+
+    private boolean reportLoading;
+
     private void loadReportData() {
+        reportLoading = true;
 
         hideMessage();
 
@@ -788,6 +834,7 @@ public class AdminReportController {
         task.setOnSucceeded(
                 event -> {
 
+                    reportLoading = false;
                     List<ReportRow> rows =
                             task.getValue();
 
@@ -825,8 +872,10 @@ public class AdminReportController {
         task.setOnFailed(
                 event -> {
 
+                    reportLoading = false;
                     Throwable error =
                             task.getException();
+                    allRows.clear();
 
 
                     if (error != null) {
@@ -1309,11 +1358,8 @@ public class AdminReportController {
 
 
     @FXML
-    private void handleAnonymousReports() {
-
-        System.out.println(
-                "Anonymous Reports not implemented yet."
-        );
+    private void handleAnonymousReports(javafx.event.ActionEvent event) {
+        navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
 
