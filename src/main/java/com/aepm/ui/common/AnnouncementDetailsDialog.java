@@ -86,21 +86,29 @@ public final class AnnouncementDetailsDialog {
         }
 
         Label heading = new Label(windowTitle);
-        heading.setStyle(
-                "-fx-font-size: 24px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-text-fill: #0F172A;"
-        );
+        heading.getStyleClass().add("admin-page-title");
 
-        Label subtitle = new Label("Announcement details, attachments and links");
-        subtitle.setStyle("-fx-text-fill: #64748B;");
+        Label subtitle = new Label(
+                "Announcement details, attachments and links"
+        );
+        subtitle.getStyleClass().add("admin-page-subtitle");
         subtitle.setWrapText(true);
 
         VBox header = new VBox(6, heading, subtitle);
         header.setPadding(new Insets(24, 24, 16, 24));
 
-        content.setPadding(new Insets(20));
-        content.setStyle("-fx-background-color: white;");
+        content.setPadding(
+                new Insets(
+                        20,
+                        28,
+                        24,
+                        28
+                )
+        );
+
+        content.setStyle(
+                "-fx-background-color: #FFFFFF;"
+        );
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
@@ -113,9 +121,26 @@ public final class AnnouncementDetailsDialog {
         status.setWrapText(true);
         status.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(status, Priority.ALWAYS);
+        status.getStyleClass().add(
+            "admin-helper-text"
+        );
 
-        retry.getStyleClass().add("secondary-button");
-        close.getStyleClass().add("login-primary-button");
+        retry.getStyleClass().removeAll(
+                "secondary-button",
+                "login-primary-button",
+                "app-button"
+        );
+
+        retry.getStyleClass().add("admin-button");
+
+
+        close.getStyleClass().removeAll(
+                "secondary-button",
+                "login-primary-button",
+                "app-button"
+        );
+
+        close.getStyleClass().add("admin-button-primary");
 
         retry.setOnAction(event -> load());
         close.setOnAction(event -> dialog.close());
@@ -128,9 +153,9 @@ public final class AnnouncementDetailsDialog {
         root.setTop(header);
         root.setBottom(footer);
         root.setStyle(
-                "-fx-background-color: white;"
-                + "-fx-font-family: 'Segoe UI';"
-                + "-fx-font-size: 14px;"
+                "-fx-background-color: #FFFFFF;"
+                + "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 12px;"
         );
 
         Scene scene = new Scene(root, 760, 620);
@@ -195,11 +220,15 @@ public final class AnnouncementDetailsDialog {
     private void display(JsonObject data) {
         content.getChildren().clear();
 
-        Label subject = paragraph(text(data, "subject"));
+        Label subject = paragraph(
+                text(data, "subject")
+        );
+
         subject.setStyle(
-                "-fx-font-size: 21px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-text-fill: #0F172A;"
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 18px;"
+                + "-fx-font-weight: 700;"
+                + "-fx-text-fill: #111111;"
         );
 
         VBox metadata = new VBox(8);
@@ -302,12 +331,23 @@ public final class AnnouncementDetailsDialog {
             metadata.getChildren().add(sentDate);
         }
 
-        Label body = paragraph(text(data, "message"));
-        body.setPadding(new Insets(16));
+        Label body = paragraph(
+                text(data, "message")
+        );
+
+        body.setPadding(
+                new Insets(14)
+        );
+
         body.setStyle(
-                "-fx-background-color: #F6F8FC;"
-                + "-fx-background-radius: 12;"
-                + "-fx-text-fill: #334155;"
+                "-fx-background-color: #F7F9FD;"
+                + "-fx-border-color: #E3E7EF;"
+                + "-fx-border-width: 1;"
+                + "-fx-background-radius: 9;"
+                + "-fx-border-radius: 9;"
+                + "-fx-text-fill: #344054;"
+                + "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 12px;"
         );
 
         content.getChildren().addAll(subject, metadata, body);
@@ -334,15 +374,27 @@ public final class AnnouncementDetailsDialog {
             HBox.setHgrow(name, Priority.ALWAYS);
 
             Button download = new Button("Download");
-            download.getStyleClass().add("secondary-button");
+
+            download.getStyleClass().removeAll(
+                    "secondary-button",
+                    "login-primary-button",
+                    "app-button"
+            );
+
+            download.getStyleClass().add(
+                    "admin-button"
+            );
             download.setOnAction(event -> download(file));
 
             HBox row = new HBox(12, name, download);
             row.setAlignment(Pos.CENTER_LEFT);
             row.setPadding(new Insets(12));
             row.setStyle(
-                    "-fx-background-color: #F1F5F9;"
-                    + "-fx-background-radius: 10;"
+                "-fx-background-color: #F7F9FD;"
+                + "-fx-border-color: #E3E7EF;"
+                + "-fx-border-width: 1;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-radius: 8;"
             );
 
             content.getChildren().add(row);
@@ -360,6 +412,11 @@ public final class AnnouncementDetailsDialog {
             String url = text(link, "url");
 
             Hyperlink button = new Hyperlink(text(link, "label"));
+            button.setStyle(
+                "-fx-text-fill: #1E3A8A;"
+                + "-fx-font-weight: 600;"
+                + "-fx-padding: 0;"
+            );
             button.setWrapText(true);
             button.setOnAction(event -> openLink(url));
 
@@ -367,10 +424,12 @@ public final class AnnouncementDetailsDialog {
             address.setWrapText(true);
             address.setMaxWidth(Double.MAX_VALUE);
             address.setStyle(
-                    "-fx-text-fill: #2563EB;"
-                    + "-fx-underline: true;"
-                    + "-fx-cursor: hand;"
-                    + "-fx-padding: 0;"
+                "-fx-text-fill: #1E3A8A;"
+                + "-fx-underline: true;"
+                + "-fx-cursor: hand;"
+                + "-fx-padding: 0;"
+                + "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 12px;"
             );
             address.setOnAction(event -> openLink(url));
 
@@ -629,12 +688,17 @@ public final class AnnouncementDetailsDialog {
     }
 
     private static Label sectionTitle(String value) {
-        Label label = paragraph(value);
+
+        Label label =
+                paragraph(value);
+
         label.setStyle(
-                "-fx-font-size: 16px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-text-fill: #0F172A;"
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 16px;"
+                + "-fx-font-weight: 700;"
+                + "-fx-text-fill: #111111;"
         );
+
         return label;
     }
 

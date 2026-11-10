@@ -102,7 +102,11 @@ public final class AdminNotificationRulesPage {
         page.setTop(header);
 
         NotificationCenterNavigation.install(
-                page, stage, "Automated Rules", this::canLeave
+                page,
+                stage,
+                "Automated Rules",
+                "Configure notification templates, reminder timing and recipients.",
+                this::canLeave
         );
 
         ruleChoice.setMaxWidth(Double.MAX_VALUE);
@@ -155,8 +159,24 @@ public final class AdminNotificationRulesPage {
                 + "-fx-text-fill: #8A6116;"
         );
 
-        save.getStyleClass().add("login-primary-button");
-        refresh.getStyleClass().add("secondary-button");
+       save.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        save.getStyleClass().add(
+                "admin-button-primary"
+        );
+        refresh.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        refresh.getStyleClass().add(
+                "admin-button"
+        );
 
         form.getChildren().addAll(
                 label("Rule Name"), name,

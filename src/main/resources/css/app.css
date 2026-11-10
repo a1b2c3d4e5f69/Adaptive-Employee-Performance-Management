@@ -2880,3 +2880,1267 @@
 
     -fx-text-fill: #087A54;
 }
+
+/* =====================================================================
+   AEPM ADMIN UI SYSTEM
+   Font: Plus Jakarta Sans
+   Primary: #1E3A8A
+   Secondary: #244FB3
+   Soft: #E8EEFC
+   Background: #F3F6FD
+   ===================================================================== */
+
+
+/* ============================================================
+   ROOT
+   ============================================================ */
+
+.admin-root {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-background-color: #F3F6FD;
+    -fx-text-fill: #111111;
+}
+
+.admin-root,
+.admin-root .label,
+.admin-root .button,
+.admin-root .text-field,
+.admin-root .text-area,
+.admin-root .combo-box,
+.admin-root .date-picker,
+.admin-root .table-view {
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+
+.admin-content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.admin-content-scroll > .viewport {
+    -fx-background-color: #F3F6FD;
+}
+
+.admin-content {
+    -fx-background-color: #F3F6FD;
+
+    -fx-padding:
+        30px
+        32px
+        36px
+        32px;
+
+    -fx-spacing: 22px;
+}
+
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+
+.admin-topbar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E3E7EF
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-padding: 14px 28px;
+
+    -fx-min-height: 72px;
+    -fx-pref-height: 72px;
+}
+
+.admin-topbar-user-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #111111;
+}
+
+.admin-topbar-user-role {
+    -fx-font-size: 11px;
+
+    -fx-text-fill: #718096;
+}
+
+.admin-role-badge {
+    -fx-background-color: #E8EEFC;
+
+    -fx-border-color: #B9C8ED;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+
+    -fx-padding: 4px 8px;
+
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #1E3A8A;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.admin-sidebar-scroll {
+    -fx-background-color: #FFFFFF;
+    -fx-background: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        #E3E7EF
+        transparent
+        transparent;
+
+    -fx-border-width: 0 1px 0 0;
+}
+
+.admin-sidebar-scroll > .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+.admin-sidebar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-padding: 20px 14px 22px 14px;
+
+    -fx-spacing: 5px;
+}
+
+.admin-brand-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #111111;
+}
+
+.admin-brand-secondary {
+    -fx-font-size: 10px;
+
+    -fx-text-fill: #8B96AA;
+}
+
+.admin-sidebar-section {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #91A0BC;
+
+    -fx-padding: 17px 8px 7px 8px;
+}
+
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+.admin-nav-button {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-text-fill: #344054;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+.admin-nav-button:hover {
+    -fx-background-color: #244FB3;
+
+    -fx-border-color: #244FB3;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+.admin-nav-button-active {
+    -fx-background-color: #E8EEFC;
+
+    -fx-border-color: #1E3A8A;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-text-fill: #1E3A8A;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+
+.admin-nav-button-active:hover {
+    -fx-background-color: #244FB3;
+
+    -fx-border-color: #244FB3;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   PAGE TITLES
+   ============================================================ */
+
+.admin-page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #111111;
+}
+
+.admin-page-subtitle {
+    -fx-font-size: 12px;
+
+    -fx-text-fill: #718096;
+}
+
+.admin-section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #111111;
+}
+
+.admin-section-subtitle {
+    -fx-font-size: 11px;
+
+    -fx-text-fill: #7A879B;
+}
+
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.admin-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E3E7EF;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 11px;
+    -fx-background-radius: 11px;
+
+    -fx-padding: 20px;
+
+    -fx-effect:
+        dropshadow(
+            gaussian,
+            rgba(17,17,17,0.035),
+            8,
+            0,
+            0,
+            2
+        );
+}
+
+.admin-card:hover {
+    -fx-border-color: #B9C8ED;
+}
+
+
+/* ============================================================
+   KPI CARD
+   ============================================================ */
+
+.admin-kpi-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E3E7EF;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+
+    -fx-padding: 18px;
+
+    -fx-min-height: 115px;
+}
+
+.admin-kpi-card:hover {
+    -fx-border-color: #B9C8ED;
+}
+
+.admin-kpi-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #667085;
+}
+
+.admin-kpi-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #111111;
+}
+
+.admin-kpi-note {
+    -fx-font-size: 10px;
+
+    -fx-text-fill: #8A94A6;
+}
+
+
+/* ============================================================
+   STANDARD BUTTON
+   ============================================================ */
+
+.admin-button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #D9DEE8;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-width: 0;
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* WHITE -> NAVY */
+
+.admin-button:hover {
+    -fx-background-color: #1E3A8A;
+
+    -fx-border-color: #1E3A8A;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+.admin-button:pressed {
+    -fx-background-color: #244FB3;
+
+    -fx-border-color: #244FB3;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   PRIMARY BUTTON
+   ============================================================ */
+
+.admin-button-primary {
+    -fx-background-color: #1E3A8A;
+
+    -fx-border-color: #1E3A8A;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-width: 0;
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.admin-button-primary:hover {
+    -fx-background-color: #244FB3;
+
+    -fx-border-color: #244FB3;
+}
+
+.admin-button-primary:pressed {
+    -fx-background-color: #111111;
+
+    -fx-border-color: #111111;
+}
+
+
+/* ============================================================
+   DANGER
+   ============================================================ */
+
+.admin-button-danger {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #D64545;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #D64545;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+.admin-button-danger:hover {
+    -fx-background-color: #D64545;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.admin-input,
+.admin-combo-box,
+.admin-date-picker,
+.admin-text-area {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DDE2EA;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-font-size: 12px;
+
+    -fx-text-fill: #111111;
+}
+
+.admin-input,
+.admin-combo-box,
+.admin-date-picker {
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+}
+
+.admin-input {
+    -fx-padding: 8px 11px;
+}
+
+.admin-input:focused,
+.admin-combo-box:focused,
+.admin-date-picker:focused,
+.admin-text-area:focused {
+    -fx-border-color: #1E3A8A;
+
+    -fx-border-width: 1.5px;
+}
+
+.admin-field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+
+    -fx-text-fill: #26344D;
+}
+
+.admin-helper-text {
+    -fx-font-size: 10px;
+
+    -fx-text-fill: #8491A8;
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.admin-table {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: transparent;
+
+    -fx-table-cell-border-color: transparent;
+}
+
+.admin-table .column-header-background {
+    -fx-background-color: #F7F9FD;
+
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.admin-table .column-header {
+    -fx-background-color: transparent;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E5E9F2
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-pref-height: 42px;
+}
+
+.admin-table .column-header .label {
+    -fx-text-fill: #596579;
+
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+.admin-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #EEF1F6
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-pref-height: 48px;
+}
+
+.admin-table .table-row-cell:hover {
+    -fx-background-color: #F3F6FD;
+}
+
+.admin-table .table-row-cell:selected {
+    -fx-background-color: #E8EEFC;
+}
+
+.admin-table .table-row-cell:selected .text {
+    -fx-fill: #111111;
+}
+
+.admin-table .table-cell {
+    -fx-border-color: transparent;
+
+    -fx-text-fill: #344054;
+
+    -fx-font-size: 11px;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+
+/* ============================================================
+   TABS
+   ============================================================ */
+
+.admin-tabs {
+    -fx-background-color: transparent;
+}
+
+.admin-tabs .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.admin-tabs .tab {
+    -fx-background-color: transparent;
+
+    -fx-padding: 10px 14px;
+}
+
+.admin-tabs .tab .tab-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-text-fill: #718096;
+}
+
+.admin-tabs .tab:selected {
+    -fx-border-color:
+        transparent
+        transparent
+        #1E3A8A
+        transparent;
+
+    -fx-border-width: 0 0 2px 0;
+}
+
+.admin-tabs .tab:selected .tab-label {
+    -fx-text-fill: #1E3A8A;
+}
+
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+
+.admin-progress-bar {
+    -fx-pref-height: 6px;
+}
+
+.admin-progress-bar > .track {
+    -fx-background-color: #EEF1F5;
+
+    -fx-background-radius: 100px;
+}
+
+.admin-progress-bar > .bar {
+    -fx-background-color: #1E3A8A;
+
+    -fx-background-radius: 100px;
+
+    -fx-background-insets: 0;
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+.admin-root .logout-button {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+
+    -fx-text-fill: #D64545;
+
+    -fx-font-size: 12px;
+
+    -fx-padding: 9px 11px;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-cursor: hand;
+}
+
+.admin-root .logout-button:hover {
+    -fx-background-color: #FFF0F0;
+
+    -fx-background-radius: 8px;
+}
+
+/* =====================================================================
+   ADMIN DASHBOARD ATTENTION PANEL FIX
+   ===================================================================== */
+
+/*
+   Force all labels inside the attention panel area
+   to use dark readable text on light Admin background.
+*/
+
+.admin-root .label {
+    -fx-text-fill: #111111;
+}
+
+
+/* Section / panel headings */
+
+.admin-root .section-title,
+.admin-root .modern-panel-title,
+.admin-root .content-title {
+    -fx-text-fill: #111111;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+
+/* Normal descriptive text */
+
+.admin-root .content-description,
+.admin-root .modern-page-subtitle,
+.admin-root .modern-status,
+.admin-root .card-description {
+    -fx-text-fill: #718096;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+}
+
+
+/* Smaller subsection captions */
+
+.admin-root .card-label,
+.admin-root .modern-metric-title {
+    -fx-text-fill: #596579;
+}
+
+
+/* Attention panel labels */
+
+.admin-root .attention-title,
+.admin-root .attention-section-title {
+    -fx-text-fill: #111111;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+}
+
+.admin-root .attention-summary,
+.admin-root .attention-subtitle,
+.admin-root .attention-description {
+    -fx-text-fill: #718096;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+}
+
+
+/* Refresh Details button */
+
+.admin-root .button {
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+.admin-root .attention-refresh-button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #D9DEE8;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+
+    -fx-cursor: hand;
+}
+
+.admin-root .attention-refresh-button:hover {
+    -fx-background-color: #1E3A8A;
+    -fx-border-color: #1E3A8A;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* Table inside attention panel */
+
+.admin-root .table-view {
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+.admin-root .table-view .column-header .label {
+    -fx-text-fill: #344054;
+    -fx-font-weight: 700;
+}
+
+.admin-root .table-view .table-cell {
+    -fx-text-fill: #344054;
+}
+
+/* =====================================================================
+   ADMIN ATTENTION PANEL - FINAL THEME
+   ===================================================================== */
+
+
+/* Whole attention section */
+
+.admin-attention-panel {
+    -fx-background-color: transparent;
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+
+/* Make internal backgrounds match Admin dashboard */
+
+.admin-attention-panel .viewport,
+.admin-attention-panel .scroll-pane,
+.admin-attention-panel .anchor-pane,
+.admin-attention-panel .border-pane,
+.admin-attention-panel .vbox,
+.admin-attention-panel .hbox {
+    -fx-background-color: transparent;
+}
+
+
+/* ============================================================
+   TEXT
+   ============================================================ */
+
+.admin-attention-panel .label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-text-fill: #344054;
+}
+
+
+/* Main heading */
+
+.admin-attention-panel .section-title,
+.admin-attention-panel .attention-title,
+.admin-attention-panel .modern-panel-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+
+/* Description / summary */
+
+.admin-attention-panel .content-description,
+.admin-attention-panel .attention-summary,
+.admin-attention-panel .attention-description,
+.admin-attention-panel .modern-page-subtitle {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #718096;
+}
+
+
+/* Sub headings */
+
+.admin-attention-panel .card-label,
+.admin-attention-panel .attention-section-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #596579;
+}
+
+
+/* ============================================================
+   ALL BUTTONS INSIDE ATTENTION PANEL
+   ============================================================ */
+
+.admin-attention-panel .button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #D9DEE8;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* White -> Royal Navy */
+
+.admin-attention-panel .button:hover {
+    -fx-background-color: #1E3A8A;
+    -fx-border-color: #1E3A8A;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* Click */
+
+.admin-attention-panel .button:pressed {
+    -fx-background-color: #244FB3;
+    -fx-border-color: #244FB3;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.admin-attention-panel .table-view {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E3E7EF;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 9px;
+    -fx-background-radius: 9px;
+
+    -fx-table-cell-border-color: transparent;
+}
+
+
+.admin-attention-panel .table-view .column-header-background {
+    -fx-background-color: #F7F9FD;
+
+    -fx-background-radius: 9px 9px 0 0;
+}
+
+
+.admin-attention-panel .table-view .column-header {
+    -fx-background-color: transparent;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E5E9F2
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-pref-height: 42px;
+}
+
+
+.admin-attention-panel .table-view .column-header .label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #344054;
+}
+
+
+.admin-attention-panel .table-view .table-row-cell {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #EEF1F6
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-pref-height: 48px;
+}
+
+
+.admin-attention-panel .table-view .table-row-cell:hover {
+    -fx-background-color: #F3F6FD;
+}
+
+
+.admin-attention-panel .table-view .table-row-cell:selected {
+    -fx-background-color: #E8EEFC;
+}
+
+
+.admin-attention-panel .table-view .table-row-cell:selected .text {
+    -fx-fill: #111111;
+}
+
+
+.admin-attention-panel .table-view .table-cell {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+
+    -fx-text-fill: #344054;
+
+    -fx-border-color: transparent;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+.admin-attention-panel .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+
+.admin-attention-panel .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+
+.admin-attention-panel .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD3E1;
+    -fx-background-radius: 100px;
+}
+
+
+.admin-attention-panel .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #1E3A8A;
+}
+
+/* ============================================================
+   ADMIN AI CONFIGURATION
+   ============================================================ */
+
+.admin-ai-checkbox {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #344054;
+}
+
+.admin-ai-checkbox .box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CBD3E1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.admin-ai-checkbox:selected .box {
+    -fx-background-color: #1E3A8A;
+    -fx-border-color: #1E3A8A;
+}
+
+.admin-ai-checkbox:selected .mark {
+    -fx-background-color: #FFFFFF;
+}
+
+.admin-ai-info-box {
+    -fx-background-color: #F3F6FD;
+
+    -fx-border-color: #D9E1F3;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+
+    -fx-padding: 12px 14px;
+}
+
+/* TitledPane used for selected announcement recipients */
+
+#systemAnnouncementsPage .titled-pane > .title {
+    -fx-background-color: #F7F9FD;
+
+    -fx-border-color: #E3E7EF;
+
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+
+    -fx-padding: 9px 12px;
+}
+
+#systemAnnouncementsPage .titled-pane > .title > .text {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+
+    -fx-fill: #344054;
+}
+
+
+/* Recipient list */
+
+#systemAnnouncementsPage .list-view {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E3E7EF;
+
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+}
+
+#systemAnnouncementsPage .list-cell {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+
+    -fx-text-fill: #344054;
+
+    -fx-padding: 8px 10px;
+}
+
+#systemAnnouncementsPage .list-cell:selected {
+    -fx-background-color: #E8EEFC;
+    -fx-text-fill: #1E3A8A;
+}
+
+/* ============================================================
+   ADMIN NOTIFICATION CENTER
+   SENT / SCHEDULED / COMPOSE
+   ============================================================ */
+
+.admin-notification-tabs {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E3E7EF;
+    -fx-border-width: 1px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+
+    -fx-tab-min-height: 40px;
+    -fx-tab-max-height: 40px;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* HEADER AREA */
+
+.admin-notification-tabs .tab-header-area {
+    -fx-padding: 0;
+}
+
+
+/* REMOVE DEFAULT GREY BAR */
+
+.admin-notification-tabs .tab-header-background {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E3E7EF
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+}
+
+
+/* ============================================================
+   NORMAL TAB
+   ============================================================ */
+
+.admin-notification-tabs .tab {
+    -fx-background-color: transparent;
+
+    -fx-background-insets: 0;
+
+    -fx-background-radius: 7px 7px 0 0;
+
+    -fx-border-color: transparent;
+
+    -fx-border-width: 0;
+
+    -fx-padding: 9px 18px;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    -fx-cursor: hand;
+}
+
+
+/* NORMAL TEXT */
+
+.admin-notification-tabs .tab .tab-label {
+    -fx-font-family: "Plus Jakarta Sans";
+
+    -fx-font-size: 12px;
+
+    -fx-font-weight: 500;
+
+    -fx-text-fill: #667085;
+}
+
+
+/* ============================================================
+   HOVER
+   ============================================================ */
+
+.admin-notification-tabs .tab:hover {
+    -fx-background-color: #F3F6FD;
+
+    -fx-background-radius: 7px 7px 0 0;
+}
+
+
+/* ============================================================
+   SELECTED TAB
+   ============================================================ */
+
+.admin-notification-tabs .tab:selected {
+    -fx-background-color: #E8EEFC;
+
+    -fx-background-radius: 7px 7px 0 0;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #1E3A8A
+        transparent;
+
+    -fx-border-width: 0 0 3px 0;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* SELECTED TEXT */
+
+.admin-notification-tabs .tab:selected .tab-label {
+    -fx-text-fill: #1E3A8A;
+
+    -fx-font-weight: 700;
+}
+
+
+/* ============================================================
+   REMOVE BLUE FOCUS BOX
+   ============================================================ */
+
+.admin-notification-tabs .tab:focused {
+    -fx-focus-color: transparent;
+
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* ============================================================
+   CONTENT AREA
+   ============================================================ */
+
+.admin-notification-tabs .tab-content-area {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: transparent;
+
+    -fx-padding: 0;
+}

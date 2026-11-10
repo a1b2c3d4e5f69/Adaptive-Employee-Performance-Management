@@ -152,6 +152,20 @@ public class AdminTaskCategoryController {
     }
 
     @FXML
+        private void handleReports(ActionEvent event) {
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminReport.fxml"
+        );
+    }
+
+    @FXML
         private void handleEscalationRules(ActionEvent event) {
 
         Stage stage = (Stage) ((Node) event.getSource())

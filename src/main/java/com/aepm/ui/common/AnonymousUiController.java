@@ -19,6 +19,10 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import com.aepm.ui.admin.AdminAnnouncementsDialog;
+
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
 
 /** UI-only lifecycle, navigation and safe asynchronous service calls. Never handles REST or credentials. */
 public abstract class AnonymousUiController {
@@ -153,9 +157,7 @@ public abstract class AnonymousUiController {
     @FXML protected void handleTasks() {navigate("/fxml/employee/employeeTask.fxml");}
     @FXML protected void handleKpi() {navigate("/fxml/employee/employeePerformance.fxml");}
     @FXML protected void handleAttendance() {navigate("/fxml/employee/employeeAttendance.fxml");}
-    @FXML protected void handleReports() {
-        if(role==1) navigate("/fxml/admin/adminReport.fxml");else message("Employee Reports is not available yet.",false);
-    }
+    @FXML protected void handleReports(ActionEvent event) {Stage stage =(Stage) ((Node) event.getSource()).getScene().getWindow();NavigationManager.navigate(stage,"/fxml/admin/adminReport.fxml");}
     @FXML protected void handleAnonymousReport() {navigate("/fxml/employee/employeeAnonymousReport.fxml");}
     @FXML protected void handleAnonymousReports() {navigate("/fxml/admin/adminAnonymousReports.fxml");}
     @FXML protected void handleUserManagement() {navigate("/fxml/admin/adminUserManagement.fxml");}
@@ -165,8 +167,16 @@ public abstract class AnonymousUiController {
     @FXML protected void handleSystemConfiguration() {navigate("/fxml/admin/systemConfiguration.fxml");}
     @FXML protected void handleAttendanceManagement() {navigate("/fxml/admin/adminAttendance.fxml");}
     @FXML protected void handleAIConfiguration() {navigate("/fxml/admin/adminAIConfiguration.fxml");}
-    @FXML protected void handleAnnouncements() {
-        if(root.getScene()!=null) com.aepm.ui.admin.AdminAnnouncementsDialog.show(root.getScene().getWindow());
+    @FXML
+    protected void handleAnnouncements(
+            ActionEvent event
+    ) {
+
+        AdminAnnouncementsDialog.show(
+                ((Node) event.getSource())
+                        .getScene()
+                        .getWindow()
+        );
     }
     @FXML protected void handleLogout() {SessionManager.clearSession();navigate("/fxml/auth/login.fxml");}
 }

@@ -1,137 +1,664 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
-<?import com.aepm.ui.components.EmployeeRoleLabel?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="com.aepm.ui.admin.AdminAnonymousReportDetailController" styleClass="main-layout" stylesheets="@../../css/app.css">
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        xmlns:fx="http://javafx.com/fxml"
+        fx:id="root"
+        fx:controller="com.aepm.ui.admin.AdminAnonymousReportDetailController"
+        stylesheets="@../../css/app.css"
+        styleClass="admin-root">
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
-            <padding>
-                <Insets top="16" right="28" bottom="16" left="28" />
-            </padding>
+
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                styleClass="admin-topbar">
+
             <VBox spacing="2">
-                <Label fx:id="welcomeLabel" text="Welcome, Administrator" styleClass="topbar-title" />
-                <Label text="Adaptive Employee Performance Management System" styleClass="topbar-subtitle" />
+
+                <Label
+                        fx:id="welcomeLabel"
+                        text="Welcome, Administrator"
+                        styleClass="admin-topbar-user-name"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="admin-page-subtitle"/>
+
             </VBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label fx:id="topNameLabel" text="Administrator" styleClass="topbar-user-name" />
-                <Label text="ADMINISTRATOR" styleClass="topbar-user-role" />
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
+
+                <Label
+                        fx:id="topNameLabel"
+                        text="Administrator"
+                        styleClass="admin-topbar-user-name"/>
+
+                <Label
+                        text="ADMINISTRATOR"
+                        styleClass="admin-topbar-user-role"/>
+
             </VBox>
+
         </HBox>
+
     </top>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
     <left>
-        <ScrollPane prefWidth="294" minWidth="294" maxWidth="294" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: white; -fx-background: white;">
-            <VBox prefWidth="240" spacing="10" styleClass="sidebar">
-                <padding>
-                    <Insets top="30" right="18" bottom="20" left="18" />
-                </padding>
-                <VBox spacing="3">
-                    <Label text="AEPM" styleClass="sidebar-logo" />
-                    <Label text="Administrator Portal" styleClass="sidebar-subtitle" />
-                </VBox>
-                <Region prefHeight="18" />
-                <Label text="MENU" styleClass="sidebar-section-title" />
-                <Button text="⌂   Home" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleHome" styleClass="sidebar-button" />
-                <Button text="●   My Profile" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleProfile" styleClass="sidebar-button" />
-                <Button text="♟   User Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleUserManagement" styleClass="sidebar-button" />
-                <Button text="✓   Task Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleTaskManagement" styleClass="sidebar-button" />
-                <Button text="◷   Escalation Rules" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleEscalationRules" styleClass="sidebar-button" />
-                <Button text="★   KPI Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleKpiManagement" styleClass="sidebar-button" />
-                <Button text="⚙   System Configuration" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleSystemConfiguration" styleClass="sidebar-button" />
-                <Button text="✉   Notification/Announcements" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAnnouncements" styleClass="sidebar-button" />
-                <Button text="✦   AI Recommendation" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAIConfiguration" styleClass="sidebar-button" />
-                <Button text="▦   Attendance Management" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAttendanceManagement" styleClass="sidebar-button" />
-                <Button text="≡   Reports" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleReports" styleClass="sidebar-button" />
-                <Button text="!   Anonymous Reports" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleAnonymousReports" styleClass="sidebar-button-active" />
-                <Region VBox.vgrow="ALWAYS" />
-                <Button text="↪   Logout" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#handleLogout" styleClass="logout-button" />
-            </VBox>
-        </ScrollPane>
-    </left>
-    <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" styleClass="modern-content-scroll">
+
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-sidebar-scroll">
+
             <content>
-                <VBox fx:id="pageContent" spacing="20" styleClass="modern-content">
-                    <padding>
-                        <Insets top="26" right="28" bottom="32" left="28" />
-                    </padding>
-                    <Label text="Anonymous Report Detail" styleClass="modern-page-title" />
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <ProgressIndicator fx:id="busyIndicator" prefWidth="24" prefHeight="24" visible="false" />
-                        <Label fx:id="messageLabel" wrapText="true" minHeight="22" />
-                    </HBox>
-                    <VBox spacing="12" styleClass="section-card">
-                        <Label text="Report" styleClass="section-title" />
-                        <HBox spacing="10">
-                            <Button fx:id="backButton" text="Back to Anonymous Reports" onAction="#handleBack" styleClass="secondary-button" />
-                            <Button fx:id="refreshReportButton" text="Refresh Report" onAction="#handleRefreshReport" styleClass="secondary-button" />
-                        </HBox>
-                        <Label fx:id="subjectLabel" text="-" wrapText="true" styleClass="section-title" />
-                        <HBox spacing="14">
-                            <Label text="Category" minWidth="160" styleClass="card-label" />
-                            <Label fx:id="categoryLabel" text="-" wrapText="true" styleClass="modern-card-value" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                        </HBox>
-                        <HBox spacing="14">
-                            <Label text="Current Status" minWidth="160" styleClass="card-label" />
-                            <Label fx:id="statusLabel" text="-" wrapText="true" styleClass="modern-card-value" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                        </HBox>
-                        <HBox spacing="14">
-                            <Label text="Submitted (UTC+08)" minWidth="160" styleClass="card-label" />
-                            <Label fx:id="submittedLabel" text="-" wrapText="true" styleClass="modern-card-value" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                        </HBox>
-                        <HBox spacing="14">
-                            <Label text="Last Updated (UTC+08)" minWidth="160" styleClass="card-label" />
-                            <Label fx:id="updatedLabel" text="-" wrapText="true" styleClass="modern-card-value" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                        </HBox>
-                        <VBox spacing="5">
-                            <Label text="Description" styleClass="card-label" />
-                            <TextArea fx:id="descriptionArea" editable="false" wrapText="true" prefRowCount="5" />
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Evidence URL / path" styleClass="card-label" />
-                            <TextField fx:id="evidenceField" editable="false" />
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Published Resolution" styleClass="card-label" />
-                            <Label fx:id="publishedResolutionLabel" text="-" wrapText="true" styleClass="modern-card-value" maxWidth="Infinity" />
-                        </VBox>
+
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="admin-sidebar">
+
+                    <!-- BRAND -->
+                    <VBox spacing="2">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="admin-brand-title"/>
+
+                        <Label
+                                text="Adaptive Performance"
+                                styleClass="admin-brand-secondary"/>
+
                     </VBox>
-                    <VBox spacing="12" styleClass="section-card">
-                        <Label text="Anonymous Conversation" styleClass="section-title" />
-                        <TableView fx:id="conversationTable" prefHeight="230" minHeight="160" />
-                        <VBox spacing="5">
-                            <Label text="Reply" styleClass="card-label" />
-                            <TextArea fx:id="replyArea" wrapText="true" prefRowCount="3" />
-                        </VBox>
-                        <HBox spacing="10">
-                            <Button fx:id="replyButton" text="Send Reply" onAction="#handleSendReply" styleClass="modern-primary-button" />
-                            <Button fx:id="refreshMessagesButton" text="Refresh Messages" onAction="#handleRefreshMessages" styleClass="secondary-button" />
-                        </HBox>
-                    </VBox>
-                    <VBox spacing="12" styleClass="section-card">
-                        <Label text="Private Investigation" styleClass="section-title" />
-                        <VBox spacing="5">
-                            <Label text="Private Investigation Note (Administrator only)" styleClass="card-label" />
-                            <TextArea fx:id="investigationNoteArea" wrapText="true" prefRowCount="4" />
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="New Status" styleClass="card-label" />
-                            <ComboBox fx:id="newStatusCombo" maxWidth="Infinity" />
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Resolution / outcome (required when resolving or closing)" styleClass="card-label" />
-                            <TextArea fx:id="resolutionArea" wrapText="true" prefRowCount="3" />
-                        </VBox>
-                        <Button fx:id="saveInvestigationButton" text="Save Investigation" onAction="#handleSaveInvestigation" styleClass="modern-primary-button" />
-                    </VBox>
-                    <VBox spacing="12" styleClass="section-card">
-                        <Label text="Investigation History" styleClass="section-title" />
-                        <TableView fx:id="historyTable" prefHeight="250" minHeight="160" />
-                    </VBox>
+
+
+                    <!-- WORKSPACE -->
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="♟   User Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleUserManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="★   KPI Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpiManagement"
+                            styleClass="admin-nav-button"/>
+
+
+                    <!-- OPERATIONS -->
+                    <Label
+                            text="OPERATIONS"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="▦   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendanceManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✉   Notifications"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnnouncements"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="!   Anonymous Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReports"
+                            styleClass="admin-nav-button-active"/>
+
+
+                    <!-- SYSTEM -->
+                    <Label
+                            text="SYSTEM"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="⚙   System Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleSystemConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✦   AI Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAIConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="◷   Deadline &amp; Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleEscalationRules"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="admin-nav-button"/>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
                 </VBox>
+
             </content>
+
         </ScrollPane>
+
+    </left>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-content-scroll">
+
+            <content>
+
+                <VBox
+                        fx:id="pageContent"
+                        spacing="22"
+                        styleClass="admin-content">
+
+
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
+
+                    <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="16">
+
+                        <VBox
+                                spacing="5"
+                                HBox.hgrow="ALWAYS">
+
+                            <Label
+                                    text="Anonymous Report Detail"
+                                    styleClass="admin-page-title"/>
+
+                            <Label
+                                    text="Review the report, communicate with the anonymous reporter and manage the investigation securely."
+                                    wrapText="true"
+                                    styleClass="admin-page-subtitle"/>
+
+                        </VBox>
+
+                        <Button
+                                fx:id="backButton"
+                                text="Back to Reports"
+                                onAction="#handleBack"
+                                styleClass="admin-button"/>
+
+                    </HBox>
+
+
+                    <!-- STATUS MESSAGE -->
+
+                    <HBox
+                            spacing="10"
+                            alignment="CENTER_LEFT">
+
+                        <ProgressIndicator
+                                fx:id="busyIndicator"
+                                prefWidth="22"
+                                prefHeight="22"
+                                visible="false"/>
+
+                        <Label
+                                fx:id="messageLabel"
+                                wrapText="true"
+                                minHeight="22"
+                                styleClass="admin-helper-text"/>
+
+                    </HBox>
+
+
+                    <!-- =================================================
+                         REPORT INFORMATION
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="admin-card">
+
+                        <HBox
+                                alignment="CENTER_LEFT"
+                                spacing="12">
+
+                            <VBox
+                                    spacing="4"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="Report Information"
+                                        styleClass="admin-section-title"/>
+
+                                <Label
+                                        text="Confidential report details submitted by the anonymous reporter."
+                                        wrapText="true"
+                                        styleClass="admin-section-subtitle"/>
+
+                            </VBox>
+
+                            <Button
+                                    fx:id="refreshReportButton"
+                                    text="Refresh Report"
+                                    onAction="#handleRefreshReport"
+                                    styleClass="admin-button"/>
+
+                        </HBox>
+
+
+                        <VBox spacing="5">
+
+                            <Label
+                                    text="Subject"
+                                    styleClass="admin-field-label"/>
+
+                            <Label
+                                    fx:id="subjectLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="admin-section-title"/>
+
+                        </VBox>
+
+
+                        <!-- SUMMARY GRID -->
+
+                        <GridPane
+                                hgap="35"
+                                vgap="14">
+
+                            <Label
+                                    text="Category"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="categoryLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Current Status"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="statusLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <Label
+                                    text="Submitted (UTC+08)"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="submittedLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <Label
+                                    text="Last Updated (UTC+08)"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="updatedLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
+
+                        </GridPane>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Description"
+                                    styleClass="admin-field-label"/>
+
+                            <TextArea
+                                    fx:id="descriptionArea"
+                                    editable="false"
+                                    wrapText="true"
+                                    prefRowCount="5"
+                                    styleClass="admin-text-area"/>
+
+                        </VBox>
+
+
+                        <!-- EVIDENCE -->
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Evidence URL / Path"
+                                    styleClass="admin-field-label"/>
+
+                            <TextField
+                                    fx:id="evidenceField"
+                                    editable="false"
+                                    styleClass="admin-input"/>
+
+                        </VBox>
+
+
+                        <!-- PUBLISHED RESOLUTION -->
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Published Resolution"
+                                    styleClass="admin-field-label"/>
+
+                            <Label
+                                    fx:id="publishedResolutionLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         ANONYMOUS CONVERSATION
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="admin-card">
+
+                        <HBox
+                                alignment="CENTER_LEFT"
+                                spacing="12">
+
+                            <VBox
+                                    spacing="4"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="Anonymous Conversation"
+                                        styleClass="admin-section-title"/>
+
+                                <Label
+                                        text="Communicate with the reporter without exposing their identity."
+                                        styleClass="admin-section-subtitle"/>
+
+                            </VBox>
+
+                            <Button
+                                    fx:id="refreshMessagesButton"
+                                    text="Refresh Messages"
+                                    onAction="#handleRefreshMessages"
+                                    styleClass="admin-button"/>
+
+                        </HBox>
+
+
+                        <TableView
+                                fx:id="conversationTable"
+                                prefHeight="240"
+                                minHeight="180"
+                                maxWidth="Infinity"
+                                styleClass="admin-table"/>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Reply"
+                                    styleClass="admin-field-label"/>
+
+                            <TextArea
+                                    fx:id="replyArea"
+                                    wrapText="true"
+                                    prefRowCount="3"
+                                    promptText="Write a reply to the anonymous reporter..."
+                                    styleClass="admin-text-area"/>
+
+                        </VBox>
+
+
+                        <HBox spacing="10">
+
+                            <Button
+                                    fx:id="replyButton"
+                                    text="Send Reply"
+                                    onAction="#handleSendReply"
+                                    styleClass="admin-button-primary"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         PRIVATE INVESTIGATION
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="admin-card">
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Private Investigation"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Investigation notes are visible to administrators only and are never shown to the anonymous reporter."
+                                    wrapText="true"
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Private Investigation Note"
+                                    styleClass="admin-field-label"/>
+
+                            <TextArea
+                                    fx:id="investigationNoteArea"
+                                    wrapText="true"
+                                    prefRowCount="4"
+                                    promptText="Record confidential investigation notes..."
+                                    styleClass="admin-text-area"/>
+
+                        </VBox>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="New Status"
+                                    styleClass="admin-field-label"/>
+
+                            <ComboBox
+                                    fx:id="newStatusCombo"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-combo-box"/>
+
+                        </VBox>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Resolution / Outcome"
+                                    styleClass="admin-field-label"/>
+
+                            <Label
+                                    text="Required when resolving or closing the report."
+                                    styleClass="admin-helper-text"/>
+
+                            <TextArea
+                                    fx:id="resolutionArea"
+                                    wrapText="true"
+                                    prefRowCount="3"
+                                    promptText="Enter the final resolution or investigation outcome..."
+                                    styleClass="admin-text-area"/>
+
+                        </VBox>
+
+
+                        <HBox spacing="10">
+
+                            <Button
+                                    fx:id="saveInvestigationButton"
+                                    text="Save Investigation"
+                                    onAction="#handleSaveInvestigation"
+                                    styleClass="admin-button-primary"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         INVESTIGATION HISTORY
+                         ================================================= -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="admin-card">
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Investigation History"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Review status changes, investigation notes and previous case actions."
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <TableView
+                                fx:id="historyTable"
+                                prefHeight="280"
+                                minHeight="200"
+                                maxWidth="Infinity"
+                                styleClass="admin-table"/>
+
+                    </VBox>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
     </center>
+
 </BorderPane>

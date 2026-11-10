@@ -182,8 +182,12 @@ public class AdminAttendanceController {
     }
 
     @FXML
-    private void handleReports() {
-        System.out.println("Reports not implemented yet.");
+    private void handleReports(ActionEvent event) {
+
+        navigate(
+                event,
+                "/fxml/admin/adminReport.fxml"
+        );
     }
 
     @FXML

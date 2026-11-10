@@ -117,12 +117,81 @@ public final class AdminNotificationTemplatesPage {
         );
         subtitle.getStyleClass().add("secondary-text");
 
-        create.getStyleClass().add("login-primary-button");
-        refresh.getStyleClass().add("secondary-button");
-        edit.getStyleClass().add("secondary-button");
-        save.getStyleClass().add("login-primary-button");
-        delete.getStyleClass().add("secondary-button");
-        preview.getStyleClass().add("secondary-button");
+        // =====================================================
+        // TEMPLATE BUTTON UI
+        // =====================================================
+
+        // + New Template
+        create.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        create.getStyleClass().add(
+                "admin-button-primary"
+        );
+
+
+        // Refresh
+        refresh.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        refresh.getStyleClass().add(
+                "admin-button"
+        );
+
+
+        // Edit Selected
+        edit.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        edit.getStyleClass().add(
+                "admin-button"
+        );
+
+
+        // Preview
+        preview.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        preview.getStyleClass().add(
+                "admin-button"
+        );
+
+
+        // Save Template / Save Changes
+        save.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button"
+        );
+
+        save.getStyleClass().add(
+                "admin-button-primary"
+        );
+
+
+        // Delete Template
+        delete.getStyleClass().removeAll(
+                "login-primary-button",
+                "secondary-button",
+                "app-button",
+                "admin-button"
+        );
+
+        delete.getStyleClass().add(
+                "admin-button-danger"
+        );
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -134,10 +203,11 @@ public final class AdminNotificationTemplatesPage {
         header.setPadding(new Insets(0, 0, 22, 0));
         page.setTop(header);
         NotificationCenterNavigation.install(
-                page,
-                stage,
-                "Templates",
-                () -> {
+            page,
+            stage,
+            "Templates",
+            "Create and maintain reusable notification titles and messages.",
+            () -> {
                     if (!active()) {
                         return false;
                     }

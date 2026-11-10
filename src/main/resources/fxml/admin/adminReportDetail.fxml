@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
@@ -16,24 +14,26 @@
         fx:controller="com.aepm.ui.admin.AdminReportDetailController"
         prefWidth="720"
         spacing="0"
-        styleClass="task-popup-root">
+        stylesheets="@../../css/app.css"
+        style="
+            -fx-font-family: 'Plus Jakarta Sans';
+            -fx-background-color: #F3F6FD;
+        ">
 
 
-    <!-- HEADER -->
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
     <HBox
             alignment="CENTER_LEFT"
             spacing="12"
-            styleClass="task-popup-header">
-
-        <padding>
-            <Insets
-                    top="18"
-                    right="20"
-                    bottom="18"
-                    left="22"/>
-        </padding>
-
+            style="
+                -fx-background-color: #FFFFFF;
+                -fx-padding: 18 22 18 22;
+                -fx-border-color: transparent transparent #E3E7EF transparent;
+                -fx-border-width: 0 0 1 0;
+            ">
 
         <VBox
                 spacing="3"
@@ -41,12 +41,12 @@
 
             <Label
                     text="Performance Summary"
-                    styleClass="modern-section-title"/>
+                    styleClass="admin-section-title"/>
 
             <Label
                     fx:id="employeeHeaderLabel"
                     text="Employee"
-                    styleClass="modern-page-subtitle"/>
+                    styleClass="admin-page-subtitle"/>
 
         </VBox>
 
@@ -54,51 +54,55 @@
         <Button
                 text="×"
                 onAction="#handleClose"
-                styleClass="task-popup-close-button"/>
+                styleClass="admin-button"/>
 
     </HBox>
 
 
-    <!-- CONTENT -->
+    <!-- =====================================================
+         CONTENT
+         ===================================================== -->
 
     <ScrollPane
             fitToWidth="true"
             hbarPolicy="NEVER"
-            prefHeight="610">
+            vbarPolicy="AS_NEEDED"
+            prefHeight="610"
+            styleClass="admin-content-scroll">
 
         <content>
 
             <VBox
-                    spacing="20">
-
-                <padding>
-                    <Insets
-                            top="22"
-                            right="24"
-                            bottom="24"
-                            left="24"/>
-                </padding>
+                    spacing="18"
+                    style="
+                        -fx-background-color: #F3F6FD;
+                        -fx-padding: 22 24 24 24;
+                    ">
 
 
-                <!-- PERFORMANCE INFO -->
+                <!-- =================================================
+                     PERFORMANCE INFORMATION
+                     ================================================= -->
 
                 <VBox
-                        spacing="18"
-                        styleClass="modern-card">
+                        spacing="16"
+                        styleClass="admin-card">
 
-                    <padding>
-                        <Insets
-                                top="20"
-                                right="20"
-                                bottom="20"
-                                left="20"/>
-                    </padding>
+                    <VBox spacing="4">
+
+                        <Label
+                                text="Performance Information"
+                                styleClass="admin-section-title"/>
+
+                        <Label
+                                text="Review the employee's evaluation period, department and overall performance result."
+                                wrapText="true"
+                                styleClass="admin-section-subtitle"/>
+
+                    </VBox>
 
 
-                    <Label
-                            text="Performance Information"
-                            styleClass="modern-section-title"/>
-
+                    <!-- ROW 1 -->
 
                     <HBox spacing="35">
 
@@ -109,13 +113,12 @@
 
                             <Label
                                     text="Employee"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Label
                                     fx:id="employeeLabel"
                                     text="-"
-                                    wrapText="true"
-                                    styleClass="modern-card-value"/>
+                                    wrapText="true"/>
 
                         </VBox>
 
@@ -127,17 +130,18 @@
 
                             <Label
                                     text="Department"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Label
                                     fx:id="departmentLabel"
-                                    text="-"
-                                    styleClass="modern-card-value"/>
+                                    text="-"/>
 
                         </VBox>
 
                     </HBox>
 
+
+                    <!-- ROW 2 -->
 
                     <HBox spacing="35">
 
@@ -148,13 +152,12 @@
 
                             <Label
                                     text="Evaluation Period"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Label
                                     fx:id="periodLabel"
                                     text="-"
-                                    wrapText="true"
-                                    styleClass="modern-card-value"/>
+                                    wrapText="true"/>
 
                         </VBox>
 
@@ -166,12 +169,12 @@
 
                             <Label
                                     text="Overall KPI"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Label
                                     fx:id="overallLabel"
                                     text="-"
-                                    styleClass="modern-kpi-value"/>
+                                    styleClass="admin-kpi-value"/>
 
                         </VBox>
 
@@ -183,12 +186,11 @@
 
                             <Label
                                     text="Status"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Label
                                     fx:id="statusLabel"
-                                    text="-"
-                                    styleClass="modern-status-badge"/>
+                                    text="-"/>
 
                         </VBox>
 
@@ -197,25 +199,28 @@
                 </VBox>
 
 
-                <!-- KPI BREAKDOWN -->
+                <!-- =================================================
+                     KPI BREAKDOWN
+                     ================================================= -->
 
                 <VBox
                         spacing="17"
-                        styleClass="modern-card">
+                        styleClass="admin-card">
 
-                    <padding>
-                        <Insets
-                                top="20"
-                                right="20"
-                                bottom="20"
-                                left="20"/>
-                    </padding>
+                    <VBox spacing="4">
+
+                        <Label
+                                text="KPI Breakdown"
+                                styleClass="admin-section-title"/>
+
+                        <Label
+                                text="Detailed contribution of each performance indicator."
+                                styleClass="admin-section-subtitle"/>
+
+                    </VBox>
 
 
-                    <Label
-                            text="KPI Breakdown"
-                            styleClass="modern-section-title"/>
-
+                    <!-- PRODUCTIVITY -->
 
                     <VBox spacing="8">
 
@@ -223,14 +228,13 @@
 
                             <Label
                                     text="Productivity"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
                             <Label
                                     fx:id="productivityLabel"
-                                    text="-"
-                                    styleClass="modern-card-value"/>
+                                    text="-"/>
 
                         </HBox>
 
@@ -239,10 +243,12 @@
                                 fx:id="productivityProgressBar"
                                 progress="0"
                                 maxWidth="Infinity"
-                                styleClass="metric-progress"/>
+                                styleClass="admin-progress-bar"/>
 
                     </VBox>
 
+
+                    <!-- TIMELINESS -->
 
                     <VBox spacing="8">
 
@@ -250,14 +256,13 @@
 
                             <Label
                                     text="Timeliness"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
                             <Label
                                     fx:id="timelinessLabel"
-                                    text="-"
-                                    styleClass="modern-card-value"/>
+                                    text="-"/>
 
                         </HBox>
 
@@ -266,10 +271,12 @@
                                 fx:id="timelinessProgressBar"
                                 progress="0"
                                 maxWidth="Infinity"
-                                styleClass="metric-progress"/>
+                                styleClass="admin-progress-bar"/>
 
                     </VBox>
 
+
+                    <!-- COMPLETION -->
 
                     <VBox spacing="8">
 
@@ -277,14 +284,13 @@
 
                             <Label
                                     text="Completion Rate"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
                             <Label
                                     fx:id="completionLabel"
-                                    text="-"
-                                    styleClass="modern-card-value"/>
+                                    text="-"/>
 
                         </HBox>
 
@@ -293,10 +299,12 @@
                                 fx:id="completionProgressBar"
                                 progress="0"
                                 maxWidth="Infinity"
-                                styleClass="metric-progress"/>
+                                styleClass="admin-progress-bar"/>
 
                     </VBox>
 
+
+                    <!-- ATTENDANCE -->
 
                     <VBox spacing="8">
 
@@ -304,14 +312,13 @@
 
                             <Label
                                     text="Attendance"
-                                    styleClass="modern-card-label"/>
+                                    styleClass="admin-field-label"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
                             <Label
                                     fx:id="attendanceLabel"
-                                    text="-"
-                                    styleClass="modern-card-value"/>
+                                    text="-"/>
 
                         </HBox>
 
@@ -320,49 +327,56 @@
                                 fx:id="attendanceProgressBar"
                                 progress="0"
                                 maxWidth="Infinity"
-                                styleClass="metric-progress"/>
+                                styleClass="admin-progress-bar"/>
 
                     </VBox>
 
                 </VBox>
 
 
-                <!-- MANAGER FEEDBACK -->
+                <!-- =================================================
+                     MANAGER FEEDBACK
+                     ================================================= -->
 
                 <VBox
-                        spacing="10"
-                        styleClass="modern-card">
+                        spacing="12"
+                        styleClass="admin-card">
 
-                    <padding>
-                        <Insets
-                                top="20"
-                                right="20"
-                                bottom="20"
-                                left="20"/>
-                    </padding>
+                    <VBox spacing="4">
 
+                        <Label
+                                text="Manager Feedback"
+                                styleClass="admin-section-title"/>
 
-                    <Label
-                            text="Manager Feedback"
-                            styleClass="modern-section-title"/>
+                        <Label
+                                text="Feedback recorded for this employee's evaluation period."
+                                styleClass="admin-section-subtitle"/>
+
+                    </VBox>
 
 
                     <VBox
                             spacing="7"
-                            styleClass="modern-feedback-box">
+                            style="
+                                -fx-background-color: #F7F9FD;
+                                -fx-border-color: #DCE4F3;
+                                -fx-border-width: 1;
+                                -fx-border-radius: 8;
+                                -fx-background-radius: 8;
+                                -fx-padding: 14;
+                            ">
 
                         <Label
                                 fx:id="feedbackLabel"
                                 text="Loading feedback..."
                                 wrapText="true"
-                                maxWidth="Infinity"
-                                styleClass="modern-card-value"/>
+                                maxWidth="Infinity"/>
 
 
                         <Label
                                 fx:id="feedbackDateLabel"
                                 text=""
-                                styleClass="modern-page-subtitle"/>
+                                styleClass="admin-helper-text"/>
 
                     </VBox>
 

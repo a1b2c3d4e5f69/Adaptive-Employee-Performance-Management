@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.image.ImageView?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ScrollPane?>
+
 <?import javafx.scene.shape.Circle?>
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.admin.AdminProfileController"
-        styleClass="main-layout">
+        stylesheets="@../../css/app.css"
+        styleClass="admin-root">
 
 
     <!-- TOP BAR -->
@@ -30,33 +31,22 @@
         <HBox
                 alignment="CENTER_LEFT"
                 spacing="20"
-                styleClass="topbar">
-
-            <padding>
-                <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
-            </padding>
-
+                styleClass="admin-topbar">
 
             <VBox spacing="2">
 
                 <Label
                         fx:id="welcomeLabel"
                         text="Welcome, Administrator"
-                        styleClass="topbar-title"/>
+                        styleClass="admin-topbar-user-name"/>
 
                 <Label
                         text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
+                        styleClass="admin-page-subtitle"/>
 
             </VBox>
 
-
             <Region HBox.hgrow="ALWAYS"/>
-
 
             <VBox
                     alignment="CENTER_RIGHT"
@@ -65,11 +55,11 @@
                 <Label
                         fx:id="topNameLabel"
                         text="Administrator"
-                        styleClass="topbar-user-name"/>
+                        styleClass="admin-topbar-user-name"/>
 
                 <Label
                         text="ADMINISTRATOR"
-                        styleClass="topbar-user-role"/>
+                        styleClass="admin-topbar-user-role"/>
 
             </VBox>
 
@@ -81,146 +71,135 @@
     <!-- SIDEBAR -->
 
     <left>
-        
-        <ScrollPane
-        prefWidth="294"
-        minWidth="294"
-        maxWidth="294"
-        fitToWidth="true"
-        hbarPolicy="NEVER"
-        vbarPolicy="AS_NEEDED"
-        style="-fx-background-color: white; -fx-background: white;">
 
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-sidebar-scroll">
+
+            <content>
 
                 <VBox
                         prefWidth="240"
-                        spacing="10"
-                        styleClass="sidebar">
+                        spacing="5"
+                        styleClass="admin-sidebar">
 
-                <padding>
-                        <Insets
-                                top="30"
-                                right="18"
-                                bottom="20"
-                                left="18"/>
-                </padding>
-
-
-                <VBox spacing="3">
+                    <VBox spacing="2">
 
                         <Label
                                 text="AEPM"
-                                styleClass="sidebar-logo"/>
+                                styleClass="admin-brand-title"/>
 
                         <Label
-                                text="Administrator Portal"
-                                styleClass="sidebar-subtitle"/>
+                                text="Adaptive Performance"
+                                styleClass="admin-brand-secondary"/>
+
+                    </VBox>
+
+
+                    <Label text="WORKSPACE"
+                           styleClass="admin-sidebar-section"/>
+
+                    <Button text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="♟   User Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleUserManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="★   KPI Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpiManagement"
+                            styleClass="admin-nav-button"/>
+
+
+                    <Label text="OPERATIONS"
+                           styleClass="admin-sidebar-section"/>
+
+                    <Button text="▦   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendanceManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="✉   Notifications"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnnouncements"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="!   Anonymous Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReports"
+                            styleClass="admin-nav-button"/>
+
+
+                    <Label text="SYSTEM"
+                           styleClass="admin-sidebar-section"/>
+
+                    <Button text="⚙   System Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleSystemConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="✦   AI Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAIConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="◷   Deadline &amp; Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleEscalationRules"
+                            styleClass="admin-nav-button"/>
+
+                    <Button text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="admin-nav-button-active"/>
+
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+
+                    <Button text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
 
                 </VBox>
 
+            </content>
 
-                <Region prefHeight="18"/>
-
-
-                <Label
-                        text="MENU"
-                        styleClass="sidebar-section-title"/>
-
-
-                <Button
-                        text="⌂   Home"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleHome"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="●   My Profile"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleProfile"
-                        styleClass="sidebar-button-active"/>
-
-                <Button
-                        text="♟   User Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleUserManagement"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="✓   Task Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleTaskManagement"
-                        styleClass="sidebar-button"/>
-                <Button
-                        text="◷   Escalation Rules"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleEscalationRules"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="★   KPI Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleKpiManagement"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="⚙   System Configuration"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleSystemConfiguration"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                    text="✉   Notification/Announcements"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnnouncements"
-                    styleClass="sidebar-button"/>
-                                    
-                <Button
-                        text="✦   AI Recommendation"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAIConfiguration"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="▦   Attendance Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAttendanceManagement"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="≡   Reports"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleReports"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="!   Anonymous Reports"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAnonymousReports"
-                        styleClass="sidebar-button"/>
-
-                <Region VBox.vgrow="ALWAYS"/>
-
-                <Button
-                        text="↪   Logout"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleLogout"
-                        styleClass="logout-button"/>
-
-                </VBox>
         </ScrollPane>
+
     </left>
 
 
@@ -228,252 +207,279 @@
 
     <center>
 
-        <VBox
-                spacing="22"
-                styleClass="home-content">
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-content-scroll">
 
-            <padding>
-                <Insets
-                        top="32"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-            </padding>
+            <content>
 
-
-            <VBox spacing="4">
-
-                <Label
-                        text="My Profile"
-                        styleClass="content-title"/>
-
-                <Label
-                        text="View and update your personal information."
-                        styleClass="content-description"/>
-
-            </VBox>
+                <VBox
+                        spacing="22"
+                        styleClass="admin-content">
 
 
-            <VBox
-                    spacing="24"
-                    styleClass="profile-card">
+                    <!-- PAGE HEADER -->
 
-
-                <!-- PROFILE HEADER -->
-
-                <HBox
-                        spacing="28"
-                        alignment="CENTER_LEFT">
-
-
-                    <!-- AVATAR -->
-
-                    <StackPane
-                            prefWidth="145"
-                            prefHeight="145">
-
-                        <Circle
-                                radius="60"
-                                styleClass="profile-avatar-background"/>
-
+                    <VBox spacing="5">
 
                         <Label
-                                fx:id="profileInitialLabel"
-                                text="A"
-                                styleClass="profile-avatar-initial"/>
-
-
-                        <ImageView
-                                fx:id="profileImageView"
-                                fitWidth="120"
-                                fitHeight="120"
-                                preserveRatio="false"/>
-
-
-                        <Button
-                                text="✎"
-                                onAction="#handleChangeProfileImage"
-                                translateX="48"
-                                translateY="48"
-                                styleClass="profile-avatar-edit-button"/>
-
-                    </StackPane>
-
-
-                    <VBox spacing="7">
+                                text="My Profile"
+                                styleClass="admin-page-title"/>
 
                         <Label
-                                fx:id="profileNameLabel"
-                                text="Administrator"
-                                styleClass="section-title"/>
-
-                        <Label
-                                fx:id="profileRoleLabel"
-                                text="Administrator"
-                                styleClass="content-description"/>
-
-                        <Label
-                                text="Click the edit icon to change your profile image."
-                                styleClass="content-description"/>
+                                text="View and update your administrator account information."
+                                styleClass="admin-page-subtitle"/>
 
                     </VBox>
 
-                </HBox>
+
+                    <!-- PROFILE HEADER -->
+
+                    <HBox
+                            spacing="24"
+                            alignment="CENTER_LEFT"
+                            styleClass="admin-profile-header-card">
 
 
-                <Region
-                        minHeight="1"
-                        prefHeight="1"
-                        maxHeight="1"
-                        styleClass="profile-divider"/>
+                        <!-- AVATAR -->
+
+                        <StackPane
+                                prefWidth="104"
+                                prefHeight="104"
+                                minWidth="104"
+                                minHeight="104"
+                                maxWidth="104"
+                                maxHeight="104">
+
+                            <Circle
+                                    radius="46"
+                                    styleClass="admin-profile-avatar-bg"/>
+
+                            <Label
+                                    fx:id="profileInitialLabel"
+                                    text="A"
+                                    styleClass="admin-profile-avatar-initial"/>
+
+                            <ImageView
+                                    fx:id="profileImageView"
+                                    fitWidth="92"
+                                    fitHeight="92"
+                                    preserveRatio="false"
+                                    smooth="true">
+
+                                <clip>
+                                    <Circle
+                                            centerX="46"
+                                            centerY="46"
+                                            radius="46"/>
+                                </clip>
+
+                            </ImageView>
 
 
-                <Label
-                        text="Personal Information"
-                        styleClass="section-title"/>
+                            <Button
+                                    text="✎"
+                                    onAction="#handleChangeProfileImage"
+                                    StackPane.alignment="BOTTOM_RIGHT"
+                                    styleClass="admin-profile-edit-button"/>
+
+                        </StackPane>
 
 
-                <!-- INFORMATION -->
+                        <!-- MAIN INFO -->
 
-                <GridPane
-                        hgap="70"
-                        vgap="22">
+                        <VBox
+                                spacing="6"
+                                HBox.hgrow="ALWAYS">
 
+                            <Label
+                                    fx:id="profileNameLabel"
+                                    text="Administrator"
+                                    styleClass="admin-profile-name"/>
 
-                    <!-- LEFT -->
+                            <Label
+                                    fx:id="profileRoleLabel"
+                                    text="Administrator"
+                                    styleClass="admin-profile-role"/>
 
-                    <Label
-                            text="Staff ID"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="0"/>
+                            <Label
+                                    text="Manage your administrator profile and account information."
+                                    styleClass="admin-profile-description"/>
 
-                    <Label
-                            fx:id="employeeIdLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="0"/>
+                        </VBox>
 
-
-                    <Label
-                            text="Email"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="1"/>
-
-                    <Label
-                            fx:id="emailLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="1"/>
+                    </HBox>
 
 
-                    <Label
-                            text="Role"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="2"/>
+                    <!-- PERSONAL INFORMATION -->
 
-                    <Label
-                            fx:id="roleLabel"
-                            text="Administrator"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="2"/>
+                    <VBox
+                            spacing="18"
+                            styleClass="admin-card">
 
+                        <VBox spacing="4">
 
-                    <!-- RIGHT -->
+                            <Label
+                                    text="Personal Information"
+                                    styleClass="admin-section-title"/>
 
-                    <Label
-                            text="Username"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="0"/>
+                            <Label
+                                    text="Review your account details and update your contact information."
+                                    styleClass="admin-section-subtitle"/>
 
-                    <Label
-                            fx:id="usernameLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="0"/>
+                        </VBox>
 
 
-                    <Label
-                            text="Department"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1"/>
+                        <GridPane
+                                hgap="36"
+                                vgap="20">
 
-                    <Label
-                            fx:id="departmentLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
+                            <columnConstraints>
 
+                                <ColumnConstraints minWidth="130"/>
 
-                    <Label
-                            text="Account Status"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="2"/>
+                                <ColumnConstraints
+                                        prefWidth="280"
+                                        hgrow="ALWAYS"/>
 
-                    <Label
-                            fx:id="accountStatusLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="2"/>
+                                <ColumnConstraints minWidth="130"/>
+
+                                <ColumnConstraints
+                                        prefWidth="280"
+                                        hgrow="ALWAYS"/>
+
+                            </columnConstraints>
 
 
-                    <!-- CONTACT -->
+                            <Label
+                                    text="Staff ID"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
 
-                    <Label
-                            text="Contact Number"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="3"/>
-
-                    <TextField
-                            fx:id="contactNumberField"
-                            promptText="Enter contact number"
-                            prefWidth="325"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="3"/>
-
-                </GridPane>
+                            <Label
+                                    fx:id="employeeIdLabel"
+                                    text="-"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
 
 
-                <Label
-                        fx:id="messageLabel"
-                        visible="false"
-                        managed="false"
-                        wrapText="true"/>
+                            <Label
+                                    text="Username"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="usernameLabel"
+                                    text="-"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
 
 
-                <!-- CONSISTENT BUTTONS -->
+                            <Label
+                                    text="Email"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
 
-                <HBox spacing="12">
+                            <Label
+                                    fx:id="emailLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
 
-                    <Button
-                            fx:id="saveButton"
-                            text="Save Changes"
-                            onAction="#handleSave"
-                            styleClass="app-button"/>
+
+                            <Label
+                                    text="Department"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="departmentLabel"
+                                    text="-"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
 
 
-                    <Button
-                            text="Change Password"
-                            onAction="#handleChangePassword"
-                            styleClass="app-button"/>
+                            <Label
+                                    text="Role"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2"/>
 
-                </HBox>
+                            <Label
+                                    fx:id="roleLabel"
+                                    text="Administrator"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2"/>
 
-            </VBox>
 
-        </VBox>
+                            <Label
+                                    text="Account Status"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="2"/>
+
+                            <Label
+                                    fx:id="accountStatusLabel"
+                                    text="-"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <Label
+                                    text="Contact Number"
+                                    styleClass="admin-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="3"/>
+
+                            <TextField
+                                    fx:id="contactNumberField"
+                                    promptText="Enter contact number"
+                                    prefWidth="280"
+                                    maxWidth="320"
+                                    styleClass="admin-input"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="3"/>
+
+                        </GridPane>
+
+
+                        <Label
+                                fx:id="messageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"
+                                styleClass="admin-helper-text"/>
+
+
+                        <HBox spacing="10">
+
+                            <Button
+                                    fx:id="saveButton"
+                                    text="Save Changes"
+                                    onAction="#handleSave"
+                                    styleClass="admin-button-primary"/>
+
+                            <Button
+                                    text="Change Password"
+                                    onAction="#handleChangePassword"
+                                    styleClass="admin-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
 
     </center>
 

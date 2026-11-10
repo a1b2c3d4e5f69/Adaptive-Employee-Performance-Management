@@ -1,419 +1,690 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane
-    xmlns:fx="http://javafx.com/fxml"
-    fx:controller="com.aepm.ui.admin.SystemConfigurationController"
-    styleClass="main-layout">
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.admin.SystemConfigurationController"
+        stylesheets="@../../css/app.css"
+        styleClass="admin-root">
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
 
     <top>
-        <HBox alignment="CENTER_LEFT"
-              spacing="20"
-              styleClass="topbar">
 
-            <padding>
-                <Insets top="16" right="28"
-                        bottom="16" left="28"/>
-            </padding>
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                styleClass="admin-topbar">
 
             <VBox spacing="2">
-                <Label fx:id="welcomeLabel"
-                       text="Welcome, Administrator"
-                       styleClass="topbar-title"/>
 
                 <Label
-                    text="Adaptive Employee Performance Management System"
-                    styleClass="topbar-subtitle"/>
+                        fx:id="welcomeLabel"
+                        text="Welcome, Administrator"
+                        styleClass="admin-topbar-user-name"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="admin-page-subtitle"/>
+
             </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label fx:id="topNameLabel"
-                       text="Administrator"
-                       styleClass="topbar-user-name"/>
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
 
-                <Label text="ADMINISTRATOR"
-                       styleClass="topbar-user-role"/>
+                <Label
+                        fx:id="topNameLabel"
+                        text="Administrator"
+                        styleClass="admin-topbar-user-name"/>
+
+                <Label
+                        text="ADMINISTRATOR"
+                        styleClass="admin-topbar-user-role"/>
+
             </VBox>
+
         </HBox>
+
     </top>
 
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
     <left>
-        
-    <ScrollPane
-        prefWidth="294"
-        minWidth="294"
-        maxWidth="294"
-        fitToWidth="true"
-        hbarPolicy="NEVER"
-        vbarPolicy="AS_NEEDED"
-        style="-fx-background-color: white; -fx-background: white;">
 
-            <VBox prefWidth="240"
-                spacing="10"
-                styleClass="sidebar">
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-sidebar-scroll">
 
-                <padding>
-                    <Insets top="30" right="18"
-                            bottom="20" left="18"/>
-                </padding>
+            <content>
 
-                <VBox spacing="3">
-                    <Label text="AEPM"
-                        styleClass="sidebar-logo"/>
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="admin-sidebar">
 
-                    <Label text="Administrator Portal"
-                        styleClass="sidebar-subtitle"/>
-                </VBox>
 
-                <Region prefHeight="18"/>
+                    <!-- BRAND -->
 
-                <Label text="MENU"
-                    styleClass="sidebar-section-title"/>
+                    <VBox spacing="2">
 
-                <Button
-                    text="⌂   Home"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleHome"
-                    styleClass="sidebar-button"/>
+                        <Label
+                                text="AEPM"
+                                styleClass="admin-brand-title"/>
 
-                <Button
-                    text="●   My Profile"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleProfile"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="♟   User Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleUserManagement"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="✓   Task Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleTaskManagement"
-                    styleClass="sidebar-button"/>
-                <Button
-                    text="◷   Escalation Rules"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleEscalationRules"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="★   KPI Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleKpiManagement"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="⚙   System Configuration"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleSystemConfiguration"
-                    styleClass="sidebar-button-active"/>
-
-                <Button
-                    text="✉   Notification/Announcements"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnnouncements"
-                    styleClass="sidebar-button"/>
-                    
-                <Button
-                    text="✦   AI Recommendation"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAIConfiguration"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="▦   Attendance Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAttendanceManagement"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="≡   Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleReports"
-                    styleClass="sidebar-button"/>
-
-                <Button
-                    text="!   Anonymous Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnonymousReports"
-                    styleClass="sidebar-button"/>
-
-                <Region VBox.vgrow="ALWAYS"/>
-
-                <Button
-                    text="↪   Logout"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleLogout"
-                    styleClass="logout-button"/>
-            </VBox>
-        </ScrollPane>
-    </left>
-
-    <center>
-        <ScrollPane fitToWidth="true"
-                    hbarPolicy="NEVER"
-                    style="-fx-background-color: transparent;">
-
-            <VBox spacing="24"
-                  styleClass="home-content">
-
-                <padding>
-                    <Insets top="32" right="35"
-                            bottom="40" left="35"/>
-                </padding>
-
-                <VBox spacing="4">
-                    <Label text="System Configuration"
-                           styleClass="content-title"/>
-
-                    <Label
-                        text="Manage company working hours and attendance settings."
-                        styleClass="content-description"/>
-                </VBox>
-
-                <VBox spacing="18"
-                    styleClass="dashboard-card"
-                    maxWidth="Infinity">
-                    <Label text="WORKING HOURS"
-                           styleClass="card-label"/>
-
-                    <Label text="Working Hours Configuration"
-                           styleClass="card-title"/>
-
-                    <Label
-                        text="Select a day to configure working time, break time and grace period."
-                        styleClass="content-description"
-                        wrapText="true"/>
-
-                    <Label text="Select Day"/>
-
-                    <ComboBox fx:id="dayCombo"
-                              maxWidth="Infinity"/>
-
-                    <CheckBox fx:id="workingDayCheck"
-                              text="Working Day"/>
-
-                    <GridPane hgap="20" vgap="14">
-
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="50"/>
-                            <ColumnConstraints percentWidth="50"/>
-                        </columnConstraints>
-
-                        <Label text="Start Time (HH:mm)"
-                               GridPane.rowIndex="0"
-                               GridPane.columnIndex="0"/>
-
-                        <Label text="End Time (HH:mm)"
-                               GridPane.rowIndex="0"
-                               GridPane.columnIndex="1"/>
-
-                        <TextField fx:id="startTimeField"
-                                   promptText="09:00"
-                                   GridPane.rowIndex="1"
-                                   GridPane.columnIndex="0"/>
-
-                        <TextField fx:id="endTimeField"
-                                   promptText="18:00"
-                                   GridPane.rowIndex="1"
-                                   GridPane.columnIndex="1"/>
-
-                        <Label text="Break Start (HH:mm)"
-                               GridPane.rowIndex="2"
-                               GridPane.columnIndex="0"/>
-
-                        <Label text="Break End (HH:mm)"
-                               GridPane.rowIndex="2"
-                               GridPane.columnIndex="1"/>
-
-                        <TextField fx:id="breakStartField"
-                                   promptText="13:00"
-                                   GridPane.rowIndex="3"
-                                   GridPane.columnIndex="0"/>
-
-                        <TextField fx:id="breakEndField"
-                                   promptText="14:00"
-                                   GridPane.rowIndex="3"
-                                   GridPane.columnIndex="1"/>
-
-                    </GridPane>
-
-                    <Label text="Grace Period (Minutes)"/>
-
-                    <TextField fx:id="gracePeriodField"
-                               promptText="15"
-                               maxWidth="200"/>
-
-                    <HBox spacing="12"
-                          alignment="CENTER_LEFT">
-
-                        <Button fx:id="saveButton"
-                                text="Save Configuration"
-                                onAction="#handleSave"
-                                styleClass="app-button"/>
-
-                        
-                        <Button text="Refresh"
-                                onAction="#handleRefresh"
-                                styleClass="app-button"/>
-                        </HBox>
-
-                        <Label fx:id="statusLabel"
-                            text="Loading configuration..."
-                            styleClass="content-description"/>
+                        <Label
+                                text="Adaptive Performance"
+                                styleClass="admin-brand-secondary"/>
 
                     </VBox>
-                    <!-- HOLIDAY MANAGEMENT -->
-                    <VBox spacing="18"
-                        styleClass="dashboard-card"
-                        maxWidth="Infinity">
 
-                        <Label text="HOLIDAY MANAGEMENT"
-                            styleClass="card-label"/>
 
-                        <Label text="Holiday Management"
-                            styleClass="card-title"/>
+                    <!-- WORKSPACE -->
 
-                        <Label text="Add, edit and manage company holidays."
-                            styleClass="content-description"
-                            wrapText="true"/>
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="admin-sidebar-section"/>
 
-                        <GridPane hgap="20" vgap="14">
+                    <Button
+                            text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="♟   User Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleUserManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="★   KPI Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpiManagement"
+                            styleClass="admin-nav-button"/>
+
+
+                    <!-- OPERATIONS -->
+
+                    <Label
+                            text="OPERATIONS"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="▦   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendanceManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✉   Notifications"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnnouncements"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="!   Anonymous Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReports"
+                            styleClass="admin-nav-button"/>
+
+
+                    <!-- SYSTEM -->
+
+                    <Label
+                            text="SYSTEM"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="⚙   System Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleSystemConfiguration"
+                            styleClass="admin-nav-button-active"/>
+
+                    <Button
+                            text="✦   AI Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAIConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="◷   Deadline &amp; Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleEscalationRules"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="admin-nav-button"/>
+
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </left>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-content-scroll">
+
+            <content>
+
+                <VBox
+                        spacing="22"
+                        styleClass="admin-content">
+
+
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
+
+                    <VBox spacing="5">
+
+                        <Label
+                                text="System Configuration"
+                                styleClass="admin-page-title"/>
+
+                        <Label
+                                text="Manage company working hours, attendance settings and public holidays."
+                                styleClass="admin-page-subtitle"/>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         WORKING HOURS
+                         ================================================= -->
+
+                    <VBox
+                            spacing="18"
+                            maxWidth="Infinity"
+                            styleClass="admin-card">
+
+
+                        <!-- HEADER -->
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Working Hours Configuration"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Configure working time, break periods and attendance grace period for each day."
+                                    wrapText="true"
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- DAY -->
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Select Day"
+                                    styleClass="admin-field-label"/>
+
+                            <ComboBox
+                                    fx:id="dayCombo"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-combo-box"/>
+
+                        </VBox>
+
+
+                        <!-- WORKING DAY -->
+
+                        <CheckBox
+                                fx:id="workingDayCheck"
+                                text="Working Day"
+                                styleClass="admin-ai-checkbox"/>
+
+
+                        <!-- TIME GRID -->
+
+                        <GridPane
+                                hgap="20"
+                                vgap="14">
 
                             <columnConstraints>
                                 <ColumnConstraints percentWidth="50"/>
                                 <ColumnConstraints percentWidth="50"/>
                             </columnConstraints>
 
-                            <!-- Holiday Name -->
-                            <Label text="Holiday Name"
-                                GridPane.rowIndex="0"
-                                GridPane.columnIndex="0"/>
 
-                            <TextField fx:id="holidayNameField"
-                                    promptText="e.g. Chinese New Year"
+                            <!-- START TIME -->
+
+                            <VBox
+                                    spacing="6"
+                                    GridPane.rowIndex="0"
+                                    GridPane.columnIndex="0">
+
+                                <Label
+                                        text="Start Time (HH:mm)"
+                                        styleClass="admin-field-label"/>
+
+                                <TextField
+                                        fx:id="startTimeField"
+                                        promptText="09:00"
+                                        styleClass="admin-input"/>
+
+                            </VBox>
+
+
+                            <!-- END TIME -->
+
+                            <VBox
+                                    spacing="6"
+                                    GridPane.rowIndex="0"
+                                    GridPane.columnIndex="1">
+
+                                <Label
+                                        text="End Time (HH:mm)"
+                                        styleClass="admin-field-label"/>
+
+                                <TextField
+                                        fx:id="endTimeField"
+                                        promptText="18:00"
+                                        styleClass="admin-input"/>
+
+                            </VBox>
+
+
+                            <!-- BREAK START -->
+
+                            <VBox
+                                    spacing="6"
                                     GridPane.rowIndex="1"
-                                    GridPane.columnIndex="0"
-                                    GridPane.columnSpan="2"/>
+                                    GridPane.columnIndex="0">
 
-                            <!-- Start Date -->
-                            <Label text="Start Date"
-                                GridPane.rowIndex="2"
-                                GridPane.columnIndex="0"/>
+                                <Label
+                                        text="Break Start (HH:mm)"
+                                        styleClass="admin-field-label"/>
 
-                            <!-- End Date -->
-                            <Label text="End Date"
-                                GridPane.rowIndex="2"
-                                GridPane.columnIndex="1"/>
+                                <TextField
+                                        fx:id="breakStartField"
+                                        promptText="13:00"
+                                        styleClass="admin-input"/>
 
-                            <DatePicker fx:id="holidayStartDatePicker"
-                                        maxWidth="Infinity"
-                                        GridPane.rowIndex="3"
-                                        GridPane.columnIndex="0"/>
+                            </VBox>
 
-                            <DatePicker fx:id="holidayEndDatePicker"
-                                        maxWidth="Infinity"
-                                        GridPane.rowIndex="3"
-                                        GridPane.columnIndex="1"/>
+
+                            <!-- BREAK END -->
+
+                            <VBox
+                                    spacing="6"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="1">
+
+                                <Label
+                                        text="Break End (HH:mm)"
+                                        styleClass="admin-field-label"/>
+
+                                <TextField
+                                        fx:id="breakEndField"
+                                        promptText="14:00"
+                                        styleClass="admin-input"/>
+
+                            </VBox>
 
                         </GridPane>
 
-                        <Label text="Description"/>
 
-                        <TextArea fx:id="holidayDescriptionField"
-                                promptText="Optional description"
-                                prefRowCount="2"
-                                wrapText="true"/>
+                        <!-- GRACE PERIOD -->
 
-                        <CheckBox fx:id="holidayNonWorkingCheck"
-                                text="Non-Working Day"
-                                selected="true"/>
+                        <VBox spacing="6">
 
-                        <HBox spacing="12">
-                            <Button text="Add Holiday"
-                                    onAction="#handleAddHoliday"
-                                    styleClass="app-button"/>
+                            <Label
+                                    text="Grace Period (Minutes)"
+                                    styleClass="admin-field-label"/>
 
-                            <Button fx:id="updateHolidayButton"
-                                    text="Update"
-                                    onAction="#handleUpdateHoliday"
-                                    styleClass="app-button"
-                                    disable="true"/>
+                            <TextField
+                                    fx:id="gracePeriodField"
+                                    promptText="15"
+                                    maxWidth="200"
+                                    styleClass="admin-input"/>
 
-                            <Button text="Delete"
-                                    onAction="#handleDeleteHoliday"
-                                    styleClass="app-button"/>
+                        </VBox>
 
-                            <Button text="Refresh"
-                                    onAction="#handleRefreshHolidays"
-                                    styleClass="app-button"/>
 
-                            <Button text="Clear"
-                                    onAction="#handleClearHoliday"
-                                    styleClass="app-button"/>
+                        <!-- ACTION BUTTONS -->
+
+                        <HBox
+                                spacing="10"
+                                alignment="CENTER_LEFT">
+
+                            <Button
+                                    fx:id="saveButton"
+                                    text="Save Configuration"
+                                    onAction="#handleSave"
+                                    styleClass="admin-button-primary"/>
+
+                            <Button
+                                    text="Refresh"
+                                    onAction="#handleRefresh"
+                                    styleClass="admin-button"/>
+
                         </HBox>
 
-                        <Label text="Holiday List"
-                            styleClass="card-title"/>
 
-                        <TableView fx:id="holidayTable"
-                                prefHeight="280">
+                        <!-- STATUS -->
 
-                            <columns>
-
-                                <TableColumn fx:id="holidayNameColumn"
-                                            text="Holiday Name"
-                                            prefWidth="170"/>
-
-                                <TableColumn fx:id="holidayStartDateColumn"
-                                            text="Start Date"
-                                            prefWidth="110"/>
-
-                                <TableColumn fx:id="holidayEndDateColumn"
-                                            text="End Date"
-                                            prefWidth="110"/>
-
-                                <TableColumn fx:id="holidayTypeColumn"
-                                            text="Non-Working Day"
-                                            prefWidth="130"/>
-
-                                <TableColumn fx:id="holidayDescriptionColumn"
-                                            text="Description"
-                                            prefWidth="210"/>
-
-                            </columns>
-                        </TableView>
-
-                        <Label fx:id="holidayStatusLabel"
-                            text="Loading holidays..."
-                            styleClass="content-description"/>
+                        <Label
+                                fx:id="statusLabel"
+                                text="Loading configuration..."
+                                styleClass="admin-helper-text"/>
 
                     </VBox>
 
-            </VBox>
+
+                    <!-- =================================================
+                         HOLIDAY MANAGEMENT
+                         ================================================= -->
+
+                    <VBox
+                            spacing="18"
+                            maxWidth="Infinity"
+                            styleClass="admin-card">
+
+
+                        <!-- HEADER -->
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Holiday Management"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Add, edit and manage company holidays and non-working days."
+                                    wrapText="true"
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- HOLIDAY FORM -->
+
+                        <GridPane
+                                hgap="20"
+                                vgap="14">
+
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+
+                            <!-- HOLIDAY NAME -->
+
+                            <VBox
+                                    spacing="6"
+                                    GridPane.rowIndex="0"
+                                    GridPane.columnIndex="0"
+                                    GridPane.columnSpan="2">
+
+                                <Label
+                                        text="Holiday Name"
+                                        styleClass="admin-field-label"/>
+
+                                <TextField
+                                        fx:id="holidayNameField"
+                                        promptText="e.g. Chinese New Year"
+                                        maxWidth="Infinity"
+                                        styleClass="admin-input"/>
+
+                            </VBox>
+
+
+                            <!-- START DATE -->
+
+                            <VBox
+                                    spacing="6"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="0">
+
+                                <Label
+                                        text="Start Date"
+                                        styleClass="admin-field-label"/>
+
+                                <DatePicker
+                                        fx:id="holidayStartDatePicker"
+                                        maxWidth="Infinity"
+                                        styleClass="admin-date-picker"/>
+
+                            </VBox>
+
+
+                            <!-- END DATE -->
+
+                            <VBox
+                                    spacing="6"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="1">
+
+                                <Label
+                                        text="End Date"
+                                        styleClass="admin-field-label"/>
+
+                                <DatePicker
+                                        fx:id="holidayEndDatePicker"
+                                        maxWidth="Infinity"
+                                        styleClass="admin-date-picker"/>
+
+                            </VBox>
+
+                        </GridPane>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    text="Description"
+                                    styleClass="admin-field-label"/>
+
+                            <TextArea
+                                    fx:id="holidayDescriptionField"
+                                    promptText="Optional description"
+                                    prefRowCount="3"
+                                    wrapText="true"
+                                    styleClass="admin-text-area"/>
+
+                        </VBox>
+
+
+                        <!-- NON-WORKING -->
+
+                        <CheckBox
+                                fx:id="holidayNonWorkingCheck"
+                                text="Non-Working Day"
+                                selected="true"
+                                styleClass="admin-ai-checkbox"/>
+
+
+                        <!-- ACTIONS -->
+
+                        <HBox spacing="10">
+
+                            <Button
+                                    text="Add Holiday"
+                                    onAction="#handleAddHoliday"
+                                    styleClass="admin-button-primary"/>
+
+                            <Button
+                                    fx:id="updateHolidayButton"
+                                    text="Update"
+                                    onAction="#handleUpdateHoliday"
+                                    styleClass="admin-button"
+                                    disable="true"/>
+
+                            <Button
+                                    text="Delete"
+                                    onAction="#handleDeleteHoliday"
+                                    styleClass="admin-button-danger"/>
+
+                            <Button
+                                    text="Refresh"
+                                    onAction="#handleRefreshHolidays"
+                                    styleClass="admin-button"/>
+
+                            <Button
+                                    text="Clear"
+                                    onAction="#handleClearHoliday"
+                                    styleClass="admin-button"/>
+
+                        </HBox>
+
+
+                        <!-- HOLIDAY LIST HEADER -->
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Holiday List"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Configured public holidays and company non-working days."
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- TABLE -->
+
+                        <TableView
+                                fx:id="holidayTable"
+                                prefHeight="300"
+                                styleClass="admin-table">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="holidayNameColumn"
+                                        text="Holiday Name"
+                                        prefWidth="170"/>
+
+                                <TableColumn
+                                        fx:id="holidayStartDateColumn"
+                                        text="Start Date"
+                                        prefWidth="110"/>
+
+                                <TableColumn
+                                        fx:id="holidayEndDateColumn"
+                                        text="End Date"
+                                        prefWidth="110"/>
+
+                                <TableColumn
+                                        fx:id="holidayTypeColumn"
+                                        text="Non-Working Day"
+                                        prefWidth="130"/>
+
+                                <TableColumn
+                                        fx:id="holidayDescriptionColumn"
+                                        text="Description"
+                                        prefWidth="210"/>
+
+                            </columns>
+
+                        </TableView>
+
+
+                        <!-- HOLIDAY STATUS -->
+
+                        <Label
+                                fx:id="holidayStatusLabel"
+                                text="Loading holidays..."
+                                styleClass="admin-helper-text"/>
+
+                    </VBox>
+
+                </VBox>
+
+            </content>
+
         </ScrollPane>
+
     </center>
+
 </BorderPane>

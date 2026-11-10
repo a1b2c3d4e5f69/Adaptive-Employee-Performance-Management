@@ -79,6 +79,51 @@ public class AdminReportController {
     @FXML
     private DatePicker endDatePicker;
 
+    @FXML
+        private void handleAttendanceManagement(ActionEvent event) {
+
+        Stage stage = (Stage) ((Node) event.getSource())
+                .getScene()
+                .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminAttendance.fxml"
+        );
+    }
+
+    @FXML
+        private void handleAnnouncements(ActionEvent event) {
+        AdminAnnouncementsDialog.show(
+                ((Node) event.getSource())
+                        .getScene()
+                        .getWindow()
+        );
+    }
+
+    @FXML
+        private void handleSystemConfiguration(ActionEvent event) {
+        navigate(
+                event,
+                "/fxml/admin/systemConfiguration.fxml"
+        );
+    }
+
+           @FXML
+        private void handleAIConfiguration(ActionEvent event) {
+        navigate(
+                event,
+                "/fxml/admin/adminAIConfiguration.fxml"
+        );
+    }
+
+    @FXML
+        private void handleEscalationRules(ActionEvent event) {
+        navigate(
+                event,
+                "/fxml/admin/adminEscalationRules.fxml"
+        );
+    }
 
     // =========================================================
     // TABLE

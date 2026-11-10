@@ -372,8 +372,11 @@ public class AdminAIConfigurationController {
     }
 
     @FXML
-    private void handleReports(ActionEvent e) {
-        navigate(e, "/fxml/admin/adminReports.fxml");
+    private void handleReports(ActionEvent event) {
+        navigate(
+                event,
+                "/fxml/admin/adminReport.fxml"
+        );
     }
 
     @FXML

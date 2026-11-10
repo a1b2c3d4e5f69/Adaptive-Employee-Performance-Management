@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -12,56 +10,42 @@
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ScrollPane?>
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.admin.AdminKpiController"
-        styleClass="main-layout">
+        stylesheets="@../../css/app.css"
+        styleClass="admin-root">
 
 
-    <!-- =====================================================
-         TOP BAR
-         ===================================================== -->
+    <!-- TOP BAR -->
 
     <top>
 
         <HBox
                 alignment="CENTER_LEFT"
                 spacing="20"
-                styleClass="topbar">
-
-            <padding>
-
-                <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
-
-            </padding>
-
+                styleClass="admin-topbar">
 
             <VBox spacing="2">
 
                 <Label
                         fx:id="welcomeLabel"
                         text="Welcome, Administrator"
-                        styleClass="topbar-title"/>
+                        styleClass="admin-topbar-user-name"/>
 
                 <Label
                         text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
+                        styleClass="admin-page-subtitle"/>
 
             </VBox>
 
-
             <Region HBox.hgrow="ALWAYS"/>
-
 
             <VBox
                     alignment="CENTER_RIGHT"
@@ -70,11 +54,11 @@
                 <Label
                         fx:id="topNameLabel"
                         text="Administrator"
-                        styleClass="topbar-user-name"/>
+                        styleClass="admin-topbar-user-name"/>
 
                 <Label
                         text="ADMINISTRATOR"
-                        styleClass="topbar-user-role"/>
+                        styleClass="admin-topbar-user-role"/>
 
             </VBox>
 
@@ -83,156 +67,157 @@
     </top>
 
 
-    <!-- =====================================================
-         SIDEBAR
-         ===================================================== -->
+    <!-- SIDEBAR -->
 
     <left>
-        
+
         <ScrollPane
-        prefWidth="294"
-        minWidth="294"
-        maxWidth="294"
-        fitToWidth="true"
-        hbarPolicy="NEVER"
-        vbarPolicy="AS_NEEDED"
-        style="-fx-background-color: white; -fx-background: white;">
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="admin-sidebar-scroll">
+
+            <content>
 
                 <VBox
                         prefWidth="240"
-                        spacing="10"
-                        styleClass="sidebar">
+                        spacing="5"
+                        styleClass="admin-sidebar">
 
-                <padding>
-
-                        <Insets
-                                top="30"
-                                right="18"
-                                bottom="20"
-                                left="18"/>
-
-                </padding>
-
-
-                <VBox spacing="3">
+                    <VBox spacing="2">
 
                         <Label
                                 text="AEPM"
-                                styleClass="sidebar-logo"/>
+                                styleClass="admin-brand-title"/>
 
                         <Label
-                                text="Administrator Portal"
-                                styleClass="sidebar-subtitle"/>
+                                text="Adaptive Performance"
+                                styleClass="admin-brand-secondary"/>
+
+                    </VBox>
+
+
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="♟   User Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleUserManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="★   KPI Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpiManagement"
+                            styleClass="admin-nav-button-active"/>
+
+
+                    <Label
+                            text="OPERATIONS"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="▦   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendanceManagement"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✉   Notifications"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnnouncements"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="!   Anonymous Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReports"
+                            styleClass="admin-nav-button"/>
+
+
+                    <Label
+                            text="SYSTEM"
+                            styleClass="admin-sidebar-section"/>
+
+                    <Button
+                            text="⚙   System Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleSystemConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="✦   AI Configuration"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAIConfiguration"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="◷   Deadline &amp; Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleEscalationRules"
+                            styleClass="admin-nav-button"/>
+
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="admin-nav-button"/>
+
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
 
                 </VBox>
 
+            </content>
 
-                <Region prefHeight="18"/>
-
-
-                <Label
-                        text="MENU"
-                        styleClass="sidebar-section-title"/>
-
-
-                <Button
-                        text="⌂   Home"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleHome"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="●   My Profile"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleProfile"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="♟   User Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleUserManagement"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="✓   Task Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleTaskManagement"
-                        styleClass="sidebar-button"/>
-                <Button
-                        text="◷   Escalation Rules"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleEscalationRules"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="★   KPI Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleKpiManagement"
-                        styleClass="sidebar-button-active"/>
-
-                <Button
-                        text="⚙   System Configuration"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleSystemConfiguration"
-                        styleClass="sidebar-button"/>
-                <Button
-                    text="✉   Notification/Announcements"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleAnnouncements"
-                    styleClass="sidebar-button"/>
-                <Button
-                        text="✦   AI Recommendation"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAIConfiguration"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="▦   Attendance Management"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAttendanceManagement"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="≡   Reports"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleReports"
-                        styleClass="sidebar-button"/>
-
-                <Button
-                        text="!   Anonymous Reports"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleAnonymousReports"
-                        styleClass="sidebar-button"/>
-
-                <Region VBox.vgrow="ALWAYS"/>
-
-                <Button
-                        text="↪   Logout"
-                        maxWidth="Infinity"
-                        alignment="CENTER_LEFT"
-                        onAction="#handleLogout"
-                        styleClass="logout-button"/>
-
-                </VBox>
         </ScrollPane>
+
     </left>
 
 
-    <!-- =====================================================
-         CONTENT
-         ===================================================== -->
+    <!-- CONTENT -->
 
     <center>
 
@@ -241,82 +226,77 @@
                 hbarPolicy="NEVER"
                 vbarPolicy="AS_NEEDED"
                 pannable="true"
-                styleClass="content-scroll-pane">
+                styleClass="admin-content-scroll">
 
             <content>
 
                 <VBox
                         spacing="22"
-                        styleClass="home-content">
-
-                    <padding>
-
-                        <Insets
-                                top="32"
-                                right="35"
-                                bottom="40"
-                                left="35"/>
-
-                    </padding>
+                        styleClass="admin-content">
 
 
-                    <!-- =================================================
-                         PAGE HEADER
-                         ================================================= -->
+                    <!-- HEADER -->
 
-                    <VBox spacing="4">
+                    <VBox spacing="5">
 
                         <Label
                                 text="KPI Management"
-                                styleClass="content-title"/>
+                                styleClass="admin-page-title"/>
 
                         <Label
-                                text="Configure KPI scoring rules and calculate employee performance."
-                                styleClass="content-description"/>
+                                text="Configure KPI scoring rules, component weightings and calculate employee performance."
+                                styleClass="admin-page-subtitle"/>
 
                     </VBox>
 
 
                     <!-- =================================================
-                         KPI CONFIG LIST
+                         CONFIGURATION LIST
                          ================================================= -->
 
                     <VBox
                             spacing="16"
-                            styleClass="section-card">
+                            styleClass="admin-card">
 
-                        <HBox alignment="CENTER_LEFT">
+                        <HBox
+                                alignment="CENTER_LEFT">
 
-                            <Label
-                                    text="KPI Configurations"
-                                    styleClass="section-title"/>
+                            <VBox
+                                    spacing="4"
+                                    HBox.hgrow="ALWAYS">
 
+                                <Label
+                                        text="KPI Configurations"
+                                        styleClass="admin-section-title"/>
 
-                            <Region HBox.hgrow="ALWAYS"/>
+                                <Label
+                                        text="Create and manage organisational KPI scoring configurations."
+                                        styleClass="admin-section-subtitle"/>
 
+                            </VBox>
 
                             <Button
-                                    text="New Configuration"
+                                    text="+ New Configuration"
                                     onAction="#handleNewConfig"
-                                    styleClass="app-button"/>
+                                    styleClass="admin-button-primary"/>
 
                         </HBox>
 
 
                         <HBox
-                                spacing="12"
+                                spacing="10"
                                 alignment="CENTER_LEFT">
 
                             <TextField
                                     fx:id="configSearchField"
                                     promptText="Search KPI configuration..."
-                                    prefWidth="320"/>
-
+                                    prefWidth="320"
+                                    styleClass="admin-input"/>
 
                             <Button
                                     text="Refresh"
                                     onAction="#loadConfigs"
-                                    styleClass="app-button"/>
+                                    styleClass="admin-button"/>
 
                         </HBox>
 
@@ -324,7 +304,8 @@
                         <TableView
                                 fx:id="configTable"
                                 prefHeight="280"
-                                minHeight="240">
+                                minHeight="240"
+                                styleClass="admin-table">
 
                             <columns>
 
@@ -333,24 +314,20 @@
                                         text="ID"
                                         prefWidth="60"/>
 
-
                                 <TableColumn
                                         fx:id="configNameColumn"
                                         text="Configuration"
                                         prefWidth="280"/>
-
 
                                 <TableColumn
                                         fx:id="riskThresholdColumn"
                                         text="Risk Threshold"
                                         prefWidth="150"/>
 
-
                                 <TableColumn
                                         fx:id="effectiveDateColumn"
                                         text="Effective Date"
                                         prefWidth="160"/>
-
 
                                 <TableColumn
                                         fx:id="configStatusColumn"
@@ -370,58 +347,73 @@
 
                     <VBox
                             spacing="18"
-                            styleClass="section-card">
+                            styleClass="admin-card">
 
-                        <Label
-                                text="Configuration Details"
-                                styleClass="section-title"/>
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Configuration Details"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Configure the selected KPI scheme and risk threshold."
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
 
 
                         <GridPane
                                 hgap="25"
                                 vgap="18">
 
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints prefWidth="340"/>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints prefWidth="200"/>
+                            </columnConstraints>
+
 
                             <Label
                                     text="Configuration Name"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"/>
-
 
                             <TextField
                                     fx:id="configNameField"
                                     promptText="e.g. Standard Employee KPI 2026"
-                                    prefWidth="340"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-input"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="0"/>
 
 
                             <Label
                                     text="Risk Threshold (%)"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="2"
                                     GridPane.rowIndex="0"/>
-
 
                             <TextField
                                     fx:id="riskThresholdField"
                                     promptText="e.g. 60"
-                                    prefWidth="180"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-input"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="0"/>
 
 
                             <Label
                                     text="Effective Date"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"/>
-
 
                             <DatePicker
                                     fx:id="effectiveDatePicker"
                                     prefWidth="220"
+                                    styleClass="admin-date-picker"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="1"/>
 
@@ -432,39 +424,37 @@
                                 fx:id="configMessageLabel"
                                 visible="false"
                                 managed="false"
-                                wrapText="true"/>
+                                wrapText="true"
+                                styleClass="admin-helper-text"/>
 
 
                         <HBox
-                                spacing="12"
+                                spacing="10"
                                 alignment="CENTER_LEFT">
 
                             <Button
                                     fx:id="createConfigButton"
                                     text="Create Configuration"
                                     onAction="#handleCreateConfig"
-                                    styleClass="app-button"/>
-
+                                    styleClass="admin-button-primary"/>
 
                             <Button
                                     fx:id="saveConfigButton"
                                     text="Save Changes"
                                     onAction="#handleSaveConfig"
-                                    styleClass="app-button"/>
-
+                                    styleClass="admin-button"/>
 
                             <Button
                                     fx:id="configStatusButton"
                                     text="Activate"
                                     onAction="#handleToggleConfigStatus"
-                                    styleClass="app-button"/>
-
+                                    styleClass="admin-button"/>
 
                             <Button
                                     fx:id="deleteConfigButton"
                                     text="Delete Configuration"
                                     onAction="#handleDeleteConfig"
-                                    styleClass="app-button"/>
+                                    styleClass="admin-button-danger"/>
 
                         </HBox>
 
@@ -472,35 +462,33 @@
 
 
                     <!-- =================================================
-                         KPI COMPONENTS
+                         COMPONENTS
                          ================================================= -->
 
                     <VBox
                             spacing="16"
-                            styleClass="section-card">
+                            styleClass="admin-card">
 
                         <HBox alignment="CENTER_LEFT">
 
-                            <VBox spacing="3">
+                            <VBox
+                                    spacing="4"
+                                    HBox.hgrow="ALWAYS">
 
                                 <Label
                                         text="KPI Components"
-                                        styleClass="section-title"/>
+                                        styleClass="admin-section-title"/>
 
                                 <Label
                                         text="Select a configuration before managing its KPI components."
-                                        styleClass="content-description"/>
+                                        styleClass="admin-section-subtitle"/>
 
                             </VBox>
 
-
-                            <Region HBox.hgrow="ALWAYS"/>
-
-
                             <Button
-                                    text="New Component"
+                                    text="+ New Component"
                                     onAction="#handleNewComponent"
-                                    styleClass="app-button"/>
+                                    styleClass="admin-button-primary"/>
 
                         </HBox>
 
@@ -508,7 +496,8 @@
                         <TableView
                                 fx:id="componentTable"
                                 prefHeight="260"
-                                minHeight="220">
+                                minHeight="220"
+                                styleClass="admin-table">
 
                             <columns>
 
@@ -517,18 +506,15 @@
                                         text="ID"
                                         prefWidth="70"/>
 
-
                                 <TableColumn
                                         fx:id="componentNameColumn"
                                         text="Component"
                                         prefWidth="360"/>
 
-
                                 <TableColumn
                                         fx:id="weightingColumn"
                                         text="Weighting (%)"
                                         prefWidth="180"/>
-
 
                                 <TableColumn
                                         fx:id="componentStatusColumn"
@@ -543,7 +529,7 @@
                         <Label
                                 fx:id="totalWeightingLabel"
                                 text="Total Active Weighting: 0.00% / 100%"
-                                styleClass="section-title"/>
+                                styleClass="admin-section-title"/>
 
                     </VBox>
 
@@ -554,44 +540,59 @@
 
                     <VBox
                             spacing="18"
-                            styleClass="section-card">
+                            styleClass="admin-card">
 
-                        <Label
-                                text="Component Details"
-                                styleClass="section-title"/>
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Component Details"
+                                    styleClass="admin-section-title"/>
+
+                            <Label
+                                    text="Configure the selected KPI component and its contribution to the overall score."
+                                    styleClass="admin-section-subtitle"/>
+
+                        </VBox>
 
 
                         <GridPane
                                 hgap="25"
                                 vgap="18">
 
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints prefWidth="340"/>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints prefWidth="200"/>
+                            </columnConstraints>
+
 
                             <Label
                                     text="Component Name"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"/>
-
 
                             <TextField
                                     fx:id="componentNameField"
                                     promptText="e.g. Productivity"
-                                    prefWidth="340"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-input"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="0"/>
 
 
                             <Label
                                     text="Weighting (%)"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="2"
                                     GridPane.rowIndex="0"/>
-
 
                             <TextField
                                     fx:id="weightingField"
                                     promptText="e.g. 30"
-                                    prefWidth="180"
+                                    maxWidth="Infinity"
+                                    styleClass="admin-input"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="0"/>
 
@@ -602,39 +603,36 @@
                                 fx:id="componentMessageLabel"
                                 visible="false"
                                 managed="false"
-                                wrapText="true"/>
+                                wrapText="true"
+                                styleClass="admin-helper-text"/>
 
 
                         <HBox
-                                spacing="12"
-                                alignment="CENTER_LEFT">
+                                spacing="10">
 
                             <Button
                                     fx:id="createComponentButton"
                                     text="Create Component"
                                     onAction="#handleCreateComponent"
-                                    styleClass="app-button"/>
-
+                                    styleClass="admin-button-primary"/>
 
                             <Button
                                     fx:id="saveComponentButton"
                                     text="Save Component"
                                     onAction="#handleSaveComponent"
-                                    styleClass="app-button"/>
-
+                                    styleClass="admin-button"/>
 
                             <Button
                                     fx:id="componentStatusButton"
                                     text="Deactivate"
                                     onAction="#handleToggleComponentStatus"
-                                    styleClass="app-button"/>
-
+                                    styleClass="admin-button"/>
 
                             <Button
                                     fx:id="deleteComponentButton"
                                     text="Delete Component"
                                     onAction="#handleDeleteComponent"
-                                    styleClass="app-button"/>
+                                    styleClass="admin-button-danger"/>
 
                         </HBox>
 
@@ -647,18 +645,17 @@
 
                     <VBox
                             spacing="18"
-                            styleClass="section-card">
+                            styleClass="admin-card">
 
                         <VBox spacing="4">
 
                             <Label
                                     text="KPI Calculation"
-                                    styleClass="section-title"/>
-
+                                    styleClass="admin-section-title"/>
 
                             <Label
                                     text="Calculate employee performance for a selected evaluation period."
-                                    styleClass="content-description"/>
+                                    styleClass="admin-section-subtitle"/>
 
                         </VBox>
 
@@ -667,46 +664,53 @@
                                 hgap="25"
                                 vgap="18">
 
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints prefWidth="300"/>
+                                <ColumnConstraints minWidth="150"/>
+                                <ColumnConstraints prefWidth="220"/>
+                            </columnConstraints>
+
 
                             <Label
                                     text="Employee"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"/>
-
 
                             <ComboBox
                                     fx:id="employeeComboBox"
                                     promptText="Select employee"
                                     prefWidth="300"
+                                    styleClass="admin-combo-box"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="0"/>
 
 
                             <Label
                                     text="Evaluation Start"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"/>
-
 
                             <DatePicker
                                     fx:id="evaluationStartDatePicker"
                                     prefWidth="220"
+                                    styleClass="admin-date-picker"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="1"/>
 
 
                             <Label
                                     text="Evaluation End"
-                                    styleClass="input-label"
+                                    styleClass="admin-field-label"
                                     GridPane.columnIndex="2"
                                     GridPane.rowIndex="1"/>
-
 
                             <DatePicker
                                     fx:id="evaluationEndDatePicker"
                                     prefWidth="220"
+                                    styleClass="admin-date-picker"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="1"/>
 
@@ -717,120 +721,112 @@
                                 fx:id="calculateKpiButton"
                                 text="Calculate KPI"
                                 onAction="#handleCalculateKpi"
-                                styleClass="app-button"/>
+                                styleClass="admin-button-primary"/>
 
 
                         <Label
                                 fx:id="calculationMessageLabel"
                                 visible="false"
                                 managed="false"
-                                wrapText="true"/>
+                                wrapText="true"
+                                styleClass="admin-helper-text"/>
 
 
-                        <!-- =============================================
-                             CALCULATED RESULT
-                             ============================================= -->
+                        <!-- RESULT -->
 
                         <VBox
                                 spacing="16"
-                                styleClass="section-card">
+                                style="-fx-background-color:#F7F9FD;
+                                       -fx-border-color:#DCE4F3;
+                                       -fx-border-radius:9;
+                                       -fx-background-radius:9;
+                                       -fx-padding:18;">
 
                             <Label
                                     text="Calculated Result"
-                                    styleClass="section-title"/>
+                                    styleClass="admin-section-title"/>
 
 
                             <GridPane
                                     hgap="35"
                                     vgap="16">
 
-
                                 <Label
                                         text="Productivity"
-                                        styleClass="input-label"
+                                        styleClass="admin-field-label"
                                         GridPane.columnIndex="0"
                                         GridPane.rowIndex="0"/>
-
 
                                 <Label
                                         fx:id="productivityResultLabel"
                                         text="-"
-                                        styleClass="task-detail-value"
                                         GridPane.columnIndex="1"
                                         GridPane.rowIndex="0"/>
 
 
                                 <Label
                                         text="Timeliness"
-                                        styleClass="input-label"
+                                        styleClass="admin-field-label"
                                         GridPane.columnIndex="2"
                                         GridPane.rowIndex="0"/>
-
 
                                 <Label
                                         fx:id="timelinessResultLabel"
                                         text="-"
-                                        styleClass="task-detail-value"
                                         GridPane.columnIndex="3"
                                         GridPane.rowIndex="0"/>
 
 
                                 <Label
                                         text="Completion Rate"
-                                        styleClass="input-label"
+                                        styleClass="admin-field-label"
                                         GridPane.columnIndex="0"
                                         GridPane.rowIndex="1"/>
-
 
                                 <Label
                                         fx:id="completionResultLabel"
                                         text="-"
-                                        styleClass="task-detail-value"
                                         GridPane.columnIndex="1"
                                         GridPane.rowIndex="1"/>
 
 
                                 <Label
                                         text="Attendance"
-                                        styleClass="input-label"
+                                        styleClass="admin-field-label"
                                         GridPane.columnIndex="2"
                                         GridPane.rowIndex="1"/>
-
 
                                 <Label
                                         fx:id="attendanceResultLabel"
                                         text="-"
-                                        styleClass="task-detail-value"
                                         GridPane.columnIndex="3"
                                         GridPane.rowIndex="1"/>
 
 
                                 <Label
                                         text="Overall KPI"
-                                        styleClass="input-label"
+                                        styleClass="admin-field-label"
                                         GridPane.columnIndex="0"
                                         GridPane.rowIndex="2"/>
-
 
                                 <Label
                                         fx:id="overallKpiResultLabel"
                                         text="-"
-                                        styleClass="section-title"
+                                        styleClass="admin-section-title"
                                         GridPane.columnIndex="1"
                                         GridPane.rowIndex="2"/>
 
 
                                 <Label
                                         text="Performance Status"
-                                        styleClass="input-label"
+                                        styleClass="admin-field-label"
                                         GridPane.columnIndex="2"
                                         GridPane.rowIndex="2"/>
-
 
                                 <Label
                                         fx:id="performanceStatusLabel"
                                         text="-"
-                                        styleClass="section-title"
+                                        styleClass="admin-section-title"
                                         GridPane.columnIndex="3"
                                         GridPane.rowIndex="2"/>
 
@@ -839,9 +835,6 @@
                         </VBox>
 
                     </VBox>
-
-
-                    <Region prefHeight="15"/>
 
                 </VBox>
 

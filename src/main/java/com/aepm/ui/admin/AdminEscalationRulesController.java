@@ -776,6 +776,19 @@ public class AdminEscalationRulesController {
             ((Node) event.getSource()).getScene().getWindow()
         );
     }
+    @FXML
+    private void handleReports(ActionEvent event) {
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        NavigationManager.navigate(
+                stage,
+                "/fxml/admin/adminReport.fxml"
+        );
+    }
 
     @FXML
     private void handleRiskRefresh() {
