@@ -66,6 +66,9 @@
             <Button text="▤   Reports" alignment="CENTER_LEFT"
                     maxWidth="Infinity" onAction="#handleReports"
                     styleClass="modern-nav-button"/>
+        <Button text="My Daily Tasks"
+        onAction="#handleDailyTasks"
+        styleClass="button-primary"/>
             <Button text="!   Anonymous Report" alignment="CENTER_LEFT"
                     maxWidth="Infinity" onAction="#handleAnonymousReport"
                     styleClass="modern-nav-button"/>

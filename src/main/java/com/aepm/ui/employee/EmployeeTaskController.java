@@ -924,6 +924,16 @@ public class EmployeeTaskController {
         // Current page
     }
 
+    @FXML
+    private void handleDailyTasks(
+            ActionEvent event
+    ) {
+        navigate(
+            event,
+            "/fxml/employee/employeeDailyTask.fxml"
+        );
+    }
+
 
     @FXML
     private void handleKpi(
