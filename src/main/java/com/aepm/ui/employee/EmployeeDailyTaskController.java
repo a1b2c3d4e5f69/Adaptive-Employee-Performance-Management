@@ -1453,6 +1453,17 @@ public class EmployeeDailyTaskController {
         );
     }
 
+    @FXML
+    private void handleAIRecommendation(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeeAIRecommendation.fxml"
+        );
+    }
+
 
     private void navigate(
             ActionEvent event,

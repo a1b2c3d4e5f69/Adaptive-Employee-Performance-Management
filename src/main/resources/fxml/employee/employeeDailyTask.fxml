@@ -1,322 +1,560 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
+<?import com.aepm.ui.components.EmployeeRoleLabel?>
+<?import com.aepm.ui.components.NotificationBell?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.aepm.ui.employee.EmployeeDailyTaskController"
-            styleClass="main-layout">
+<BorderPane
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.aepm.ui.employee.EmployeeDailyTaskController"
+        stylesheets="@../../css/app.css"
+        styleClass="employee-root">
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
 
     <top>
-        <HBox alignment="CENTER_LEFT"
-              spacing="20"
-              styleClass="topbar">
 
-            <padding>
-                <Insets top="16" right="28" bottom="16" left="28"/>
-            </padding>
+        <HBox
+                alignment="CENTER_LEFT"
+                spacing="20"
+                styleClass="employee-topbar">
 
             <VBox spacing="2">
-                <Label text="My Daily Tasks"
-                       styleClass="topbar-title"/>
-                <Label text="Manage your personal daily work and to-do list."
-                       styleClass="topbar-subtitle"/>
+
+                <EmployeeWelcomeLabel
+                        styleClass="employee-topbar-user-name"/>
+
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="employee-page-subtitle"/>
+
             </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Button text="← Back to Assigned Tasks"
-                    onAction="#handleBack"
-                    styleClass="secondary-button"/>
+            <NotificationBell/>
+
+            <VBox
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
+
+                <Label
+                        text="Employee"
+                        styleClass="employee-topbar-user-name"/>
+
+                <EmployeeRoleLabel
+                        styleClass="employee-topbar-user-position"/>
+
+            </VBox>
 
         </HBox>
+
     </top>
 
 
+    <!-- =====================================================
+         SIDEBAR
+         EXACT SAME STRUCTURE
+         ===================================================== -->
+
     <left>
-        <ScrollPane prefWidth="294"
-                    minWidth="294"
-                    maxWidth="294"
-                    fitToWidth="true"
-                    hbarPolicy="NEVER"
-                    vbarPolicy="AS_NEEDED"
-                    style="-fx-background-color:white;-fx-background:white;">
+
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="employee-sidebar-scroll">
 
             <content>
-                <VBox prefWidth="240"
-                      spacing="10"
-                      styleClass="sidebar">
 
-                    <padding>
-                        <Insets top="30" right="18" bottom="20" left="18"/>
-                    </padding>
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="employee-sidebar">
 
-                    <VBox spacing="3">
-                        <Label text="AEPM"
-                               styleClass="sidebar-logo"/>
-                        <Label text="Employee Portal"
-                               styleClass="sidebar-subtitle"/>
+                    <VBox spacing="2">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="employee-brand-title"/>
+
+                        <Label
+                                text="Adaptive Performance"
+                                styleClass="employee-brand-secondary"/>
+
                     </VBox>
 
-                    <Region prefHeight="18"/>
 
-                    <Label text="MENU"
-                           styleClass="sidebar-section-title"/>
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="employee-sidebar-section"/>
 
-                    <Button text="⌂   Home"
+                    <Button
+                            text="⌂   Home"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleHome"
-                            styleClass="sidebar-button"/>
+                            styleClass="employee-nav-button"/>
 
-                    <Button text="●   My Profile"
-                            maxWidth="Infinity"
-                            alignment="CENTER_LEFT"
-                            onAction="#handleProfile"
-                            styleClass="sidebar-button"/>
-
-                    <Button text="✓   My Tasks"
+                    <Button
+                            text="✓   My Tasks"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleBack"
-                            styleClass="sidebar-button-active"/>
+                            styleClass="employee-nav-button-active"/>
 
-                    <Button text="▦   Attendance"
+                    <Button
+                            text="◷   Attendance"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleAttendance"
-                            styleClass="sidebar-button"/>
+                            styleClass="employee-nav-button"/>
 
-                    <Button text="★   My Performance"
+                    <Button
+                            text="⌁   My Performance"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handlePerformance"
-                            styleClass="sidebar-button"/>
+                            styleClass="employee-nav-button"/>
 
-                    <Button text="≡   Reports"
+
+                    <Label
+                            text="PERSONAL PRODUCTIVITY"
+                            styleClass="employee-sidebar-section"/>
+
+                    <Button
+                            text="✣   AI Recommendations"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
-                            onAction="#handleReports"
-                            styleClass="sidebar-button"/>
+                            onAction="#handleAIRecommendation"
+                            styleClass="employee-nav-button"/>
 
-                    <Button text="!   Anonymous Report"
+
+                    <Label
+                            text="SUPPORT &amp; GOVERNANCE"
+                            styleClass="employee-sidebar-section"/>
+
+                    <Button
+                            text="!   Anonymous Report"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleAnonymousReport"
-                            styleClass="sidebar-button"/>
+                            styleClass="employee-nav-button"/>
+
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="employee-nav-button"/>
 
                     <Region VBox.vgrow="ALWAYS"/>
 
-                    <Button text="↪   Logout"
+                    <Button
+                            text="↪   Logout"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleLogout"
                             styleClass="logout-button"/>
 
                 </VBox>
+
             </content>
 
         </ScrollPane>
+
     </left>
 
 
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
     <center>
-        <ScrollPane fitToWidth="true"
-                    hbarPolicy="NEVER">
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="employee-content-scroll">
 
             <content>
 
-                <VBox spacing="22">
-
-                    <padding>
-                        <Insets top="30" right="35" bottom="35" left="35"/>
-                    </padding>
+                <VBox
+                        spacing="22"
+                        styleClass="employee-content">
 
                     <!-- HEADER -->
-                    <HBox alignment="CENTER_LEFT"
-                          spacing="15">
 
-                        <VBox spacing="5">
-                            <Label text="My Daily Tasks"
-                                   style="-fx-font-size: 26px; -fx-font-weight: bold;"/>
+                    <HBox
+                            spacing="16"
+                            alignment="CENTER_LEFT">
 
-                            <Label text="Plan and complete your personal work for each day."
-                                   style="-fx-text-fill: #64748B;"/>
+                        <VBox
+                                spacing="5"
+                                HBox.hgrow="ALWAYS">
+
+                            <Label
+                                    text="My Tasks"
+                                    styleClass="employee-page-title"/>
+
+                            <Label
+                                    text="Plan your daily priorities and keep personal work organized."
+                                    styleClass="employee-page-subtitle"/>
+
                         </VBox>
 
-                        <Region HBox.hgrow="ALWAYS"/>
-
-                        <Button text="+ Add Daily Task"
+                        <Button
+                                text="+ Add Daily Task"
                                 onAction="#handleNewTask"
-                                styleClass="button-primary"/>
+                                styleClass="employee-button-primary"/>
 
                     </HBox>
 
 
-                    <!-- DATE -->
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
+                    <!-- TASK TYPE SWITCH -->
 
-                        <Button text="‹"
-                                onAction="#handlePreviousDay"/>
+                    <HBox
+                            spacing="8"
+                            alignment="CENTER_LEFT">
 
-                        <DatePicker fx:id="taskDatePicker"/>
+                        <Button
+                                text="Assigned Tasks"
+                                onAction="#handleBack"
+                                styleClass="employee-button"/>
 
-                        <Button text="Today"
-                                onAction="#handleToday"/>
-
-                        <Button text="›"
-                                onAction="#handleNextDay"/>
-
-                        <Region HBox.hgrow="ALWAYS"/>
-
-                        <Button text="Refresh"
-                                onAction="#handleRefresh"/>
+                        <Button
+                                text="My Daily Tasks"
+                                styleClass="employee-button-primary"/>
 
                     </HBox>
 
 
-                    <!-- SUMMARY -->
-                    <HBox spacing="15">
+                    <!-- DATE / FILTER CARD -->
 
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS"
-                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
-                            <Label text="Total"/>
-                            <Label fx:id="totalLabel"
-                                   text="0"
-                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                        </VBox>
+                    <VBox
+                            spacing="16"
+                            styleClass="employee-card">
 
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS"
-                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
-                            <Label text="Completed"/>
-                            <Label fx:id="completedLabel"
-                                   text="0"
-                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                        </VBox>
+                        <HBox
+                                spacing="10"
+                                alignment="CENTER_LEFT">
 
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS"
-                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
-                            <Label text="Remaining"/>
-                            <Label fx:id="remainingLabel"
-                                   text="0"
-                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                        </VBox>
+                            <Button
+                                    text="‹"
+                                    onAction="#handlePreviousDay"
+                                    styleClass="employee-button"/>
 
-                        <VBox spacing="5"
-                              HBox.hgrow="ALWAYS"
-                              style="-fx-background-color: white; -fx-padding: 18; -fx-background-radius: 10;">
-                            <Label text="Completion"/>
-                            <Label fx:id="completionLabel"
-                                   text="0%"
-                                   style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                        </VBox>
+                            <DatePicker
+                                    fx:id="taskDatePicker"
+                                    styleClass="employee-date-picker"/>
 
-                    </HBox>
+                            <Button
+                                    text="Today"
+                                    onAction="#handleToday"
+                                    styleClass="employee-button"/>
+
+                            <Button
+                                    text="›"
+                                    onAction="#handleNextDay"
+                                    styleClass="employee-button"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Button
+                                    text="Refresh"
+                                    onAction="#handleRefresh"
+                                    styleClass="employee-button"/>
+
+                        </HBox>
 
 
-                    <!-- FILTER -->
-                    <HBox spacing="12"
-                          alignment="CENTER_LEFT">
+                        <!-- SUMMARY -->
 
-                        <Label text="Status:"/>
+                        <HBox spacing="14">
 
-                        <ComboBox fx:id="statusFilter"
-                                  prefWidth="160"/>
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    styleClass="employee-kpi-card">
 
-                        <Label text="Priority:"/>
+                                <Label
+                                        text="TOTAL"
+                                        styleClass="employee-kpi-title"/>
 
-                        <ComboBox fx:id="priorityFilter"
-                                  prefWidth="140"/>
+                                <Label
+                                        fx:id="totalLabel"
+                                        text="0"
+                                        styleClass="employee-kpi-value"/>
 
-                        <Button text="Clear Filter"
-                                onAction="#handleClearFilter"/>
+                                <Label
+                                        text="Tasks scheduled"
+                                        styleClass="employee-kpi-note"/>
 
-                    </HBox>
-
-
-                    <!-- TABLE -->
-                    <TableView fx:id="dailyTaskTable"
-                               prefHeight="380">
-
-                        <columns>
-
-                            <TableColumn fx:id="titleColumn"
-                                         text="Task"
-                                         prefWidth="230"/>
-
-                            <TableColumn fx:id="categoryColumn"
-                                         text="Category"
-                                         prefWidth="130"/>
-
-                            <TableColumn fx:id="priorityColumn"
-                                         text="Priority"
-                                         prefWidth="100"/>
-
-                            <TableColumn fx:id="dueTimeColumn"
-                                         text="Due Time"
-                                         prefWidth="110"/>
-
-                            <TableColumn fx:id="statusColumn"
-                                         text="Status"
-                                         prefWidth="130"/>
-
-                            <TableColumn fx:id="completedAtColumn"
-                                         text="Completed At"
-                                         prefWidth="180"/>
-
-                        </columns>
-
-                        <placeholder>
-                            <Label text="No daily tasks for this date."/>
-                        </placeholder>
-
-                    </TableView>
+                            </VBox>
 
 
-                    <!-- ACTIONS -->
-                    <HBox spacing="10">
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    styleClass="employee-kpi-card">
 
-                        <Button text="Edit"
-                                onAction="#handleEdit"/>
+                                <Label
+                                        text="COMPLETED"
+                                        styleClass="employee-kpi-title"/>
 
-                        <Button text="Start"
-                                onAction="#handleStart"/>
+                                <Label
+                                        fx:id="completedLabel"
+                                        text="0"
+                                        styleClass="employee-kpi-value"/>
 
-                        <Button text="Complete"
-                                onAction="#handleComplete"
-                                styleClass="button-primary"/>
+                                <Label
+                                        text="Finished today"
+                                        styleClass="employee-kpi-note"/>
 
-                        <Button text="Reopen"
-                                onAction="#handleReopen"/>
-
-                        <Button text="Cancel Task"
-                                onAction="#handleCancelTask"/>
-
-                        <Region HBox.hgrow="ALWAYS"/>
-
-                        <Button text="Delete"
-                                onAction="#handleDelete"
-                                styleClass="danger-button"/>
-
-                    </HBox>
+                            </VBox>
 
 
-                    <Label fx:id="messageLabel"
-                           visible="false"
-                           managed="false"
-                           wrapText="true"
-                           style="-fx-text-fill: #2563EB;"/>
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    styleClass="employee-kpi-card">
+
+                                <Label
+                                        text="REMAINING"
+                                        styleClass="employee-kpi-title"/>
+
+                                <Label
+                                        fx:id="remainingLabel"
+                                        text="0"
+                                        styleClass="employee-kpi-value"/>
+
+                                <Label
+                                        text="Still pending"
+                                        styleClass="employee-kpi-note"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="5"
+                                    HBox.hgrow="ALWAYS"
+                                    styleClass="employee-kpi-card">
+
+                                <Label
+                                        text="COMPLETION"
+                                        styleClass="employee-kpi-title"/>
+
+                                <Label
+                                        fx:id="completionLabel"
+                                        text="0%"
+                                        styleClass="employee-kpi-value"/>
+
+                                <Label
+                                        text="Daily progress"
+                                        styleClass="employee-kpi-note"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- DAILY TASK LIST -->
+
+                    <VBox
+                            spacing="16"
+                            styleClass="employee-card">
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+                            <VBox
+                                    spacing="4"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="Daily Task List"
+                                        styleClass="employee-section-title"/>
+
+                                <Label
+                                        text="Manage your personal work priorities for the selected date."
+                                        styleClass="employee-section-subtitle"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <!-- FILTER -->
+
+                        <HBox
+                                spacing="10"
+                                alignment="CENTER_LEFT">
+
+                            <Label
+                                    text="Status"
+                                    styleClass="employee-field-label"/>
+
+                            <ComboBox
+                                    fx:id="statusFilter"
+                                    prefWidth="160"
+                                    styleClass="employee-combo-box"/>
+
+                            <Label
+                                    text="Priority"
+                                    styleClass="employee-field-label"/>
+
+                            <ComboBox
+                                    fx:id="priorityFilter"
+                                    prefWidth="150"
+                                    styleClass="employee-combo-box"/>
+
+                            <Button
+                                    text="Clear Filters"
+                                    onAction="#handleClearFilter"
+                                    styleClass="employee-button"/>
+
+                        </HBox>
+
+
+                        <!-- TABLE -->
+
+                        <TableView
+                                fx:id="dailyTaskTable"
+                                prefHeight="400"
+                                minHeight="360"
+                                styleClass="employee-table">
+
+                            <columns>
+
+                                <TableColumn
+                                        fx:id="titleColumn"
+                                        text="Task"
+                                        prefWidth="260"/>
+
+                                <TableColumn
+                                        fx:id="categoryColumn"
+                                        text="Category"
+                                        prefWidth="150"/>
+
+                                <TableColumn
+                                        fx:id="priorityColumn"
+                                        text="Priority"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="dueTimeColumn"
+                                        text="Due Time"
+                                        prefWidth="120"/>
+
+                                <TableColumn
+                                        fx:id="statusColumn"
+                                        text="Status"
+                                        prefWidth="150"/>
+
+                                <TableColumn
+                                        fx:id="completedAtColumn"
+                                        text="Completed At"
+                                        prefWidth="180"/>
+
+                            </columns>
+
+                            <placeholder>
+
+                                <VBox
+                                        alignment="CENTER"
+                                        spacing="6">
+
+                                    <Label
+                                            text="No daily tasks for this date"
+                                            styleClass="employee-empty-title"/>
+
+                                    <Label
+                                            text="Add a task to start organizing your day."
+                                            styleClass="employee-empty-description"/>
+
+                                </VBox>
+
+                            </placeholder>
+
+                        </TableView>
+
+
+                        <!-- ACTIONS -->
+
+                        <HBox
+                                spacing="8"
+                                alignment="CENTER_LEFT">
+
+                            <Button
+                                    text="Edit"
+                                    onAction="#handleEdit"
+                                    styleClass="employee-button"/>
+
+                            <Button
+                                    text="Start"
+                                    onAction="#handleStart"
+                                    styleClass="employee-button"/>
+
+                            <Button
+                                    text="Complete"
+                                    onAction="#handleComplete"
+                                    styleClass="employee-button-primary"/>
+
+                            <Button
+                                    text="Reopen"
+                                    onAction="#handleReopen"
+                                    styleClass="employee-button"/>
+
+                            <Button
+                                    text="Cancel Task"
+                                    onAction="#handleCancelTask"
+                                    styleClass="employee-button"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Button
+                                    text="Delete"
+                                    onAction="#handleDelete"
+                                    styleClass="employee-button-danger"/>
+
+                        </HBox>
+
+
+                        <Label
+                                fx:id="messageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"
+                                styleClass="employee-helper-text"/>
+
+                    </VBox>
 
                 </VBox>
 
             </content>
 
         </ScrollPane>
+
     </center>
 
 </BorderPane>

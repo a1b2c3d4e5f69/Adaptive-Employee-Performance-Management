@@ -1,336 +1,418 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.chart.*?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import com.aepm.ui.components.NotificationBell?>
-<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
-<?import com.aepm.ui.components.EmployeeRoleLabel?>
-<?import com.aepm.ui.components.EmployeeWelcomeLabel?>
-<?import com.aepm.ui.components.EmployeeRoleLabel?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.aepm.ui.employee.EmployeeHomeController"
-            styleClass="main-layout">
+            stylesheets="@../../css/app.css"
+            styleClass="employee-root">
 
+    <!-- TOP BAR -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
-            <padding>
-                <Insets top="16" right="28" bottom="16" left="28"/>
-            </padding>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="employee-topbar">
+
             <VBox spacing="2">
-                <EmployeeWelcomeLabel styleClass="topbar-title"/>
+                <Label fx:id="topNameLabel"
+                       text="Welcome, Employee"
+                       styleClass="employee-topbar-user-name"/>
+
                 <Label text="Adaptive Employee Performance Management System"
-                       styleClass="topbar-subtitle"/>
+                       styleClass="employee-page-subtitle"/>
             </VBox>
+
             <Region HBox.hgrow="ALWAYS"/>
-            <NotificationBell fx:id="notificationBell"/>
-            <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label fx:id="topNameLabel" text="Employee"
-                       styleClass="topbar-user-name"/>
-                <EmployeeRoleLabel fx:id="topRoleLabel"
-                                   styleClass="topbar-user-role"/>
+
+            <NotificationBell/>
+
+            <VBox alignment="CENTER_RIGHT"
+                  spacing="2">
+
+                <Label fx:id="welcomeNameLabel"
+                       text="Employee"
+                       styleClass="employee-topbar-user-name"/>
+
+                <Label fx:id="topRoleLabel"
+                       text="EMPLOYEE"
+                       styleClass="employee-topbar-user-position"/>
             </VBox>
+
         </HBox>
     </top>
 
+
+    <!-- SIDEBAR -->
     <left>
-        <VBox prefWidth="245" minWidth="245" maxWidth="245"
-              spacing="8" styleClass="modern-sidebar">
-            <padding>
-                <Insets top="28" right="18" bottom="20" left="18"/>
-            </padding>
-            <Label text="MENU" styleClass="modern-sidebar-section"/>
-            <Button text="⌂   Home" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleHome"
-                    styleClass="modern-nav-button-active"/>
-            <Button text="○   My Profile" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleProfile"
-                    styleClass="modern-nav-button"/>
-            <Button text="✓   My Tasks" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleTasks"
-                    styleClass="modern-nav-button"/>
-            <Button text="▥   Performance" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleKpi"
-                    styleClass="modern-nav-button"/>
-            <Button text="▦   My Attendance" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleAttendance"
-                    styleClass="modern-nav-button"/>
-            <Button text="▤   Reports" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleReports"
-                    styleClass="modern-nav-button"/>
-            <Button text="!   Anonymous Report" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleAnonymousReport"
-                    styleClass="modern-nav-button"/>
-            <Region VBox.vgrow="ALWAYS"/>
-            <Button text="↪   Logout" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleLogout"
-                    styleClass="modern-logout-button"/>
-        </VBox>
-    </left>
+        <ScrollPane prefWidth="240"
+                    minWidth="240"
+                    maxWidth="240"
+                    fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="employee-sidebar-scroll">
 
-    <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
-                    vbarPolicy="AS_NEEDED" pannable="true"
-                    styleClass="modern-content-scroll">
             <content>
-                <VBox spacing="24" maxWidth="Infinity"
-                      styleClass="modern-content">
-                    <padding>
-                        <Insets top="30" right="32" bottom="40" left="32"/>
-                    </padding>
+                <VBox prefWidth="240"
+                      spacing="5"
+                      styleClass="employee-sidebar">
 
-                    <VBox spacing="5">
-                        <Label text="Employee Home"
-                               styleClass="modern-page-title"/>
-                        <Label text="Access your assigned tasks, performance results, and employee services."
-                               wrapText="true" styleClass="modern-page-subtitle"/>
+                    <VBox spacing="2">
+                        <Label text="AEPM"
+                               styleClass="employee-brand-title"/>
+
+                        <Label text="Adaptive Performance"
+                               styleClass="employee-brand-secondary"/>
                     </VBox>
 
-                    <HBox spacing="30" alignment="CENTER_LEFT"
-                          maxWidth="Infinity" styleClass="employee-welcome-card">
-                        <padding>
-                            <Insets top="26" right="30" bottom="26" left="30"/>
-                        </padding>
-                        <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="Welcome back,"
-                                   styleClass="employee-welcome-small"/>
-                            <Label fx:id="welcomeNameLabel" text="Employee"
-                                   styleClass="employee-welcome-name"/>
-                            <Label text="Stay on top of your assigned work and monitor your performance progress."
+                    <Label text="WORKSPACE"
+                           styleClass="employee-sidebar-section"/>
+
+                    <Button text="⌂   Home"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="employee-nav-button-active"/>
+
+                    <Button text="✓   My Tasks"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTasks"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="◷   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendance"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="⌁   My Performance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpi"
+                            styleClass="employee-nav-button"/>
+
+                    <Label text="SUPPORT &amp; GOVERNANCE"
+                           styleClass="employee-sidebar-section"/>
+
+                    <Button text="!   Anonymous Report"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReport"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="employee-nav-button"/>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <Button text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+            </content>
+
+        </ScrollPane>
+    </left>
+
+
+    <!-- CONTENT -->
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="employee-content-scroll">
+
+            <content>
+                <VBox spacing="22"
+                      styleClass="employee-content">
+
+                    <!-- WELCOME -->
+                    <HBox spacing="20"
+                          alignment="CENTER_LEFT"
+                          styleClass="employee-card">
+
+                        <VBox spacing="7"
+                              HBox.hgrow="ALWAYS">
+
+                            <Label text="Welcome back"
+                                   styleClass="employee-section-subtitle"/>
+
+                            <Label text="Your Employee Dashboard"
+                                   styleClass="employee-page-title"/>
+
+                            <Label text="Stay focused on your priorities, monitor your workload and keep track of your performance."
                                    wrapText="true"
-                                   styleClass="employee-welcome-description"/>
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Button text="View My Tasks →"
+                                   styleClass="employee-page-subtitle"/>
+
+                            <HBox spacing="10">
+
+                                <Button text="View My Tasks"
                                         onAction="#handleTasks"
-                                        styleClass="modern-primary-button"/>
-                                <Button text="View Performance"
+                                        styleClass="employee-button-primary"/>
+
+                                <Button text="My Performance"
                                         onAction="#handleKpi"
-                                        styleClass="modern-secondary-button"/>
+                                        styleClass="employee-button"/>
+
                             </HBox>
                         </VBox>
-                        <VBox spacing="12" prefWidth="260"
-                              styleClass="employee-info-panel">
-                            <HBox spacing="18" alignment="CENTER_LEFT">
-                                <VBox spacing="4" HBox.hgrow="ALWAYS">
-                                    <Label text="Employee ID"
-                                           styleClass="modern-card-label"/>
-                                    <Label fx:id="employeeIdLabel" text="-"
-                                           styleClass="employee-info-value"/>
-                                </VBox>
-                                <VBox spacing="4" HBox.hgrow="ALWAYS">
-                                    <Label text="Department"
-                                           styleClass="modern-card-label"/>
-                                    <Label fx:id="departmentLabel" text="-"
-                                           styleClass="employee-info-value"/>
-                                </VBox>
+
+
+                        <VBox spacing="6"
+                              minWidth="200"
+                              styleClass="employee-kpi-card">
+
+                            <Label text="DEPARTMENT"
+                                   styleClass="employee-kpi-title"/>
+
+                            <Label fx:id="departmentLabel"
+                                   text="-"
+                                   styleClass="employee-section-title"/>
+
+                            <Label fx:id="employeeIdLabel"
+                                   text="-"
+                                   styleClass="employee-kpi-note"/>
+
+                        </VBox>
+
+                    </HBox>
+
+
+                    <!-- DASHBOARD TITLE -->
+                    <HBox alignment="CENTER_LEFT">
+
+                        <VBox spacing="4"
+                              HBox.hgrow="ALWAYS">
+
+                            <Label text="Dashboard Overview"
+                                   styleClass="employee-section-title"/>
+
+                            <Label text="Quick summary of your workload and performance."
+                                   styleClass="employee-section-subtitle"/>
+                        </VBox>
+
+                        <Button text="Refresh"
+                                onAction="#handleRefreshDashboard"
+                                styleClass="employee-button"/>
+
+                    </HBox>
+
+                    <Label fx:id="dashboardStatusLabel"
+                           text=""
+                           styleClass="employee-helper-text"/>
+
+
+                    <!-- MAIN KPI -->
+                    <HBox spacing="14">
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-kpi-card">
+
+                            <Label text="TOTAL TASKS"
+                                   styleClass="employee-kpi-title"/>
+
+                            <Label fx:id="taskCountLabel"
+                                   text="0"
+                                   styleClass="employee-kpi-value"/>
+
+                            <Label text="Assigned workload"
+                                   styleClass="employee-kpi-note"/>
+                        </VBox>
+
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-kpi-card">
+
+                            <Label text="IN PROGRESS"
+                                   styleClass="employee-kpi-title"/>
+
+                            <Label fx:id="inProgressCountLabel"
+                                   text="0"
+                                   styleClass="employee-kpi-value"/>
+
+                            <Label text="Currently active"
+                                   styleClass="employee-kpi-note"/>
+                        </VBox>
+
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-kpi-card">
+
+                            <Label text="COMPLETION"
+                                   styleClass="employee-kpi-title"/>
+
+                            <Label fx:id="completionRateLabel"
+                                   text="0%"
+                                   styleClass="employee-kpi-value"/>
+
+                            <Label text="Task completion rate"
+                                   styleClass="employee-kpi-note"/>
+                        </VBox>
+
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-kpi-card">
+
+                            <Label text="OVERALL KPI"
+                                   styleClass="employee-kpi-title"/>
+
+                            <Label fx:id="kpiScoreLabel"
+                                   text="-"
+                                   styleClass="employee-kpi-value"/>
+
+                            <Label fx:id="performanceStatusLabel"
+                                   text="-"
+                                   styleClass="employee-kpi-note"/>
+                        </VBox>
+
+                    </HBox>
+
+
+                    <!-- SECONDARY -->
+                    <HBox spacing="14">
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-card">
+                            <Label text="Pending Tasks"
+                                   styleClass="employee-section-subtitle"/>
+                            <Label fx:id="pendingCountLabel"
+                                   text="0"
+                                   styleClass="employee-section-title"/>
+                        </VBox>
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-card">
+                            <Label text="Completed Tasks"
+                                   styleClass="employee-section-subtitle"/>
+                            <Label fx:id="completedCountLabel"
+                                   text="0"
+                                   styleClass="employee-section-title"/>
+                        </VBox>
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-card">
+                            <Label text="Overdue Tasks"
+                                   styleClass="employee-section-subtitle"/>
+                            <Label fx:id="overdueCountLabel"
+                                   text="0"
+                                   styleClass="employee-section-title"/>
+                        </VBox>
+
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-card">
+                            <Label text="Due Soon"
+                                   styleClass="employee-section-subtitle"/>
+                            <Label fx:id="dueSoonLabel"
+                                   text="0"
+                                   styleClass="employee-section-title"/>
+                        </VBox>
+
+                    </HBox>
+
+
+                    <!-- CHARTS -->
+                    <HBox spacing="14">
+
+                        <VBox spacing="12"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="employee-card">
+
+                            <Label text="Task Status"
+                                   styleClass="employee-section-title"/>
+
+                            <BarChart fx:id="taskStatusChart"
+                                      prefHeight="280"
+                                      legendVisible="false"
+                                      animated="false">
+
+                                <xAxis>
+                                    <CategoryAxis/>
+                                </xAxis>
+
+                                <yAxis>
+                                    <NumberAxis/>
+                                </yAxis>
+
+                            </BarChart>
+                        </VBox>
+
+
+                        <VBox spacing="12"
+                              prefWidth="360"
+                              styleClass="employee-card">
+
+                            <Label text="Deadline Escalation"
+                                   styleClass="employee-section-title"/>
+
+                            <PieChart fx:id="escalationChart"
+                                      prefHeight="230"
+                                      labelsVisible="false"
+                                      legendVisible="false"/>
+
+                            <HBox alignment="CENTER"
+                                  spacing="5">
+
+                                <Label text="Active:"
+                                       styleClass="employee-section-subtitle"/>
+
+                                <Label fx:id="donutTotalLabel"
+                                       text="0"
+                                       styleClass="employee-section-title"/>
+
                             </HBox>
+
+                            <Label fx:id="escalationCountLabel"
+                                   text="0"
+                                   visible="false"
+                                   managed="false"/>
+
                         </VBox>
                     </HBox>
 
-                    <VBox spacing="20" maxWidth="Infinity"
-                          styleClass="modern-dashboard">
 
-                        <HBox alignment="CENTER_LEFT" spacing="12">
-                            <VBox spacing="5">
-                                <Label text="My Dashboard"
-                                       styleClass="modern-section-title"/>
-                                <Label text="Track your tasks, KPI performance and deadlines."
-                                       styleClass="modern-page-subtitle"/>
-                            </VBox>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="Refresh"
-                                    onAction="#handleRefreshDashboard"
-                                    styleClass="modern-refresh"/>
-                        </HBox>
+                    <!-- REMINDER -->
+                    <VBox spacing="8"
+                          styleClass="employee-card">
 
-                        <Label fx:id="dashboardStatusLabel"
-                               text="Loading dashboard..."
+                        <Label text="Reminders"
+                               styleClass="employee-section-title"/>
+
+                        <Label fx:id="remindersLabel"
+                               text="No reminders."
                                wrapText="true"
-                               styleClass="modern-page-subtitle"/>
+                               styleClass="employee-page-subtitle"/>
 
-                        <VBox spacing="16" styleClass="modern-panel">
-                            <Label text="My Task Overview"
-                                   styleClass="modern-panel-title"/>
-
-                            <GridPane hgap="14" vgap="14">
-                                <columnConstraints>
-                                    <ColumnConstraints percentWidth="25"/>
-                                    <ColumnConstraints percentWidth="25"/>
-                                    <ColumnConstraints percentWidth="25"/>
-                                    <ColumnConstraints percentWidth="25"/>
-                                </columnConstraints>
-
-                                <VBox GridPane.columnIndex="0" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-blue">
-                                    <Label text="TOTAL TASKS"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="taskCountLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-
-                                <VBox GridPane.columnIndex="1" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-purple">
-                                    <Label text="PENDING"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="pendingCountLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-
-                                <VBox GridPane.columnIndex="2" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-green">
-                                    <Label text="COMPLETED"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="completedCountLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-
-                                <VBox GridPane.columnIndex="3" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-rose">
-                                    <Label text="OVERDUE"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="overdueCountLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-                            </GridPane>
-
-                            <GridPane hgap="14" vgap="14">
-                                <columnConstraints>
-                                    <ColumnConstraints percentWidth="50"/>
-                                    <ColumnConstraints percentWidth="50"/>
-                                </columnConstraints>
-
-                                <VBox GridPane.columnIndex="0" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-cyan">
-                                    <Label text="IN PROGRESS"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="inProgressCountLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-
-                                <VBox GridPane.columnIndex="1" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-lavender">
-                                    <Label text="COMPLETION RATE"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="completionRateLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-                            </GridPane>
-                        </VBox>
-
-                        <VBox spacing="16" styleClass="modern-panel">
-                            <Label text="My Performance Summary"
-                                   styleClass="modern-panel-title"/>
-                            <GridPane hgap="14">
-                                <columnConstraints>
-                                    <ColumnConstraints percentWidth="50"/>
-                                    <ColumnConstraints percentWidth="50"/>
-                                </columnConstraints>
-
-                                <VBox GridPane.columnIndex="0" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-blue">
-                                    <Label text="LATEST KPI SCORE"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="kpiScoreLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-
-                                <VBox GridPane.columnIndex="1" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-purple">
-                                    <Label text="PERFORMANCE STATUS"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="performanceStatusLabel"
-                                           text="—" wrapText="true"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-                            </GridPane>
-                        </VBox>
-
-                        <VBox spacing="16" styleClass="modern-panel">
-                            <Label text="Deadline Reminders &amp; Alerts"
-                                   styleClass="modern-panel-title"/>
-
-                            <GridPane hgap="14">
-                                <columnConstraints>
-                                    <ColumnConstraints percentWidth="50"/>
-                                    <ColumnConstraints percentWidth="50"/>
-                                </columnConstraints>
-
-                                <VBox GridPane.columnIndex="0" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-amber">
-                                    <Label text="DUE WITHIN 3 DAYS"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="dueSoonLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-
-                                <VBox GridPane.columnIndex="1" spacing="8"
-                                      maxWidth="Infinity"
-                                      styleClass="modern-metric-card,dash-rose">
-                                    <Label text="ACTIVE ESCALATIONS"
-                                           styleClass="modern-metric-title"/>
-                                    <Label fx:id="escalationCountLabel" text="—"
-                                           styleClass="modern-metric-number"/>
-                                </VBox>
-                            </GridPane>
-
-                            <Label text="Upcoming Deadlines"
-                                   styleClass="modern-panel-title"/>
-                            <Label fx:id="remindersLabel"
-                                   text="Loading reminders..."
-                                   wrapText="true"
-                                   styleClass="modern-page-subtitle"/>
-                        </VBox>
-
-                        <GridPane hgap="16" vgap="16">
-                            <columnConstraints>
-                                <ColumnConstraints percentWidth="55"/>
-                                <ColumnConstraints percentWidth="45"/>
-                            </columnConstraints>
-
-                            <VBox GridPane.columnIndex="0" spacing="12"
-                                  minWidth="0" styleClass="modern-panel">
-                                <Label text="Task Status Overview"
-                                       styleClass="modern-panel-title"/>
-                                <BarChart fx:id="taskStatusChart"
-                                          animated="false"
-                                          legendVisible="false"
-                                          prefHeight="300">
-                                    <xAxis>
-                                        <CategoryAxis label="Status"/>
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis label="Tasks"
-                                                    forceZeroInRange="true"/>
-                                    </yAxis>
-                                </BarChart>
-                            </VBox>
-
-                            <VBox GridPane.columnIndex="1" spacing="12"
-                                  minWidth="0" styleClass="modern-panel">
-                                <Label text="Escalations by Level"
-                                       styleClass="modern-panel-title"/>
-                                <PieChart fx:id="escalationChart"
-                                          animated="false"
-                                          labelsVisible="false"
-                                          legendVisible="false"
-                                          prefHeight="300"/>
-                                <Label fx:id="donutTotalLabel" text="—"
-                                       styleClass="modern-donut-number"/>
-                            </VBox>
-                        </GridPane>
                     </VBox>
+
                 </VBox>
             </content>
         </ScrollPane>
     </center>
+
 </BorderPane>

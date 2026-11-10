@@ -964,6 +964,17 @@ public class EmployeeTaskController {
         navigate(event, "/fxml/employee/employeeAnonymousReport.fxml");
     }
 
+    @FXML
+private void handleAIRecommendation(
+        ActionEvent event
+) {
+
+    navigate(
+            event,
+            "/fxml/employee/employeeAIRecommendation.fxml"
+    );
+}
+
 
     @FXML
     private void handleLogout(

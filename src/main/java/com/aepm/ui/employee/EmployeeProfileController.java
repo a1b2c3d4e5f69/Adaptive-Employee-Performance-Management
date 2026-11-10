@@ -6,25 +6,23 @@ import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import javafx.scene.shape.Circle;
-
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 public class EmployeeProfileController {
 
@@ -54,11 +52,25 @@ public class EmployeeProfileController {
 
 
     // =========================================================
-    // PROFILE INFORMATION
+    // HEADER PROFILE
     // =========================================================
 
     @FXML
     private Label fullNameLabel;
+
+    @FXML
+    private Label departmentHeaderLabel;
+
+    @FXML
+    private Label employeeHeaderIdLabel;
+
+    @FXML
+    private Label headerAccountStatusLabel;
+
+
+    // =========================================================
+    // PERSONAL INFORMATION
+    // =========================================================
 
     @FXML
     private Label employeeIdLabel;
@@ -96,6 +108,8 @@ public class EmployeeProfileController {
     private final UserService userService =
             new UserService();
 
+    private User loadedUser;
+
 
     // =========================================================
     // INITIALIZE
@@ -104,50 +118,60 @@ public class EmployeeProfileController {
     @FXML
     public void initialize() {
 
-        UIHelper.hideMessage(
-                messageLabel
-        );
+        UIHelper.hideMessage(messageLabel);
+
+        configureAvatar();
+
+        /*
+         * Display session information first,
+         * then replace it with the complete DB record.
+         */
+        User sessionUser =
+                SessionManager.getCurrentUser();
+
+        if (sessionUser != null) {
+
+            populateProfile(
+                    sessionUser
+            );
+        }
+
+        loadFullProfile();
+    }
 
 
+    // =========================================================
+    // AVATAR
+    // =========================================================
+
+    private void configureAvatar() {
+
+        /*
+         * ImageView = 92 x 92
+         */
         Circle clip =
                 new Circle(
-                        60,
-                        60,
-                        60
+                        46,
+                        46,
+                        46
                 );
-
 
         profileImageView.setClip(
                 clip
         );
-
-
-        loadProfile();
-    }
-    @FXML
-        private void handleAttendance(ActionEvent event) {
-
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/employee/employeeAttendance.fxml"
-        );
     }
 
+
     // =========================================================
-    // LOAD PROFILE
+    // LOAD COMPLETE USER FROM DATABASE
     // =========================================================
 
-    private void loadProfile() {
+    private void loadFullProfile() {
 
-        User user =
+        User sessionUser =
                 SessionManager.getCurrentUser();
 
-
-        if (user == null) {
+        if (sessionUser == null) {
 
             UIHelper.showError(
                     messageLabel,
@@ -158,64 +182,275 @@ public class EmployeeProfileController {
         }
 
 
+        Task<User> task =
+                new Task<>() {
+
+                    @Override
+                    protected User call()
+                            throws Exception {
+
+                        List<User> users =
+                                userService.getAllUsers();
+
+                        if (users == null) {
+                            return null;
+                        }
+
+                        for (User user : users) {
+
+                            if (user == null) {
+                                continue;
+                            }
+
+                            if (
+                                    isSameUser(
+                                            sessionUser,
+                                            user
+                                    )
+                            ) {
+
+                                return user;
+                            }
+                        }
+
+                        return null;
+                    }
+                };
+
+
+        task.setOnSucceeded(event -> {
+
+            User result =
+                    task.getValue();
+
+            if (result == null) {
+
+                UIHelper.showError(
+                        messageLabel,
+                        "Unable to find your complete profile record."
+                );
+
+                return;
+            }
+
+            /*
+             * Task.setOnSucceeded already runs on FX thread,
+             * but this keeps it safe.
+             */
+            runOnFxThread(() -> {
+
+                loadedUser = result;
+
+                populateProfile(
+                        result
+                );
+
+                UIHelper.hideMessage(
+                        messageLabel
+                );
+            });
+        });
+
+
+        task.setOnFailed(event -> {
+
+            Throwable error =
+                    task.getException();
+
+            if (error != null) {
+                error.printStackTrace();
+            }
+
+            runOnFxThread(() ->
+                    UIHelper.showError(
+                            messageLabel,
+                            error == null
+                                    ? "Unable to load profile information."
+                                    : getRootMessage(error)
+                    )
+            );
+        });
+
+
+        Thread thread =
+                new Thread(
+                        task,
+                        "employee-profile-loader"
+                );
+
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+
+    // =========================================================
+    // MATCH CURRENT USER
+    // =========================================================
+
+    private boolean isSameUser(
+            User sessionUser,
+            User databaseUser
+    ) {
+
+        /*
+         * 1. Best match = user_id
+         */
+        if (
+                hasText(sessionUser.getUserId())
+                        &&
+                        hasText(databaseUser.getUserId())
+                        &&
+                        sessionUser.getUserId()
+                                .equalsIgnoreCase(
+                                        databaseUser.getUserId()
+                                )
+        ) {
+
+            return true;
+        }
+
+
+        /*
+         * 2. Fallback = email
+         */
+        if (
+                hasText(sessionUser.getEmail())
+                        &&
+                        hasText(databaseUser.getEmail())
+                        &&
+                        sessionUser.getEmail()
+                                .equalsIgnoreCase(
+                                        databaseUser.getEmail()
+                                )
+        ) {
+
+            return true;
+        }
+
+
+        /*
+         * 3. Fallback = username
+         */
+        if (
+                hasText(sessionUser.getUsername())
+                        &&
+                        hasText(databaseUser.getUsername())
+                        &&
+                        sessionUser.getUsername()
+                                .equalsIgnoreCase(
+                                        databaseUser.getUsername()
+                                )
+        ) {
+
+            return true;
+        }
+
+
+        return false;
+    }
+
+
+    // =========================================================
+    // POPULATE PROFILE
+    // =========================================================
+
+    private void populateProfile(
+            User user
+    ) {
+
+        if (user == null) {
+            return;
+        }
+
+
         String name =
-                user.getFullName() == null
-                        ? "Employee"
-                        : user.getFullName();
+                safeName(
+                        user.getFullName()
+                );
+
+        String employeeId =
+                safe(
+                        user.getEmployeeId()
+                );
+
+        String username =
+                safe(
+                        user.getUsername()
+                );
+
+        String email =
+                safe(
+                        user.getEmail()
+                );
+
+        String department =
+                safe(
+                        user.getDepartment()
+                );
+
+        String accountStatus =
+                safe(
+                        user.getAccountStatus()
+                );
 
 
-        welcomeLabel.setText(
-                "Welcome, " + name
-        );
+        // TOP BAR
+        if (welcomeLabel != null) {
+
+            welcomeLabel.setText(
+                    "Welcome, " + name
+            );
+        }
+
+        if (topNameLabel != null) {
+
+            topNameLabel.setText(
+                    name
+            );
+        }
 
 
-        topNameLabel.setText(
-                name
-        );
-
-
+        // PROFILE HEADER
         fullNameLabel.setText(
                 name
         );
 
-
-        employeeIdLabel.setText(
-                safe(
-                        user.getEmployeeId()
-                )
+        employeeHeaderIdLabel.setText(
+                employeeId
         );
 
+        departmentHeaderLabel.setText(
+                department
+        );
+
+        headerAccountStatusLabel.setText(
+                accountStatus
+        );
+
+
+        // PERSONAL INFO
+        employeeIdLabel.setText(
+                employeeId
+        );
 
         usernameLabel.setText(
-                safe(
-                        user.getUsername()
-                )
+                username
         );
-
 
         emailLabel.setText(
-                safe(
-                        user.getEmail()
-                )
+                email
         );
-
 
         departmentLabel.setText(
-                safe(
-                        user.getDepartment()
-                )
+                department
         );
-
 
         roleLabel.setText(
                 "Employee"
         );
 
-
         accountStatusLabel.setText(
-                safe(
-                        user.getAccountStatus()
-                )
+                accountStatus
         );
 
 
@@ -241,84 +476,154 @@ public class EmployeeProfileController {
     ) {
 
         String imageUrl =
-                user.getProfileImage();
+                user == null
+                        ? null
+                        : user.getProfileImage();
 
 
-        if (
-                imageUrl != null
-                        && !imageUrl.isBlank()
-        ) {
+        if (!hasText(imageUrl)) {
 
-            try {
+            showInitial(
+                    firstLetter(
+                            user == null
+                                    ? null
+                                    : user.getFullName()
+                    )
+            );
 
-                Image image =
-                        new Image(
-                                imageUrl
-                                        + "?t="
-                                        + System.currentTimeMillis(),
-                                true
-                        );
-
-
-                profileImageView.setImage(
-                        image
-                );
-
-
-                profileImageView.setVisible(
-                        true
-                );
-
-
-                profileInitialLabel.setVisible(
-                        false
-                );
-
-
-                return;
-
-            } catch (Exception ignored) {
-            }
+            return;
         }
 
 
-        profileImageView.setImage(
-                null
-        );
+        try {
+
+            String separator =
+                    imageUrl.contains("?")
+                            ? "&"
+                            : "?";
+
+            String cacheBustedUrl =
+                    imageUrl
+                            + separator
+                            + "t="
+                            + System.currentTimeMillis();
 
 
-        profileImageView.setVisible(
-                false
-        );
+            Image image =
+                    new Image(
+                            cacheBustedUrl,
+                            true
+                    );
 
 
-        profileInitialLabel.setVisible(
-                true
-        );
+            image.progressProperty()
+                    .addListener(
+                            (
+                                    observable,
+                                    oldValue,
+                                    newValue
+                            ) -> {
+
+                                if (
+                                        newValue.doubleValue()
+                                                < 1.0
+                                ) {
+
+                                    return;
+                                }
+
+                                runOnFxThread(() -> {
+
+                                    if (!image.isError()) {
+
+                                        profileImageView.setImage(
+                                                image
+                                        );
+
+                                        profileImageView.setVisible(
+                                                true
+                                        );
+
+                                        profileInitialLabel.setVisible(
+                                                false
+                                        );
+
+                                    } else {
+
+                                        showInitial(
+                                                firstLetter(
+                                                        user.getFullName()
+                                                )
+                                        );
+                                    }
+                                });
+                            }
+                    );
 
 
-        String name =
-                user.getFullName();
+            image.exceptionProperty()
+                    .addListener(
+                            (
+                                    observable,
+                                    oldException,
+                                    newException
+                            ) -> {
+
+                                if (newException != null) {
+
+                                    runOnFxThread(() ->
+                                            showInitial(
+                                                    firstLetter(
+                                                            user.getFullName()
+                                                    )
+                                            )
+                                    );
+                                }
+                            }
+                    );
 
 
-        if (
-                name != null
-                        && !name.isBlank()
-        ) {
+        } catch (Exception exception) {
 
-            profileInitialLabel.setText(
-                    name.substring(
-                            0,
-                            1
-                    ).toUpperCase()
-            );
+            exception.printStackTrace();
 
-        } else {
-
-            profileInitialLabel.setText(
-                    "E"
+            showInitial(
+                    firstLetter(
+                            user.getFullName()
+                    )
             );
         }
+    }
+
+
+    // =========================================================
+    // FALLBACK INITIAL
+    // =========================================================
+
+    private void showInitial(
+            String initial
+    ) {
+
+        runOnFxThread(() -> {
+
+            profileImageView.setImage(
+                    null
+            );
+
+            profileImageView.setVisible(
+                    false
+            );
+
+            profileInitialLabel.setVisible(
+                    true
+            );
+
+            profileInitialLabel.setText(
+                    hasText(initial)
+                            ? initial
+                            : "E"
+            );
+        });
     }
 
 
@@ -333,7 +638,6 @@ public class EmployeeProfileController {
 
         FileChooser chooser =
                 new FileChooser();
-
 
         chooser.setTitle(
                 "Select Profile Image"
@@ -387,13 +691,12 @@ public class EmployeeProfileController {
                 true
         );
 
-
         UIHelper.hideMessage(
                 messageLabel
         );
 
 
-        Task<String> task =
+        Task<String> uploadTask =
                 new Task<>() {
 
                     @Override
@@ -408,68 +711,54 @@ public class EmployeeProfileController {
                 };
 
 
-        task.setOnSucceeded(
-                e -> {
+        uploadTask.setOnSucceeded(event2 -> {
 
-                    editImageButton.setDisable(
-                            false
-                    );
+            editImageButton.setDisable(
+                    false
+            );
 
-
-                    User user =
-                            SessionManager
-                                    .getCurrentUser();
-
-
-                    if (user != null) {
-
-                        loadProfileImage(
-                                user
-                        );
-                    }
+            UIHelper.showSuccess(
+                    messageLabel,
+                    "Profile image updated successfully."
+            );
 
 
-                    UIHelper.showSuccess(
-                            messageLabel,
-                            "Profile image updated successfully."
-                    );
-                }
-        );
+            /*
+             * Reload DB after successful upload.
+             */
+            loadFullProfile();
+        });
 
 
-        task.setOnFailed(
-                e -> {
+        uploadTask.setOnFailed(event2 -> {
 
-                    editImageButton.setDisable(
-                            false
-                    );
+            editImageButton.setDisable(
+                    false
+            );
 
+            Throwable error =
+                    uploadTask.getException();
 
-                    Throwable error =
-                            task.getException();
+            if (error != null) {
+                error.printStackTrace();
+            }
 
-
-                    UIHelper.showError(
-                            messageLabel,
-                            error == null
-                                    ? "Unable to upload profile image."
-                                    : error.getMessage()
-                    );
-                }
-        );
+            UIHelper.showError(
+                    messageLabel,
+                    error == null
+                            ? "Unable to upload profile image."
+                            : getRootMessage(error)
+            );
+        });
 
 
         Thread thread =
                 new Thread(
-                        task
+                        uploadTask,
+                        "profile-image-upload"
                 );
 
-
-        thread.setDaemon(
-                true
-        );
-
-
+        thread.setDaemon(true);
         thread.start();
     }
 
@@ -487,12 +776,33 @@ public class EmployeeProfileController {
                         .trim();
 
 
+        if (
+                !contact.isBlank()
+                        &&
+                        !contact.matches(
+                                "[0-9+\\- ]{7,20}"
+                        )
+        ) {
+
+            UIHelper.showError(
+                    messageLabel,
+                    "Please enter a valid contact number."
+            );
+
+            return;
+        }
+
+
         saveButton.setDisable(
                 true
         );
 
+        UIHelper.hideMessage(
+                messageLabel
+        );
 
-        Task<Void> task =
+
+        Task<Void> saveTask =
                 new Task<>() {
 
                     @Override
@@ -509,61 +819,56 @@ public class EmployeeProfileController {
                 };
 
 
-        task.setOnSucceeded(
-                e -> {
+        saveTask.setOnSucceeded(event -> {
 
-                    saveButton.setDisable(
-                            false
-                    );
+            saveButton.setDisable(
+                    false
+            );
 
+            UIHelper.showSuccess(
+                    messageLabel,
+                    "Profile updated successfully."
+            );
 
-                    UIHelper.showSuccess(
-                            messageLabel,
-                            "Profile updated successfully."
-                    );
-                }
-        );
-
-
-        task.setOnFailed(
-                e -> {
-
-                    saveButton.setDisable(
-                            false
-                    );
+            loadFullProfile();
+        });
 
 
-                    Throwable error =
-                            task.getException();
+        saveTask.setOnFailed(event -> {
 
+            saveButton.setDisable(
+                    false
+            );
 
-                    UIHelper.showError(
-                            messageLabel,
-                            error == null
-                                    ? "Unable to update profile."
-                                    : error.getMessage()
-                    );
-                }
-        );
+            Throwable error =
+                    saveTask.getException();
+
+            if (error != null) {
+                error.printStackTrace();
+            }
+
+            UIHelper.showError(
+                    messageLabel,
+                    error == null
+                            ? "Unable to update profile."
+                            : getRootMessage(error)
+            );
+        });
 
 
         Thread thread =
                 new Thread(
-                        task
+                        saveTask,
+                        "profile-contact-save"
                 );
 
-
-        thread.setDaemon(
-                true
-        );
-
-
+        thread.setDaemon(true);
         thread.start();
     }
 
 
     // =========================================================
-    // HOME
+    // NAVIGATION
     // =========================================================
 
     @FXML
@@ -578,84 +883,65 @@ public class EmployeeProfileController {
     }
 
 
-    // =========================================================
-    // PROFILE
-    // =========================================================
-
     @FXML
     private void handleProfile(
-        ActionEvent event
+            ActionEvent event
     ) {
-        navigate(
-            event,
-            "/fxml/employee/employeeProfile.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // TASK
-    // =========================================================
-
-    @FXML
-    private void handleTasks(ActionEvent event) {
-        navigate(
-            event,
-            "/fxml/employee/employeeTask.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // KPI
-    // =========================================================
-
-    @FXML
-        private void handleKpi(
-                ActionEvent event
-        ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/employee/employeePerformance.fxml"
-        );
-        }
-
-
-    // =========================================================
-    // REPORTS
-    // =========================================================
-
-     @FXML
-        private void handleReports(
-                ActionEvent event
-        ) {
 
         navigate(
                 event,
-                "/fxml/employee/employeeReport.fxml"
+                "/fxml/employee/employeeProfile.fxml"
         );
-        }
-
-
-    // =========================================================
-    // ANONYMOUS REPORT
-    // =========================================================
-
-    @FXML
-    private void handleAnonymousReport(javafx.event.ActionEvent event) {
-        navigate(event, "/fxml/employee/employeeAnonymousReport.fxml");
     }
 
 
-    // =========================================================
-    // CHANGE PASSWORD
-    // =========================================================
+    @FXML
+    private void handleTasks(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeeTask.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleAttendance(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeeAttendance.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleKpi(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeePerformance.fxml"
+        );
+    }
+
+
+    @FXML
+    private void handleAnonymousReport(
+            ActionEvent event
+    ) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeeAnonymousReport.fxml"
+        );
+    }
+
 
     @FXML
     private void handleChangePassword(
@@ -669,10 +955,6 @@ public class EmployeeProfileController {
     }
 
 
-    // =========================================================
-    // LOGOUT
-    // =========================================================
-
     @FXML
     private void handleLogout(
             ActionEvent event
@@ -680,17 +962,12 @@ public class EmployeeProfileController {
 
         SessionManager.clearSession();
 
-
         navigate(
                 event,
                 "/fxml/auth/login.fxml"
         );
     }
 
-
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
 
     private void navigate(
             ActionEvent event,
@@ -715,16 +992,99 @@ public class EmployeeProfileController {
 
 
     // =========================================================
+    // FX THREAD
+    // =========================================================
+
+    private void runOnFxThread(
+            Runnable action
+    ) {
+
+        if (Platform.isFxApplicationThread()) {
+
+            action.run();
+
+        } else {
+
+            Platform.runLater(
+                    action
+            );
+        }
+    }
+
+
+    // =========================================================
     // HELPERS
     // =========================================================
+
+    private boolean hasText(
+            String value
+    ) {
+
+        return value != null
+                && !value.isBlank();
+    }
+
 
     private String safe(
             String value
     ) {
 
-        return value == null
-                || value.isBlank()
-                ? "-"
-                : value;
+        return hasText(value)
+                ? value
+                : "-";
+    }
+
+
+    private String safeName(
+            String value
+    ) {
+
+        return hasText(value)
+                ? value
+                : "Employee";
+    }
+
+
+    private String firstLetter(
+            String value
+    ) {
+
+        if (!hasText(value)) {
+            return "E";
+        }
+
+        return value
+                .substring(
+                        0,
+                        1
+                )
+                .toUpperCase();
+    }
+
+
+    private String getRootMessage(
+            Throwable error
+    ) {
+
+        if (error == null) {
+            return "Unexpected error.";
+        }
+
+
+        Throwable current =
+                error;
+
+        while (current.getCause() != null) {
+
+            current =
+                    current.getCause();
+        }
+
+
+        return hasText(
+                current.getMessage()
+        )
+                ? current.getMessage()
+                : "Unexpected error.";
     }
 }

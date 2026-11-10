@@ -12,8 +12,8 @@
 
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.aepm.ui.employee.EmployeeAIRecommendationController"
-        styleClass="main-layout">
+        fx:controller="com.aepm.ui.employee.EmployeeHomeController"
+        styleClass="main-layout,employee-root,employee-page">
 
     <!-- ================= TOP BAR ================= -->
 

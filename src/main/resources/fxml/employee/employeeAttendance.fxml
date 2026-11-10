@@ -1,259 +1,315 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import com.aepm.ui.components.NotificationBell?>
 <?import com.aepm.ui.components.EmployeeWelcomeLabel?>
 <?import com.aepm.ui.components.EmployeeRoleLabel?>
-<?import com.aepm.ui.components.NotificationBell?>
-<?import javafx.scene.shape.Rectangle?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.aepm.ui.employee.EmployeeAttendanceController"
-            styleClass="main-layout">
+            stylesheets="@../../css/app.css"
+            styleClass="employee-root">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
-            <padding>
-                <Insets top="16" right="28" bottom="16" left="28"/>
-            </padding>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="employee-topbar">
+
             <VBox spacing="2">
-                <EmployeeWelcomeLabel styleClass="topbar-title"/>
+                <EmployeeWelcomeLabel styleClass="employee-topbar-user-name"/>
+
                 <Label text="Adaptive Employee Performance Management System"
-                       styleClass="topbar-subtitle"/>
+                       styleClass="employee-page-subtitle"/>
             </VBox>
+
             <Region HBox.hgrow="ALWAYS"/>
+
             <NotificationBell/>
+
             <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label fx:id="topNameLabel" text="Employee"
-                       styleClass="topbar-user-name"/>
+
+                <Label fx:id="topNameLabel"
+                       text="Employee"
+                       styleClass="employee-topbar-user-name"/>
+
                 <EmployeeRoleLabel fx:id="topRoleLabel"
-                                   styleClass="topbar-user-role"/>
+                                   styleClass="employee-topbar-user-position"/>
+
             </VBox>
         </HBox>
     </top>
 
+
     <left>
-        <VBox prefWidth="245" minWidth="245" maxWidth="245"
-              spacing="8" styleClass="modern-sidebar">
-            <padding>
-                <Insets top="28" right="18" bottom="20" left="18"/>
-            </padding>
-            <Label text="MENU" styleClass="modern-sidebar-section"/>
-            <Button text="⌂   Home" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleHome"
-                    styleClass="modern-nav-button"/>
-            <Button text="○   My Profile" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleProfile"
-                    styleClass="modern-nav-button"/>
-            <Button text="✓   My Tasks" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleTasks"
-                    styleClass="modern-nav-button"/>
-            <Button text="▥   Performance" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleKpi"
-                    styleClass="modern-nav-button"/>
-            <Button text="▦   My Attendance" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleAttendance"
-                    styleClass="modern-nav-button-active"/>
-            <Button text="▤   Reports" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleReports"
-                    styleClass="modern-nav-button"/>
-            <Button text="!   Anonymous Report" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleAnonymousReport"
-                    styleClass="modern-nav-button"/>
-            <Region VBox.vgrow="ALWAYS"/>
-            <Button text="↪   Logout" alignment="CENTER_LEFT"
-                    maxWidth="Infinity" onAction="#handleLogout"
-                    styleClass="modern-logout-button"/>
-        </VBox>
+        <ScrollPane prefWidth="240"
+                    minWidth="240"
+                    maxWidth="240"
+                    fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="employee-sidebar-scroll">
+
+            <content>
+                <VBox prefWidth="240"
+                      spacing="5"
+                      styleClass="employee-sidebar">
+
+                    <VBox spacing="2">
+                        <Label text="AEPM"
+                               styleClass="employee-brand-title"/>
+                        <Label text="Adaptive Performance"
+                               styleClass="employee-brand-secondary"/>
+                    </VBox>
+
+                    <Label text="WORKSPACE"
+                           styleClass="employee-sidebar-section"/>
+
+                    <Button text="⌂   Home"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="✓   My Tasks"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTasks"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="◷   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendance"
+                            styleClass="employee-nav-button-active"/>
+
+                    <Button text="⌁   My Performance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpi"
+                            styleClass="employee-nav-button"/>
+
+                    <Label text="SUPPORT &amp; GOVERNANCE"
+                           styleClass="employee-sidebar-section"/>
+
+                    <Button text="!   Anonymous Report"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReport"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="employee-nav-button"/>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <Button text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+            </content>
+        </ScrollPane>
     </left>
 
-    <!-- MAIN CONTENT -->
+
     <center>
         <ScrollPane fitToWidth="true"
                     hbarPolicy="NEVER"
                     vbarPolicy="AS_NEEDED"
-                    pannable="true"
-                    styleClass="modern-content-scroll">
+                    styleClass="employee-content-scroll">
 
             <content>
-                <VBox spacing="24"
-                      maxWidth="Infinity"
-                      styleClass="modern-content">
+                <VBox spacing="22"
+                      styleClass="employee-content">
 
-                    <padding>
-                        <Insets top="30"
-                                right="32"
-                                bottom="40"
-                                left="32"/>
-                    </padding>
-
-                    <!-- PAGE HEADER -->
                     <VBox spacing="5">
                         <Label text="My Attendance"
-                               styleClass="modern-page-title"/>
+                               styleClass="employee-page-title"/>
 
-                        <Label text="Scan the daily QR code and view your attendance history."
-                               styleClass="modern-page-subtitle"/>
+                        <Label text="Scan the daily attendance QR code and review your attendance history."
+                               styleClass="employee-page-subtitle"/>
                     </VBox>
 
-                    <!-- TODAY'S STATUS -->
-                    <HBox spacing="18" maxWidth="Infinity">
 
-                        <VBox spacing="10"
+                    <!-- TODAY -->
+                    <HBox spacing="14">
+
+                        <VBox spacing="5"
                               HBox.hgrow="ALWAYS"
-                              maxWidth="Infinity"
-                              styleClass="modern-card">
+                              styleClass="employee-kpi-card">
 
-                            <padding>
-                                <Insets top="22" right="24" bottom="22" left="24"/>
-                            </padding>
-
-                            <Label text="Check In"
-                                   styleClass="modern-card-label"/>
+                            <Label text="CHECK IN"
+                                   styleClass="employee-kpi-title"/>
 
                             <Label fx:id="checkInLabel"
                                    text="--:--"
-                                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #202035;"/>
+                                   styleClass="employee-kpi-value"/>
 
                             <Label text="Today's check-in time"
-                                   styleClass="modern-page-subtitle"/>
+                                   styleClass="employee-kpi-note"/>
+
                         </VBox>
 
-                        <VBox spacing="10"
+
+                        <VBox spacing="5"
                               HBox.hgrow="ALWAYS"
-                              maxWidth="Infinity"
-                              styleClass="modern-card">
+                              styleClass="employee-kpi-card">
 
-                            <padding>
-                                <Insets top="22" right="24" bottom="22" left="24"/>
-                            </padding>
-
-                            <Label text="Check Out"
-                                   styleClass="modern-card-label"/>
+                            <Label text="CHECK OUT"
+                                   styleClass="employee-kpi-title"/>
 
                             <Label fx:id="checkOutLabel"
                                    text="--:--"
-                                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #202035;"/>
+                                   styleClass="employee-kpi-value"/>
 
                             <Label text="Today's check-out time"
-                                   styleClass="modern-page-subtitle"/>
+                                   styleClass="employee-kpi-note"/>
+
                         </VBox>
 
                     </HBox>
 
-                    <!-- QR SCANNER -->
+
+                    <!-- QR SCAN -->
                     <VBox spacing="16"
                           alignment="CENTER"
-                          maxWidth="Infinity"
-                          styleClass="modern-card">
-
-                        <padding>
-                            <Insets top="26" right="24" bottom="26" left="24"/>
-                        </padding>
+                          styleClass="employee-card">
 
                         <Label text="Scan Attendance QR Code"
-                               styleClass="modern-section-title"/>
+                               styleClass="employee-section-title"/>
 
-                        <Label text="Scan the daily QR Code displayed by Admin."
-                               styleClass="modern-page-subtitle"/>
+                        <Label text="Use your camera or upload the QR image displayed by the administrator."
+                               styleClass="employee-section-subtitle"/>
 
                         <StackPane prefWidth="420"
-                                prefHeight="260"
-                                minWidth="420"
-                                maxWidth="420"
-                                style="-fx-background-color: #F3F6FC; -fx-background-radius: 10; -fx-border-color: #E3E8F2; -fx-border-radius: 10;">
+                                   prefHeight="260"
+                                   minWidth="420"
+                                   maxWidth="420"
+                                   style="-fx-background-color:#FBFAF6;
+                                          -fx-border-color:#E7E7E2;
+                                          -fx-border-radius:10;
+                                          -fx-background-radius:10;">
 
                             <ImageView fx:id="cameraPreview"
-                                fitWidth="400"
-                                fitHeight="240"
-                                preserveRatio="true"/>
+                                       fitWidth="400"
+                                       fitHeight="240"
+                                       preserveRatio="true"/>
 
                             <Label fx:id="cameraPlaceholder"
-                                text="Camera is not started"
-                                styleClass="modern-page-subtitle"/>
+                                   text="Camera is not started"
+                                   styleClass="employee-section-subtitle"/>
 
                         </StackPane>
-                        <Rectangle
-                            fx:id="qrScanLine"
-                            width="380"
-                            height="3"
-                            arcWidth="3"
-                            arcHeight="3"
-                            fill="#2563EB"
-                            mouseTransparent="true"
-                            visible="false"/>
 
-                        <HBox spacing="12" alignment="CENTER">
+
+                        <Rectangle fx:id="qrScanLine"
+                                   width="380"
+                                   height="3"
+                                   arcWidth="3"
+                                   arcHeight="3"
+                                   fill="#FFC700"
+                                   mouseTransparent="true"
+                                   visible="false"/>
+
+
+                        <HBox spacing="10"
+                              alignment="CENTER">
 
                             <Button fx:id="startCameraButton"
-                                text="Start Camera"
-                                onAction="#handleStartCamera"
-                                styleClass="modern-primary-button"/>
-
-                            <Button fx:id="stopCameraButton"
-                                text="Stop Camera"
-                                disable="true"
-                                onAction="#handleStopCamera"
-                                styleClass="modern-secondary-button"/>
+                                    text="Start Camera"
+                                    onAction="#handleStartCamera"
+                                    styleClass="employee-button-primary"/>
 
                             <Button fx:id="uploadQrButton"
-                                text="Upload QR Image"
-                                onAction="#handleUploadQrImage"
-                                styleClass="modern-secondary-button"/>
+                                    text="Upload QR Image"
+                                    onAction="#handleUploadQrImage"
+                                    styleClass="employee-button"/>
+
+                            <Button fx:id="stopCameraButton"
+                                    text="Stop Camera"
+                                    disable="true"
+                                    onAction="#handleStopCamera"
+                                    styleClass="employee-button"/>
 
                         </HBox>
 
+
                         <Label fx:id="scanStatusLabel"
-                            text="Ready to scan QR Code."
-                            wrapText="true"
-                            styleClass="modern-page-subtitle"/>
+                               text="Ready to scan QR Code."
+                               wrapText="true"
+                               styleClass="employee-section-subtitle"/>
+
 
                         <Button fx:id="lateCheckOutButton"
-                            text="Check Out After 10 PM"
-                            disable="true"
-                            onAction="#handleLateCheckOut"
-                            styleClass="modern-secondary-button"/>
+                                text="Check Out After 10 PM"
+                                disable="true"
+                                onAction="#handleLateCheckOut"
+                                styleClass="employee-button"/>
 
                     </VBox>
 
-                    <!-- ATTENDANCE HISTORY -->
-                    <VBox spacing="18"
-                          maxWidth="Infinity"
-                          styleClass="modern-card">
 
-                        <padding>
-                            <Insets top="24" right="24" bottom="24" left="24"/>
-                        </padding>
+                    <!-- HISTORY -->
+                    <VBox spacing="14"
+                          styleClass="employee-card">
 
                         <HBox alignment="CENTER_LEFT">
 
-                            <Label text="Attendance History"
-                                styleClass="modern-section-title"/>
+                            <VBox spacing="3"
+                                  HBox.hgrow="ALWAYS">
 
-                            <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Attendance History"
+                                       styleClass="employee-section-title"/>
+
+                                <Label text="Review your previous attendance and overtime records."
+                                       styleClass="employee-section-subtitle"/>
+
+                            </VBox>
 
                             <Button text="Refresh"
-                                onAction="#handleRefreshHistory"
-                                styleClass="modern-secondary-button"/>
+                                    onAction="#handleRefreshHistory"
+                                    styleClass="employee-button"/>
+
                         </HBox>
 
-                        <TableView fx:id="attendanceTable" maxWidth="Infinity" prefHeight="280">
+
+                        <TableView fx:id="attendanceTable"
+                                   prefHeight="300"
+                                   styleClass="employee-table">
+
                             <columns>
+
                                 <TableColumn fx:id="dateColumn"
-                                    text="Date"/>
+                                             text="Date"/>
 
                                 <TableColumn fx:id="checkInColumn"
-                                    text="Check In"/>
+                                             text="Check In"/>
 
                                 <TableColumn fx:id="checkOutColumn"
-                                    text="Check Out"/>
+                                             text="Check Out"/>
 
                                 <TableColumn fx:id="statusColumn"
-                                    text="Status"/>
+                                             text="Status"/>
+
                                 <TableColumn fx:id="overtimeColumn"
-                                    text="OT"/>
+                                             text="Overtime"/>
+
                             </columns>
 
                         </TableView>

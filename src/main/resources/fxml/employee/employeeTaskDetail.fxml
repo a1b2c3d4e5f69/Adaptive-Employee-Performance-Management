@@ -19,7 +19,7 @@
         prefWidth="720"
         minWidth="720"
         maxWidth="720"
-        styleClass="task-popup-root">
+        styleClass="main-layout,employee-root,employee-page">
 
 
     <!-- =====================================================

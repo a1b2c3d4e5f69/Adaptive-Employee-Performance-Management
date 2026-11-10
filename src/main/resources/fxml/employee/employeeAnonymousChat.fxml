@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import com.aepm.ui.components.EmployeeWelcomeLabel?>
 <?import com.aepm.ui.components.EmployeeRoleLabel?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="com.aepm.ui.employee.EmployeeAnonymousChatController" styleClass="main-layout" stylesheets="@../../css/app.css">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="com.aepm.ui.employee.EmployeeAnonymousChatController" styleClass="main-layout,employee-root,employee-page" stylesheets="@../../css/app.css">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
             <padding>

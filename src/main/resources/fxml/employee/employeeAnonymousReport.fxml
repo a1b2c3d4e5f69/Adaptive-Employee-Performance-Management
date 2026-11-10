@@ -1,114 +1,455 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import com.aepm.ui.components.EmployeeWelcomeLabel?>
 <?import com.aepm.ui.components.EmployeeRoleLabel?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="com.aepm.ui.employee.EmployeeAnonymousReportController" styleClass="main-layout" stylesheets="@../../css/app.css">
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:id="root"
+            fx:controller="com.aepm.ui.employee.EmployeeAnonymousReportController"
+            stylesheets="@../../css/app.css"
+            styleClass="employee-root">
+
+    <!-- TOP -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="topbar">
-            <padding>
-                <Insets top="16" right="28" bottom="16" left="28" />
-            </padding>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="employee-topbar">
+
             <VBox spacing="2">
-                <EmployeeWelcomeLabel styleClass="topbar-title" />
-                <Label text="Adaptive Employee Performance Management System" styleClass="topbar-subtitle" />
+
+                <EmployeeWelcomeLabel styleClass="employee-topbar-user-name"/>
+
+                <Label text="Adaptive Employee Performance Management System"
+                       styleClass="employee-page-subtitle"/>
+
             </VBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <VBox alignment="CENTER_RIGHT" spacing="2">
-                <Label fx:id="topNameLabel" text="Employee" styleClass="topbar-user-name" />
-                <EmployeeRoleLabel fx:id="topRoleLabel" styleClass="topbar-user-role" />
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <VBox alignment="CENTER_RIGHT"
+                  spacing="2">
+
+                <Label fx:id="topNameLabel"
+                       text="Employee"
+                       styleClass="employee-topbar-user-name"/>
+
+                <EmployeeRoleLabel fx:id="topRoleLabel"
+                                   styleClass="employee-topbar-user-position"/>
+
             </VBox>
+
         </HBox>
     </top>
+
+
+    <!-- SIDEBAR -->
     <left>
-        <VBox prefWidth="245" minWidth="245" maxWidth="245" spacing="8" styleClass="modern-sidebar">
-            <padding>
-                <Insets top="28" right="18" bottom="20" left="18" />
-            </padding>
-            <Label text="MENU" styleClass="modern-sidebar-section" />
-            <Button text="⌂   Home" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleHome" styleClass="modern-nav-button" />
-            <Button text="○   My Profile" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleProfile" styleClass="modern-nav-button" />
-            <Button text="✓   My Tasks" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleTasks" styleClass="modern-nav-button" />
-            <Button text="▥   Performance" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleKpi" styleClass="modern-nav-button" />
-            <Button text="▦   My Attendance" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleAttendance" styleClass="modern-nav-button" />
-            <Button text="▤   Reports" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleReports" styleClass="modern-nav-button" />
-            <Button text="!   Anonymous Report" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleAnonymousReport" styleClass="modern-nav-button-active" />
-            <Region VBox.vgrow="ALWAYS" />
-            <Button text="↪   Logout" alignment="CENTER_LEFT" maxWidth="Infinity" onAction="#handleLogout" styleClass="modern-logout-button" />
-        </VBox>
-    </left>
-    <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" styleClass="modern-content-scroll">
+        <ScrollPane prefWidth="240"
+                    minWidth="240"
+                    maxWidth="240"
+                    fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="employee-sidebar-scroll">
+
             <content>
-                <VBox fx:id="pageContent" spacing="20" styleClass="modern-content">
-                    <padding>
-                        <Insets top="26" right="28" bottom="32" left="28" />
-                    </padding>
-                    <Label text="Anonymous Report" styleClass="modern-page-title" />
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <ProgressIndicator fx:id="busyIndicator" prefWidth="24" prefHeight="24" visible="false" />
-                        <Label fx:id="messageLabel" wrapText="true" minHeight="22" />
+                <VBox prefWidth="240"
+                      spacing="5"
+                      styleClass="employee-sidebar">
+
+                    <VBox spacing="2">
+                        <Label text="AEPM"
+                               styleClass="employee-brand-title"/>
+                        <Label text="Adaptive Performance"
+                               styleClass="employee-brand-secondary"/>
+                    </VBox>
+
+                    <Label text="WORKSPACE"
+                           styleClass="employee-sidebar-section"/>
+
+                    <Button text="⌂   Home"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="✓   My Tasks"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTasks"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="◷   Attendance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAttendance"
+                            styleClass="employee-nav-button"/>
+
+                    <Button text="⌁   My Performance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleKpi"
+                            styleClass="employee-nav-button"/>
+
+                    <Label text="SUPPORT &amp; GOVERNANCE"
+                           styleClass="employee-sidebar-section"/>
+
+                    <Button text="!   Anonymous Report"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleAnonymousReport"
+                            styleClass="employee-nav-button-active"/>
+
+                    <Button text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="employee-nav-button"/>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <Button text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </left>
+
+
+    <!-- CONTENT -->
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="employee-content-scroll">
+
+            <content>
+                <VBox fx:id="pageContent"
+                      spacing="22"
+                      styleClass="employee-content">
+
+                    <!-- HEADER -->
+                    <VBox spacing="5">
+
+                        <Label text="Anonymous Reporting"
+                               styleClass="employee-page-title"/>
+
+                        <Label text="Submit and track workplace concerns safely and confidentially."
+                               styleClass="employee-page-subtitle"/>
+
+                    </VBox>
+
+
+                    <!-- PRIVACY NOTICE -->
+                    <VBox spacing="6"
+                          style="-fx-background-color:#FFF9E6;
+                                 -fx-border-color:#FFDE69;
+                                 -fx-border-width:1;
+                                 -fx-border-radius:10;
+                                 -fx-background-radius:10;
+                                 -fx-padding:18;">
+
+                        <Label text="Your privacy is protected"
+                               styleClass="employee-section-title"/>
+
+                        <Label text="Your identity is not disclosed to the administrator reviewing this report. Avoid including unnecessary identifying information and keep your secret reference number safely."
+                               wrapText="true"
+                               styleClass="employee-section-subtitle"/>
+
+                    </VBox>
+
+
+                    <!-- STATUS -->
+                    <HBox spacing="10"
+                          alignment="CENTER_LEFT">
+
+                        <ProgressIndicator fx:id="busyIndicator"
+                                           prefWidth="24"
+                                           prefHeight="24"
+                                           visible="false"/>
+
+                        <Label fx:id="messageLabel"
+                               wrapText="true"
+                               minHeight="22"
+                               styleClass="employee-helper-text"/>
+
                     </HBox>
-                    <VBox spacing="12" styleClass="section-card">
-                        <Label text="Submit Anonymous Report" styleClass="section-title" />
-                        <VBox spacing="5">
-                            <Label text="Category" styleClass="card-label" />
-                            <ComboBox fx:id="categoryCombo" promptText="Select a category" maxWidth="Infinity" />
+
+
+                    <!-- SUBMIT -->
+                    <VBox spacing="16"
+                          styleClass="employee-card">
+
+                        <VBox spacing="4">
+                            <Label text="Submit Anonymous Report"
+                                   styleClass="employee-section-title"/>
+
+                            <Label text="Provide enough information for the administrator to understand and investigate the concern."
+                                   wrapText="true"
+                                   styleClass="employee-section-subtitle"/>
                         </VBox>
-                        <VBox spacing="5">
-                            <Label text="Subject" styleClass="card-label" />
-                            <TextField fx:id="subjectField" promptText="Brief subject" />
+
+
+                        <VBox spacing="6">
+
+                            <Label text="Category"
+                                   styleClass="employee-field-label"/>
+
+                            <ComboBox fx:id="categoryCombo"
+                                      promptText="Select a category"
+                                      maxWidth="Infinity"
+                                      styleClass="employee-combo-box"/>
+
                         </VBox>
-                        <VBox spacing="5">
-                            <Label text="Description" styleClass="card-label" />
-                            <TextArea fx:id="descriptionArea" wrapText="true" prefRowCount="5" promptText="Describe the concern without adding identifying details unnecessarily." />
+
+
+                        <VBox spacing="6">
+
+                            <Label text="Subject"
+                                   styleClass="employee-field-label"/>
+
+                            <TextField fx:id="subjectField"
+                                       promptText="Brief subject"
+                                       styleClass="employee-input"/>
+
                         </VBox>
-                        <VBox spacing="5">
-                            <Label text="Optional evidence URL, path or file name" styleClass="card-label" />
+
+
+                        <VBox spacing="6">
+
+                            <Label text="Description"
+                                   styleClass="employee-field-label"/>
+
+                            <TextArea fx:id="descriptionArea"
+                                      wrapText="true"
+                                      prefRowCount="6"
+                                      promptText="Describe the concern without adding identifying details unnecessarily."
+                                      styleClass="employee-text-area"/>
+
+                        </VBox>
+
+
+                        <VBox spacing="6">
+
+                            <Label text="Optional Evidence"
+                                   styleClass="employee-field-label"/>
+
                             <HBox spacing="10">
-                                <TextField fx:id="evidenceField" HBox.hgrow="ALWAYS" />
-                                <Button text="Browse Evidence" onAction="#handleBrowseEvidence" styleClass="secondary-button" />
+
+                                <TextField fx:id="evidenceField"
+                                           promptText="Evidence URL, path or file name"
+                                           HBox.hgrow="ALWAYS"
+                                           styleClass="employee-input"/>
+
+                                <Button text="Browse Evidence"
+                                        onAction="#handleBrowseEvidence"
+                                        styleClass="employee-button"/>
+
                             </HBox>
+
+                            <Label text="Browse records the file name only; it does not upload a file. Avoid paths that reveal unnecessary personal details."
+                                   wrapText="true"
+                                   styleClass="employee-helper-text"/>
+
                         </VBox>
-                        <Label text="Browse records the file name only; it does not upload a file. You may enter a shareable evidence URL or path. Avoid paths that reveal personal details." wrapText="true" styleClass="modern-page-subtitle" />
+
+
                         <HBox spacing="10">
-                            <Button fx:id="submitButton" text="Submit Report" onAction="#handleSubmit" styleClass="modern-primary-button" />
-                            <Button fx:id="clearFormButton" text="Clear Form" onAction="#handleClearForm" styleClass="secondary-button" />
+
+                            <Button fx:id="submitButton"
+                                    text="Submit Report"
+                                    onAction="#handleSubmit"
+                                    styleClass="employee-button-primary"/>
+
+                            <Button fx:id="clearFormButton"
+                                    text="Clear Form"
+                                    onAction="#handleClearForm"
+                                    styleClass="employee-button"/>
+
                         </HBox>
-                        <Label text="Your secret reference" styleClass="card-label" />
-                        <TextField fx:id="referenceDisplay" editable="false" style="-fx-font-family: monospace; -fx-font-size: 16px; -fx-font-weight: bold;" />
-                        <Label text="Keep this reference number safely. You will need it to track this report." wrapText="true" styleClass="message-success" />
-                        <Button fx:id="copyReferenceButton" text="Copy Reference" onAction="#handleCopyReference" styleClass="secondary-button" />
+
+
+                        <!-- SECRET REFERENCE -->
+                        <VBox spacing="7"
+                              style="-fx-background-color:#FBFAF6;
+                                     -fx-border-color:#E7E7E2;
+                                     -fx-border-radius:8;
+                                     -fx-background-radius:8;
+                                     -fx-padding:14;">
+
+                            <Label text="Your Secret Reference"
+                                   styleClass="employee-field-label"/>
+
+                            <TextField fx:id="referenceDisplay"
+                                       editable="false"
+                                       styleClass="employee-input"
+                                       style="-fx-font-family:monospace;
+                                              -fx-font-size:15px;
+                                              -fx-font-weight:bold;"/>
+
+                            <Label text="Keep this reference number safely. You will need it to track this report."
+                                   wrapText="true"
+                                   styleClass="employee-section-subtitle"/>
+
+                            <Button fx:id="copyReferenceButton"
+                                    text="Copy Reference"
+                                    onAction="#handleCopyReference"
+                                    styleClass="employee-button"/>
+
+                        </VBox>
+
                     </VBox>
-                    <VBox spacing="12" styleClass="section-card">
-                        <Label text="Track Report" styleClass="section-title" />
+
+
+                    <!-- TRACK -->
+                    <VBox spacing="16"
+                          styleClass="employee-card">
+
+                        <VBox spacing="4">
+
+                            <Label text="Track Existing Report"
+                                   styleClass="employee-section-title"/>
+
+                            <Label text="Enter your secret reference number to securely view the latest report status."
+                                   styleClass="employee-section-subtitle"/>
+
+                        </VBox>
+
+
                         <HBox spacing="10">
-                            <TextField fx:id="trackingReferenceField" promptText="Secret reference" HBox.hgrow="ALWAYS" />
-                            <Button fx:id="trackButton" text="Track Report" onAction="#handleTrack" styleClass="modern-primary-button" />
+
+                            <TextField fx:id="trackingReferenceField"
+                                       promptText="Enter secret reference"
+                                       HBox.hgrow="ALWAYS"
+                                       styleClass="employee-input"/>
+
+                            <Button fx:id="trackButton"
+                                    text="Track Report"
+                                    onAction="#handleTrack"
+                                    styleClass="employee-button-primary"/>
+
                         </HBox>
-                        <GridPane hgap="16" vgap="10">
+
+
+                        <GridPane hgap="25"
+                                  vgap="14">
+
                             <columnConstraints>
-                                <ColumnConstraints minWidth="145" />
-                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints minWidth="170"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
                             </columnConstraints>
-                            <Label text="Subject" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="card-label" />
-                            <Label fx:id="trackedSubject" text="-" wrapText="true" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="modern-card-value" />
-                            <Label text="Category" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="card-label" />
-                            <Label fx:id="trackedCategory" text="-" wrapText="true" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="modern-card-value" />
-                            <Label text="Current Status" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="card-label" />
-                            <Label fx:id="trackedStatus" text="-" wrapText="true" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="modern-card-value" />
-                            <Label text="Submitted (UTC+08)" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="card-label" />
-                            <Label fx:id="trackedSubmitted" text="-" wrapText="true" maxWidth="Infinity" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="modern-card-value" />
-                            <Label text="Last Updated (UTC+08)" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="card-label" />
-                            <Label fx:id="trackedUpdated" text="-" wrapText="true" maxWidth="Infinity" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="modern-card-value" />
-                            <Label fx:id="trackedResolutionCaption" text="Resolution" GridPane.rowIndex="5" GridPane.columnIndex="0" styleClass="card-label" />
-                            <Label fx:id="trackedResolution" text="-" wrapText="true" maxWidth="Infinity" GridPane.rowIndex="5" GridPane.columnIndex="1" styleClass="modern-card-value" />
+
+
+                            <Label text="Subject"
+                                   styleClass="employee-field-label"
+                                   GridPane.rowIndex="0"
+                                   GridPane.columnIndex="0"/>
+
+                            <Label fx:id="trackedSubject"
+                                   text="-"
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   GridPane.rowIndex="0"
+                                   GridPane.columnIndex="1"/>
+
+
+                            <Label text="Category"
+                                   styleClass="employee-field-label"
+                                   GridPane.rowIndex="1"
+                                   GridPane.columnIndex="0"/>
+
+                            <Label fx:id="trackedCategory"
+                                   text="-"
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   GridPane.rowIndex="1"
+                                   GridPane.columnIndex="1"/>
+
+
+                            <Label text="Current Status"
+                                   styleClass="employee-field-label"
+                                   GridPane.rowIndex="2"
+                                   GridPane.columnIndex="0"/>
+
+                            <Label fx:id="trackedStatus"
+                                   text="-"
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   GridPane.rowIndex="2"
+                                   GridPane.columnIndex="1"/>
+
+
+                            <Label text="Submitted (UTC+08)"
+                                   styleClass="employee-field-label"
+                                   GridPane.rowIndex="3"
+                                   GridPane.columnIndex="0"/>
+
+                            <Label fx:id="trackedSubmitted"
+                                   text="-"
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   GridPane.rowIndex="3"
+                                   GridPane.columnIndex="1"/>
+
+
+                            <Label text="Last Updated (UTC+08)"
+                                   styleClass="employee-field-label"
+                                   GridPane.rowIndex="4"
+                                   GridPane.columnIndex="0"/>
+
+                            <Label fx:id="trackedUpdated"
+                                   text="-"
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   GridPane.rowIndex="4"
+                                   GridPane.columnIndex="1"/>
+
+
+                            <Label fx:id="trackedResolutionCaption"
+                                   text="Resolution"
+                                   styleClass="employee-field-label"
+                                   GridPane.rowIndex="5"
+                                   GridPane.columnIndex="0"/>
+
+                            <Label fx:id="trackedResolution"
+                                   text="-"
+                                   wrapText="true"
+                                   maxWidth="Infinity"
+                                   GridPane.rowIndex="5"
+                                   GridPane.columnIndex="1"/>
+
                         </GridPane>
-                        <Button fx:id="openChatButton" text="Open Anonymous Chat" onAction="#handleOpenChat" styleClass="secondary-button" />
+
+
+                        <HBox>
+                            <Button fx:id="openChatButton"
+                                    text="Open Anonymous Chat"
+                                    onAction="#handleOpenChat"
+                                    styleClass="employee-button"/>
+                        </HBox>
+
                     </VBox>
+
                 </VBox>
             </content>
         </ScrollPane>
     </center>
+
 </BorderPane>

@@ -462,15 +462,16 @@
 }
 
 .profile-avatar-background {
-    -fx-fill: #EAF2FF;
-    -fx-stroke: #C7D8F7;
-    -fx-stroke-width: 1px;
+    -fx-fill: #FFF9E6;
+    -fx-stroke: #FFDE69;
+    -fx-stroke-width: 1.2;
 }
 
 .profile-avatar-initial {
-    -fx-font-size: 36px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2563EB;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 34px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #A37500;
 }
 
 .profile-avatar-edit-button {
@@ -1263,4 +1264,1619 @@
         transparent;
 
     -fx-border-width: 1px 0 0 0;
+}
+
+/* =====================================================================
+   AEPM EMPLOYEE UI SYSTEM
+   Role Accent:
+   Black        #111111
+   Gold         #FFC700
+   Soft Gold    #FFDE69
+   White        #FFFFFF
+
+   Font:
+   Plus Jakarta Sans
+   ===================================================================== */
+
+
+/* =====================================================================
+   EMPLOYEE ROOT
+   ===================================================================== */
+
+.employee-root {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-background-color: #FAFAF8;
+    -fx-text-fill: #111111;
+}
+
+.employee-root .label {
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+
+/* =====================================================================
+   APP BACKGROUND
+   ===================================================================== */
+
+.employee-page {
+    -fx-background-color: #FAFAF8;
+}
+
+.employee-content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.employee-content-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.employee-content {
+    -fx-background-color: transparent;
+    -fx-padding: 30px 32px 36px 32px;
+    -fx-spacing: 22px;
+}
+
+
+/* =====================================================================
+   TOP BAR
+   ===================================================================== */
+
+.employee-topbar {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #E8E8E3 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 14px 28px;
+    -fx-min-height: 70px;
+    -fx-pref-height: 70px;
+}
+
+.employee-topbar-search {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E5EA;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 13px;
+    -fx-text-fill: #111111;
+
+    -fx-padding: 9px 13px;
+    -fx-pref-height: 38px;
+    -fx-min-height: 38px;
+}
+
+.employee-topbar-search:focused {
+    -fx-border-color: #FFC700;
+    -fx-border-width: 1.5px;
+}
+
+.employee-topbar-user-name {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.employee-topbar-user-position {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #718096;
+}
+
+.employee-role-badge {
+    -fx-background-color: #FFF9E6;
+    -fx-background-radius: 6px;
+
+    -fx-border-color: #FFDE69;
+    -fx-border-radius: 6px;
+
+    -fx-text-fill: #A37500;
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 4px 8px;
+}
+
+
+/* =====================================================================
+   SIDEBAR
+   ===================================================================== */
+
+.employee-sidebar-scroll {
+    -fx-background-color: #FFFFFF;
+    -fx-background: #FFFFFF;
+    -fx-border-color: transparent #E8E8E3 transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.employee-sidebar-scroll > .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+.employee-sidebar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-padding: 20px 14px 24px 14px;
+    -fx-spacing: 5px;
+}
+
+
+/* KEEP YOUR EXISTING AEPM LOGO */
+
+.employee-brand-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.employee-brand-secondary {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #93A0B5;
+}
+
+.employee-sidebar-section {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #91A0BC;
+
+    -fx-padding: 17px 8px 7px 8px;
+}
+
+
+/* =====================================================================
+   SIDEBAR NAVIGATION
+   ===================================================================== */
+
+.employee-nav-button {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-text-fill: #26344D;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+
+/* normal white -> gold when hover */
+
+.employee-nav-button:hover {
+    -fx-background-color: #FFF9E6;
+    -fx-text-fill: #111111;
+}
+
+
+/* ACTIVE MENU */
+
+.employee-nav-button-active {
+    -fx-background-color: #FFF9E6;
+
+    -fx-border-color: #111111;
+    -fx-border-width: 1.5px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-text-fill: #9A7100;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+.employee-nav-button-active:hover {
+    -fx-background-color: #FFDE69;
+    -fx-text-fill: #111111;
+}
+
+
+/* =====================================================================
+   PAGE HEADER / HERO
+   ===================================================================== */
+
+.employee-page-header {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-color: #E4E8EF;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+
+    -fx-padding: 22px 24px;
+}
+
+.employee-page-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 25px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.employee-page-subtitle {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #718096;
+}
+
+.employee-section-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.employee-section-subtitle {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #718096;
+}
+
+
+/* =====================================================================
+   CARD
+   ===================================================================== */
+
+.employee-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-color: #E2E7EF;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+
+    -fx-padding: 18px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(17, 17, 17, 0.035),
+        8,
+        0,
+        0,
+        2
+    );
+}
+
+.employee-card:hover {
+    -fx-border-color: #FFDE69;
+}
+
+
+/* =====================================================================
+   KPI CARD
+   ===================================================================== */
+
+.employee-kpi-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-color: #E2E7EF;
+    -fx-border-radius: 10px;
+
+    -fx-padding: 18px;
+
+    -fx-min-height: 128px;
+}
+
+.employee-kpi-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #60708C;
+}
+
+.employee-kpi-value {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.employee-kpi-note {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #718096;
+}
+
+.employee-kpi-icon-box {
+    -fx-background-color: #FFF9E6;
+    -fx-background-radius: 8px;
+
+    -fx-border-color: #FFDE69;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 8px;
+}
+
+.employee-divider {
+    -fx-background-color: #EEF0F4;
+    -fx-pref-height: 1px;
+}
+
+
+/* =====================================================================
+   STANDARD BUTTON
+   IMPORTANT:
+   NO FIXED WIDTH.
+   BUTTON AUTOMATICALLY FITS TEXT.
+   ===================================================================== */
+
+.employee-button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #D9DEE8;
+    -fx-border-width: 1px;
+    -fx-border-radius: 7px;
+
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+
+/*
+   White normally.
+   Yellow when mouse hover.
+*/
+
+.employee-button:hover {
+    -fx-background-color: #FFC700;
+    -fx-border-color: #FFC700;
+    -fx-text-fill: #111111;
+}
+
+.employee-button:pressed {
+    -fx-background-color: #FFDE69;
+    -fx-border-color: #FFDE69;
+}
+
+
+/* PRIMARY */
+
+.employee-button-primary {
+    -fx-background-color: #FFC700;
+
+    -fx-border-color: #FFC700;
+    -fx-border-width: 1px;
+    -fx-border-radius: 7px;
+
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+.employee-button-primary:hover {
+    -fx-background-color: #FFDE69;
+    -fx-border-color: #FFDE69;
+}
+
+.employee-button-primary:pressed {
+    -fx-background-color: #111111;
+    -fx-border-color: #111111;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* TEXT / LINK BUTTON */
+
+.employee-button-link {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+
+    -fx-text-fill: #9A7100;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 7px 9px;
+
+    -fx-cursor: hand;
+}
+
+.employee-button-link:hover {
+    -fx-background-color: #FFF9E6;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #111111;
+}
+
+
+/* DANGER */
+
+.employee-button-danger {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #D64545;
+    -fx-border-radius: 7px;
+
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #D64545;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+}
+
+.employee-button-danger:hover {
+    -fx-background-color: #D64545;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* DISABLED */
+
+.employee-button:disabled,
+.employee-button-primary:disabled,
+.employee-button-danger:disabled {
+    -fx-background-color: #F1F2F4;
+    -fx-border-color: #E0E2E6;
+    -fx-text-fill: #A5ACB8;
+
+    -fx-opacity: 1;
+}
+
+
+/* =====================================================================
+   INPUT
+   ===================================================================== */
+
+.employee-input,
+.employee-combo-box,
+.employee-date-picker,
+.employee-text-area {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DDE2EA;
+    -fx-border-width: 1px;
+    -fx-border-radius: 7px;
+
+    -fx-background-radius: 7px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-text-fill: #111111;
+}
+
+.employee-input,
+.employee-combo-box,
+.employee-date-picker {
+    -fx-pref-height: 38px;
+    -fx-min-height: 38px;
+}
+
+.employee-input {
+    -fx-padding: 8px 11px;
+}
+
+.employee-input:focused,
+.employee-combo-box:focused,
+.employee-date-picker:focused,
+.employee-text-area:focused {
+    -fx-border-color: #FFC700;
+    -fx-border-width: 1.5px;
+}
+
+.employee-field-label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #26344D;
+}
+
+.employee-helper-text {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #8491A8;
+}
+
+
+/* =====================================================================
+   TABLE
+   ===================================================================== */
+
+.employee-table {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E2E7EF;
+    -fx-border-width: 1px;
+    -fx-border-radius: 9px;
+
+    -fx-background-radius: 9px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+
+    -fx-table-cell-border-color: transparent;
+}
+
+.employee-table .column-header-background {
+    -fx-background-color: #FAFAF8;
+
+    -fx-background-radius: 9px 9px 0 0;
+}
+
+.employee-table .column-header {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent transparent #E7EAEF transparent;
+
+    -fx-pref-height: 40px;
+}
+
+.employee-table .column-header .label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #64748B;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+.employee-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #EEF0F3 transparent;
+    -fx-pref-height: 46px;
+}
+
+.employee-table .table-row-cell:hover {
+    -fx-background-color: #FFFBEF;
+}
+
+.employee-table .table-row-cell:selected {
+    -fx-background-color: #FFF3BF;
+}
+
+.employee-table .table-cell {
+    -fx-border-color: transparent;
+
+    -fx-text-fill: #26344D;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+
+/* =====================================================================
+   TABS
+   ===================================================================== */
+
+.employee-tabs {
+    -fx-background-color: transparent;
+}
+
+.employee-tabs .tab-header-area {
+    -fx-padding: 0;
+}
+
+.employee-tabs .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.employee-tabs .tab {
+    -fx-background-color: transparent;
+
+    -fx-padding: 10px 14px;
+
+    -fx-border-color: transparent transparent transparent transparent;
+}
+
+.employee-tabs .tab .tab-label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #718096;
+}
+
+.employee-tabs .tab:selected {
+    -fx-border-color: transparent transparent #FFC700 transparent;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.employee-tabs .tab:selected .tab-label {
+    -fx-text-fill: #111111;
+}
+
+
+/* =====================================================================
+   STATUS BADGES
+   ===================================================================== */
+
+.employee-badge {
+    -fx-background-radius: 6px;
+    -fx-padding: 4px 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+}
+
+.employee-badge-pending {
+    -fx-background-color: #FFF9E6;
+    -fx-text-fill: #9A7100;
+}
+
+.employee-badge-progress {
+    -fx-background-color: #EEF6FF;
+    -fx-text-fill: #1677C8;
+}
+
+.employee-badge-completed {
+    -fx-background-color: #EAF8F1;
+    -fx-text-fill: #087A54;
+}
+
+.employee-badge-danger {
+    -fx-background-color: #FFF0F0;
+    -fx-text-fill: #C63838;
+}
+
+.employee-badge-neutral {
+    -fx-background-color: #F1F3F6;
+    -fx-text-fill: #596579;
+}
+
+
+/* =====================================================================
+   PROGRESS BAR
+   ===================================================================== */
+
+.employee-progress-bar {
+    -fx-pref-height: 6px;
+}
+
+.employee-progress-bar > .track {
+    -fx-background-color: #EEF1F5;
+    -fx-background-radius: 100px;
+}
+
+.employee-progress-bar > .bar {
+    -fx-background-color: #FFC700;
+    -fx-background-radius: 100px;
+    -fx-background-insets: 0;
+}
+
+
+/* =====================================================================
+   DIALOG
+   ===================================================================== */
+
+.employee-dialog {
+    -fx-background-color: #FFFFFF;
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+.employee-dialog > .header-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #ECEEF2 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.employee-dialog-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+
+/* =====================================================================
+   EMPTY STATE
+   ===================================================================== */
+
+.employee-empty-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.employee-empty-description {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #718096;
+}
+
+
+/* =====================================================================
+   SCROLL BAR
+   ===================================================================== */
+
+.employee-root .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.employee-root .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.employee-root .scroll-bar:vertical .thumb {
+    -fx-background-color: #D9DDE5;
+    -fx-background-radius: 100px;
+}
+
+.employee-root .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #FFC700;
+}
+
+.employee-root .scroll-bar .increment-button,
+.employee-root .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+
+/* =====================================================================
+   EMPLOYEE FINAL THEME OVERRIDE
+   MUST STAY AT THE VERY END OF app.css
+   ===================================================================== */
+
+
+/* ============================================================
+   EMPLOYEE COLOR SYSTEM
+   #111111 BLACK
+   #FFC700 GOLD
+   #FFDE69 SOFT GOLD
+   #FFFFFF WHITE
+   ============================================================ */
+
+.employee-root {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-background-color: #FAFAF8;
+}
+
+
+/* Make all Employee children inherit font */
+
+.employee-root,
+.employee-root .label,
+.employee-root .button,
+.employee-root .text-field,
+.employee-root .text-area,
+.employee-root .combo-box,
+.employee-root .date-picker,
+.employee-root .table-view {
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+
+/* ============================================================
+   PAGE BACKGROUND
+   ============================================================ */
+
+.employee-root > .center,
+.employee-content-scroll,
+.employee-content-scroll > .viewport {
+    -fx-background-color: #FAFAF8;
+}
+
+.employee-content {
+    -fx-background-color: #FAFAF8;
+}
+
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+
+.employee-topbar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E8E8E3
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-padding: 14px 28px;
+
+    -fx-min-height: 72px;
+    -fx-pref-height: 72px;
+}
+
+
+.employee-topbar-user-name {
+    -fx-text-fill: #111111;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+
+.employee-topbar-user-position {
+    -fx-text-fill: #7C879C;
+    -fx-font-size: 11px;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.employee-sidebar-scroll {
+    -fx-background-color: #FFFFFF;
+    -fx-background: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        #ECE9DF
+        transparent
+        transparent;
+
+    -fx-border-width: 0 1px 0 0;
+}
+
+
+.employee-sidebar-scroll > .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+
+.employee-sidebar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-padding: 20px 14px 22px 14px;
+}
+
+
+/* ============================================================
+   BRAND
+   ============================================================ */
+
+.employee-brand-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111111;
+}
+
+
+.employee-brand-secondary {
+    -fx-font-size: 10px;
+    -fx-text-fill: #8B96AA;
+}
+
+
+/* ============================================================
+   SIDEBAR SECTION LABEL
+   ============================================================ */
+
+.employee-sidebar-section {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #91A0BC;
+
+    -fx-padding: 17px 8px 7px 8px;
+}
+
+
+/* ============================================================
+   NORMAL NAV
+   ============================================================ */
+
+.employee-nav-button {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #344054;
+
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+/* WHITE -> YELLOW */
+
+.employee-nav-button:hover {
+    -fx-background-color: #FFDE69;
+
+    -fx-border-color: #FFDE69;
+
+    -fx-text-fill: #111111;
+}
+
+
+/* ============================================================
+   ACTIVE NAV
+   ============================================================ */
+
+.employee-nav-button-active {
+    -fx-background-color: #FFF7D6;
+
+    -fx-border-color: #FFC700;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-text-fill: #8A6500;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-cursor: hand;
+}
+
+
+.employee-nav-button-active:hover {
+    -fx-background-color: #FFDE69;
+
+    -fx-border-color: #FFC700;
+
+    -fx-text-fill: #111111;
+}
+
+
+/* ============================================================
+   PAGE TITLE
+   ============================================================ */
+
+.employee-page-title {
+    -fx-font-size: 26px;
+
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #111111;
+}
+
+
+.employee-page-subtitle {
+    -fx-font-size: 12px;
+
+    -fx-text-fill: #718096;
+}
+
+
+.employee-section-title {
+    -fx-font-size: 16px;
+
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #111111;
+}
+
+
+.employee-section-subtitle {
+    -fx-font-size: 11px;
+
+    -fx-text-fill: #7A879B;
+}
+
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.employee-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 11px;
+    -fx-border-radius: 11px;
+
+    -fx-border-color: #E7E7E2;
+    -fx-border-width: 1px;
+
+    -fx-padding: 20px;
+
+    -fx-effect:
+        dropshadow(
+            gaussian,
+            rgba(17,17,17,0.035),
+            8,
+            0,
+            0,
+            2
+        );
+}
+
+
+.employee-card:hover {
+    -fx-border-color: #FFDE69;
+}
+
+
+/* ============================================================
+   STANDARD EMPLOYEE BUTTON
+   WHITE -> GOLD
+   ============================================================ */
+
+.employee-button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-text-fill: #111111;
+
+    -fx-border-color: #DADDE3;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-width: 0;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+.employee-button:hover {
+    -fx-background-color: #FFC700;
+
+    -fx-border-color: #FFC700;
+
+    -fx-text-fill: #111111;
+}
+
+
+.employee-button:pressed {
+    -fx-background-color: #FFDE69;
+
+    -fx-border-color: #FFDE69;
+}
+
+
+/* ============================================================
+   PRIMARY BUTTON
+   ============================================================ */
+
+.employee-button-primary {
+    -fx-background-color: #FFC700;
+
+    -fx-text-fill: #111111;
+
+    -fx-border-color: #FFC700;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-width: 0;
+
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+.employee-button-primary:hover {
+    -fx-background-color: #FFDE69;
+
+    -fx-border-color: #FFDE69;
+
+    -fx-text-fill: #111111;
+}
+
+
+.employee-button-primary:pressed {
+    -fx-background-color: #111111;
+
+    -fx-border-color: #111111;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.employee-input,
+.employee-combo-box,
+.employee-date-picker {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DDE0E5;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-size: 12px;
+
+    -fx-min-height: 38px;
+    -fx-pref-height: 38px;
+}
+
+
+.employee-input {
+    -fx-padding: 8px 11px;
+}
+
+
+.employee-input:focused,
+.employee-combo-box:focused,
+.employee-date-picker:focused {
+    -fx-border-color: #FFC700;
+
+    -fx-border-width: 1.5px;
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.employee-table {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: transparent;
+
+    -fx-background-radius: 8px;
+
+    -fx-table-cell-border-color: transparent;
+}
+
+
+.employee-table .column-header-background {
+    -fx-background-color: #FBFAF6;
+
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+
+.employee-table .column-header {
+    -fx-background-color: transparent;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #ECEBE6
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-pref-height: 42px;
+}
+
+
+.employee-table .column-header .label {
+    -fx-text-fill: #596579;
+
+    -fx-font-size: 10px;
+
+    -fx-font-weight: bold;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+
+.employee-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #F0F0EC
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-pref-height: 48px;
+}
+
+
+.employee-table .table-row-cell:hover {
+    -fx-background-color: #FFFBEA;
+}
+
+
+.employee-table .table-row-cell:selected {
+    -fx-background-color: #FFF3BF;
+}
+
+
+.employee-table .table-row-cell:selected .text {
+    -fx-fill: #111111;
+}
+
+
+.employee-table .table-cell {
+    -fx-border-color: transparent;
+
+    -fx-text-fill: #344054;
+
+    -fx-font-size: 11px;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+
+/* ============================================================
+   DAILY KPI CARDS
+   ============================================================ */
+
+.employee-kpi-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E7E7E2;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+
+    -fx-padding: 18px;
+
+    -fx-min-height: 115px;
+}
+
+
+.employee-kpi-card:hover {
+    -fx-border-color: #FFDE69;
+}
+
+
+.employee-kpi-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #667085;
+}
+
+
+.employee-kpi-value {
+    -fx-font-size: 24px;
+
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #111111;
+}
+
+
+.employee-kpi-note {
+    -fx-font-size: 10px;
+
+    -fx-text-fill: #8A94A6;
+}
+
+
+/* ============================================================
+   HELP / MESSAGE
+   ============================================================ */
+
+.employee-helper-text {
+    -fx-font-size: 10px;
+
+    -fx-text-fill: #7D889C;
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+.employee-root .logout-button {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #D64545;
+
+    -fx-border-color: transparent;
+
+    -fx-font-size: 12px;
+
+    -fx-padding: 9px 11px;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-cursor: hand;
+}
+
+
+.employee-root .logout-button:hover {
+    -fx-background-color: #FFF0F0;
+
+    -fx-background-radius: 8px;
+}
+
+
+/* =====================================================================
+   EMPLOYEE PROFILE - FINAL
+   ===================================================================== */
+
+
+/* ============================================================
+   PROFILE HEADER CARD
+   ============================================================ */
+
+.employee-profile-header-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E8E5DC;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+
+    -fx-padding: 22px 24px;
+
+    -fx-effect:
+        dropshadow(
+            gaussian,
+            rgba(17,17,17,0.04),
+            8,
+            0,
+            0,
+            2
+        );
+}
+
+
+.employee-profile-header-card:hover {
+    -fx-border-color: #FFDE69;
+}
+
+
+/* ============================================================
+   AVATAR
+   ============================================================ */
+
+.employee-profile-avatar-bg {
+    -fx-fill: #FFF9E6;
+
+    -fx-stroke: #FFDE69;
+    -fx-stroke-width: 1.2px;
+}
+
+
+.employee-profile-avatar-initial {
+    -fx-font-family: "Plus Jakarta Sans";
+
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #9A7100;
+}
+
+
+/* ============================================================
+   EDIT PROFILE IMAGE BUTTON
+   ============================================================ */
+
+.employee-profile-edit-button {
+    -fx-background-color: #FFC700;
+
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 2px;
+
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+
+    -fx-text-fill: #111111;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 0;
+
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
+.employee-profile-edit-button:hover {
+    -fx-background-color: #FFDE69;
+}
+
+
+.employee-profile-edit-button:pressed {
+    -fx-background-color: #111111;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   PROFILE NAME
+   ============================================================ */
+
+.employee-profile-name {
+    -fx-font-family: "Plus Jakarta Sans";
+
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #111111;
+}
+
+
+/* ============================================================
+   PROFILE ROLE BADGE
+   ============================================================ */
+
+.employee-profile-role {
+    -fx-background-color: #FFF9E6;
+
+    -fx-border-color: #FFDE69;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+
+    -fx-padding: 4px 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #8A6500;
+}
+
+
+/* ============================================================
+   PROFILE META
+   ============================================================ */
+
+.employee-profile-meta {
+    -fx-font-family: "Plus Jakarta Sans";
+
+    -fx-font-size: 11px;
+    -fx-font-weight: 500;
+
+    -fx-text-fill: #7A879B;
+}
+
+
+.employee-profile-description {
+    -fx-font-family: "Plus Jakarta Sans";
+
+    -fx-font-size: 11px;
+
+    -fx-text-fill: #718096;
+
+    -fx-padding: 4px 0 0 0;
+}
+
+
+/* ============================================================
+   PROFILE STATUS BOX
+   ============================================================ */
+
+.employee-profile-status-box {
+    -fx-background-color: #FBFAF6;
+
+    -fx-border-color: #ECE9DF;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+
+    -fx-padding: 12px 16px;
+
+    -fx-min-width: 145px;
+}
+
+
+.employee-profile-status-active {
+    -fx-background-color: #EAF8F1;
+
+    -fx-background-radius: 6px;
+
+    -fx-padding: 4px 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #087A54;
 }
