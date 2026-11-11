@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.image.ImageView?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -17,15 +17,16 @@
 
 <?import javafx.scene.shape.Circle?>
 
+
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerProfileController"
-        styleClass="main-layout">
+        stylesheets="@../../css/app.css,@../../css/manager.css"
+        styleClass="manager-root">
 
 
     <!-- =====================================================
          TOP BAR
-         EXACT SAME AS EMPLOYEE
          ===================================================== -->
 
     <top>
@@ -33,27 +34,18 @@
         <HBox
                 alignment="CENTER_LEFT"
                 spacing="20"
-                styleClass="topbar">
-
-            <padding>
-                <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
-            </padding>
-
+                styleClass="manager-topbar">
 
             <VBox spacing="2">
 
                 <Label
                         fx:id="welcomeLabel"
                         text="Welcome, Manager"
-                        styleClass="topbar-title"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
+                        styleClass="manager-page-subtitle"/>
 
             </VBox>
 
@@ -68,12 +60,12 @@
                 <Label
                         fx:id="topNameLabel"
                         text="Manager"
-                        styleClass="topbar-user-name"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         fx:id="topRoleLabel"
                         text="MANAGER"
-                        styleClass="topbar-user-role"/>
+                        styleClass="manager-topbar-user-role"/>
 
             </VBox>
 
@@ -84,114 +76,118 @@
 
     <!-- =====================================================
          SIDEBAR
-         EXACT SAME AS EMPLOYEE
          ===================================================== -->
 
     <left>
 
-    <VBox
-            prefWidth="275"
-            minWidth="275"
-            maxWidth="275"
-            spacing="10"
-            styleClass="sidebar">
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="manager-sidebar-scroll">
 
-        <padding>
-            <Insets
-                    top="28"
-                    right="12"
-                    bottom="20"
-                    left="12"/>
-        </padding>
+            <content>
 
-        <VBox spacing="3">
-
-            <Label
-                    text="AEPM"
-                    styleClass="sidebar-logo"/>
-
-            <Label
-                    text="Manager Portal"
-                    styleClass="sidebar-subtitle"/>
-
-        </VBox>
-
-        <Region prefHeight="42"/>
-
-        <Label
-                text="MENU"
-                styleClass="sidebar-section-title"/>
-
-        <Region prefHeight="18"/>
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="manager-sidebar">
 
 
-        <Button
-                text="⌂   Home"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleHome"
-                styleClass="sidebar-button"/>
+                    <!-- BRAND -->
+
+                    <VBox spacing="2">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="manager-brand-title"/>
+
+                        <Label
+                                text="Manager Portal"
+                                styleClass="manager-brand-secondary"/>
+
+                    </VBox>
 
 
-        <Button
-                text="●   My Profile"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleProfile"
-                styleClass="sidebar-button-active"/>
+                    <!-- WORKSPACE -->
+
+                    <Label
+                                text="WORKSPACE"
+                                styleClass="manager-sidebar-section"/>
+
+                        <Button
+                                text="⌂   Dashboard"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handleHome"
+                                styleClass="manager-nav-button"/>
+
+                        <Button
+                                text="✓   Task Management"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handleTaskManagement"
+                                styleClass="manager-nav-button"/>
+
+                        <Button
+                                text="★   Performance"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handlePerformance"
+                                styleClass="manager-nav-button"/>
+
+                        <Button
+                                text="≡   Reports"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handleReports"
+                                styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="✓   Task Management"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleTasks"
-                styleClass="sidebar-button"/>
+                        <Label
+                                text="TEAM MANAGEMENT"
+                                styleClass="manager-sidebar-section"/>
 
-            <Button
-                    text="◷   Deadline Escalation"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDeadlineEscalation"
-                    styleClass="sidebar-button"/>
-
-        <Button
-                text="★   Performance"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handlePerformance"
-                styleClass="sidebar-button"/>
+                        <Button
+                                text="◷   Deadline Escalation"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handleDeadlineEscalation"
+                                styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="≡   Reports"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleReports"
-                styleClass="sidebar-button"/>
+                        <Label
+                                text="ACCOUNT"
+                                styleClass="manager-sidebar-section"/>
+
+                        <Button
+                                text="○   My Profile"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handleProfile"
+                                styleClass="manager-nav-button-active"/>
 
 
-            <Button
-                    text="▣   Dashboard"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDashboard"
-                    styleClass="sidebar-button"/>
+                    <Region VBox.vgrow="ALWAYS"/>
 
 
-            <Region VBox.vgrow="ALWAYS"/>
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
 
+                </VBox>
 
-        <Button
-                text="↪   Logout"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleLogout"
-                styleClass="logout-button"/>
+            </content>
 
-    </VBox>
+        </ScrollPane>
 
-</left>
+    </left>
 
 
     <!-- =====================================================
@@ -200,260 +196,372 @@
 
     <center>
 
-        <VBox
-                spacing="24"
-                styleClass="home-content">
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="manager-content-scroll">
 
-            <padding>
-                <Insets
-                        top="32"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-            </padding>
+            <content>
 
-
-            <!-- TITLE -->
-
-            <VBox spacing="4">
-
-                <Label
-                        text="My Profile"
-                        styleClass="content-title"/>
-
-                <Label
-                        text="View and update your personal information."
-                        styleClass="content-description"/>
-
-            </VBox>
+                <VBox
+                        spacing="22"
+                        maxWidth="Infinity"
+                        styleClass="manager-content">
 
 
-            <!-- PROFILE CARD -->
-
-            <VBox
-                    spacing="28"
-                    styleClass="profile-card">
-
-
-                <!-- AVATAR -->
-
-                <HBox
-                        alignment="CENTER_LEFT"
-                        spacing="25">
-
-
-                    <StackPane
-                            prefWidth="130"
-                            prefHeight="130"
-                            maxWidth="130"
-                            maxHeight="130">
-
-                        <Circle
-                                radius="60"
-                                styleClass="profile-avatar-background"/>
-
-                        <Label
-                                fx:id="profileInitialLabel"
-                                text="M"
-                                styleClass="profile-avatar-initial"/>
-
-                        <ImageView
-                                fx:id="profileImageView"
-                                fitWidth="120"
-                                fitHeight="120"
-                                preserveRatio="false"
-                                visible="false"/>
-
-                        <Button
-                                fx:id="editImageButton"
-                                text="✎"
-                                onAction="#handleChangeProfileImage"
-                                styleClass="profile-avatar-edit-button"
-                                StackPane.alignment="BOTTOM_RIGHT"/>
-
-                    </StackPane>
-
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
 
                     <VBox spacing="5">
 
                         <Label
-                                fx:id="fullNameLabel"
-                                text="Manager"
-                                styleClass="section-title"/>
+                                text="My Profile"
+                                styleClass="manager-page-title"/>
 
                         <Label
-                                text="Manager"
-                                styleClass="content-description"/>
-
-                        <Label
-                                text="Click the edit icon to change your profile image."
-                                styleClass="content-description"/>
+                                text="View and update your personal information."
+                                wrapText="true"
+                                styleClass="manager-page-subtitle"/>
 
                     </VBox>
 
-                </HBox>
+
+                    <!-- =================================================
+                         PROFILE CARD
+                         ================================================= -->
+
+                    <VBox
+                            spacing="22"
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
 
 
-                <Region
-                        prefHeight="1"
-                        styleClass="profile-divider"/>
+                        <!-- PROFILE HEADER -->
+
+                        <HBox
+                                alignment="CENTER_LEFT"
+                                spacing="24">
 
 
-                <!-- PERSONAL INFORMATION -->
+                            <!-- AVATAR -->
 
-                <Label
-                        text="Personal Information"
-                        styleClass="section-title"/>
-
-
-                <GridPane
-                        hgap="35"
-                        vgap="20">
-
-
-                    <!-- STAFF ID -->
-
-                    <Label
-                            text="Staff ID"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="0"/>
-
-                    <Label
-                            fx:id="employeeIdLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="0"/>
+                            <StackPane
+                                    prefWidth="104"
+                                    prefHeight="104"
+                                    minWidth="104"
+                                    minHeight="104"
+                                    maxWidth="104"
+                                    maxHeight="104">
 
 
-                    <!-- USERNAME -->
-
-                    <Label
-                            text="Username"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="0"/>
-
-                    <Label
-                            fx:id="usernameLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="0"/>
+                                <Circle
+                                        radius="46"
+                                        style="
+                                            -fx-fill: #DFF4F1;
+                                            -fx-stroke: #C9DAD6;
+                                            -fx-stroke-width: 1;
+                                        "/>
 
 
-                    <!-- EMAIL -->
-
-                    <Label
-                            text="Email"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="1"/>
-
-                    <Label
-                            fx:id="emailLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="1"/>
+                                <Label
+                                        fx:id="profileInitialLabel"
+                                        text="M"
+                                        style="
+                                            -fx-font-size: 28px;
+                                            -fx-font-weight: bold;
+                                            -fx-text-fill: #0F766E;
+                                        "/>
 
 
-                    <!-- DEPARTMENT -->
+                                <ImageView
+                                        fx:id="profileImageView"
+                                        fitWidth="92"
+                                        fitHeight="92"
+                                        preserveRatio="false"
+                                        smooth="true"
+                                        visible="false">
 
-                    <Label
-                            text="Department"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1"/>
+                                    <clip>
 
-                    <Label
-                            fx:id="departmentLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="1"/>
+                                        <Circle
+                                                centerX="46"
+                                                centerY="46"
+                                                radius="46"/>
 
+                                    </clip>
 
-                    <!-- ROLE -->
-
-                    <Label
-                            text="Role"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="2"/>
-
-                    <Label
-                            fx:id="roleLabel"
-                            text="Manager"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="2"/>
+                                </ImageView>
 
 
-                    <!-- STATUS -->
+                                <Button
+                                        fx:id="editImageButton"
+                                        text="✎"
+                                        onAction="#handleChangeProfileImage"
+                                        StackPane.alignment="BOTTOM_RIGHT"
+                                        style="
+                                            -fx-background-color: #0F766E;
+                                            -fx-text-fill: white;
+                                            -fx-background-radius: 20;
+                                            -fx-min-width: 32;
+                                            -fx-min-height: 32;
+                                            -fx-max-width: 32;
+                                            -fx-max-height: 32;
+                                            -fx-font-size: 12px;
+                                            -fx-cursor: hand;
+                                        "/>
 
-                    <Label
-                            text="Account Status"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="2"/>
-
-                    <Label
-                            fx:id="accountStatusLabel"
-                            text="-"
-                            styleClass="profile-field-value"
-                            GridPane.columnIndex="3"
-                            GridPane.rowIndex="2"/>
-
-
-                    <!-- CONTACT -->
-
-                    <Label
-                            text="Contact Number"
-                            styleClass="profile-field-label"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="3"/>
-
-                    <TextField
-                            fx:id="contactNumberField"
-                            promptText="Enter contact number"
-                            prefWidth="260"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="3"/>
-
-                </GridPane>
+                            </StackPane>
 
 
-                <!-- MESSAGE -->
+                            <!-- PROFILE INFO -->
 
-                <Label
-                        fx:id="messageLabel"
-                        visible="false"
-                        managed="false"
-                        wrapText="true"/>
+                            <VBox
+                                    spacing="6"
+                                    alignment="CENTER_LEFT"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="fullNameLabel"
+                                        text="Manager"
+                                        styleClass="manager-section-title"/>
+
+                                <Label
+                                        text="Manager"
+                                        style="
+                                            -fx-background-color: #DFF4F1;
+                                            -fx-text-fill: #0F766E;
+                                            -fx-font-size: 11px;
+                                            -fx-font-weight: 600;
+                                            -fx-padding: 5 10;
+                                            -fx-background-radius: 20;
+                                        "/>
+
+                                <Label
+                                        text="Click the edit icon to change your profile image."
+                                        wrapText="true"
+                                        styleClass="manager-section-subtitle"/>
+
+                            </VBox>
+
+                        </HBox>
 
 
-                <!-- ACTIONS -->
+                        <!-- DIVIDER -->
 
-                <HBox spacing="12">
+                        <Region
+                                prefHeight="1"
+                                maxHeight="1"
+                                style="-fx-background-color: #DCE7E4;"/>
 
-                    <Button
-                            fx:id="saveButton"
-                            text="Save Changes"
-                            onAction="#handleSave"
-                            styleClass="app-button"/>
 
-                    <Button
-                            text="Change Password"
-                            onAction="#handleChangePassword"
-                            styleClass="app-button"/>
+                        <!-- =================================================
+                             PERSONAL INFORMATION
+                             ================================================= -->
 
-                </HBox>
+                        <VBox spacing="4">
 
-            </VBox>
+                            <Label
+                                    text="Personal Information"
+                                    styleClass="manager-section-title"/>
 
-        </VBox>
+                            <Label
+                                    text="Review your employment details and update your contact number when needed."
+                                    wrapText="true"
+                                    styleClass="manager-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- INFORMATION GRID -->
+
+                        <GridPane
+                                hgap="36"
+                                vgap="20"
+                                maxWidth="Infinity">
+
+                            <columnConstraints>
+
+                                <ColumnConstraints
+                                        minWidth="130"/>
+
+                                <ColumnConstraints
+                                        prefWidth="280"
+                                        hgrow="ALWAYS"/>
+
+                                <ColumnConstraints
+                                        minWidth="130"/>
+
+                                <ColumnConstraints
+                                        prefWidth="280"
+                                        hgrow="ALWAYS"/>
+
+                            </columnConstraints>
+
+
+                            <!-- STAFF ID -->
+
+                            <Label
+                                    text="Staff ID"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="employeeIdLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <!-- USERNAME -->
+
+                            <Label
+                                    text="Username"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+                            <Label
+                                    fx:id="usernameLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <!-- EMAIL -->
+
+                            <Label
+                                    text="Email"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="emailLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <!-- DEPARTMENT -->
+
+                            <Label
+                                    text="Department"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+                            <Label
+                                    fx:id="departmentLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <!-- ROLE -->
+
+                            <Label
+                                    text="Role"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2"/>
+
+                            <Label
+                                    fx:id="roleLabel"
+                                    text="Manager"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <!-- STATUS -->
+
+                            <Label
+                                    text="Account Status"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="2"/>
+
+                            <Label
+                                    fx:id="accountStatusLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <!-- CONTACT -->
+
+                            <Label
+                                    text="Contact Number"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="3"/>
+
+                            <TextField
+                                    fx:id="contactNumberField"
+                                    promptText="Enter contact number"
+                                    prefWidth="260"
+                                    maxWidth="320"
+                                    styleClass="manager-input"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="3"/>
+
+                        </GridPane>
+
+
+                        <!-- =================================================
+                             MESSAGE
+                             ================================================= -->
+
+                        <Label
+                                fx:id="messageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"
+                                styleClass="manager-helper-text"/>
+
+
+                        <!-- =================================================
+                             ACTIONS
+                             ================================================= -->
+
+                        <HBox
+                                spacing="10"
+                                alignment="CENTER_LEFT">
+
+                            <Button
+                                    fx:id="saveButton"
+                                    text="Save Changes"
+                                    onAction="#handleSave"
+                                    styleClass="manager-button-primary"/>
+
+                            <Button
+                                    text="Change Password"
+                                    onAction="#handleChangePassword"
+                                    styleClass="manager-button"/>
+
+                        </HBox>
+
+                    </VBox>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
 
     </center>
 

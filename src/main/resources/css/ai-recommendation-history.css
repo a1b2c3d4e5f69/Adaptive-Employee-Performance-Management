@@ -5,7 +5,7 @@
 
 .ai-history-overlay {
     -fx-background-color: rgba(15, 23, 42, 0.38);
-    -fx-font-family: "Segoe UI";
+    -fx-font-family: "Plus Jakarta Sans";
 }
 
 /* MAIN CARD */
@@ -197,33 +197,54 @@
 }
 
 /* CLOSE BUTTON */
-
 .ai-history-secondary-button {
-    -fx-background-color: #FFFFFF;
-    -fx-border-color: #CBD5E1;
-    -fx-border-width: 1.2;
-    -fx-text-fill: #183153;
+    -fx-background-color: #0F766E;
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 9px 16px;
+    -fx-min-height: 38px;
 }
 
 .ai-history-secondary-button:hover {
-    -fx-background-color: #F8FAFC;
-    -fx-border-color: #94A3B8;
+    -fx-background-color: #115E59;
+    -fx-border-color: #115E59;
 }
 
 /* VIEW DETAILS BUTTON */
 
 .ai-history-primary-button {
-    -fx-background-color: #2563EB;
-    -fx-border-color: transparent;
+    -fx-background-color: #0F766E;
+    -fx-border-color: #0F766E;
     -fx-text-fill: #FFFFFF;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 9px 16px;
+    -fx-min-height: 38px;
 }
 
 .ai-history-primary-button:hover {
-    -fx-background-color: #1D4ED8;
+    -fx-background-color: #115E59;
+    -fx-border-color: #115E59;
 }
 
 .ai-history-primary-button:pressed {
-    -fx-background-color: #1E40AF;
+    -fx-background-color: #134E4A;
 }
 
 .ai-history-primary-button:disabled {

@@ -72,8 +72,8 @@ public final class ManagerReportsPage {
 
     private final CategoryAxis trendXAxis = new CategoryAxis();
     private final NumberAxis trendYAxis = new NumberAxis(0, 100, 20);
-    private final LineChart<String, Number> trendChart =
-            new LineChart<>(trendXAxis, trendYAxis);
+    private final LineChart<String, Number> trendChart = new LineChart<>(trendXAxis, trendYAxis);
+
 
     private record Choice(String label, JsonObject value) {
         @Override
@@ -114,19 +114,30 @@ public final class ManagerReportsPage {
         this.stage = stage;
         this.shell = shell;
 
-        Label heading = label("Performance & KPI Reports");
-        heading.setStyle(
-                "-fx-font-size: 28px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-text-fill: #0F172A;"
+        Label heading = label(
+                "Performance & KPI Reports"
+        );
+
+        heading.getStyleClass().remove(
+                "manager-report-title"
+        );
+
+        heading.getStyleClass().add(
+                "manager-page-title"
         );
 
         Label subtitle = label(
                 "Review performance results for your direct reports."
         );
-        subtitle.setStyle("-fx-text-fill: #64748B;");
 
-        refresh.getStyleClass().add("secondary-button");
+        subtitle.getStyleClass().remove(
+                "manager-report-subtitle"
+        );
+
+        subtitle.getStyleClass().add(
+                "manager-page-subtitle"
+        );
+
         refresh.setOnAction(event -> loadOptions());
 
         Region spacer = new Region();
@@ -139,26 +150,17 @@ public final class ManagerReportsPage {
         configureFilter(department, "All Departments");
         configureFilter(period, "All Evaluation Periods");
 
-        apply.getStyleClass().add("login-primary-button");
-        clear.getStyleClass().add("secondary-button");
-        for (Button button : new Button[]{apply, clear}) {
-            button.setStyle(
-                    "-fx-min-width: 150px;"
-                    + "-fx-pref-width: 150px;"
-                    + "-fx-max-width: 150px;"
-                    + "-fx-min-height: 44px;"
-                    + "-fx-pref-height: 44px;"
-                    + "-fx-max-height: 44px;"
-                    + "-fx-font-size: 14px;"
-                    + "-fx-font-weight: bold;"
-                    + "-fx-padding: 0 16px;"
-                    + "-fx-alignment: CENTER;"
-                    + "-fx-background-insets: 0;"
-                    + "-fx-border-insets: 0;"
-                    + "-fx-background-radius: 10px;"
-                    + "-fx-border-radius: 10px;"
-            );
-        }
+        apply.getStyleClass().add(
+                "manager-button-primary"
+        );
+
+        clear.getStyleClass().add(
+                "manager-button"
+        );
+
+        refresh.getStyleClass().add(
+                "manager-button"
+        );
 
         apply.setOnAction(event -> loadReports(0));
 
@@ -181,17 +183,17 @@ public final class ManagerReportsPage {
                 + "calculated result. Missing scores appear as —."
                 + "\nTeam membership and department reflect current records."
         );
-        note.setStyle("-fx-text-fill: #64748B;");
+        note.getStyleClass().add("manager-report-helper");
 
         VBox filterCard = new VBox(
-                14, filters, new HBox(10, apply, clear), note
+                14,
+                filters,
+                new HBox(10, apply, clear),
+                note
         );
-        filterCard.setPadding(new Insets(20));
-        filterCard.setStyle(
-                "-fx-background-color: white;"
-                + "-fx-background-radius: 16;"
-                + "-fx-border-color: #E1E6EF;"
-                + "-fx-border-radius: 16;"
+
+        table.getStyleClass().add(
+                "manager-report-table"
         );
 
         VBox header = new VBox(10, titleRow, subtitle);
@@ -226,61 +228,52 @@ public final class ManagerReportsPage {
         table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         table.setPlaceholder(new Label("Loading report options..."));
 
-        previous.getStyleClass().add("secondary-button");
-        next.getStyleClass().add("secondary-button");
+        previous.getStyleClass().add("manager-button");
+        next.getStyleClass().add("manager-button");
 
         previous.setOnAction(event ->
                 loadReports(Math.max(0, offset - PAGE_SIZE))
         );
         next.setOnAction(event -> loadReports(offset + PAGE_SIZE));
 
-        pageInfo.setStyle("-fx-text-fill: #475569;");
-        status.setStyle("-fx-text-fill: #475569;");
+        pageInfo.getStyleClass().add("manager-report-status");
+        status.getStyleClass().add("manager-report-status");
         status.setWrapText(true);
-
+        BorderPane reportContent = new BorderPane();
         HBox pagination = new HBox(12, previous, pageInfo, next);
         pagination.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         table.setMinHeight(320);
         table.setPrefHeight(420);
         table.setMaxHeight(Double.MAX_VALUE);
 
-        BorderPane reportContent = new BorderPane();
+        BorderPane.setAlignment( table, javafx.geometry.Pos.CENTER);
+        reportContent.getStyleClass().add("manager-report-content-card");
         reportContent.setTop(filterCard);
         reportContent.setCenter(table);
         reportContent.setBottom(pagination);
-        for (Button button : new Button[]{exportPdf, exportExcel}) {
-            button.setStyle(
-                    "-fx-min-width: 136px;"
-                    + "-fx-pref-width: 136px;"
-                    + "-fx-max-width: 136px;"
-                    + "-fx-min-height: 40px;"
-                    + "-fx-pref-height: 40px;"
-                    + "-fx-max-height: 40px;"
-                    + "-fx-background-color: white;"
-                    + "-fx-text-fill: #2563EB;"
-                    + "-fx-border-color: #D8E1EE;"
-                    + "-fx-border-radius: 8px;"
-                    + "-fx-background-radius: 8px;"
-                    + "-fx-font-size: 14px;"
-                    + "-fx-font-weight: bold;"
-                    + "-fx-padding: 0 12px;"
-                    + "-fx-cursor: hand;"
-            );
+        for (Button button : new Button[]{
+                exportPdf,
+                exportExcel
+        }) {
+
+        button.getStyleClass().add(
+                "manager-button"
+        );
+
+        button.setPrefWidth(136);
         }
 
         exportPdf.setOnAction(event -> exportReport(true));
         exportExcel.setOnAction(event -> exportReport(false));
 
-        Button clearSelection = new Button("Clear Selection");
+        Button clearSelection =
+                new Button("Clear Selection");
 
-        clearSelection.setStyle(exportExcel.getStyle());
+        clearSelection.getStyleClass().add(
+                "manager-button"
+        );
 
-        clearSelection.setOnAction(event -> {
-            table.getSelectionModel().clearSelection();
-            status.setText(
-                    "Row selection cleared. Export will use the filters above."
-            );
-        });
+        clearSelection.setPrefWidth(136);
 
         HBox exportActions = new HBox(
                 12,
@@ -297,8 +290,6 @@ public final class ManagerReportsPage {
         );
         reportFooter.setPadding(new Insets(0, 0, 8, 0));
 
-        reportContent.setBottom(reportFooter);
-
         BorderPane.setMargin(
                 table,
                 new Insets(16, 0, 16, 0)
@@ -306,25 +297,61 @@ public final class ManagerReportsPage {
 
         Tab reportTab = new Tab(
                 "Report Table",
-                scrollReportContent(reportContent)
+                reportContent
         );
 
         Tab trendTab = new Tab(
                 "KPI Trend",
-                scrollReportContent(buildTrendContent())
+                buildTrendContent()
         );
 
-        TabPane reportTabs = new TabPane(reportTab, trendTab);
-        reportTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        reportTabs.getStyleClass().add("report-tabs");
+        TabPane reportTabs =
+                new TabPane(
+                        reportTab,
+                        trendTab
+                );
 
-        page.setCenter(reportTabs);
+        reportTabs.setTabClosingPolicy(
+                TabPane.TabClosingPolicy.UNAVAILABLE
+        );
+
+        reportTabs.getStyleClass().add(
+                "manager-report-tabs"
+        );
+
+        reportTabs.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        reportTabs.setMaxHeight(
+                Double.MAX_VALUE
+        );
+
+
+        VBox reportsCard =
+                new VBox(
+                        reportTabs
+                );
+
+        reportsCard.getStyleClass().add(
+                "manager-report-main-card"
+        );
+
+        VBox.setVgrow(
+                reportTabs,
+                Priority.ALWAYS
+        );
+
+
+        page.setCenter(
+                reportsCard
+        );
 
         status.setPadding(new Insets(14, 0, 0, 0));
         page.setBottom(status);
 
         page.setPadding(new Insets(28));
-        page.setStyle("-fx-background-color: #F6F8FC;");
+        page.getStyleClass().add("manager-report-page");
 
         employee.valueProperty().addListener(
                 (obs, old, selected) -> invalidateResults()
@@ -360,11 +387,22 @@ public final class ManagerReportsPage {
             String destination = null;
 
             if (text.contains("Reports")) {
-                button.getStyleClass().remove("sidebar-button-active");
-                button.getStyleClass().add("sidebar-button-active");
+
+                button.getStyleClass().removeAll(
+                        "sidebar-button",
+                        "sidebar-button-active",
+                        "manager-nav-button",
+                        "manager-nav-button-active"
+                );
+
+                button.getStyleClass().add(
+                        "manager-nav-button-active"
+                );
+
                 button.setOnAction(event -> {
-                    // Already on Reports.
+                        // Already on Reports.
                 });
+
                 continue;
             }
 
@@ -381,27 +419,38 @@ public final class ManagerReportsPage {
             }
 
             if (destination != null) {
-                button.getStyleClass().remove("sidebar-button-active");
 
-                if (!button.getStyleClass().contains("sidebar-button")) {
-                    button.getStyleClass().add("sidebar-button");
+                button.getStyleClass().removeAll(
+                        "sidebar-button",
+                        "sidebar-button-active",
+                        "manager-nav-button-active"
+                );
+
+                if (!button.getStyleClass().contains(
+                        "manager-nav-button"
+                )) {
+                        button.getStyleClass().add(
+                                "manager-nav-button"
+                        );
                 }
 
                 String path = destination;
+
                 button.setOnAction(event ->
-                        NavigationManager.navigate(stage, path)
+                        NavigationManager.navigate(
+                                stage,
+                                path
+                        )
                 );
-            }
+             }
         }
     }
 
-    private void configureFilter(
-            ComboBox<Choice> combo, String allLabel
-    ) {
+    private void configureFilter( ComboBox<Choice> combo, String allLabel) {
         combo.getItems().add(new Choice(allLabel, null));
         combo.getSelectionModel().selectFirst();
         combo.setPrefWidth(260);
-        combo.setMinHeight(40);
+        combo.getStyleClass().add("manager-report-combo");
     }
 
     private VBox filterBox(String title, ComboBox<Choice> combo) {
@@ -724,9 +773,15 @@ public final class ManagerReportsPage {
     }
 
     private static Label label(String text) {
+
         Label label = new Label(text);
+
         label.setWrapText(true);
-        label.setStyle("-fx-text-fill: #334155;");
+
+        label.getStyleClass().add(
+                "manager-report-text"
+        );
+
         return label;
     }
 
@@ -754,86 +809,195 @@ public final class ManagerReportsPage {
     }
 
     private VBox buildTrendContent() {
-        trendEmployee.setPromptText("Select employee");
-        trendEmployee.setPrefWidth(300);
-        trendEmployee.setMinHeight(44);
 
-        loadTrendButton.getStyleClass().add("login-primary-button");
-        loadTrendButton.setStyle(
-                "-fx-min-width: 136px;"
-                + "-fx-pref-width: 136px;"
-                + "-fx-max-width: 136px;"
-                + "-fx-min-height: 40px;"
-                + "-fx-pref-height: 40px;"
-                + "-fx-max-height: 40px;"
-                + "-fx-font-size: 14px;"
-                + "-fx-padding: 0 16px;"
+        trendEmployee.setPromptText(
+                "Select employee"
         );
-        loadTrendButton.setOnAction(event -> loadEmployeeTrend());
 
-        trendEmployee.valueProperty().addListener((obs, old, selected) -> {
-            resetTrend("Click Load Trend to view this employee's results.");
-            updateControls();
-        });
+        trendEmployee.setPrefWidth(360);
+
+        trendEmployee.getStyleClass().add(
+                "manager-report-combo"
+        );
+
+
+        loadTrendButton.getStyleClass().add(
+                "manager-button-primary"
+        );
+
+        loadTrendButton.setOnAction(
+                event -> loadEmployeeTrend()
+        );
+
+
+        trendEmployee.valueProperty().addListener(
+                (obs, oldValue, newValue) -> {
+
+                        resetTrend(
+                                "Click Load Trend to view this employee's results."
+                        );
+
+                        updateControls();
+                }
+        );
+
 
         Label explanation = label(
                 "Overall KPI across all saved evaluation periods."
                         + "\nEach period uses its latest calculated result. "
                         + "Periods are ordered by evaluation end date."
         );
-        explanation.setStyle("-fx-text-fill: #64748B;");
 
-        trendXAxis.setLabel("Evaluation Period");
-        trendXAxis.setTickLabelRotation(-25);
-
-        trendYAxis.setLabel("Overall KPI Score");
-        trendYAxis.setAutoRanging(false);
-
-        trendChart.setTitle("Overall KPI Trend");
-        trendChart.setAnimated(false);
-        trendChart.setCreateSymbols(true);
-        trendChart.setLegendVisible(true);
-        trendChart.setAxisSortingPolicy(LineChart.SortingPolicy.NONE);
-        trendChart.setMinHeight(320);
-        trendChart.setStyle("-fx-background-color: white;");
-
-        ScrollPane chartScroll = new ScrollPane(trendChart);
-        chartScroll.setFitToWidth(true);
-        chartScroll.setFitToHeight(true);
-        chartScroll.setStyle(
-                "-fx-background: white;"
-                + "-fx-background-color: white;"
-                + "-fx-border-color: transparent;"
+        explanation.getStyleClass().add(
+                "manager-report-helper"
         );
 
-        trendMessage.setWrapText(true);
-        trendMessage.setStyle("-fx-text-fill: #475569;");
-        HBox trendActions = new HBox(
-        12,
-        filterBox("Employee", trendEmployee),
-                loadTrendButton
-        );
-        trendActions.setAlignment(javafx.geometry.Pos.BOTTOM_LEFT);
 
-        trendEmployee.setStyle(
-                "-fx-min-height: 40px;"
-                + "-fx-pref-height: 40px;"
-                + "-fx-max-height: 40px;"
+        trendXAxis.setLabel(
+                "Evaluation Period"
         );
-        VBox content = new VBox(
-                16,
-                explanation,
-                trendActions,
+
+        trendXAxis.setTickLabelRotation(
+                -25
+        );
+
+
+        trendYAxis.setLabel(
+                "Overall KPI Score"
+        );
+
+        trendYAxis.setAutoRanging(
+                false
+        );
+
+
+        trendChart.setTitle(
+                "Overall KPI Trend"
+        );
+
+        trendChart.setAnimated(
+                false
+        );
+
+        trendChart.setCreateSymbols(
+                true
+        );
+
+        trendChart.setLegendVisible(
+                true
+        );
+
+        trendChart.setAxisSortingPolicy(
+                LineChart.SortingPolicy.NONE
+        );
+
+
+        trendChart.setMinHeight(
+                420
+        );
+
+        trendChart.setPrefHeight(
+                520
+        );
+
+        trendChart.setMaxHeight(
+                Double.MAX_VALUE
+        );
+
+        trendChart.setMinWidth(
+                650
+        );
+
+        trendChart.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+
+        trendChart.getStyleClass().add(
+                "manager-report-chart"
+        );
+
+
+        ScrollPane chartScroll =
+                new ScrollPane(
+                        trendChart
+                );
+
+        chartScroll.setFitToHeight(
+                true
+        );
+
+        chartScroll.setFitToWidth(
+                true
+        );
+
+        chartScroll.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
+        );
+
+        chartScroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        chartScroll.getStyleClass().add(
+                "manager-report-scroll"
+        );
+
+
+        trendMessage.setWrapText(
+                true
+        );
+
+        trendMessage.getStyleClass().add(
+                "manager-report-status"
+        );
+
+
+        HBox trendActions =
+                new HBox(
+                        12,
+                        filterBox(
+                                "Employee",
+                                trendEmployee
+                        ),
+                        loadTrendButton
+                );
+
+        trendActions.setAlignment(
+                javafx.geometry.Pos.BOTTOM_LEFT
+        );
+
+
+        VBox content =
+                new VBox(
+                        18,
+                        explanation,
+                        trendActions,
+                        chartScroll,
+                        trendMessage
+                );
+
+        content.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        content.setMaxHeight(
+                Double.MAX_VALUE
+        );
+
+        content.getStyleClass().remove(
+                "manager-report-card"
+        );
+
+        content.getStyleClass().add(
+                "manager-report-content-card"
+        );
+
+        VBox.setVgrow(
                 chartScroll,
-                trendMessage
+                Priority.ALWAYS
         );
 
-        content.setPadding(new Insets(20));
-        content.setStyle(
-                "-fx-background-color: white;"
-                + "-fx-background-radius: 16;"
-        );
-        VBox.setVgrow(chartScroll, Priority.ALWAYS);
 
         return content;
     }
@@ -1088,15 +1252,8 @@ public final class ManagerReportsPage {
         content.setMinHeight(Region.USE_PREF_SIZE);
 
         ScrollPane scroll = new ScrollPane(content);
-        scroll.setFitToWidth(true);
-        scroll.setFitToHeight(true);
-        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        scroll.setStyle(
-                "-fx-background: white;"
-                + "-fx-background-color: white;"
-                + "-fx-border-color: transparent;"
+        scroll.getStyleClass().add(
+                "manager-report-scroll"
         );
 
         return scroll;

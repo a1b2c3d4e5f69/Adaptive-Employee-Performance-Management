@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -19,37 +19,31 @@
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerCreateTaskController"
-        styleClass="main-layout">
+        stylesheets="@../../css/app.css,@../../css/manager.css"
+        styleClass="manager-root">
 
 
-    <!-- ========================= TOP BAR ========================= -->
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
 
     <top>
 
         <HBox
                 alignment="CENTER_LEFT"
                 spacing="20"
-                styleClass="topbar">
-
-            <padding>
-                <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
-            </padding>
-
+                styleClass="manager-topbar">
 
             <VBox spacing="2">
 
                 <Label
                         fx:id="welcomeLabel"
                         text="Welcome, Manager"
-                        styleClass="topbar-title"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
+                        styleClass="manager-page-subtitle"/>
 
             </VBox>
 
@@ -64,12 +58,12 @@
                 <Label
                         fx:id="topNameLabel"
                         text="Manager"
-                        styleClass="topbar-user-name"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         fx:id="topRoleLabel"
                         text="MANAGER"
-                        styleClass="topbar-user-role"/>
+                        styleClass="manager-topbar-user-role"/>
 
             </VBox>
 
@@ -78,315 +72,422 @@
     </top>
 
 
-    <!-- ========================= SIDEBAR ========================= -->
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
     <left>
 
-        <VBox
+        <ScrollPane
                 prefWidth="240"
-                spacing="10"
-                styleClass="sidebar">
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="manager-sidebar-scroll">
 
-            <padding>
-                <Insets
-                        top="30"
-                        right="18"
-                        bottom="20"
-                        left="18"/>
-            </padding>
+            <content>
 
-
-            <VBox spacing="3">
-
-                <Label
-                        text="AEPM"
-                        styleClass="sidebar-logo"/>
-
-                <Label
-                        text="Manager Portal"
-                        styleClass="sidebar-subtitle"/>
-
-            </VBox>
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="manager-sidebar">
 
 
-            <Region prefHeight="18"/>
+                    <!-- BRAND -->
+
+                    <VBox spacing="2">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="manager-brand-title"/>
+
+                        <Label
+                                text="Manager Portal"
+                                styleClass="manager-brand-secondary"/>
+
+                    </VBox>
 
 
-            <Label
-                    text="MENU"
-                    styleClass="sidebar-section-title"/>
+                    <!-- WORKSPACE -->
+
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="manager-sidebar-section"/>
 
 
-            <Button
-                    text="⌂   Home"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleHome"
-                    styleClass="sidebar-button"/>
+                    <Button
+                            text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="manager-nav-button"/>
 
 
-            <Button
-                    text="●   My Profile"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleProfile"
-                    styleClass="sidebar-button"/>
+                    <Button
+                            text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="manager-nav-button-active"/>
 
 
-            <Button
-                    text="✓   Task Management"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleTaskManagement"
-                    styleClass="sidebar-button-active"/>
-
-            <Button
-                    text="◷   Deadline Escalation"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDeadlineEscalation"
-                    styleClass="sidebar-button"/>
-
-            <Button
-                    text="★   Performance"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handlePerformance"
-                    styleClass="sidebar-button"/>
+                    <Button
+                            text="★   Performance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handlePerformance"
+                            styleClass="manager-nav-button"/>
 
 
-            <Button
-                    text="≡   Reports"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleReports"
-                    styleClass="sidebar-button"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
+                    <Button
+                            text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="manager-nav-button"/>
 
 
-            <Button
-                    text="↪   Logout"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleLogout"
-                    styleClass="logout-button"/>
+                    <!-- TEAM MANAGEMENT -->
 
-        </VBox>
+                    <Label
+                            text="TEAM MANAGEMENT"
+                            styleClass="manager-sidebar-section"/>
+
+
+                    <Button
+                            text="◷   Deadline Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleDeadlineEscalation"
+                            styleClass="manager-nav-button"/>
+
+
+                    <!-- ACCOUNT -->
+
+                    <Label
+                            text="ACCOUNT"
+                            styleClass="manager-sidebar-section"/>
+
+
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="manager-nav-button"/>
+
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
 
     </left>
 
 
-    <!-- ========================= CONTENT ========================= -->
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
 
     <center>
 
-        <VBox
-                spacing="22"
-                styleClass="home-content">
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="manager-content-scroll">
 
-            <padding>
-                <Insets
-                        top="32"
-                        right="35"
-                        bottom="35"
-                        left="35"/>
-            </padding>
+            <content>
+
+                <VBox
+                        spacing="22"
+                        maxWidth="Infinity"
+                        styleClass="manager-content">
 
 
-            <!-- HEADER -->
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
 
-            <HBox alignment="CENTER_LEFT">
+                    <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="16">
 
-                <VBox spacing="4">
+                        <VBox
+                                spacing="5"
+                                HBox.hgrow="ALWAYS">
 
-                    <Label
-                            text="Create Task"
-                            styleClass="content-title"/>
+                            <Label
+                                    text="Create Task"
+                                    styleClass="manager-page-title"/>
 
-                    <Label
-                            text="Create and assign a new task to an employee."
-                            styleClass="content-description"/>
+                            <Label
+                                    text="Create and assign a new task to an employee."
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"/>
+
+                        </VBox>
+
+
+                        <Button
+                                text="← Back"
+                                onAction="#handleBack"
+                                styleClass="manager-button"/>
+
+                    </HBox>
+
+
+                    <!-- =================================================
+                         TASK FORM
+                         ================================================= -->
+
+                    <VBox
+                            spacing="20"
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
+
+
+                        <!-- CARD HEADER -->
+
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Task Information"
+                                    styleClass="manager-section-title"/>
+
+                            <Label
+                                    text="Enter task details, assign an employee and define the completion requirements."
+                                    wrapText="true"
+                                    styleClass="manager-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- =================================================
+                             BASIC INFORMATION GRID
+                             ================================================= -->
+
+                        <GridPane
+                                hgap="28"
+                                vgap="18"
+                                maxWidth="Infinity">
+
+                            <columnConstraints>
+
+                                <ColumnConstraints
+                                        minWidth="120"/>
+
+                                <ColumnConstraints
+                                        prefWidth="320"
+                                        hgrow="ALWAYS"/>
+
+                                <ColumnConstraints
+                                        minWidth="120"/>
+
+                                <ColumnConstraints
+                                        prefWidth="300"
+                                        hgrow="ALWAYS"/>
+
+                            </columnConstraints>
+
+
+                            <!-- TASK TITLE -->
+
+                            <Label
+                                    text="Task Title"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+                            <TextField
+                                    fx:id="titleField"
+                                    promptText="Enter task title"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-input"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <!-- ASSIGN EMPLOYEE -->
+
+                            <Label
+                                    text="Assign Employee"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="0"/>
+
+                            <ComboBox
+                                    fx:id="employeeComboBox"
+                                    promptText="Select employee"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-combo-box"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="0"/>
+
+
+                            <!-- CATEGORY -->
+
+                            <Label
+                                    text="Category"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"/>
+
+                            <ComboBox
+                                    fx:id="categoryComboBox"
+                                    promptText="Select category"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-combo-box"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <!-- PRIORITY -->
+
+                            <Label
+                                    text="Priority"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"/>
+
+                            <ComboBox
+                                    fx:id="priorityComboBox"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-combo-box"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="1"/>
+
+
+                            <!-- DIFFICULTY -->
+
+                            <Label
+                                    text="Difficulty"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2"/>
+
+                            <ComboBox
+                                    fx:id="difficultyComboBox"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-combo-box"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2"/>
+
+
+                            <!-- DUE DATE -->
+
+                            <Label
+                                    text="Due Date"
+                                    styleClass="manager-field-label"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="2"/>
+
+                            <DatePicker
+                                    fx:id="dueDatePicker"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-date-picker"
+                                    GridPane.columnIndex="3"
+                                    GridPane.rowIndex="2"/>
+
+                        </GridPane>
+
+
+                        <!-- =================================================
+                             DESCRIPTION
+                             ================================================= -->
+
+                        <VBox spacing="7">
+
+                            <Label
+                                    text="Description"
+                                    styleClass="manager-field-label"/>
+
+                            <TextArea
+                                    fx:id="descriptionArea"
+                                    promptText="Enter task description"
+                                    prefRowCount="4"
+                                    wrapText="true"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-text-area"/>
+
+                        </VBox>
+
+
+                        <!-- =================================================
+                             COMPLETION CRITERIA
+                             ================================================= -->
+
+                        <VBox spacing="7">
+
+                            <Label
+                                    text="Completion Criteria"
+                                    styleClass="manager-field-label"/>
+
+                            <TextArea
+                                    fx:id="completionCriteriaArea"
+                                    promptText="Describe what is required to complete this task"
+                                    prefRowCount="3"
+                                    wrapText="true"
+                                    maxWidth="Infinity"
+                                    styleClass="manager-text-area"/>
+
+                        </VBox>
+
+
+                        <!-- =================================================
+                             MESSAGE
+                             ================================================= -->
+
+                        <Label
+                                fx:id="messageLabel"
+                                visible="false"
+                                managed="false"
+                                wrapText="true"
+                                maxWidth="Infinity"
+                                styleClass="manager-helper-text"/>
+
+
+                        <!-- =================================================
+                             ACTIONS
+                             ================================================= -->
+
+                        <HBox
+                                alignment="CENTER_RIGHT"
+                                spacing="10">
+
+                            <Button
+                                    text="Cancel"
+                                    onAction="#handleBack"
+                                    styleClass="manager-button"/>
+
+                            <Button
+                                    fx:id="createButton"
+                                    text="Create Task"
+                                    onAction="#handleCreateTask"
+                                    styleClass="manager-button-primary"/>
+
+                        </HBox>
+
+                    </VBox>
 
                 </VBox>
 
+            </content>
 
-                <Region HBox.hgrow="ALWAYS"/>
-
-
-                <Button
-                        text="← Back"
-                        onAction="#handleBack"
-                        styleClass="app-button"/>
-
-            </HBox>
-
-
-            <!-- FORM CARD -->
-
-            <VBox
-                    spacing="22"
-                    styleClass="section-card">
-
-
-                <Label
-                        text="Task Information"
-                        styleClass="section-title"/>
-
-
-                <GridPane
-        hgap="28"
-        vgap="18">
-
-    <Label
-            text="Task Title"
-            styleClass="input-label"
-            GridPane.columnIndex="0"
-            GridPane.rowIndex="0"/>
-
-    <TextField
-            fx:id="titleField"
-            promptText="Enter task title"
-            prefWidth="320"
-            GridPane.columnIndex="1"
-            GridPane.rowIndex="0"/>
-
-
-    <Label
-            text="Assign Employee"
-            styleClass="input-label"
-            GridPane.columnIndex="2"
-            GridPane.rowIndex="0"/>
-
-    <ComboBox
-            fx:id="employeeComboBox"
-            promptText="Select employee"
-            prefWidth="300"
-            GridPane.columnIndex="3"
-            GridPane.rowIndex="0"/>
-
-
-    <Label
-            text="Category"
-            styleClass="input-label"
-            GridPane.columnIndex="0"
-            GridPane.rowIndex="1"/>
-
-    <ComboBox
-            fx:id="categoryComboBox"
-            promptText="Select category"
-            prefWidth="320"
-            GridPane.columnIndex="1"
-            GridPane.rowIndex="1"/>
-
-
-    <Label
-            text="Priority"
-            styleClass="input-label"
-            GridPane.columnIndex="2"
-            GridPane.rowIndex="1"/>
-
-    <ComboBox
-            fx:id="priorityComboBox"
-            prefWidth="300"
-            GridPane.columnIndex="3"
-            GridPane.rowIndex="1"/>
-
-
-    <Label
-            text="Difficulty"
-            styleClass="input-label"
-            GridPane.columnIndex="0"
-            GridPane.rowIndex="2"/>
-
-    <ComboBox
-            fx:id="difficultyComboBox"
-            prefWidth="320"
-            GridPane.columnIndex="1"
-            GridPane.rowIndex="2"/>
-
-
-    <Label
-            text="Due Date"
-            styleClass="input-label"
-            GridPane.columnIndex="2"
-            GridPane.rowIndex="2"/>
-
-    <DatePicker
-            fx:id="dueDatePicker"
-            prefWidth="300"
-            GridPane.columnIndex="3"
-            GridPane.rowIndex="2"/>
-
-</GridPane>
-
-
-                <!-- DESCRIPTION -->
-
-                <VBox spacing="7">
-
-                    <Label
-                            text="Description"
-                            styleClass="input-label"/>
-
-                    <TextArea
-                            fx:id="descriptionArea"
-                            promptText="Enter task description"
-                            prefRowCount="4"
-                            wrapText="true"/>
-
-                </VBox>
-
-
-                <!-- CRITERIA -->
-
-                <VBox spacing="7">
-
-                    <Label
-                            text="Completion Criteria"
-                            styleClass="input-label"/>
-
-                    <TextArea
-                            fx:id="completionCriteriaArea"
-                            promptText="Describe what is required to complete this task"
-                            prefRowCount="3"
-                            wrapText="true"/>
-
-                </VBox>
-
-
-                <!-- MESSAGE -->
-
-                <Label
-                        fx:id="messageLabel"
-                        visible="false"
-                        managed="false"
-                        wrapText="true"/>
-
-
-                <!-- BUTTON -->
-
-                <HBox
-                        alignment="CENTER_RIGHT"
-                        spacing="12">
-
-                    <Button
-                            text="Cancel"
-                            onAction="#handleBack"
-                            styleClass="app-button"/>
-
-
-                    <Button
-                            fx:id="createButton"
-                            text="Create Task"
-                            onAction="#handleCreateTask"
-                            styleClass="app-button"/>
-
-                </HBox>
-
-            </VBox>
-
-        </VBox>
+        </ScrollPane>
 
     </center>
 

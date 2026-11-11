@@ -1,71 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
+
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerReportController"
-        styleClass="main-layout">
+        stylesheets="@../../css/app.css,@../../css/manager.css"
+        styleClass="manager-root">
 
-    <!-- TOP BAR -->
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
 
     <top>
 
         <HBox
                 alignment="CENTER_LEFT"
-                spacing="16"
-                styleClass="modern-topbar">
+                spacing="20"
+                styleClass="manager-topbar">
 
-            <padding>
-                <Insets top="14" right="30" bottom="14" left="30"/>
-            </padding>
+            <VBox spacing="2">
 
-            <Label
-                    text="AEPM"
-                    styleClass="modern-brand"/>
+                <Label
+                        text="AEPM"
+                        styleClass="manager-topbar-user-name"/>
 
-            <Region
-                    prefWidth="1"
-                    minWidth="1"
-                    maxWidth="1"
-                    prefHeight="28"
-                    styleClass="topbar-divider"/>
+                <Label
+                        text="Adaptive Employee Performance Management System"
+                        styleClass="manager-page-subtitle"/>
 
-            <Label
-                    text="Adaptive Employee Performance Management System"
-                    styleClass="modern-system-name"/>
+            </VBox>
+
 
             <Region HBox.hgrow="ALWAYS"/>
 
+
             <VBox
-                    spacing="2"
-                    alignment="CENTER_RIGHT">
+                    alignment="CENTER_RIGHT"
+                    spacing="2">
 
                 <Label
                         fx:id="topNameLabel"
                         text="Manager"
-                        styleClass="modern-user-name"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         fx:id="topRoleLabel"
                         text="MANAGER"
-                        styleClass="modern-user-role"/>
+                        styleClass="manager-topbar-user-role"/>
 
             </VBox>
 
@@ -74,110 +72,134 @@
     </top>
 
 
-    <!-- SIDEBAR -->
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
     <left>
 
-    <VBox
-            prefWidth="275"
-            minWidth="275"
-            maxWidth="275"
-            spacing="10"
-            styleClass="sidebar">
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="manager-sidebar-scroll">
 
-        <padding>
-            <Insets
-                    top="28"
-                    right="12"
-                    bottom="20"
-                    left="12"/>
-        </padding>
+            <content>
 
-        <VBox spacing="3">
-
-            <Label
-                    text="AEPM"
-                    styleClass="sidebar-logo"/>
-
-            <Label
-                    text="Manager Portal"
-                    styleClass="sidebar-subtitle"/>
-
-        </VBox>
-
-        <Region prefHeight="42"/>
-
-        <Label
-                text="MENU"
-                styleClass="sidebar-section-title"/>
-
-        <Region prefHeight="18"/>
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="manager-sidebar">
 
 
-        <Button
-                text="⌂   Home"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleHome"
-                styleClass="sidebar-button"/>
+                    <!-- BRAND -->
+
+                    <VBox spacing="2">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="manager-brand-title"/>
+
+                        <Label
+                                text="Manager Portal"
+                                styleClass="manager-brand-secondary"/>
+
+                    </VBox>
 
 
-        <Button
-                text="●   My Profile"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleProfile"
-                styleClass="sidebar-button"/>
+                    <!-- WORKSPACE -->
+
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="manager-sidebar-section"/>
 
 
-        <Button
-                text="✓   Task Management"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleTasks"
-                styleClass="sidebar-button"/>
+                    <Button
+                            text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="★   Performance"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handlePerformance"
-                styleClass="sidebar-button"/>
+                    <Button
+                            text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="≡   Reports"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleReports"
-                styleClass="sidebar-button-active"/>
+                    <Button
+                            text="★   Performance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handlePerformance"
+                            styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="▣   Dashboard"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleDashboard"
-                styleClass="sidebar-button"/>
+                    <Button
+                            text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="manager-nav-button-active"/>
 
 
-        <Region VBox.vgrow="ALWAYS"/>
+                    <!-- TEAM MANAGEMENT -->
+
+                    <Label
+                            text="TEAM MANAGEMENT"
+                            styleClass="manager-sidebar-section"/>
 
 
-        <Button
-                text="↪   Logout"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleLogout"
-                styleClass="logout-button"/>
+                    <Button
+                            text="◷   Deadline Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleDeadlineEscalation"
+                            styleClass="manager-nav-button"/>
 
-    </VBox>
+                    <!-- ACCOUNT -->
 
-</left>
+                    <Label
+                            text="ACCOUNT"
+                            styleClass="manager-sidebar-section"/>
 
 
-    <!-- CONTENT -->
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="manager-nav-button"/>
+
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </left>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
 
     <center>
 
@@ -186,25 +208,23 @@
                 hbarPolicy="NEVER"
                 vbarPolicy="AS_NEEDED"
                 pannable="true"
-                styleClass="modern-content-scroll">
+                styleClass="manager-content-scroll">
 
             <content>
 
                 <VBox
-                        spacing="24"
+                        spacing="22"
                         maxWidth="Infinity"
-                        styleClass="modern-content">
-
-                    <padding>
-                        <Insets top="30" right="32" bottom="40" left="32"/>
-                    </padding>
+                        styleClass="manager-content">
 
 
-                    <!-- PAGE HEADER -->
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
 
                     <HBox
                             alignment="CENTER_LEFT"
-                            spacing="20">
+                            spacing="16">
 
                         <VBox
                                 spacing="5"
@@ -212,222 +232,257 @@
 
                             <Label
                                     text="Performance Reports"
-                                    styleClass="modern-page-title"/>
+                                    styleClass="manager-page-title"/>
 
                             <Label
                                     text="Search, filter, and review employee performance records."
-                                    styleClass="modern-page-subtitle"/>
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"/>
 
                         </VBox>
 
+
                         <Button
-                                text="↻  Refresh"
+                                text="Refresh"
                                 onAction="#handleRefresh"
-                                styleClass="modern-primary-button"/>
+                                styleClass="manager-button"/>
 
                     </HBox>
 
-                    <HBox
-                        spacing="18"
-                        maxWidth="Infinity">
+
+                    <!-- =================================================
+                         SUMMARY CARDS
+                         ================================================= -->
+
+                    <GridPane
+                            hgap="14"
+                            vgap="14"
+                            maxWidth="Infinity">
+
+                        <columnConstraints>
+
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+
+                        </columnConstraints>
 
 
-                    <VBox
-                            spacing="8"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            styleClass="report-stat-card">
+                        <!-- TOTAL RECORDS -->
 
-                        <padding>
-                            <Insets top="20" right="22" bottom="20" left="22"/>
-                        </padding>
+                        <VBox
+                                GridPane.columnIndex="0"
+                                spacing="6"
+                                maxWidth="Infinity"
+                                styleClass="manager-kpi-card">
 
-                        <Label
-                                text="Total Records"
-                                styleClass="modern-card-label"/>
+                            <Label
+                                    text="TOTAL RECORDS"
+                                    styleClass="manager-kpi-title"/>
 
-                        <Label
-                                fx:id="totalRecordsLabel"
-                                text="0"
-                                styleClass="report-stat-value"/>
+                            <Label
+                                    fx:id="totalRecordsLabel"
+                                    text="0"
+                                    styleClass="manager-kpi-value"/>
 
-                        <Label
-                                text="Performance records"
-                                styleClass="modern-page-subtitle"/>
+                            <Label
+                                    text="Performance records"
+                                    styleClass="manager-kpi-note"/>
 
-                    </VBox>
+                        </VBox>
 
 
-                    <VBox
-                            spacing="8"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            styleClass="report-stat-card">
+                        <!-- AVERAGE KPI -->
 
-                        <padding>
-                            <Insets top="20" right="22" bottom="20" left="22"/>
-                        </padding>
+                        <VBox
+                                GridPane.columnIndex="1"
+                                spacing="6"
+                                maxWidth="Infinity"
+                                styleClass="manager-kpi-card">
 
-                        <Label
-                                text="Average KPI"
-                                styleClass="modern-card-label"/>
+                            <Label
+                                    text="AVERAGE KPI"
+                                    styleClass="manager-kpi-title"/>
 
-                        <Label
-                                fx:id="averageKpiLabel"
-                                text="0.00%"
-                                styleClass="report-stat-value"/>
+                            <Label
+                                    fx:id="averageKpiLabel"
+                                    text="0.00%"
+                                    styleClass="manager-kpi-value"/>
 
-                        <Label
-                                text="Filtered average"
-                                styleClass="modern-page-subtitle"/>
+                            <Label
+                                    text="Filtered average"
+                                    styleClass="manager-kpi-note"/>
 
-                    </VBox>
+                        </VBox>
 
 
-                    <VBox
-                            spacing="8"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            styleClass="report-stat-card">
+                        <!-- AT RISK -->
 
-                        <padding>
-                            <Insets top="20" right="22" bottom="20" left="22"/>
-                        </padding>
+                        <VBox
+                                GridPane.columnIndex="2"
+                                spacing="6"
+                                maxWidth="Infinity"
+                                styleClass="manager-kpi-card">
 
-                        <Label
-                                text="At Risk"
-                                styleClass="modern-card-label"/>
+                            <Label
+                                    text="AT RISK"
+                                    styleClass="manager-kpi-title"/>
 
-                        <Label
-                                fx:id="atRiskCountLabel"
-                                text="0"
-                                styleClass="report-stat-value"/>
+                            <Label
+                                    fx:id="atRiskCountLabel"
+                                    text="0"
+                                    styleClass="manager-kpi-value"/>
 
-                        <Label
-                                text="At-risk records"
-                                styleClass="modern-page-subtitle"/>
+                            <Label
+                                    text="At-risk records"
+                                    styleClass="manager-kpi-note"/>
 
-                    </VBox>
+                        </VBox>
 
 
-                    <VBox
-                            spacing="8"
-                            HBox.hgrow="ALWAYS"
-                            maxWidth="Infinity"
-                            styleClass="report-stat-card">
+                        <!-- NORMAL / GOOD -->
 
-                        <padding>
-                            <Insets top="20" right="22" bottom="20" left="22"/>
-                        </padding>
+                        <VBox
+                                GridPane.columnIndex="3"
+                                spacing="6"
+                                maxWidth="Infinity"
+                                styleClass="manager-kpi-card">
 
-                        <Label
-                                text="Normal / Good"
-                                styleClass="modern-card-label"/>
+                            <Label
+                                    text="NORMAL / GOOD"
+                                    styleClass="manager-kpi-title"/>
 
-                        <Label
-                                fx:id="normalGoodCountLabel"
-                                text="0"
-                                styleClass="report-stat-value"/>
+                            <Label
+                                    fx:id="normalGoodCountLabel"
+                                    text="0"
+                                    styleClass="manager-kpi-value"/>
 
-                        <Label
-                                text="Healthy performance"
-                                styleClass="modern-page-subtitle"/>
+                            <Label
+                                    text="Healthy performance"
+                                    styleClass="manager-kpi-note"/>
 
-                    </VBox>
+                        </VBox>
 
-                </HBox>
+                    </GridPane>
 
 
-                    <!-- FILTERS -->
+                    <!-- =================================================
+                         FILTERS CARD
+                         ================================================= -->
 
                     <VBox
                             spacing="16"
-                            styleClass="modern-card">
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
 
-                        <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
-                        </padding>
 
-                        <Label
-                                text="Report Filters"
-                                styleClass="modern-section-title"/>
+                        <VBox spacing="4">
 
+                            <Label
+                                    text="Report Filters"
+                                    styleClass="manager-section-title"/>
+
+                            <Label
+                                    text="Filter records by employee, department, status, or evaluation period."
+                                    wrapText="true"
+                                    styleClass="manager-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- ROW 1 -->
 
                         <HBox
-                                spacing="14"
+                                spacing="10"
                                 alignment="CENTER_LEFT">
 
                             <TextField
                                     fx:id="searchField"
                                     promptText="Search Staff ID, name or department..."
-                                    prefWidth="330"/>
+                                    prefWidth="330"
+                                    styleClass="manager-input"/>
+
 
                             <ComboBox
                                     fx:id="departmentFilterComboBox"
-                                    prefWidth="180"/>
+                                    prefWidth="180"
+                                    styleClass="manager-combo-box"/>
+
 
                             <ComboBox
                                     fx:id="statusFilterComboBox"
-                                    prefWidth="160"/>
+                                    prefWidth="160"
+                                    styleClass="manager-combo-box"/>
 
                         </HBox>
 
 
+                        <!-- ROW 2 -->
+
                         <HBox
-                                spacing="14"
+                                spacing="10"
                                 alignment="CENTER_LEFT">
 
                             <DatePicker
                                     fx:id="startDatePicker"
                                     promptText="Start date"
-                                    prefWidth="180"/>
+                                    prefWidth="180"
+                                    styleClass="manager-date-picker"/>
 
                             <Label
                                     text="to"
-                                    styleClass="modern-page-subtitle"/>
+                                    styleClass="manager-section-subtitle"/>
 
                             <DatePicker
                                     fx:id="endDatePicker"
                                     promptText="End date"
-                                    prefWidth="180"/>
+                                    prefWidth="180"
+                                    styleClass="manager-date-picker"/>
+
 
                             <Button
                                     text="Clear Filters"
                                     onAction="#handleClearFilters"
-                                    styleClass="app-button"/>
+                                    styleClass="manager-button"/>
 
                         </HBox>
 
                     </VBox>
 
+
+                    <!-- =================================================
+                         MESSAGE
+                         ================================================= -->
 
                     <Label
                             fx:id="messageLabel"
                             visible="false"
                             managed="false"
                             wrapText="true"
-                            styleClass="modern-message"/>
+                            styleClass="manager-helper-text"/>
 
 
-                    <!-- REPORT TABLE -->
+                    <!-- =================================================
+                         REPORT TABLE
+                         ================================================= -->
 
                     <VBox
                             spacing="16"
-                            styleClass="modern-card">
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
 
-                        <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
-                        </padding>
 
                         <VBox spacing="4">
 
                             <Label
                                     text="Performance Records"
-                                    styleClass="modern-section-title"/>
+                                    styleClass="manager-section-title"/>
 
                             <Label
                                     text="Select a row to view the performance summary."
-                                    styleClass="modern-page-subtitle"/>
+                                    wrapText="true"
+                                    styleClass="manager-section-subtitle"/>
 
                         </VBox>
 
@@ -437,7 +492,7 @@
                                 prefHeight="350"
                                 minHeight="320"
                                 maxWidth="Infinity"
-                                styleClass="modern-table">
+                                styleClass="manager-table">
 
                             <columns>
 

@@ -8,9 +8,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import com.aepm.ui.components.NotificationBell?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
@@ -336,69 +340,182 @@
                     </HBox>
 
 
-                    <!-- CHARTS -->
-                    <HBox spacing="14">
+                    <!-- =====================================================
+                     CHARTS
+                     ===================================================== -->
 
-                        <VBox spacing="12"
-                              HBox.hgrow="ALWAYS"
-                              styleClass="employee-card">
+                     <GridPane
+                            hgap="14"
+                            vgap="14">
 
-                            <Label text="Task Status"
+                     <columnConstraints>
+                            <ColumnConstraints percentWidth="58"/>
+                            <ColumnConstraints percentWidth="42"/>
+                     </columnConstraints>
+
+
+                     <!-- =================================================
+                            TASK STATUS OVERVIEW
+                            ================================================= -->
+
+                     <VBox
+                            GridPane.columnIndex="0"
+                            spacing="14"
+                            minWidth="0"
+                            maxWidth="Infinity"
+                            styleClass="employee-card">
+
+
+                            <VBox spacing="4">
+
+                            <Label
+                                   text="Task Status Overview"
                                    styleClass="employee-section-title"/>
 
-                            <BarChart fx:id="taskStatusChart"
-                                      prefHeight="280"
-                                      legendVisible="false"
-                                      animated="false">
+                            <Label
+                                   text="Distribution of your assigned tasks by current status."
+                                   wrapText="true"
+                                   styleClass="employee-section-subtitle"/>
 
-                                <xAxis>
-                                    <CategoryAxis/>
-                                </xAxis>
+                            </VBox>
 
-                                <yAxis>
-                                    <NumberAxis/>
-                                </yAxis>
+
+                            <BarChart
+                                   fx:id="taskStatusChart"
+                                   animated="false"
+                                   legendVisible="false"
+                                   categoryGap="14"
+                                   prefHeight="300"
+                                   minHeight="270"
+                                   minWidth="0"
+                                   styleClass="employee-dashboard-chart">
+
+                            <xAxis>
+
+                                   <CategoryAxis
+                                          label="Status"/>
+
+                            </xAxis>
+
+                            <yAxis>
+
+                                   <NumberAxis
+                                          label="Tasks"
+                                          forceZeroInRange="true"
+                                          tickUnit="1"/>
+
+                            </yAxis>
 
                             </BarChart>
-                        </VBox>
+
+                     </VBox>
 
 
-                        <VBox spacing="12"
-                              prefWidth="360"
-                              styleClass="employee-card">
+                     <!-- =================================================
+                     DEADLINE ESCALATION
+                     ================================================= -->
 
-                            <Label text="Deadline Escalation"
+                     <VBox
+                            GridPane.columnIndex="1"
+                            spacing="14"
+                            minWidth="0"
+                            maxWidth="Infinity"
+                            styleClass="employee-card">
+
+
+                     <VBox spacing="4">
+
+                            <Label
+                                   text="Deadline Escalation"
                                    styleClass="employee-section-title"/>
 
-                            <PieChart fx:id="escalationChart"
-                                      prefHeight="230"
-                                      labelsVisible="false"
-                                      legendVisible="false"/>
+                            <Label
+                                   text="Current active deadline escalation levels."
+                                   wrapText="true"
+                                   styleClass="employee-section-subtitle"/>
 
-                            <HBox alignment="CENTER"
-                                  spacing="5">
+                     </VBox>
 
-                                <Label text="Active:"
-                                       styleClass="employee-section-subtitle"/>
 
-                                <Label fx:id="donutTotalLabel"
-                                       text="0"
-                                       styleClass="employee-section-title"/>
+                     <StackPane
+                            alignment="CENTER"
+                            prefHeight="270">
 
+
+                            <PieChart
+                                   fx:id="escalationChart"
+                                   animated="false"
+                                   labelsVisible="false"
+                                   legendVisible="false"
+                                   prefHeight="260"/>
+
+
+                            <Circle
+                                   radius="51"
+                                   fill="WHITE"
+                                   mouseTransparent="true"/>
+
+
+                            <VBox
+                                   alignment="CENTER"
+                                   spacing="2"
+                                   mouseTransparent="true">
+
+                            <Label
+                                   fx:id="donutTotalLabel"
+                                   text="0"
+                                   styleClass="employee-kpi-value"/>
+
+                            <Label
+                                   text="Total Active"
+                                   styleClass="employee-kpi-note"/>
+
+                            </VBox>
+
+                     </StackPane>
+
+                     <HBox
+                            alignment="CENTER"
+                            spacing="18">
+
+                            <HBox spacing="6" alignment="CENTER">
+                                   <Label text="●"
+                                          styleClass="level-legend-1"/>
+                                   <Label text="Level 1"
+                                          styleClass="chart-legend-text"/>
                             </HBox>
 
-                            <Label fx:id="escalationCountLabel"
-                                   text="0"
-                                   visible="false"
-                                   managed="false"/>
+                            <HBox spacing="6" alignment="CENTER">
+                                   <Label text="●"
+                                          styleClass="level-legend-2"/>
+                                   <Label text="Level 2"
+                                          styleClass="chart-legend-text"/>
+                            </HBox>
 
-                        </VBox>
-                    </HBox>
+                            <HBox spacing="6" alignment="CENTER">
+                                   <Label text="●"
+                                          styleClass="level-legend-3"/>
+                                   <Label text="Level 3"
+                                          styleClass="chart-legend-text"/>
+                            </HBox>
+
+                     </HBox>
 
 
-                    <!-- REMINDER -->
-                    <VBox spacing="8"
-                          styleClass="employee-card">
+                     <Label
+                            fx:id="escalationCountLabel"
+                            text="0"
+                            visible="false"
+                            managed="false"/>
+
+                     </VBox>
+
+                     </GridPane>
+
+
+                     <!-- REMINDER -->
+                     <VBox spacing="8"
+                     styleClass="employee-card">
 
                         <Label text="Reminders"
                                styleClass="employee-section-title"/>

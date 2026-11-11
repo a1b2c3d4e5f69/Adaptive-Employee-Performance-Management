@@ -143,7 +143,14 @@ public class NotificationBell extends StackPane {
 
         VBox container = new VBox(header, new Separator(), scroll);
         container.setPrefWidth(420);
-        container.setStyle("-fx-background-color: white; -fx-background-radius: 14; -fx-border-color: #DEE7F3; -fx-border-radius: 14; -fx-effect: dropshadow(gaussian, rgba(15,35,69,0.15), 22, 0, 0, 7);");
+        container.setStyle(
+            "-fx-font-family: 'Plus Jakarta Sans';" +
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 14;" +
+            "-fx-border-color: #DEE7F3;" +
+            "-fx-border-radius: 14;" +
+            "-fx-effect: dropshadow(gaussian, rgba(15,35,69,0.15), 22, 0, 0, 7);"
+        );
 
         popup.getContent().add(container);
         popup.setAutoHide(true);
@@ -375,7 +382,10 @@ public class NotificationBell extends StackPane {
         pane.getButtonTypes().add(ButtonType.CLOSE);
         pane.setPrefWidth(850);
         pane.setPrefHeight(680);
-        pane.setStyle("-fx-background-color: #F5F7FC;");
+        pane.setStyle(
+            "-fx-font-family: 'Plus Jakarta Sans';" +
+            "-fx-background-color: #F5F7FC;"
+        );
 
         Label heading = new Label("Performance Risk Details");
         heading.setStyle(

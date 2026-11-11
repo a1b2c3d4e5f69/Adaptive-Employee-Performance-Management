@@ -15,6 +15,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.Locale;
@@ -229,35 +230,59 @@ public class EmployeeHomeController {
     }
 
     private void updateCharts(
-            EmployeeDashboardService.Summary s
-    ) {
+                EmployeeDashboardService.Summary s
+        ) {
 
         XYChart.Series<String, Number> series =
                 new XYChart.Series<>();
 
-        series.getData().add(
-                new XYChart.Data<>("Completed", s.completed())
-        );
 
         series.getData().add(
-                new XYChart.Data<>("In Progress", s.inProgress())
+                createBarData(
+                        "Completed",
+                        s.completed()
+                )
         );
+
 
         series.getData().add(
-                new XYChart.Data<>("Overdue", s.overdue())
+                createBarData(
+                        "In Progress",
+                        s.inProgress()
+                )
         );
+
 
         series.getData().add(
-                new XYChart.Data<>("Pending", s.pending())
+                createBarData(
+                        "Overdue",
+                        s.overdue()
+                )
         );
+
 
         series.getData().add(
-                new XYChart.Data<>("Other", s.other())
+                createBarData(
+                        "Pending",
+                        s.pending()
+                )
         );
 
-        taskStatusChart.setAnimated(false);
-        taskStatusChart.setLegendVisible(false);
-        taskStatusChart.getData().setAll(series);
+
+        series.getData().add(
+                createBarData(
+                        "Other",
+                        0
+                )
+        );
+
+
+        taskStatusChart.getData().clear();
+
+        taskStatusChart.getData().add(
+                series
+        );
+
 
         String[] barColors = {
                 "#2563EB",
@@ -267,41 +292,66 @@ public class EmployeeHomeController {
                 "#64748B"
         };
 
-        for (int i = 0; i < series.getData().size(); i++) {
 
-            final String color = barColors[i];
+        for (int i = 0;
+                i < series.getData().size();
+                i++) {
 
-            XYChart.Data<String, Number> item =
-                    series.getData().get(i);
+                final String color =
+                        barColors[i];
 
-            if (item.getNode() != null) {
+                XYChart.Data<String, Number> item =
+                        series.getData().get(i);
+
+
+                if (item.getNode() != null) {
+
                 item.getNode().setStyle(
-                        "-fx-bar-fill: " + color + ";"
+                        "-fx-bar-fill: "
+                                + color
+                                + ";"
                 );
-            }
+                }
 
-            item.nodeProperty().addListener(
-                    (obs, oldNode, node) -> {
+
+                item.nodeProperty().addListener(
+                        (obs, oldNode, node) -> {
+
                         if (node != null) {
-                            node.setStyle(
-                                    "-fx-bar-fill: "
-                                            + color + ";"
-                            );
+
+                                node.setStyle(
+                                        "-fx-bar-fill: "
+                                                + color
+                                                + ";"
+                                );
                         }
-                    }
-            );
+                        }
+                );
         }
 
-        var pieData = FXCollections.observableArrayList(
-                new PieChart.Data("Level 1", s.level1()),
-                new PieChart.Data("Level 2", s.level2()),
-                new PieChart.Data("Level 3", s.level3())
-        );
+
+        var pieData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data(
+                                "Level 1",
+                                s.level1()
+                        ),
+                        new PieChart.Data(
+                                "Level 2",
+                                s.level2()
+                        ),
+                        new PieChart.Data(
+                                "Level 3",
+                                s.level3()
+                        )
+                );
+
 
         escalationChart.setAnimated(false);
         escalationChart.setLegendVisible(false);
         escalationChart.setLabelsVisible(false);
         escalationChart.setData(pieData);
+
 
         String[] pieColors = {
                 "#2563EB",
@@ -309,27 +359,41 @@ public class EmployeeHomeController {
                 "#FB7185"
         };
 
-        for (int i = 0; i < pieData.size(); i++) {
 
-            final String color = pieColors[i];
-            PieChart.Data item = pieData.get(i);
+        for (int i = 0;
+                i < pieData.size();
+                i++) {
 
-            if (item.getNode() != null) {
+                final String color =
+                        pieColors[i];
+
+                PieChart.Data item =
+                        pieData.get(i);
+
+
+                if (item.getNode() != null) {
+
                 item.getNode().setStyle(
-                        "-fx-pie-color: " + color + ";"
+                        "-fx-pie-color: "
+                                + color
+                                + ";"
                 );
-            }
+                }
 
-            item.nodeProperty().addListener(
-                    (obs, oldNode, node) -> {
+
+                item.nodeProperty().addListener(
+                        (obs, oldNode, node) -> {
+
                         if (node != null) {
-                            node.setStyle(
-                                    "-fx-pie-color: "
-                                            + color + ";"
-                            );
+
+                                node.setStyle(
+                                        "-fx-pie-color: "
+                                                + color
+                                                + ";"
+                                );
                         }
-                    }
-            );
+                        }
+                );
         }
     }
 
@@ -413,5 +477,68 @@ public class EmployeeHomeController {
                 .getScene().getWindow();
 
         NavigationManager.navigate(stage, path);
+    }
+
+    private XYChart.Data<String, Number> createBarData(
+                String category,
+                int value
+        ) {
+
+        XYChart.Data<String, Number> data =
+                new XYChart.Data<>(
+                        category,
+                        value
+                );
+
+
+        data.nodeProperty().addListener(
+                (obs, oldNode, node) -> {
+
+                        if (node == null) {
+                        return;
+                        }
+
+
+                        Label valueLabel =
+                                new Label(
+                                        String.valueOf(value)
+                                );
+
+                        valueLabel.getStyleClass().add(
+                                "employee-chart-value-label"
+                        );
+
+
+                        node.parentProperty().addListener(
+                                (parentObs, oldParent, parent) -> {
+
+                                if (!(parent instanceof StackPane stackPane)) {
+                                        return;
+                                }
+
+                                if (!stackPane.getChildren().contains(
+                                        valueLabel
+                                )) {
+
+                                        stackPane.getChildren().add(
+                                                valueLabel
+                                        );
+
+                                        StackPane.setAlignment(
+                                                valueLabel,
+                                                javafx.geometry.Pos.TOP_CENTER
+                                        );
+
+                                        valueLabel.setTranslateY(
+                                                -18
+                                        );
+                                }
+                                }
+                        );
+                }
+        );
+
+
+        return data;
     }
 }

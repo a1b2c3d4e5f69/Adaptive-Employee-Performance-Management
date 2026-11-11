@@ -1,0 +1,817 @@
+/* ============================================================
+   MANAGER DESIGN SYSTEM
+   Emerald Teal Theme
+   ============================================================ */
+
+.manager-root {
+    -fx-background-color: #F4F8F7;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+}
+
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+
+.manager-topbar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #DCE7E4
+        transparent;
+
+    -fx-border-width: 0 0 1px 0;
+
+    -fx-padding: 14px 28px;
+
+    -fx-min-height: 72px;
+    -fx-pref-height: 72px;
+}
+
+.manager-topbar-user-name {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.manager-topbar-user-role {
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0F766E;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.manager-sidebar-scroll {
+    -fx-background-color: #FFFFFF;
+    -fx-background: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        #DCE7E4
+        transparent
+        transparent;
+
+    -fx-border-width: 0 1px 0 0;
+}
+
+.manager-sidebar-scroll > .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-sidebar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-padding: 20px 14px 22px 14px;
+
+    -fx-spacing: 5px;
+}
+
+.manager-brand-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111111;
+}
+
+.manager-brand-secondary {
+    -fx-font-size: 10px;
+    -fx-text-fill: #667085;
+}
+
+.manager-sidebar-section {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #475467;
+
+    -fx-padding: 16px 8px 5px 8px;
+}
+
+
+/* ============================================================
+   SIDEBAR BUTTON
+   ============================================================ */
+
+.manager-nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #344054;
+
+    -fx-border-color: transparent;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-nav-button:hover {
+    -fx-background-color: #115E59;
+    -fx-text-fill: #FFFFFF;
+}
+
+.manager-nav-button-active {
+    -fx-background-color: #DFF4F1;
+    -fx-text-fill: #0F766E;
+
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-nav-button-active:hover {
+    -fx-background-color: #115E59;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #115E59;
+}
+
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+
+.manager-content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+
+    -fx-border-color: transparent;
+}
+
+.manager-content-scroll > .viewport {
+    -fx-background-color: #F4F8F7;
+}
+
+.manager-content {
+    -fx-background-color: #F4F8F7;
+
+    -fx-padding: 30px 32px 36px 32px;
+
+    -fx-spacing: 22px;
+}
+
+
+/* ============================================================
+   PAGE TITLE
+   ============================================================ */
+
+.manager-page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111111;
+}
+
+.manager-page-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #667085;
+}
+
+
+/* ============================================================
+   SECTION TITLE
+   ============================================================ */
+
+.manager-section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.manager-section-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #667085;
+}
+
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.manager-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 11px;
+    -fx-border-radius: 11px;
+
+    -fx-padding: 20px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(17, 24, 39, 0.035),
+        8,
+        0,
+        0,
+        2
+    );
+}
+
+
+/* ============================================================
+   KPI CARD
+   ============================================================ */
+
+.manager-kpi-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+
+    -fx-padding: 18px;
+
+    -fx-min-height: 112px;
+}
+
+.manager-kpi-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #667085;
+}
+
+.manager-kpi-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111111;
+}
+
+.manager-kpi-note {
+    -fx-font-size: 10px;
+    -fx-text-fill: #8A94A6;
+}
+
+
+/* ============================================================
+   NORMAL BUTTON
+   ============================================================ */
+
+.manager-button {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #0F766E;
+
+    -fx-border-color: #C9DAD6;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-button:hover {
+    -fx-background-color: #0F766E;
+    -fx-border-color: #0F766E;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* ============================================================
+   PRIMARY BUTTON
+   ============================================================ */
+
+.manager-button-primary {
+    -fx-background-color: #0F766E;
+    -fx-text-fill: #FFFFFF;
+
+    -fx-border-color: #0F766E;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-cursor: hand;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-button-primary:hover {
+    -fx-background-color: #115E59;
+    -fx-border-color: #115E59;
+}
+
+
+/* ============================================================
+   TAB BUTTON
+   ============================================================ */
+
+.manager-tab-button {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #0F766E;
+
+    -fx-border-color: #C9DAD6;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-cursor: hand;
+}
+
+.manager-tab-button:hover {
+    -fx-background-color: #DFF4F1;
+}
+
+.manager-tab-button-active {
+    -fx-background-color: #0F766E;
+    -fx-text-fill: #FFFFFF;
+
+    -fx-border-color: #0F766E;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 16px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.manager-input,
+.manager-combo-box,
+.manager-date-picker {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #C9DAD6;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-text-fill: #111111;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-input {
+    -fx-padding: 8px 12px;
+}
+
+.manager-input:focused,
+.manager-combo-box:focused,
+.manager-date-picker:focused {
+    -fx-border-color: #0F766E;
+}
+
+
+/* ============================================================
+   TEXT AREA
+   ============================================================ */
+
+.manager-text-area {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #C9DAD6;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-font-size: 12px;
+    -fx-text-fill: #111111;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-text-area .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+}
+
+.manager-text-area:focused {
+    -fx-border-color: #0F766E;
+}
+
+
+/* ============================================================
+   FIELD LABEL
+   ============================================================ */
+
+.manager-field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #475467;
+}
+
+.manager-helper-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8A94A6;
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.manager-table {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 9px;
+    -fx-border-radius: 9px;
+
+    -fx-padding: 0;
+}
+
+.manager-table .column-header-background {
+    -fx-background-color: #F4F8F7;
+}
+
+.manager-table .column-header {
+    -fx-background-color: transparent;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #DCE7E4
+        transparent;
+}
+
+.manager-table .column-header .label {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+
+    -fx-text-fill: #475467;
+}
+
+.manager-table .table-cell {
+    -fx-font-size: 11px;
+    -fx-text-fill: #344054;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #EDF2F1
+        transparent;
+
+    -fx-padding: 10px;
+}
+
+.manager-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-table .table-row-cell:hover {
+    -fx-background-color: #F6FAF9;
+}
+
+.manager-table .table-row-cell:selected {
+    -fx-background-color: #DFF4F1;
+}
+
+.manager-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #0F766E;
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+.manager-root .logout-button {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #DC3545;
+
+    -fx-border-color: transparent;
+
+    -fx-background-radius: 8px;
+
+    -fx-padding: 9px 11px;
+
+    -fx-min-height: 38px;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+
+    -fx-cursor: hand;
+}
+
+.manager-root .logout-button:hover {
+    -fx-background-color: #FEE2E2;
+
+    -fx-text-fill: #B91C1C;
+}
+
+.manager-dialog-close-button {
+    -fx-background-color: #0F766E;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #0F766E;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 20px;
+    -fx-min-height: 38px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-cursor: hand;
+}
+
+.manager-dialog-close-button:hover {
+    -fx-background-color: #115E59;
+    -fx-border-color: #115E59;
+}
+
+/* ============================================================
+   REPORT CHART
+   ============================================================ */
+
+.manager-report-chart {
+    -fx-background-color: #FFFFFF;
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+.manager-report-chart .chart-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.manager-report-chart .axis-label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-text-fill: #667085;
+}
+
+
+/* ============================================================
+   REPORT SCROLL
+   ============================================================ */
+
+.manager-report-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.manager-report-scroll > .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-report-tabs {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    -fx-padding: 0;
+}
+
+.manager-report-tabs > .tab-header-area {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.manager-report-tabs > .tab-header-area > .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.manager-report-tabs > .tab-header-area > .headers-region {
+    -fx-background-color: transparent;
+}
+
+.manager-report-tabs > .tab-content-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+
+    -fx-min-height: 820px;
+}
+
+.manager-report-tabs:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-report-tabs .tab {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DCE7E4;
+
+    -fx-background-radius: 8px 8px 0px 0px;
+    -fx-border-radius: 8px 8px 0px 0px;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+
+    -fx-padding: 7px 14px;
+}
+
+.manager-report-tabs .tab:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+    -fx-background-insets: 0;
+}
+
+.manager-report-tabs .tab:selected {
+    -fx-background-color: #0F766E;
+    -fx-border-color: #0F766E;
+}
+
+.manager-report-tabs .tab .tab-label {
+    -fx-text-fill: #0F766E;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+}
+
+.manager-report-tabs .tab:selected .tab-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: 700;
+}
+
+.manager-report-combo {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #C9DAD6;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+
+    -fx-min-height: 38px;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-report-combo:focused {
+    -fx-border-color: #0F766E;
+
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-report-combo .list-cell {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCE7E4;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #344054;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #DFF4F1;
+    -fx-text-fill: #0F766E;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #0F766E;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* ============================================================
+   REPORT MAIN WHITE CONTENT
+   ============================================================ */
+
+.manager-report-content-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+
+    -fx-padding: 20px;
+}
+
+.manager-report-filter-section {
+    -fx-background-color: #F8FBFA;
+
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 9px;
+    -fx-border-radius: 9px;
+
+    -fx-padding: 20px;
+}
+
+.manager-report-filter-area {
+    -fx-background-color: transparent;
+    -fx-padding: 20px 20px 16px 20px;
+}
+
+/* ============================================================
+   REPORT OUTER WHITE CARD
+   ============================================================ */
+
+.manager-report-main-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 18;
+    -fx-border-color: #D9E7E3;
+    -fx-border-radius: 18;
+    -fx-padding: 0;
+
+    -fx-min-height: 820px;
+}
+
+.level-legend-1 {
+    -fx-text-fill: #2563EB;
+    -fx-font-size: 12px;
+}
+
+.level-legend-2 {
+    -fx-text-fill: #F59E0B;
+    -fx-font-size: 12px;
+}
+
+.level-legend-3 {
+    -fx-text-fill: #FB7185;
+    -fx-font-size: 12px;
+}
+
+.chart-legend-text {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-text-fill: #667085;
+}

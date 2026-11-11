@@ -461,17 +461,8 @@ public final class AEPMDialog {
         Button closeButton = new Button("Close");
         closeButton.setPrefSize(120, 40);
         closeButton.setDefaultButton(true);
-        closeButton.setStyle(
-            "-fx-background-color: "
-                    + primary
-                    + ";"
-                    + "-fx-background-radius: 8;"
-                    + "-fx-border-radius: 8;"
-                    + "-fx-text-fill: white;"
-                    + "-fx-font-family: 'Plus Jakarta Sans';"
-                    + "-fx-font-size: 12px;"
-                    + "-fx-font-weight: bold;"
-                    + "-fx-cursor: hand;"
+        closeButton.getStyleClass().add(
+                "manager-dialog-close-button"
         );
         closeButton.setOnAction(e -> dialog.close());
 
@@ -495,6 +486,16 @@ public final class AEPMDialog {
         root.setStyle("-fx-background-color: transparent;");
 
         Scene scene = new Scene(root, 540, Region.USE_COMPUTED_SIZE);
+                var managerCss =
+                AEPMDialog.class.getResource(
+                        "/css/manager.css"
+                );
+
+        if (managerCss != null) {
+            scene.getStylesheets().add(
+                    managerCss.toExternalForm()
+            );
+        }
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
         dialog.setScene(scene);
@@ -591,38 +592,30 @@ public final class AEPMDialog {
         Button generate = new Button("Generate New Version");
 
         String base =
-                "-fx-background-radius: 10;"
-                + "-fx-border-radius: 10;"
-                + "-fx-padding: 11 16;"
-                + "-fx-font-size: 13px;"
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-radius: 8;"
+                + "-fx-padding: 9 16;"
+                + "-fx-min-height: 38;"
+                + "-fx-font-size: 12px;"
                 + "-fx-font-weight: bold;"
                 + "-fx-cursor: hand;";
 
-        cancel.setStyle(
-            base
-                    + "-fx-background-color: white;"
-                    + "-fx-border-color: #D9DEE8;"
-                    + "-fx-text-fill: "
-                    + (adminTheme
-                        ? "#1E3A8A"
-                        : "#334155")
-                    + ";"
-        );
+        cancel.setStyle(base
+                + "-fx-background-color: #FFFFFF;"
+                + "-fx-border-color: #C9DAD6;"
+                + "-fx-border-width: 1;"
+                + "-fx-text-fill: #0F766E;");
 
-        history.setStyle(
-            base
-                    + "-fx-background-color: "
-                    + primary
-                    + ";"
-                    + "-fx-border-color: "
-                    + primary
-                    + ";"
-                    + "-fx-text-fill: white;"
-        );
+        history.setStyle(base
+                + "-fx-background-color: #0F766E;"
+                + "-fx-border-color: #0F766E;"
+                + "-fx-text-fill: #FFFFFF;");
 
         generate.setStyle(base
-                + "-fx-background-color: #EFF6FF;"
-                + "-fx-text-fill: #2563EB;");
+                + "-fx-background-color: #DFF4F1;"
+                + "-fx-border-color: #DFF4F1;"
+                + "-fx-text-fill: #0F766E;");
 
         cancel.setCancelButton(true);
         history.setDefaultButton(true);

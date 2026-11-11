@@ -154,6 +154,32 @@ public class ManagerDeadlineEscalationController {
         applyFilters();
     }
 
+    private void setActiveTab(Button activeButton, Button inactiveButton) {
+
+        activeButton.getStyleClass().removeAll(
+                "manager-tab-button",
+                "manager-tab-button-active",
+                "quick-button",
+                "app-button"
+        );
+
+        inactiveButton.getStyleClass().removeAll(
+                "manager-tab-button",
+                "manager-tab-button-active",
+                "quick-button",
+                "app-button"
+        );
+
+
+        activeButton.getStyleClass().add(
+                "manager-tab-button-active"
+        );
+
+        inactiveButton.getStyleClass().add(
+                "manager-tab-button"
+        );
+    }
+
     private void updateTabAppearance() {
 
         String activeStyle =
@@ -172,14 +198,8 @@ public class ManagerDeadlineEscalationController {
             "-fx-background-radius: 8;" +
             "-fx-padding: 11 20;";
 
-        escalationTabButton.setStyle(
-            riskHistoryMode ? inactiveStyle : activeStyle
-        );
-
-        riskTabButton.setStyle(
-            riskHistoryMode ? activeStyle : inactiveStyle
-        );
-    }       
+    }      
+     
     private String encode(String value) {
         return URLEncoder.encode(
             value, StandardCharsets.UTF_8);

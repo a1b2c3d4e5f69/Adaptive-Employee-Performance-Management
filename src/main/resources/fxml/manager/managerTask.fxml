@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -12,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -21,7 +20,8 @@
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerTaskController"
-        styleClass="main-layout">
+        stylesheets="@../../css/app.css,@../../css/manager.css"
+        styleClass="manager-root">
 
 
     <!-- =====================================================
@@ -33,29 +33,18 @@
         <HBox
                 alignment="CENTER_LEFT"
                 spacing="20"
-                styleClass="topbar">
-
-            <padding>
-
-                <Insets
-                        top="16"
-                        right="28"
-                        bottom="16"
-                        left="28"/>
-
-            </padding>
-
+                styleClass="manager-topbar">
 
             <VBox spacing="2">
 
                 <Label
                         fx:id="welcomeLabel"
                         text="Welcome, Manager"
-                        styleClass="topbar-title"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         text="Adaptive Employee Performance Management System"
-                        styleClass="topbar-subtitle"/>
+                        styleClass="manager-page-subtitle"/>
 
             </VBox>
 
@@ -70,12 +59,12 @@
                 <Label
                         fx:id="topNameLabel"
                         text="Manager"
-                        styleClass="topbar-user-name"/>
+                        styleClass="manager-topbar-user-name"/>
 
                 <Label
                         fx:id="topRoleLabel"
                         text="MANAGER"
-                        styleClass="topbar-user-role"/>
+                        styleClass="manager-topbar-user-role"/>
 
             </VBox>
 
@@ -88,115 +77,129 @@
          SIDEBAR
          ===================================================== -->
 
-   <left>
+    <left>
 
-    <VBox
-            prefWidth="275"
-            minWidth="275"
-            maxWidth="275"
-            spacing="10"
-            styleClass="sidebar">
+        <ScrollPane
+                prefWidth="240"
+                minWidth="240"
+                maxWidth="240"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="manager-sidebar-scroll">
 
-        <padding>
-            <Insets
-                    top="28"
-                    right="12"
-                    bottom="20"
-                    left="12"/>
-        </padding>
+            <content>
 
-        <VBox spacing="3">
-
-            <Label
-                    text="AEPM"
-                    styleClass="sidebar-logo"/>
-
-            <Label
-                    text="Manager Portal"
-                    styleClass="sidebar-subtitle"/>
-
-        </VBox>
-
-        <Region prefHeight="42"/>
-
-        <Label
-                text="MENU"
-                styleClass="sidebar-section-title"/>
-
-        <Region prefHeight="18"/>
+                <VBox
+                        prefWidth="240"
+                        spacing="5"
+                        styleClass="manager-sidebar">
 
 
-        <Button
-                text="⌂   Home"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleHome"
-                styleClass="sidebar-button"/>
+                    <!-- BRAND -->
+
+                    <VBox spacing="2">
+
+                        <Label
+                                text="AEPM"
+                                styleClass="manager-brand-title"/>
+
+                        <Label
+                                text="Manager Portal"
+                                styleClass="manager-brand-secondary"/>
+
+                    </VBox>
 
 
-        <Button
-                text="●   My Profile"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleProfile"
-                styleClass="sidebar-button"/>
+                    <!-- WORKSPACE -->
+
+                    <Label
+                            text="WORKSPACE"
+                            styleClass="manager-sidebar-section"/>
 
 
-        <Button
-                text="✓   Task Management"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleTasks"
-                styleClass="sidebar-button-active"/>
-
-            <Button
-                    text="◷   Deadline Escalation"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDeadlineEscalation"
-                    styleClass="sidebar-button"/>
-
-        <Button
-                text="★   Performance"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handlePerformance"
-                styleClass="sidebar-button"/>
+                    <Button
+                            text="⌂   Dashboard"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleHome"
+                            styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="≡   Reports"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleReports"
-                styleClass="sidebar-button"/>
+                    <Button
+                            text="✓   Task Management"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleTaskManagement"
+                            styleClass="manager-nav-button-active"/>
 
 
-            <Button
-                    text="▣   Dashboard"
-                    maxWidth="Infinity"
-                    alignment="CENTER_LEFT"
-                    onAction="#handleDashboard"
-                    styleClass="sidebar-button"/>
+                    <Button
+                            text="★   Performance"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handlePerformance"
+                            styleClass="manager-nav-button"/>
 
 
-            <Region VBox.vgrow="ALWAYS"/>
+                    <Button
+                            text="≡   Reports"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleReports"
+                            styleClass="manager-nav-button"/>
 
 
-        <Button
-                text="↪   Logout"
-                maxWidth="Infinity"
-                alignment="CENTER_LEFT"
-                onAction="#handleLogout"
-                styleClass="logout-button"/>
+                    <!-- TEAM MANAGEMENT -->
 
-    </VBox>
+                    <Label
+                            text="TEAM MANAGEMENT"
+                            styleClass="manager-sidebar-section"/>
 
-</left>
+
+                    <Button
+                            text="◷   Deadline Escalation"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleDeadlineEscalation"
+                            styleClass="manager-nav-button"/>
+
+                    <!-- ACCOUNT -->
+
+                    <Label
+                            text="ACCOUNT"
+                            styleClass="manager-sidebar-section"/>
+
+
+                    <Button
+                            text="○   My Profile"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleProfile"
+                            styleClass="manager-nav-button"/>
+
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+
+                    <Button
+                            text="↪   Logout"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleLogout"
+                            styleClass="logout-button"/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </left>
 
 
     <!-- =====================================================
-         CONTENT
+         MAIN CONTENT
          ===================================================== -->
 
     <center>
@@ -206,45 +209,38 @@
                 hbarPolicy="NEVER"
                 vbarPolicy="AS_NEEDED"
                 pannable="true"
-                styleClass="content-scroll-pane">
+                styleClass="manager-content-scroll">
 
             <content>
 
                 <VBox
                         spacing="22"
-                        styleClass="home-content">
-
-                    <padding>
-
-                        <Insets
-                                top="32"
-                                right="35"
-                                bottom="40"
-                                left="35"/>
-
-                    </padding>
+                        maxWidth="Infinity"
+                        styleClass="manager-content">
 
 
                     <!-- =================================================
                          PAGE HEADER
                          ================================================= -->
 
-                    <HBox alignment="CENTER_LEFT">
+                    <HBox
+                            alignment="CENTER_LEFT"
+                            spacing="16">
 
-                        <VBox spacing="4">
+                        <VBox
+                                spacing="5"
+                                HBox.hgrow="ALWAYS">
 
                             <Label
                                     text="Task Management"
-                                    styleClass="content-title"/>
+                                    styleClass="manager-page-title"/>
 
                             <Label
                                     text="Create, assign and monitor employee tasks."
-                                    styleClass="content-description"/>
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"/>
 
                         </VBox>
-
-
-                        <Region HBox.hgrow="ALWAYS"/>
 
 
                         <HBox spacing="10">
@@ -252,13 +248,12 @@
                             <Button
                                     text="Refresh"
                                     onAction="#handleRefresh"
-                                    styleClass="app-button"/>
-
+                                    styleClass="manager-button"/>
 
                             <Button
                                     text="+ Create Task"
                                     onAction="#handleCreateTask"
-                                    styleClass="app-button"/>
+                                    styleClass="manager-button-primary"/>
 
                         </HBox>
 
@@ -271,85 +266,99 @@
 
                     <VBox
                             spacing="16"
-                            styleClass="section-card">
-
-                        <Label
-                                text="All Tasks"
-                                styleClass="section-title"/>
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
 
 
-                        <!-- =============================================
-                             SEARCH
-                             ============================================= -->
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="All Tasks"
+                                    styleClass="manager-section-title"/>
+
+                            <Label
+                                    text="Search and filter tasks assigned to employees."
+                                    wrapText="true"
+                                    styleClass="manager-section-subtitle"/>
+
+                        </VBox>
+
+
+                        <!-- SEARCH ROW -->
 
                         <HBox
-                                spacing="12"
+                                spacing="10"
                                 alignment="CENTER_LEFT">
 
                             <TextField
                                     fx:id="searchField"
                                     promptText="Search task name..."
-                                    prefWidth="280"/>
+                                    prefWidth="280"
+                                    styleClass="manager-input"/>
 
 
                             <DatePicker
                                     fx:id="dueDateFilterPicker"
                                     promptText="Due date"
-                                    prefWidth="175"/>
+                                    prefWidth="175"
+                                    styleClass="manager-date-picker"/>
 
 
                             <Button
                                     text="Clear Filters"
                                     onAction="#handleClearFilters"
-                                    styleClass="app-button"/>
+                                    styleClass="manager-button"/>
 
                         </HBox>
 
 
-                        <!-- =============================================
-                             FILTERS
-                             ============================================= -->
+                        <!-- FILTER ROW -->
 
                         <HBox
-                                spacing="12"
+                                spacing="10"
                                 alignment="CENTER_LEFT">
 
                             <ComboBox
                                     fx:id="employeeFilterComboBox"
                                     promptText="All Employees"
-                                    prefWidth="220"/>
+                                    prefWidth="220"
+                                    styleClass="manager-combo-box"/>
 
 
                             <ComboBox
                                     fx:id="categoryFilterComboBox"
                                     promptText="All Categories"
-                                    prefWidth="180"/>
+                                    prefWidth="180"
+                                    styleClass="manager-combo-box"/>
 
 
                             <ComboBox
                                     fx:id="statusFilterComboBox"
                                     promptText="All Status"
-                                    prefWidth="170"/>
+                                    prefWidth="170"
+                                    styleClass="manager-combo-box"/>
 
                         </HBox>
 
+
+                        <!-- MESSAGE -->
 
                         <Label
                                 fx:id="messageLabel"
                                 visible="false"
                                 managed="false"
                                 wrapText="true"
-                                styleClass="content-description"/>
+                                styleClass="manager-helper-text"/>
 
 
-                        <!-- =============================================
-                             TASK TABLE
-                             ============================================= -->
+                        <!-- TASK TABLE -->
 
                         <TableView
                                 fx:id="taskTable"
                                 prefHeight="350"
-                                minHeight="300">
+                                minHeight="300"
+                                maxWidth="Infinity"
+                                styleClass="manager-table">
 
                             <columns>
 
@@ -358,42 +367,35 @@
                                         text="Task"
                                         prefWidth="150"/>
 
-
                                 <TableColumn
                                         fx:id="categoryColumn"
                                         text="Category"
                                         prefWidth="115"/>
-
 
                                 <TableColumn
                                         fx:id="employeeColumn"
                                         text="Employee"
                                         prefWidth="155"/>
 
-
                                 <TableColumn
                                         fx:id="priorityColumn"
                                         text="Priority"
                                         prefWidth="80"/>
-
 
                                 <TableColumn
                                         fx:id="difficultyColumn"
                                         text="Difficulty"
                                         prefWidth="90"/>
 
-
                                 <TableColumn
                                         fx:id="statusColumn"
                                         text="Status"
                                         prefWidth="105"/>
 
-
                                 <TableColumn
                                         fx:id="progressColumn"
                                         text="Progress"
                                         prefWidth="80"/>
-
 
                                 <TableColumn
                                         fx:id="dueDateColumn"
@@ -413,16 +415,26 @@
 
                     <VBox
                             spacing="16"
-                            styleClass="section-card">
-
-                        <HBox alignment="CENTER_LEFT">
-
-                            <Label
-                                    text="Selected Task"
-                                    styleClass="section-title"/>
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
 
 
-                            <Region HBox.hgrow="ALWAYS"/>
+                        <HBox
+                                alignment="CENTER_LEFT"
+                                spacing="12">
+
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="Selected Task"
+                                        styleClass="manager-section-title"/>
+
+                                <Label
+                                        text="Review the selected task details before editing or cancelling it."
+                                        wrapText="true"
+                                        styleClass="manager-section-subtitle"/>
+
+                            </VBox>
 
 
                             <HBox spacing="10">
@@ -430,100 +442,129 @@
                                 <Button
                                         text="Edit Task"
                                         onAction="#handleEditTask"
-                                        styleClass="app-button"/>
-
+                                        styleClass="manager-button"/>
 
                                 <Button
                                         text="Cancel Task"
                                         onAction="#handleCancelTask"
-                                        styleClass="app-button"/>
+                                        styleClass="manager-button"/>
 
                             </HBox>
 
                         </HBox>
 
 
-                        <GridPane
-                                hgap="30"
-                                vgap="14">
+                        <Region
+                                prefHeight="1"
+                                maxHeight="1"
+                                style="-fx-background-color: #DCE7E4;"/>
 
-                            <!-- ROW 1 -->
+
+                        <!-- DETAILS GRID -->
+
+                        <GridPane
+                                hgap="32"
+                                vgap="16"
+                                maxWidth="Infinity">
+
+                            <columnConstraints>
+
+                                <ColumnConstraints minWidth="100"/>
+
+                                <ColumnConstraints
+                                        prefWidth="280"
+                                        hgrow="ALWAYS"/>
+
+                                <ColumnConstraints minWidth="100"/>
+
+                                <ColumnConstraints
+                                        prefWidth="280"
+                                        hgrow="ALWAYS"/>
+
+                            </columnConstraints>
+
+
+                            <!-- TASK -->
 
                             <Label
                                     text="Task"
-                                    styleClass="input-label"
+                                    styleClass="manager-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="0"/>
-
 
                             <Label
                                     fx:id="selectedTaskLabel"
                                     text="No task selected"
-                                    styleClass="task-detail-value"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="0"/>
 
 
+                            <!-- CATEGORY -->
+
                             <Label
                                     text="Category"
-                                    styleClass="input-label"
+                                    styleClass="manager-field-label"
                                     GridPane.columnIndex="2"
                                     GridPane.rowIndex="0"/>
-
 
                             <Label
                                     fx:id="selectedCategoryLabel"
                                     text="-"
-                                    styleClass="task-detail-value"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="0"/>
 
 
-                            <!-- ROW 2 -->
+                            <!-- EMPLOYEE -->
 
                             <Label
                                     text="Employee"
-                                    styleClass="input-label"
+                                    styleClass="manager-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="1"/>
-
 
                             <Label
                                     fx:id="selectedEmployeeLabel"
                                     text="-"
-                                    styleClass="task-detail-value"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="1"/>
 
 
+                            <!-- STATUS -->
+
                             <Label
                                     text="Status"
-                                    styleClass="input-label"
+                                    styleClass="manager-field-label"
                                     GridPane.columnIndex="2"
                                     GridPane.rowIndex="1"/>
-
 
                             <Label
                                     fx:id="selectedStatusLabel"
                                     text="-"
-                                    styleClass="task-detail-value"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="1"/>
 
 
-                            <!-- ROW 3 -->
+                            <!-- PROGRESS -->
 
                             <Label
                                     text="Progress"
-                                    styleClass="input-label"
+                                    styleClass="manager-field-label"
                                     GridPane.columnIndex="0"
                                     GridPane.rowIndex="2"/>
-
 
                             <Label
                                     fx:id="selectedProgressLabel"
                                     text="-"
-                                    styleClass="task-detail-value"
+                                    wrapText="true"
+                                    styleClass="manager-page-subtitle"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="2"/>
 
@@ -538,23 +579,31 @@
 
                     <VBox
                             spacing="14"
-                            styleClass="section-card">
-
-                        <Label
-                                text="Progress History"
-                                styleClass="section-title"/>
+                            maxWidth="Infinity"
+                            styleClass="manager-card">
 
 
-                        <Label
-                                fx:id="historyMessageLabel"
-                                text="Select a task to view progress history."
-                                styleClass="content-description"/>
+                        <VBox spacing="4">
+
+                            <Label
+                                    text="Progress History"
+                                    styleClass="manager-section-title"/>
+
+                            <Label
+                                    fx:id="historyMessageLabel"
+                                    text="Select a task to view progress history."
+                                    wrapText="true"
+                                    styleClass="manager-section-subtitle"/>
+
+                        </VBox>
 
 
                         <TableView
                                 fx:id="historyTable"
                                 prefHeight="220"
-                                minHeight="180">
+                                minHeight="180"
+                                maxWidth="Infinity"
+                                styleClass="manager-table">
 
                             <columns>
 
@@ -563,12 +612,10 @@
                                         text="Progress"
                                         prefWidth="100"/>
 
-
                                 <TableColumn
                                         fx:id="historyNoteColumn"
                                         text="Progress Note"
                                         prefWidth="500"/>
-
 
                                 <TableColumn
                                         fx:id="historyDateColumn"
@@ -582,7 +629,7 @@
                     </VBox>
 
 
-                    <Region prefHeight="15"/>
+                    <Region prefHeight="10"/>
 
                 </VBox>
 
