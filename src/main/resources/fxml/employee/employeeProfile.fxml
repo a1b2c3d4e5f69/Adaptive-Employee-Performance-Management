@@ -27,6 +27,7 @@
         stylesheets="@../../css/app.css"
         styleClass="employee-root">
 
+
     <!-- =====================================================
          TOP BAR
          ===================================================== -->
@@ -49,9 +50,12 @@
 
             </VBox>
 
+
             <Region HBox.hgrow="ALWAYS"/>
 
+
             <NotificationBell/>
+
 
             <VBox
                     alignment="CENTER_RIGHT"
@@ -95,7 +99,9 @@
                         spacing="5"
                         styleClass="employee-sidebar">
 
+
                     <!-- BRAND -->
+
                     <VBox spacing="2">
 
                         <Label
@@ -110,12 +116,13 @@
 
 
                     <!-- WORKSPACE -->
+
                     <Label
                             text="WORKSPACE"
                             styleClass="employee-sidebar-section"/>
 
                     <Button
-                            text="⌂   Dashboard"
+                            text="⌂   Home"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleHome"
@@ -144,6 +151,7 @@
 
 
                     <!-- SUPPORT -->
+
                     <Label
                             text="SUPPORT &amp; GOVERNANCE"
                             styleClass="employee-sidebar-section"/>
@@ -162,7 +170,9 @@
                             onAction="#handleProfile"
                             styleClass="employee-nav-button-active"/>
 
+
                     <Region VBox.vgrow="ALWAYS"/>
+
 
                     <Button
                             text="↪   Logout"
@@ -198,7 +208,11 @@
                         spacing="22"
                         styleClass="employee-content">
 
-                    <!-- PAGE HEADER -->
+
+                    <!-- =================================================
+                         PAGE HEADER
+                         ================================================= -->
+
                     <VBox spacing="5">
 
                         <Label
@@ -212,9 +226,9 @@
                     </VBox>
 
 
-                    <!-- =====================================================
+                    <!-- =================================================
                          PROFILE HEADER CARD
-                         ===================================================== -->
+                         ================================================= -->
 
                     <HBox
                             spacing="24"
@@ -222,7 +236,9 @@
                             maxWidth="Infinity"
                             styleClass="employee-profile-header-card">
 
+
                         <!-- AVATAR -->
+
                         <StackPane
                                 prefWidth="104"
                                 prefHeight="104"
@@ -231,13 +247,16 @@
                                 maxWidth="104"
                                 maxHeight="104">
 
+
                             <!-- FALLBACK BACKGROUND -->
+
                             <Circle
                                     radius="46"
                                     styleClass="employee-profile-avatar-bg"/>
 
 
                             <!-- INITIAL -->
+
                             <Label
                                     fx:id="profileInitialLabel"
                                     text="E"
@@ -245,6 +264,7 @@
 
 
                             <!-- REAL PROFILE IMAGE -->
+
                             <ImageView
                                     fx:id="profileImageView"
                                     fitWidth="92"
@@ -266,6 +286,7 @@
 
 
                             <!-- EDIT BUTTON -->
+
                             <Button
                                     fx:id="editImageButton"
                                     text="✎"
@@ -276,7 +297,10 @@
                         </StackPane>
 
 
-                        <!-- PROFILE MAIN INFO -->
+                        <!-- =================================================
+                             PROFILE MAIN INFO
+                             ================================================= -->
+
                         <VBox
                                 spacing="6"
                                 alignment="CENTER_LEFT"
@@ -325,7 +349,10 @@
                         </VBox>
 
 
-                        <!-- ACCOUNT STATUS -->
+                        <!-- =================================================
+                             ACCOUNT STATUS
+                             ================================================= -->
+
                         <VBox
                                 spacing="5"
                                 alignment="CENTER_LEFT"
@@ -357,6 +384,9 @@
                             spacing="18"
                             styleClass="employee-card">
 
+
+                        <!-- CARD HEADER -->
+
                         <VBox spacing="4">
 
                             <Label
@@ -370,9 +400,14 @@
                         </VBox>
 
 
+                        <!-- =================================================
+                             INFORMATION GRID
+                             ================================================= -->
+
                         <GridPane
                                 hgap="36"
                                 vgap="20">
+
 
                             <columnConstraints>
 
@@ -393,7 +428,9 @@
                             </columnConstraints>
 
 
-                            <!-- STAFF ID -->
+                            <!-- =================================================
+                                 STAFF ID
+                                 ================================================= -->
 
                             <Label
                                     text="Staff ID"
@@ -404,11 +441,15 @@
                             <Label
                                     fx:id="employeeIdLabel"
                                     text="-"
+                                    wrapText="true"
+                                    styleClass="employee-page-subtitle"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="0"/>
 
 
-                            <!-- USERNAME -->
+                            <!-- =================================================
+                                 USERNAME
+                                 ================================================= -->
 
                             <Label
                                     text="Username"
@@ -419,11 +460,15 @@
                             <Label
                                     fx:id="usernameLabel"
                                     text="-"
+                                    wrapText="true"
+                                    styleClass="employee-page-subtitle"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="0"/>
 
 
-                            <!-- EMAIL -->
+                            <!-- =================================================
+                                 EMAIL
+                                 ================================================= -->
 
                             <Label
                                     text="Email"
@@ -435,11 +480,14 @@
                                     fx:id="emailLabel"
                                     text="-"
                                     wrapText="true"
+                                    styleClass="employee-page-subtitle"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="1"/>
 
 
-                            <!-- DEPARTMENT -->
+                            <!-- =================================================
+                                 DEPARTMENT
+                                 ================================================= -->
 
                             <Label
                                     text="Department"
@@ -450,11 +498,15 @@
                             <Label
                                     fx:id="departmentLabel"
                                     text="-"
+                                    wrapText="true"
+                                    styleClass="employee-page-subtitle"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="1"/>
 
 
-                            <!-- ROLE -->
+                            <!-- =================================================
+                                 ROLE
+                                 ================================================= -->
 
                             <Label
                                     text="Role"
@@ -465,11 +517,15 @@
                             <Label
                                     fx:id="roleLabel"
                                     text="Employee"
+                                    wrapText="true"
+                                    styleClass="employee-page-subtitle"
                                     GridPane.columnIndex="1"
                                     GridPane.rowIndex="2"/>
 
 
-                            <!-- ACCOUNT STATUS -->
+                            <!-- =================================================
+                                 ACCOUNT STATUS
+                                 ================================================= -->
 
                             <Label
                                     text="Account Status"
@@ -480,11 +536,15 @@
                             <Label
                                     fx:id="accountStatusLabel"
                                     text="-"
+                                    wrapText="true"
+                                    styleClass="employee-page-subtitle"
                                     GridPane.columnIndex="3"
                                     GridPane.rowIndex="2"/>
 
 
-                            <!-- CONTACT NUMBER -->
+                            <!-- =================================================
+                                 CONTACT NUMBER
+                                 ================================================= -->
 
                             <Label
                                     text="Contact Number"
@@ -504,7 +564,10 @@
                         </GridPane>
 
 
-                        <!-- MESSAGE -->
+                        <!-- =================================================
+                             MESSAGE
+                             ================================================= -->
+
                         <Label
                                 fx:id="messageLabel"
                                 visible="false"
@@ -513,7 +576,10 @@
                                 styleClass="employee-helper-text"/>
 
 
-                        <!-- ACTIONS -->
+                        <!-- =================================================
+                             ACTIONS
+                             ================================================= -->
+
                         <HBox
                                 spacing="10"
                                 alignment="CENTER_LEFT">
@@ -534,7 +600,11 @@
                     </VBox>
 
 
-                    <!-- Existing controller may still reference this -->
+                    <!-- =================================================
+                         HIDDEN WELCOME LABEL
+                         EXISTING CONTROLLER REFERENCE
+                         ================================================= -->
+
                     <Label
                             fx:id="welcomeLabel"
                             visible="false"

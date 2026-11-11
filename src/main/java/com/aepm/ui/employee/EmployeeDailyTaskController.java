@@ -12,9 +12,13 @@ import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -512,311 +516,648 @@ public class EmployeeDailyTaskController {
     }
 
 
-    // =========================================================
-    // ADD / EDIT DIALOG
-    // =========================================================
+   private void showTaskDialog(
+        EmployeeDailyTask existing
+) {
 
-    private void showTaskDialog(
-            EmployeeDailyTask existing
-    ) {
-
-        Dialog<ButtonType> dialog =
-                new Dialog<>();
+    Dialog<ButtonType> dialog =
+            new Dialog<>();
 
 
-        dialog.setTitle(
-                existing == null
-                        ? "Add Daily Task"
-                        : "Edit Daily Task"
+    dialog.setTitle(
+            existing == null
+                    ? "Add Daily Task"
+                    : "Edit Daily Task"
+    );
+
+
+    // =====================================================
+    // BUTTON TYPES
+    // =====================================================
+
+    ButtonType saveType =
+            new ButtonType(
+                    existing == null
+                            ? "Add Task"
+                            : "Save Changes",
+                    ButtonBar.ButtonData.OK_DONE
+            );
+
+
+    dialog.getDialogPane()
+            .getButtonTypes()
+            .addAll(
+                    saveType,
+                    ButtonType.CANCEL
+            );
+
+
+    // =====================================================
+    // TITLE
+    // =====================================================
+
+    TextField titleField =
+            new TextField();
+
+    titleField.setPromptText(
+            "Example: Reply client email"
+    );
+
+    titleField.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    titleField.getStyleClass()
+            .add(
+                    "employee-input"
+            );
+
+
+    // =====================================================
+    // DESCRIPTION
+    // =====================================================
+
+    TextArea descriptionArea =
+            new TextArea();
+
+    descriptionArea.setPromptText(
+            "Optional description"
+    );
+
+    descriptionArea.setPrefRowCount(
+            3
+    );
+
+    descriptionArea.setWrapText(
+            true
+    );
+
+    descriptionArea.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    descriptionArea.getStyleClass()
+            .add(
+                    "employee-text-area"
+            );
+
+
+    // =====================================================
+    // CATEGORY
+    // =====================================================
+
+    ComboBox<String> categoryBox =
+            new ComboBox<>();
+
+    categoryBox.getItems()
+            .setAll(
+                    "Email",
+                    "Report",
+                    "Meeting",
+                    "Follow-up",
+                    "Documentation",
+                    "Development",
+                    "Other"
+            );
+
+    categoryBox.setValue(
+            "Other"
+    );
+
+    categoryBox.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    categoryBox.getStyleClass()
+            .add(
+                    "employee-combo-box"
+            );
+
+
+    // =====================================================
+    // PRIORITY
+    // =====================================================
+
+    ComboBox<String> priorityBox =
+            new ComboBox<>();
+
+    priorityBox.getItems()
+            .setAll(
+                    "Low",
+                    "Medium",
+                    "High"
+            );
+
+    priorityBox.setValue(
+            "Medium"
+    );
+
+    priorityBox.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    priorityBox.getStyleClass()
+            .add(
+                    "employee-combo-box"
+            );
+
+
+    // =====================================================
+    // DATE
+    // =====================================================
+
+    DatePicker datePicker =
+            new DatePicker(
+                    taskDatePicker.getValue()
+            );
+
+    datePicker.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    datePicker.getStyleClass()
+            .add(
+                    "employee-date-picker"
+            );
+
+
+    // =====================================================
+    // DUE TIME
+    // =====================================================
+
+    TextField dueTimeField =
+            new TextField();
+
+    dueTimeField.setPromptText(
+            "HH:mm, example 17:30"
+    );
+
+    dueTimeField.setMaxWidth(
+            Double.MAX_VALUE
+    );
+
+    dueTimeField.getStyleClass()
+            .add(
+                    "employee-input"
+            );
+
+
+    // =====================================================
+    // EXISTING DATA
+    // =====================================================
+
+    if (existing != null) {
+
+        titleField.setText(
+                existing.getTaskTitle()
         );
 
 
-        dialog.getDialogPane()
-                .getButtonTypes()
-                .addAll(
-                        ButtonType.OK,
-                        ButtonType.CANCEL
-                );
-
-
-        TextField titleField =
-                new TextField();
-
-
-        titleField.setPromptText(
-                "Example: Reply client email"
-        );
-
-
-        TextArea descriptionArea =
-                new TextArea();
-
-
-        descriptionArea.setPromptText(
-                "Optional description"
-        );
-
-
-        descriptionArea.setPrefRowCount(3);
-
-
-        ComboBox<String> categoryBox =
-                new ComboBox<>();
-
-
-        categoryBox.getItems().setAll(
-                "Email",
-                "Report",
-                "Meeting",
-                "Follow-up",
-                "Documentation",
-                "Development",
-                "Other"
+        descriptionArea.setText(
+                existing.getTaskDescription()
         );
 
 
         categoryBox.setValue(
-                "Other"
-        );
-
-
-        ComboBox<String> priorityBox =
-                new ComboBox<>();
-
-
-        priorityBox.getItems().setAll(
-                "Low",
-                "Medium",
-                "High"
+                existing.getCategory()
         );
 
 
         priorityBox.setValue(
-                "Medium"
+                existing.getPriority()
         );
 
 
-        DatePicker datePicker =
-                new DatePicker(
-                        taskDatePicker.getValue()
-                );
-
-
-        TextField dueTimeField =
-                new TextField();
-
-
-        dueTimeField.setPromptText(
-                "HH:mm, example 17:30"
+        datePicker.setValue(
+                existing.getTaskDate()
         );
-
-
-        if (existing != null) {
-
-            titleField.setText(
-                    existing.getTaskTitle()
-            );
-
-
-            descriptionArea.setText(
-                    existing.getTaskDescription()
-            );
-
-
-            categoryBox.setValue(
-                    existing.getCategory()
-            );
-
-
-            priorityBox.setValue(
-                    existing.getPriority()
-            );
-
-
-            datePicker.setValue(
-                    existing.getTaskDate()
-            );
-
-
-            if (
-                    existing.getDueTime() != null
-            ) {
-
-                dueTimeField.setText(
-                        existing.getDueTime()
-                                .format(
-                                        TIME_FORMAT
-                                )
-                );
-            }
-        }
-
-
-        GridPane grid =
-                new GridPane();
-
-
-        grid.setHgap(12);
-
-        grid.setVgap(12);
-
-
-        grid.add(
-                new Label("Task Title *"),
-                0,
-                0
-        );
-
-        grid.add(
-                titleField,
-                1,
-                0
-        );
-
-
-        grid.add(
-                new Label("Description"),
-                0,
-                1
-        );
-
-        grid.add(
-                descriptionArea,
-                1,
-                1
-        );
-
-
-        grid.add(
-                new Label("Category *"),
-                0,
-                2
-        );
-
-        grid.add(
-                categoryBox,
-                1,
-                2
-        );
-
-
-        grid.add(
-                new Label("Priority *"),
-                0,
-                3
-        );
-
-        grid.add(
-                priorityBox,
-                1,
-                3
-        );
-
-
-        grid.add(
-                new Label("Task Date *"),
-                0,
-                4
-        );
-
-        grid.add(
-                datePicker,
-                1,
-                4
-        );
-
-
-        grid.add(
-                new Label("Due Time"),
-                0,
-                5
-        );
-
-        grid.add(
-                dueTimeField,
-                1,
-                5
-        );
-
-
-        dialog.getDialogPane()
-                .setContent(
-                        grid
-                );
-
-
-        Optional<ButtonType> result =
-                dialog.showAndWait();
 
 
         if (
-                result.isEmpty()
-                        ||
-                        result.get()
-                                != ButtonType.OK
+                existing.getDueTime() != null
         ) {
 
-            return;
+            dueTimeField.setText(
+                    existing.getDueTime()
+                            .format(
+                                    TIME_FORMAT
+                            )
+            );
         }
+    }
 
 
-        LocalTime dueTime = null;
+    // =====================================================
+    // HEADER
+    // =====================================================
 
-
-        try {
-
-            if (
-                    !dueTimeField
-                            .getText()
-                            .isBlank()
-            ) {
-
-                dueTime =
-                        LocalTime.parse(
-                                dueTimeField
-                                        .getText()
-                                        .trim(),
-                                TIME_FORMAT
-                        );
-            }
-
-        } catch (Exception exception) {
-
-            showAlert(
-                    "Invalid Time",
-                    "Please use HH:mm format. Example: 17:30."
+    Label heading =
+            new Label(
+                    existing == null
+                            ? "Add Daily Task"
+                            : "Edit Daily Task"
             );
 
-            return;
+    heading.getStyleClass()
+            .add(
+                    "employee-section-title"
+            );
+
+
+    Label subtitle =
+            new Label(
+                    existing == null
+                            ? "Create a personal task to organise your daily work."
+                            : "Update the selected daily task information."
+            );
+
+    subtitle.setWrapText(
+            true
+    );
+
+    subtitle.getStyleClass()
+            .add(
+                    "employee-section-subtitle"
+            );
+
+
+    VBox header =
+            new VBox(
+                    4,
+                    heading,
+                    subtitle
+            );
+
+
+    // =====================================================
+    // LABELS
+    // =====================================================
+
+    Label titleLabel =
+            new Label(
+                    "Task Title *"
+            );
+
+    Label descriptionLabel =
+            new Label(
+                    "Description"
+            );
+
+    Label categoryLabel =
+            new Label(
+                    "Category *"
+            );
+
+    Label priorityLabel =
+            new Label(
+                    "Priority *"
+            );
+
+    Label dateLabel =
+            new Label(
+                    "Task Date *"
+            );
+
+    Label timeLabel =
+            new Label(
+                    "Due Time"
+            );
+
+
+    titleLabel.getStyleClass()
+            .add(
+                    "employee-field-label"
+            );
+
+    descriptionLabel.getStyleClass()
+            .add(
+                    "employee-field-label"
+            );
+
+    categoryLabel.getStyleClass()
+            .add(
+                    "employee-field-label"
+            );
+
+    priorityLabel.getStyleClass()
+            .add(
+                    "employee-field-label"
+            );
+
+    dateLabel.getStyleClass()
+            .add(
+                    "employee-field-label"
+            );
+
+    timeLabel.getStyleClass()
+            .add(
+                    "employee-field-label"
+            );
+
+
+    // =====================================================
+    // FORM GRID
+    // =====================================================
+
+    GridPane grid =
+            new GridPane();
+
+    grid.setHgap(
+            18
+    );
+
+    grid.setVgap(
+            14
+    );
+
+
+    ColumnConstraints labelColumn =
+            new ColumnConstraints();
+
+    labelColumn.setMinWidth(
+            120
+    );
+
+
+    ColumnConstraints inputColumn =
+            new ColumnConstraints();
+
+    inputColumn.setHgrow(
+            Priority.ALWAYS
+    );
+
+    inputColumn.setFillWidth(
+            true
+    );
+
+
+    grid.getColumnConstraints()
+            .addAll(
+                    labelColumn,
+                    inputColumn
+            );
+
+
+    grid.add(
+            titleLabel,
+            0,
+            0
+    );
+
+    grid.add(
+            titleField,
+            1,
+            0
+    );
+
+
+    grid.add(
+            descriptionLabel,
+            0,
+            1
+    );
+
+    grid.add(
+            descriptionArea,
+            1,
+            1
+    );
+
+
+    grid.add(
+            categoryLabel,
+            0,
+            2
+    );
+
+    grid.add(
+            categoryBox,
+            1,
+            2
+    );
+
+
+    grid.add(
+            priorityLabel,
+            0,
+            3
+    );
+
+    grid.add(
+            priorityBox,
+            1,
+            3
+    );
+
+
+    grid.add(
+            dateLabel,
+            0,
+            4
+    );
+
+    grid.add(
+            datePicker,
+            1,
+            4
+    );
+
+
+    grid.add(
+            timeLabel,
+            0,
+            5
+    );
+
+    grid.add(
+            dueTimeField,
+            1,
+            5
+    );
+
+
+    // =====================================================
+    // MAIN CONTENT
+    // =====================================================
+
+    VBox content =
+            new VBox(
+                    18,
+                    header,
+                    grid
+            );
+
+    content.setPadding(
+            new Insets(
+                    20,
+                    22,
+                    18,
+                    22
+            )
+    );
+
+    content.setPrefWidth(
+            620
+    );
+
+
+    dialog.getDialogPane()
+            .setContent(
+                    content
+            );
+
+
+    // =====================================================
+    // APPLY EXISTING CSS
+    // =====================================================
+
+    var css =
+            getClass()
+                    .getResource(
+                            "/css/app.css"
+                    );
+
+    if (css != null) {
+
+        dialog.getDialogPane()
+                .getStylesheets()
+                .add(
+                        css.toExternalForm()
+                );
+    }
+
+
+    dialog.getDialogPane()
+            .setStyle(
+                    "-fx-background-color: #FFFFFF;"
+                    + "-fx-font-family: 'Plus Jakarta Sans';"
+                    + "-fx-font-size: 12px;"
+            );
+
+
+    // =====================================================
+    // BUTTON UI
+    // =====================================================
+
+    Button saveButton =
+            (Button) dialog
+                    .getDialogPane()
+                    .lookupButton(
+                            saveType
+                    );
+
+
+    Button cancelButton =
+            (Button) dialog
+                    .getDialogPane()
+                    .lookupButton(
+                            ButtonType.CANCEL
+                    );
+
+
+    saveButton.getStyleClass()
+            .removeAll(
+                    "login-primary-button",
+                    "secondary-button",
+                    "app-button"
+            );
+
+    saveButton.getStyleClass()
+            .add(
+                    "employee-button-primary"
+            );
+
+
+    cancelButton.getStyleClass()
+            .removeAll(
+                    "login-primary-button",
+                    "secondary-button",
+                    "app-button"
+            );
+
+    cancelButton.getStyleClass()
+            .add(
+                    "employee-button"
+            );
+
+
+    // =====================================================
+    // DEFAULT FOCUS
+    // =====================================================
+
+    javafx.application.Platform.runLater(
+            titleField::requestFocus
+    );
+
+
+    // =====================================================
+    // SHOW
+    // =====================================================
+
+    Optional<ButtonType> result =
+            dialog.showAndWait();
+
+
+    if (
+            result.isEmpty()
+                    ||
+                    result.get()
+                            != saveType
+    ) {
+
+        return;
+    }
+
+
+    // =====================================================
+    // KEEP YOUR EXISTING SAVE LOGIC BELOW THIS LINE
+    // =====================================================
+
+    LocalTime dueTime = null;
+
+
+    try {
+
+        if (
+                !dueTimeField
+                        .getText()
+                        .isBlank()
+        ) {
+
+            dueTime =
+                    LocalTime.parse(
+                            dueTimeField
+                                    .getText()
+                                    .trim(),
+                            TIME_FORMAT
+                    );
         }
 
+    } catch (Exception exception) {
 
-        LocalTime finalDueTime =
-                dueTime;
+        showAlert(
+                "Invalid Time",
+                "Please use HH:mm format. Example: 17:30."
+        );
 
-
-        Task<EmployeeDailyTask> saveTask =
-                new Task<>() {
-
-                    @Override
-                    protected EmployeeDailyTask call()
-                            throws Exception {
-
-                        if (existing == null) {
-
-                            return service.createTask(
-                                    titleField.getText(),
-                                    descriptionArea.getText(),
-                                    categoryBox.getValue(),
-                                    priorityBox.getValue(),
-                                    datePicker.getValue(),
-                                    finalDueTime
-                            );
-                        }
+        return;
+    }
 
 
-                        return service.updateTask(
-                                existing,
+    LocalTime finalDueTime =
+            dueTime;
+
+
+    Task<EmployeeDailyTask> saveTask =
+            new Task<>() {
+
+                @Override
+                protected EmployeeDailyTask call()
+                        throws Exception {
+
+                    if (existing == null) {
+
+                        return service.createTask(
                                 titleField.getText(),
                                 descriptionArea.getText(),
                                 categoryBox.getValue(),
@@ -825,57 +1166,70 @@ public class EmployeeDailyTaskController {
                                 finalDueTime
                         );
                     }
-                };
 
 
-        saveTask.setOnSucceeded(
-                event -> {
-
-                    taskDatePicker.setValue(
-                            datePicker.getValue()
-                    );
-
-
-                    loadTasks();
-
-
-                    showMessage(
-                            existing == null
-                                    ? "Daily task created successfully."
-                                    : "Daily task updated successfully."
+                    return service.updateTask(
+                            existing,
+                            titleField.getText(),
+                            descriptionArea.getText(),
+                            categoryBox.getValue(),
+                            priorityBox.getValue(),
+                            datePicker.getValue(),
+                            finalDueTime
                     );
                 }
-        );
+            };
 
 
-        saveTask.setOnFailed(
-                event -> {
+    saveTask.setOnSucceeded(
+            event -> {
 
-                    Throwable error =
-                            saveTask.getException();
-
-
-                    showAlert(
-                            "Unable to Save",
-                            rootMessage(
-                                    error
-                            )
-                    );
-                }
-        );
-
-
-        Thread thread =
-                new Thread(
-                        saveTask
+                taskDatePicker.setValue(
+                        datePicker.getValue()
                 );
 
 
-        thread.setDaemon(true);
+                loadTasks();
 
-        thread.start();
-    }
 
+                showMessage(
+                        existing == null
+                                ? "Daily task created successfully."
+                                : "Daily task updated successfully."
+                );
+            }
+    );
+
+
+    saveTask.setOnFailed(
+            event -> {
+
+                Throwable error =
+                        saveTask.getException();
+
+
+                showAlert(
+                        "Unable to Save",
+                        rootMessage(
+                                error
+                        )
+                );
+            }
+    );
+
+
+    Thread thread =
+            new Thread(
+                    saveTask
+            );
+
+
+    thread.setDaemon(
+            true
+    );
+
+    thread.start();
+}
 
     // =========================================================
     // STATUS ACTIONS

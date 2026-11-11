@@ -110,7 +110,7 @@
                             styleClass="employee-sidebar-section"/>
 
                     <Button
-                            text="⌂   Dashboard"
+                            text="⌂   Home"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleHome"
@@ -136,20 +136,6 @@
                             alignment="CENTER_LEFT"
                             onAction="#handleKpi"
                             styleClass="employee-nav-button"/>
-
-
-                    <!-- PERSONAL PRODUCTIVITY -->
-                    <Label
-                            text="PERSONAL PRODUCTIVITY"
-                            styleClass="employee-sidebar-section"/>
-
-                    <Button
-                            text="✣   AI Recommendations"
-                            maxWidth="Infinity"
-                            alignment="CENTER_LEFT"
-                            onAction="#handleAIRecommendation"
-                            styleClass="employee-nav-button"/>
-
 
                     <!-- SUPPORT -->
                     <Label

@@ -1,55 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
+
 <VBox
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.employee.EmployeeTaskDetailController"
-        prefWidth="720"
-        minWidth="720"
-        maxWidth="720"
-        styleClass="main-layout,employee-root,employee-page">
+
+        prefWidth="820"
+        prefHeight="700"
+
+        minWidth="760"
+        minHeight="600"
+
+        maxHeight="760"
+
+        stylesheets="@../../css/app.css"
+
+        styleClass="employee-root">
 
 
     <!-- =====================================================
-         HEADER
+         FIXED HEADER
+         X WILL ALWAYS BE VISIBLE
          ===================================================== -->
 
     <HBox
             alignment="CENTER_LEFT"
-            spacing="12"
-            styleClass="task-popup-header">
+            spacing="8">
 
         <padding>
             <Insets
-                    top="18"
-                    right="24"
-                    bottom="18"
-                    left="24"/>
+                    top="12"
+                    right="18"
+                    bottom="12"
+                    left="18"/>
         </padding>
 
 
         <Label
                 fx:id="difficultyBadgeLabel"
                 text="Medium"
-                styleClass="task-popup-badge"/>
+                styleClass="employee-badge,employee-badge-pending"/>
 
 
         <Label
                 fx:id="statusBadgeLabel"
                 text="Pending"
-                styleClass="task-popup-status"/>
+                styleClass="employee-badge,employee-badge-completed"/>
 
 
         <Region HBox.hgrow="ALWAYS"/>
@@ -58,46 +69,49 @@
         <Button
                 text="×"
                 onAction="#handleClose"
-                styleClass="task-popup-close"/>
+                styleClass="employee-button-link"/>
 
     </HBox>
 
 
     <!-- =====================================================
-         SCROLL CONTENT
+         ONLY THIS PART SCROLLS
          ===================================================== -->
 
     <ScrollPane
             fitToWidth="true"
             hbarPolicy="NEVER"
             vbarPolicy="AS_NEEDED"
-            prefHeight="580"
-            styleClass="task-popup-scroll">
+            VBox.vgrow="ALWAYS"
+            styleClass="employee-content-scroll">
 
         <content>
 
             <VBox
-                    spacing="22"
-                    styleClass="task-popup-content">
+                    spacing="16"
+                    maxWidth="Infinity">
 
                 <padding>
                     <Insets
-                            top="26"
-                            right="26"
-                            bottom="26"
-                            left="26"/>
+                            top="18"
+                            right="24"
+                            bottom="18"
+                            left="24"/>
                 </padding>
 
 
-                <!-- TITLE -->
+                <!-- =================================================
+                     TASK TITLE
+                     ================================================= -->
 
-                <VBox spacing="7">
+                <VBox spacing="4">
 
                     <Label
                             fx:id="taskTitleLabel"
                             text="Task Name"
                             wrapText="true"
-                            styleClass="task-popup-title"/>
+                            maxWidth="Infinity"
+                            styleClass="employee-page-title"/>
 
 
                     <Label
@@ -105,229 +119,326 @@
                             text="-"
                             wrapText="true"
                             maxWidth="Infinity"
-                            styleClass="task-popup-description"/>
+                            styleClass="employee-page-subtitle"/>
 
                 </VBox>
 
 
-                <!-- MAIN INFO -->
+                <!-- =================================================
+                     TASK DETAILS CARD
+                     ================================================= -->
 
-                <GridPane
-                        hgap="40"
-                        vgap="16"
-                        styleClass="task-popup-info-box">
-
-                    <padding>
-                        <Insets
-                                top="18"
-                                right="18"
-                                bottom="18"
-                                left="18"/>
-                    </padding>
+                <VBox
+                        spacing="16"
+                        maxWidth="Infinity"
+                        styleClass="employee-card">
 
 
-                    <VBox
-                            spacing="4"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="0">
+                    <!-- HEADER -->
+
+                    <VBox spacing="3">
 
                         <Label
-                                text="Category"
-                                styleClass="task-popup-field-label"/>
+                                text="Task Information"
+                                styleClass="employee-section-title"/>
 
                         <Label
-                                fx:id="categoryLabel"
-                                text="-"
-                                styleClass="task-popup-field-value"/>
+                                text="Review the task assignment, deadline and current status."
+                                wrapText="true"
+                                styleClass="employee-section-subtitle"/>
 
                     </VBox>
 
 
-                    <VBox
-                            spacing="4"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="0">
+                    <!-- INFORMATION -->
+
+                    <GridPane
+                            hgap="28"
+                            vgap="15"
+                            maxWidth="Infinity">
+
+                        <columnConstraints>
+
+                            <ColumnConstraints
+                                    percentWidth="33.33"
+                                    hgrow="ALWAYS"/>
+
+                            <ColumnConstraints
+                                    percentWidth="33.33"
+                                    hgrow="ALWAYS"/>
+
+                            <ColumnConstraints
+                                    percentWidth="33.34"
+                                    hgrow="ALWAYS"/>
+
+                        </columnConstraints>
+
+
+                        <!-- CATEGORY -->
+
+                        <VBox
+                                spacing="3"
+                                GridPane.columnIndex="0"
+                                GridPane.rowIndex="0">
+
+                            <Label
+                                    text="Category"
+                                    styleClass="employee-helper-text"/>
+
+                            <Label
+                                    fx:id="categoryLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="employee-section-title"/>
+
+                        </VBox>
+
+
+                        <!-- PRIORITY -->
+
+                        <VBox
+                                spacing="3"
+                                GridPane.columnIndex="1"
+                                GridPane.rowIndex="0">
+
+                            <Label
+                                    text="Priority"
+                                    styleClass="employee-helper-text"/>
+
+                            <Label
+                                    fx:id="priorityLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="employee-section-title"/>
+
+                        </VBox>
+
+
+                        <!-- ASSIGNED DATE -->
+
+                        <VBox
+                                spacing="3"
+                                GridPane.columnIndex="2"
+                                GridPane.rowIndex="0">
+
+                            <Label
+                                    text="Assigned Date"
+                                    styleClass="employee-helper-text"/>
+
+                            <Label
+                                    fx:id="assignedDateLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="employee-section-title"/>
+
+                        </VBox>
+
+
+                        <!-- DUE DATE -->
+
+                        <VBox
+                                spacing="3"
+                                GridPane.columnIndex="0"
+                                GridPane.rowIndex="1">
+
+                            <Label
+                                    text="Due Date"
+                                    styleClass="employee-helper-text"/>
+
+                            <Label
+                                    fx:id="dueDateLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="employee-section-title"/>
+
+                        </VBox>
+
+
+                        <!-- DIFFICULTY -->
+
+                        <VBox
+                                spacing="3"
+                                GridPane.columnIndex="1"
+                                GridPane.rowIndex="1">
+
+                            <Label
+                                    text="Difficulty"
+                                    styleClass="employee-helper-text"/>
+
+                            <Label
+                                    fx:id="difficultyLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="employee-section-title"/>
+
+                        </VBox>
+
+
+                        <!-- STATUS -->
+
+                        <VBox
+                                spacing="3"
+                                GridPane.columnIndex="2"
+                                GridPane.rowIndex="1">
+
+                            <Label
+                                    text="Status"
+                                    styleClass="employee-helper-text"/>
+
+                            <Label
+                                    fx:id="statusLabel"
+                                    text="-"
+                                    wrapText="true"
+                                    styleClass="employee-section-title"/>
+
+                        </VBox>
+
+                    </GridPane>
+
+
+                    <!-- COMPLETION CRITERIA -->
+
+                    <VBox spacing="5">
 
                         <Label
-                                text="Priority"
-                                styleClass="task-popup-field-label"/>
+                                text="Completion Criteria"
+                                styleClass="employee-section-title"/>
 
                         <Label
-                                fx:id="priorityLabel"
+                                fx:id="criteriaLabel"
                                 text="-"
-                                styleClass="task-popup-field-value"/>
+                                wrapText="true"
+                                maxWidth="Infinity"
+                                styleClass="employee-page-subtitle"/>
 
                     </VBox>
 
 
-                    <VBox
-                            spacing="4"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="0">
+                    <!-- TASK PROGRESS -->
 
-                        <Label
-                                text="Assigned Date"
-                                styleClass="task-popup-field-label"/>
+                    <VBox spacing="8">
 
-                        <Label
-                                fx:id="assignedDateLabel"
-                                text="-"
-                                styleClass="task-popup-field-value"/>
+                        <HBox alignment="CENTER_LEFT">
 
-                    </VBox>
+                            <VBox spacing="2">
 
+                                <Label
+                                        text="Task Progress"
+                                        styleClass="employee-section-title"/>
 
-                    <VBox
-                            spacing="4"
-                            GridPane.columnIndex="0"
-                            GridPane.rowIndex="1">
+                                <Label
+                                        text="Current completion progress."
+                                        styleClass="employee-section-subtitle"/>
 
-                        <Label
-                                text="Due Date"
-                                styleClass="task-popup-field-label"/>
-
-                        <Label
-                                fx:id="dueDateLabel"
-                                text="-"
-                                styleClass="task-popup-field-value"/>
-
-                    </VBox>
+                            </VBox>
 
 
-                    <VBox
-                            spacing="4"
-                            GridPane.columnIndex="1"
-                            GridPane.rowIndex="1">
+                            <Region HBox.hgrow="ALWAYS"/>
 
-                        <Label
-                                text="Difficulty"
-                                styleClass="task-popup-field-label"/>
 
-                        <Label
-                                fx:id="difficultyLabel"
-                                text="-"
-                                styleClass="task-popup-field-value"/>
+                            <Label
+                                    fx:id="progressValueLabel"
+                                    text="0%"
+                                    styleClass="employee-kpi-value"/>
+
+                        </HBox>
+
+
+                        <ProgressBar
+                                fx:id="progressBar"
+                                progress="0"
+                                maxWidth="Infinity"
+                                styleClass="employee-progress-bar"/>
 
                     </VBox>
-
-
-                    <VBox
-                            spacing="4"
-                            GridPane.columnIndex="2"
-                            GridPane.rowIndex="1">
-
-                        <Label
-                                text="Status"
-                                styleClass="task-popup-field-label"/>
-
-                        <Label
-                                fx:id="statusLabel"
-                                text="-"
-                                styleClass="task-popup-field-value"/>
-
-                    </VBox>
-
-                </GridPane>
-
-
-                <!-- COMPLETION CRITERIA -->
-
-                <VBox spacing="6">
-
-                    <Label
-                            text="Completion Criteria"
-                            styleClass="task-popup-section-title"/>
-
-                    <Label
-                            fx:id="criteriaLabel"
-                            text="-"
-                            wrapText="true"
-                            maxWidth="Infinity"
-                            styleClass="task-popup-description"/>
 
                 </VBox>
 
 
-                <Separator/>
+                <!-- =================================================
+                     UPDATE PROGRESS
+                     ================================================= -->
+
+                <VBox
+                        fx:id="progressUpdateSection"
+                        spacing="12"
+                        maxWidth="Infinity"
+                        styleClass="employee-card">
 
 
-                <!-- PROGRESS -->
-
-                <VBox spacing="12">
-
-                    <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="3">
 
                         <Label
-                                text="Progress"
-                                styleClass="task-popup-section-title"/>
+                                text="Update Progress"
+                                styleClass="employee-section-title"/>
+
+                        <Label
+                                text="Update the percentage completed and optionally add a note."
+                                wrapText="true"
+                                styleClass="employee-section-subtitle"/>
+
+                    </VBox>
+
+
+                    <!-- PERCENTAGE -->
+
+                    <HBox
+                            spacing="16"
+                            alignment="CENTER_LEFT">
+
+                        <VBox spacing="5">
+
+                            <Label
+                                    text="Progress Percentage"
+                                    styleClass="employee-field-label"/>
+
+                            <TextField
+                                    fx:id="progressField"
+                                    promptText="0 - 100"
+                                    prefWidth="210"
+                                    maxWidth="210"
+                                    styleClass="employee-input"/>
+
+                        </VBox>
+
 
                         <Region HBox.hgrow="ALWAYS"/>
 
-                        <Label
-                                fx:id="progressValueLabel"
-                                text="0%"
-                                styleClass="task-popup-progress-text"/>
+
+                        <Button
+                                fx:id="updateProgressButton"
+                                text="Update Progress"
+                                onAction="#handleUpdateProgress"
+                                styleClass="employee-button-primary"/>
 
                     </HBox>
 
 
-                    <ProgressBar
-                            fx:id="progressBar"
-                            progress="0"
-                            maxWidth="Infinity"
-                            styleClass="task-popup-progress"/>
+                    <!-- NOTE -->
 
-                </VBox>
-
-
-                <!-- PROGRESS UPDATE -->
-
-                <VBox
-                        fx:id="progressUpdateSection"
-                        spacing="14">
-
-                    <Label
-                            text="Update Progress"
-                            styleClass="task-popup-section-title"/>
-
-
-                    <VBox spacing="7">
-
-                        <Label
-                                text="Progress Percentage"
-                                styleClass="task-popup-field-label"/>
-
-                        <TextField
-                                fx:id="progressField"
-                                promptText="0 - 100"
-                                maxWidth="220"/>
-
-                    </VBox>
-
-
-                    <VBox spacing="7">
+                    <VBox spacing="5">
 
                         <Label
                                 text="Progress Note"
-                                styleClass="task-popup-field-label"/>
+                                styleClass="employee-field-label"/>
 
                         <TextArea
                                 fx:id="progressNoteArea"
                                 promptText="Add a short progress note..."
-                                prefRowCount="4"
-                                wrapText="true"/>
+                                prefRowCount="2"
+                                prefHeight="72"
+                                wrapText="true"
+                                maxWidth="Infinity"
+                                styleClass="employee-text-area"/>
 
                     </VBox>
 
-
-                    <Button
-                            fx:id="updateProgressButton"
-                            text="Update Progress"
-                            onAction="#handleUpdateProgress"
-                            styleClass="modern-primary-button"/>
-
                 </VBox>
 
+
+                <!-- =================================================
+                     MESSAGE
+                     ================================================= -->
 
                 <Label
                         fx:id="messageLabel"
@@ -335,7 +446,7 @@
                         managed="false"
                         wrapText="true"
                         maxWidth="Infinity"
-                        styleClass="modern-message"/>
+                        styleClass="employee-helper-text"/>
 
             </VBox>
 
@@ -345,20 +456,20 @@
 
 
     <!-- =====================================================
-         FOOTER ACTIONS
+         FIXED FOOTER
+         ALWAYS VISIBLE
          ===================================================== -->
 
     <HBox
-            spacing="12"
-            alignment="CENTER_RIGHT"
-            styleClass="task-popup-footer">
+            spacing="10"
+            alignment="CENTER_RIGHT">
 
         <padding>
             <Insets
-                    top="16"
-                    right="24"
-                    bottom="16"
-                    left="24"/>
+                    top="12"
+                    right="18"
+                    bottom="12"
+                    left="18"/>
         </padding>
 
 
@@ -366,21 +477,21 @@
                 fx:id="acceptButton"
                 text="Accept Task"
                 onAction="#handleAcceptTask"
-                styleClass="app-button"/>
+                styleClass="employee-button"/>
 
 
         <Button
                 fx:id="startButton"
                 text="Start Task"
                 onAction="#handleStartTask"
-                styleClass="app-button"/>
+                styleClass="employee-button"/>
 
 
         <Button
                 fx:id="completeButton"
                 text="Complete Task"
                 onAction="#handleCompleteTask"
-                styleClass="modern-primary-button"/>
+                styleClass="employee-button-primary"/>
 
     </HBox>
 
