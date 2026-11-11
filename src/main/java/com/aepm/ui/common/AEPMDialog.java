@@ -42,20 +42,32 @@ public final class AEPMDialog {
             dialog.initOwner(owner);
         }
 
-        String accent = error ? "#DC3545" : "#2563EB";
-        String symbol = error ? "!" : "✓";
+        boolean adminTheme =
+        isAdminOwner(owner);
+
+        String accent =
+                error ? "#DC3545" : adminTheme ? "#1E3A8A" : "#2563EB";
+
+        String softAccent =
+                error ? "#FEE2E2" : adminTheme ? "#E8EEFC" : "#DBEAFE";
+
+        String symbol =
+                error ? "!" : "✓";
 
         Label icon = new Label(symbol);
         icon.setAlignment(Pos.CENTER);
         icon.setMinSize(44, 44);
         icon.setMaxSize(44, 44);
         icon.setStyle(
-            "-fx-background-color: " +
-            (error ? "#FEE2E2" : "#DBEAFE") + ";" +
-            "-fx-background-radius: 14;" +
-            "-fx-text-fill: " + accent + ";" +
-            "-fx-font-size: 22px;" +
-            "-fx-font-weight: bold;"
+            "-fx-background-color: "
+                    + softAccent
+                    + ";"
+                    + "-fx-background-radius: 12;"
+                    + "-fx-text-fill: "
+                    + accent
+                    + ";"
+                    + "-fx-font-size: 22px;"
+                    + "-fx-font-weight: bold;"
         );
 
         Label titleLabel = new Label(title);
@@ -109,12 +121,16 @@ public final class AEPMDialog {
         okButton.setPrefHeight(38);
         okButton.setDefaultButton(true);
         okButton.setStyle(
-            "-fx-background-color: #2563EB;" +
-            "-fx-background-radius: 9;" +
-            "-fx-text-fill: white;" +
-            "-fx-font-size: 13px;" +
-            "-fx-font-weight: bold;" +
-            "-fx-cursor: hand;"
+            "-fx-background-color: "
+                    + accent
+                    + ";"
+                    + "-fx-background-radius: 8;"
+                    + "-fx-border-radius: 8;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-family: 'Plus Jakarta Sans';"
+                    + "-fx-font-size: 12px;"
+                    + "-fx-font-weight: bold;"
+                    + "-fx-cursor: hand;"
         );
         okButton.setOnAction(e -> dialog.close());
 
@@ -127,11 +143,12 @@ public final class AEPMDialog {
         VBox content = new VBox(22, header, messageLabel, footer);
         content.setPadding(new Insets(28));
         content.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 16;" +
-            "-fx-border-color: #E2E8F0;" +
-            "-fx-border-radius: 16;" +
-            "-fx-border-width: 1;"
+            "-fx-background-color: white;"
+                    + "-fx-background-radius: 12;"
+                    + "-fx-border-color: #E3E7EF;"
+                    + "-fx-border-radius: 12;"
+                    + "-fx-border-width: 1;"
+                    + "-fx-font-family: 'Plus Jakarta Sans';"
         );
 
         VBox root = new VBox(content);
@@ -209,9 +226,12 @@ public final class AEPMDialog {
         return message;
     }
     
-    public static boolean showConfirmation(
-            Window owner, String title, String message) {
+    public static boolean showConfirmation(Window owner, String title, String message) {
+        boolean adminTheme = isAdminOwner(owner);
 
+        String primary = adminTheme ? "#1E3A8A" : "#2563EB";
+
+        String soft = adminTheme ? "#E8EEFC" : "#DBEAFE";
         Stage dialog = new Stage();
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -229,11 +249,15 @@ public final class AEPMDialog {
         icon.setMinSize(44, 44);
         icon.setMaxSize(44, 44);
         icon.setStyle(
-            "-fx-background-color: #DBEAFE;" +
-            "-fx-background-radius: 14;" +
-            "-fx-text-fill: #2563EB;" +
-            "-fx-font-size: 23px;" +
-            "-fx-font-weight: bold;"
+            "-fx-background-color: "
+                    + soft
+                    + ";"
+                    + "-fx-background-radius: 12;"
+                    + "-fx-text-fill: "
+                    + primary
+                    + ";"
+                    + "-fx-font-size: 23px;"
+                    + "-fx-font-weight: bold;"
         );
 
         Label titleLabel = new Label(title);
@@ -265,11 +289,18 @@ public final class AEPMDialog {
         Button cancelButton = new Button("Cancel");
         cancelButton.setPrefSize(105, 38);
         cancelButton.setStyle(
-            "-fx-background-color: #F1F5F9;" +
-            "-fx-background-radius: 9;" +
-            "-fx-text-fill: #475569;" +
-            "-fx-font-weight: bold;" +
-            "-fx-cursor: hand;"
+            "-fx-background-color: #FFFFFF;"
+                    + "-fx-border-color: #D9DEE8;"
+                    + "-fx-border-width: 1;"
+                    + "-fx-background-radius: 8;"
+                    + "-fx-border-radius: 8;"
+                    + "-fx-text-fill: "
+                    + (adminTheme ? "#1E3A8A" : "#475569")
+                    + ";"
+                    + "-fx-font-family: 'Plus Jakarta Sans';"
+                    + "-fx-font-size: 12px;"
+                    + "-fx-font-weight: bold;"
+                    + "-fx-cursor: hand;"
         );
         cancelButton.setOnAction(e -> dialog.close());
 
@@ -285,12 +316,17 @@ public final class AEPMDialog {
 
         confirmButton.setStyle(
             "-fx-background-color: "
-            + (isDelete ? "#DC3545" : "#2563EB") + ";"
-            + "-fx-background-radius: 9;"
-            + "-fx-text-fill: white;"
-            + "-fx-font-size: 13px;"
-            + "-fx-font-weight: bold;"
-            + "-fx-cursor: hand;"
+                    + (isDelete
+                        ? "#DC3545"
+                        : primary)
+                    + ";"
+                    + "-fx-background-radius: 8;"
+                    + "-fx-border-radius: 8;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-family: 'Plus Jakarta Sans';"
+                    + "-fx-font-size: 12px;"
+                    + "-fx-font-weight: bold;"
+                    + "-fx-cursor: hand;"
         );
 
         confirmButton.setOnAction(e -> {
@@ -340,11 +376,11 @@ public final class AEPMDialog {
     }
 
     
-    public static void showNotice(
-            Window owner,
-            String title,
-            String message) {
+    public static void showNotice( Window owner, String title, String message) {
+        boolean adminTheme = isAdminOwner(owner);
 
+        String primary = adminTheme ? "#1E3A8A" : "#2563EB";
+        String soft = adminTheme ? "#E8EEFC" : "#DBEAFE";
         Stage dialog = new Stage();
         dialog.initStyle(StageStyle.TRANSPARENT);
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -358,11 +394,15 @@ public final class AEPMDialog {
         icon.setMinSize(48, 48);
         icon.setMaxSize(48, 48);
         icon.setStyle(
-                "-fx-background-color: #DBEAFE;" +
-                "-fx-background-radius: 14;" +
-                "-fx-text-fill: #2563EB;" +
-                "-fx-font-size: 25px;" +
-                "-fx-font-weight: bold;"
+            "-fx-background-color: "
+                    + soft
+                    + ";"
+                    + "-fx-background-radius: 12;"
+                    + "-fx-text-fill: "
+                    + primary
+                    + ";"
+                    + "-fx-font-size: 25px;"
+                    + "-fx-font-weight: bold;"
         );
 
         Label heading = new Label(
@@ -404,22 +444,34 @@ public final class AEPMDialog {
         messageCard.setMinHeight(Region.USE_PREF_SIZE);
         messageCard.setMaxWidth(Double.MAX_VALUE);
         messageCard.setStyle(
-                "-fx-background-color: #F5F8FD;" +
-                "-fx-background-radius: 12;" +
-                "-fx-border-color: #E4ECF7;" +
-                "-fx-border-radius: 12;"
+            "-fx-background-color: "
+                    + (adminTheme
+                        ? "#F7F9FD"
+                        : "#F5F8FD")
+                    + ";"
+                    + "-fx-background-radius: 9;"
+                    + "-fx-border-color: "
+                    + (adminTheme
+                        ? "#E3E7EF"
+                        : "#E4ECF7")
+                    + ";"
+                    + "-fx-border-radius: 9;"
         );
 
         Button closeButton = new Button("Close");
         closeButton.setPrefSize(120, 40);
         closeButton.setDefaultButton(true);
         closeButton.setStyle(
-                "-fx-background-color: #2563EB;" +
-                "-fx-background-radius: 9;" +
-                "-fx-text-fill: white;" +
-                "-fx-font-size: 13px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-cursor: hand;"
+            "-fx-background-color: "
+                    + primary
+                    + ";"
+                    + "-fx-background-radius: 8;"
+                    + "-fx-border-radius: 8;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-font-family: 'Plus Jakarta Sans';"
+                    + "-fx-font-size: 12px;"
+                    + "-fx-font-weight: bold;"
+                    + "-fx-cursor: hand;"
         );
         closeButton.setOnAction(e -> dialog.close());
 
@@ -473,9 +525,14 @@ public final class AEPMDialog {
         CANCEL
     }
 
-    public static RecommendationChoice showRecommendationChoice(
-            Window owner
-    ) {
+    public static RecommendationChoice showRecommendationChoice(Window owner) {
+        boolean adminTheme = isAdminOwner(owner);
+
+        String primary = adminTheme ? "#1E3A8A" : "#2563EB";
+
+        String soft = adminTheme ? "#E8EEFC" : "#DBEAFE";
+
+        String verySoft = adminTheme ? "#F3F6FD" : "#EFF6FF";
         Stage dialog = new Stage(StageStyle.TRANSPARENT);
         dialog.setTitle("Recommendations Already Exist");
 
@@ -494,11 +551,15 @@ public final class AEPMDialog {
         icon.setAlignment(Pos.CENTER);
         icon.setMinSize(48, 48);
         icon.setStyle(
-                "-fx-background-color: #DBEAFE;"
-                + "-fx-background-radius: 14;"
-                + "-fx-text-fill: #2563EB;"
-                + "-fx-font-size: 18px;"
-                + "-fx-font-weight: bold;"
+            "-fx-background-color: "
+                    + soft
+                    + ";"
+                    + "-fx-background-radius: 12;"
+                    + "-fx-text-fill: "
+                    + primary
+                    + ";"
+                    + "-fx-font-size: 18px;"
+                    + "-fx-font-weight: bold;"
         );
 
         Label title = new Label("Recommendations Already Exist");
@@ -537,14 +598,27 @@ public final class AEPMDialog {
                 + "-fx-font-weight: bold;"
                 + "-fx-cursor: hand;";
 
-        cancel.setStyle(base
-                + "-fx-background-color: white;"
-                + "-fx-border-color: #CBD5E1;"
-                + "-fx-text-fill: #334155;");
+        cancel.setStyle(
+            base
+                    + "-fx-background-color: white;"
+                    + "-fx-border-color: #D9DEE8;"
+                    + "-fx-text-fill: "
+                    + (adminTheme
+                        ? "#1E3A8A"
+                        : "#334155")
+                    + ";"
+        );
 
-        history.setStyle(base
-                + "-fx-background-color: #2563EB;"
-                + "-fx-text-fill: white;");
+        history.setStyle(
+            base
+                    + "-fx-background-color: "
+                    + primary
+                    + ";"
+                    + "-fx-border-color: "
+                    + primary
+                    + ";"
+                    + "-fx-text-fill: white;"
+        );
 
         generate.setStyle(base
                 + "-fx-background-color: #EFF6FF;"
@@ -573,11 +647,11 @@ public final class AEPMDialog {
         VBox panel = new VBox(22, header, message, buttons);
         panel.setPadding(new Insets(26));
         panel.setStyle(
-                "-fx-font-family: 'Segoe UI';"
-                + "-fx-background-color: white;"
-                + "-fx-background-radius: 18;"
-                + "-fx-border-color: #DBE4F0;"
-                + "-fx-border-radius: 18;"
+            "-fx-font-family: 'Plus Jakarta Sans';"
+                    + "-fx-background-color: white;"
+                    + "-fx-background-radius: 12;"
+                    + "-fx-border-color: #E3E7EF;"
+                    + "-fx-border-radius: 12;"
         );
 
         var screens = owner == null
@@ -612,5 +686,20 @@ public final class AEPMDialog {
 
         dialog.showAndWait();
         return result[0];
+    }
+
+    private static boolean isAdminOwner(Window owner) {
+
+        if (owner == null
+                || owner.getScene() == null
+                || owner.getScene().getRoot() == null) {
+
+            return false;
+        }
+
+        return owner.getScene()
+                .getRoot()
+                .getStyleClass()
+                .contains("admin-root");
     }
 }
