@@ -198,7 +198,6 @@ public final class ManagerReportsPage {
 
         VBox header = new VBox(10, titleRow, subtitle);
         header.setPadding(new Insets(0, 0, 18, 0));
-        page.setTop(header);
 
         addColumn("Employee No.", 120,
                 row -> value(row, "employee_number"));
@@ -239,18 +238,20 @@ public final class ManagerReportsPage {
         pageInfo.getStyleClass().add("manager-report-status");
         status.getStyleClass().add("manager-report-status");
         status.setWrapText(true);
-        BorderPane reportContent = new BorderPane();
-        HBox pagination = new HBox(12, previous, pageInfo, next);
-        pagination.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        table.setMinHeight(320);
-        table.setPrefHeight(420);
-        table.setMaxHeight(Double.MAX_VALUE);
+        HBox pagination = new HBox(
+                12,
+                previous,
+                pageInfo,
+                next
+        );
 
-        BorderPane.setAlignment( table, javafx.geometry.Pos.CENTER);
-        reportContent.getStyleClass().add("manager-report-content-card");
-        reportContent.setTop(filterCard);
-        reportContent.setCenter(table);
-        reportContent.setBottom(pagination);
+        pagination.setAlignment(
+                javafx.geometry.Pos.CENTER_LEFT
+        );
+        table.setMinHeight(400);
+        table.setPrefHeight(460);
+        table.setMaxHeight(460);
+
         for (Button button : new Button[]{
                 exportPdf,
                 exportExcel
@@ -270,87 +271,232 @@ public final class ManagerReportsPage {
                 new Button("Clear Selection");
 
         clearSelection.getStyleClass().add(
-                "manager-button"
-        );
+                "manager-button");
 
         clearSelection.setPrefWidth(136);
 
-        HBox exportActions = new HBox(
-                12,
-                exportPdf,
-                exportExcel,
-                clearSelection
-        );
+        HBox exportActions = new HBox(12,exportPdf,exportExcel,clearSelection);
         exportActions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        VBox reportFooter = new VBox(
-                12,
-                pagination,
-                exportActions
-        );
-        reportFooter.setPadding(new Insets(0, 0, 8, 0));
+        VBox reportFooter = new VBox(8,pagination,exportActions);
 
-        BorderPane.setMargin(
-                table,
-                new Insets(16, 0, 16, 0)
+        reportFooter.setPadding(new Insets(2, 0, 4, 0));
+        VBox reportContent = new VBox(12,filterCard,table,reportFooter);
+
+        reportContent.getStyleClass().add("manager-report-content-card");
+
+        reportContent.setMaxWidth(Double.MAX_VALUE);
+
+        reportContent.setMaxHeight(Double.MAX_VALUE);
+
+        VBox trendContent = buildTrendContent();
+
+        Button reportTableButton =
+                new Button("Report Table");
+
+        Button kpiTrendButton =
+                new Button("KPI Trend");
+
+
+        reportTableButton.getStyleClass().add(
+                "manager-tab-button-active"
         );
 
-        Tab reportTab = new Tab(
-                "Report Table",
-                reportContent
+        kpiTrendButton.getStyleClass().add(
+                "manager-tab-button"
         );
 
-        Tab trendTab = new Tab(
-                "KPI Trend",
-                buildTrendContent()
-        );
 
-        TabPane reportTabs =
-                new TabPane(
-                        reportTab,
-                        trendTab
+        HBox reportTabs =
+                new HBox(
+                        12,
+                        reportTableButton,
+                        kpiTrendButton
                 );
 
-        reportTabs.setTabClosingPolicy(
-                TabPane.TabClosingPolicy.UNAVAILABLE
+        reportTabs.setAlignment(
+                javafx.geometry.Pos.CENTER_LEFT
         );
 
-        reportTabs.getStyleClass().add(
-                "manager-report-tabs"
-        );
 
-        reportTabs.setMaxWidth(
+        StackPane reportView =
+                new StackPane(
+                        reportContent,
+                        trendContent
+                );
+
+        reportView.setMaxWidth(
                 Double.MAX_VALUE
         );
 
-        reportTabs.setMaxHeight(
-                Double.MAX_VALUE
+
+        reportContent.setVisible(true);
+        reportContent.setManaged(true);
+
+        trendContent.setVisible(false);
+        trendContent.setManaged(false);
+
+
+        reportTableButton.setOnAction(event -> {
+
+        reportContent.setVisible(true);
+        reportContent.setManaged(true);
+
+        trendContent.setVisible(false);
+        trendContent.setManaged(false);
+
+        reportTableButton.getStyleClass().removeAll(
+                "manager-tab-button",
+                "manager-tab-button-active"
         );
 
+        reportTableButton.getStyleClass().add(
+                "manager-tab-button-active"
+        );
 
+        kpiTrendButton.getStyleClass().removeAll(
+                "manager-tab-button",
+                "manager-tab-button-active"
+        );
+
+        kpiTrendButton.getStyleClass().add(
+                "manager-tab-button"
+        );
+        });
+
+
+        kpiTrendButton.setOnAction(event -> {
+
+        reportContent.setVisible(false);
+        reportContent.setManaged(false);
+
+        trendContent.setVisible(true);
+        trendContent.setManaged(true);
+
+        kpiTrendButton.getStyleClass().removeAll(
+                "manager-tab-button",
+                "manager-tab-button-active"
+        );
+
+        kpiTrendButton.getStyleClass().add(
+                "manager-tab-button-active"
+        );
+
+        reportTableButton.getStyleClass().removeAll(
+                "manager-tab-button",
+                "manager-tab-button-active"
+        );
+
+        reportTableButton.getStyleClass().add(
+                "manager-tab-button"
+        );
+        });
+ 
         VBox reportsCard =
                 new VBox(
-                        reportTabs
+                        14,
+                        reportTabs,
+                        reportView
                 );
 
         reportsCard.getStyleClass().add(
                 "manager-report-main-card"
         );
 
-        VBox.setVgrow(
-                reportTabs,
-                Priority.ALWAYS
+        reportsCard.setFillWidth(true);
+        reportsCard.setMaxWidth(Double.MAX_VALUE);
+
+        reportsCard.getStyleClass().add(
+                "manager-report-main-card"
+        );
+
+        reportsCard.setSpacing(
+                0
+        );
+
+        reportsCard.setFillWidth(
+                true
+        );
+
+        reportsCard.setMaxWidth(
+                Double.MAX_VALUE
         );
 
 
+        // =====================================================
+        // FULL PAGE CONTENT
+        // =====================================================
+
+        VBox fullContent =
+                new VBox(
+                        18,
+                        header,
+                        reportsCard,
+                        status
+                );
+
+        fullContent.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        fullContent.getStyleClass().add(
+                "manager-report-page-content"
+        );
+
+
+        // =====================================================
+        // OUTER PAGE SCROLL
+        // =====================================================
+
+        ScrollPane pageScroll =
+                new ScrollPane(
+                        fullContent
+                );
+
+        pageScroll.setFitToWidth(
+                true
+        );
+
+        pageScroll.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        pageScroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
+        );
+
+        pageScroll.setPannable(
+                true
+        );
+
+        pageScroll.getStyleClass().add(
+                "manager-content-scroll"
+        );
+
+
+        // =====================================================
+        // PUT SCROLL INTO PAGE
+        // =====================================================
+
+        page.setTop(
+                null
+        );
+
+        page.setBottom(
+                null
+        );
+
         page.setCenter(
-                reportsCard
+                pageScroll
+        );
+
+        page.setPadding(
+                Insets.EMPTY
         );
 
         status.setPadding(new Insets(14, 0, 0, 0));
-        page.setBottom(status);
 
-        page.setPadding(new Insets(28));
+        page.setPadding(Insets.EMPTY);
         page.getStyleClass().add("manager-report-page");
 
         employee.valueProperty().addListener(
@@ -1247,11 +1393,26 @@ public final class ManagerReportsPage {
     }
 
     private ScrollPane scrollReportContent(Region content) {
-        // Keep enough space for the table/chart.
-        // Smaller windows can scroll instead of compressing the content.
-        content.setMinHeight(Region.USE_PREF_SIZE);
 
-        ScrollPane scroll = new ScrollPane(content);
+        content.setMinHeight(
+                Region.USE_PREF_SIZE
+        );
+
+        ScrollPane scroll =
+                new ScrollPane(content);
+
+        scroll.setFitToWidth(true);
+
+        scroll.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
+        );
+
+        scroll.setPannable(true);
+
         scroll.getStyleClass().add(
                 "manager-report-scroll"
         );
