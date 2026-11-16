@@ -840,3 +840,120 @@
     -fx-font-weight: 600;
     -fx-text-fill: #344054;
 }
+
+/* ADD THIS TO THE END OF src/main/resources/css/manager.css */
+
+.manager-task-popup-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #FFFFFF;
+    -fx-border-color: transparent;
+}
+
+.manager-task-popup-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 24px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111111;
+}
+
+.manager-task-popup-subtitle {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-text-fill: #0F766E;
+}
+
+.manager-task-popup-card {
+    -fx-background-color: #F4F8F7;
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 18px;
+}
+
+.manager-task-popup-label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-text-fill: #667085;
+}
+
+.manager-task-popup-value {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.manager-task-popup-section-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+.manager-task-popup-employee-box {
+    -fx-background-color: #F4F8F7;
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 12px;
+}
+
+.manager-task-popup-employee {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-text-fill: #344054;
+}
+
+.manager-task-popup-text {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-text-fill: #344054;
+}
+
+.manager-task-popup-footer {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCE7E4 transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.manager-danger-button {
+    -fx-background-color: #DC2626;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 9px;
+    -fx-border-radius: 9px;
+    -fx-padding: 10px 16px;
+    -fx-cursor: hand;
+}
+
+.manager-danger-button:hover {
+    -fx-background-color: #B91C1C;
+}
+
+.manager-table .table-row-cell {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-table .table-row-cell:odd {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-table .table-row-cell:selected,
+.manager-table .table-row-cell:selected:focused {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-table .table-row-cell:selected .table-cell,
+.manager-table .table-row-cell:selected:focused .table-cell {
+    -fx-text-fill: #344054;
+}
+
+.manager-table .table-row-cell:hover,
+.manager-table .table-row-cell:selected:hover,
+.manager-table .table-row-cell:selected:focused:hover {
+    -fx-background-color: #DFF4F1;
+}

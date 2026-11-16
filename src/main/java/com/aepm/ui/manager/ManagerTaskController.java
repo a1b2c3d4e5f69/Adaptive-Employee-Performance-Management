@@ -3,33 +3,23 @@ package com.aepm.ui.manager;
 import com.aepm.logic.task.TaskCategoryService;
 import com.aepm.logic.task.TaskProgressService;
 import com.aepm.logic.task.TaskService;
+import com.aepm.logic.task.TeamTaskService;
 import com.aepm.logic.user.UserService;
-
 import com.aepm.model.Task;
+import com.aepm.model.TaskAssignment;
 import com.aepm.model.TaskCategory;
 import com.aepm.model.TaskProgress;
 import com.aepm.model.User;
-import com.aepm.data.task.TaskAssignmentRepository;
-import com.aepm.model.TaskAssignment;
-
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.aepm.ui.navigation.NavigationManager;
-
 import com.aepm.util.ManagerTaskEditContext;
 import com.aepm.util.SessionManager;
-
 import javafx.beans.property.SimpleStringProperty;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import javafx.scene.Node;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -39,16 +29,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,2112 +44,621 @@ import java.util.UUID;
 
 public class ManagerTaskController {
 
-    // =========================================================
-    // TOP BAR
-    // =========================================================
-    @FXML
-    private Label topRoleLabel;
-    
-    @FXML
-    private Label welcomeLabel;
+    @FXML private Label welcomeLabel;
+    @FXML private Label topNameLabel;
+    @FXML private Label topRoleLabel;
 
-    @FXML
-    private Label topNameLabel;
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> employeeFilterComboBox;
+    @FXML private ComboBox<String> categoryFilterComboBox;
+    @FXML private ComboBox<String> statusFilterComboBox;
+    @FXML private DatePicker dueDateFilterPicker;
 
+    @FXML private TableView<Task> taskTable;
+    @FXML private TableColumn<Task, String> titleColumn;
+    @FXML private TableColumn<Task, String> categoryColumn;
+    @FXML private TableColumn<Task, String> employeeColumn;
+    @FXML private TableColumn<Task, String> priorityColumn;
+    @FXML private TableColumn<Task, String> difficultyColumn;
+    @FXML private TableColumn<Task, String> statusColumn;
+    @FXML private TableColumn<Task, Double> progressColumn;
+    @FXML private TableColumn<Task, OffsetDateTime> dueDateColumn;
 
-    // =========================================================
-    // SEARCH / FILTER
-    // =========================================================
+    @FXML private TableView<TaskProgress> historyTable;
+    @FXML private TableColumn<TaskProgress, Double> historyProgressColumn;
+    @FXML private TableColumn<TaskProgress, String> historyNoteColumn;
+    @FXML private TableColumn<TaskProgress, OffsetDateTime> historyDateColumn;
 
-    @FXML
-    private TextField searchField;
+    @FXML private Label messageLabel;
+    @FXML private Label historyMessageLabel;
 
-    @FXML
-    private ComboBox<String> employeeFilterComboBox;
+    private final TaskService taskService = new TaskService();
+    private final TaskProgressService taskProgressService = new TaskProgressService();
+    private final TaskCategoryService categoryService = new TaskCategoryService();
+    private final UserService userService = new UserService();
+    private final TeamTaskService teamTaskService = new TeamTaskService();
 
-    @FXML
-    private ComboBox<String> categoryFilterComboBox;
+    private final Map<String, String> employeeDisplayMap = new HashMap<>();
+    private final Map<Long, String> categoryDisplayMap = new HashMap<>();
+    private final Map<UUID, String> teamMemberDisplayMap = new HashMap<>();
 
-    @FXML
-    private ComboBox<String> statusFilterComboBox;
-
-    @FXML
-    private DatePicker dueDateFilterPicker;
-
-
-    // =========================================================
-    // TASK TABLE
-    // =========================================================
-
-    @FXML
-    private TableView<Task> taskTable;
-
-    @FXML
-    private TableColumn<Task, String> titleColumn;
-
-    @FXML
-    private TableColumn<Task, String> categoryColumn;
-
-    @FXML
-    private TableColumn<Task, String> employeeColumn;
-
-    @FXML
-    private TableColumn<Task, String> priorityColumn;
-
-    @FXML
-    private TableColumn<Task, String> difficultyColumn;
-
-    @FXML
-    private TableColumn<Task, String> statusColumn;
-
-    @FXML
-    private TableColumn<Task, Double> progressColumn;
-
-    @FXML
-    private TableColumn<Task, OffsetDateTime> dueDateColumn;
-
-
-    // =========================================================
-    // SELECTED TASK
-    // =========================================================
-
-    @FXML
-    private Label selectedTaskLabel;
-
-    @FXML
-    private Label selectedCategoryLabel;
-
-    @FXML
-    private Label selectedEmployeeLabel;
-
-    @FXML
-    private Label selectedStatusLabel;
-
-    @FXML
-    private Label selectedProgressLabel;
-
-
-    // =========================================================
-    // PROGRESS HISTORY
-    // =========================================================
-
-    @FXML
-    private TableView<TaskProgress> historyTable;
-
-    @FXML
-    private TableColumn<TaskProgress, Double> historyProgressColumn;
-
-    @FXML
-    private TableColumn<TaskProgress, String> historyNoteColumn;
-
-    @FXML
-    private TableColumn<TaskProgress, OffsetDateTime> historyDateColumn;
-
-
-    // =========================================================
-    // MESSAGE
-    // =========================================================
-
-    @FXML
-    private Label messageLabel;
-
-    @FXML
-    private Label historyMessageLabel;
-
-    @FXML
-    private void handleDeadlineEscalation(ActionEvent event) {    
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
-    
-        NavigationManager.navigate(
-                stage,
-                "/fxml/manager/managerDeadlineEscalation.fxml"
-        );
-    }
-
-    private final TaskAssignmentRepository
-        assignmentRepository =new TaskAssignmentRepository();
-
-    private final Map<UUID, String>
-        teamMemberDisplayMap =
-        new ConcurrentHashMap<>();
-
-    // =========================================================
-    // SERVICES
-    // =========================================================
-
-    private final TaskService taskService =
-            new TaskService();
-
-    private final TaskProgressService taskProgressService =
-            new TaskProgressService();
-
-    private final TaskCategoryService categoryService =
-            new TaskCategoryService();
-
-    private final UserService userService =
-            new UserService();
-
-
-    // =========================================================
-    // LOOKUP MAPS
-    // =========================================================
-
-    private final Map<String, String> employeeDisplayMap =
-            new HashMap<>();
-
-    private final Map<Long, String> categoryDisplayMap =
-            new HashMap<>();
-
-
-    // =========================================================
-    // FILTER DATA
-    // =========================================================
-
-    private final ObservableList<Task> allTasks =
-            FXCollections.observableArrayList();
-
+    private final ObservableList<Task> allTasks = FXCollections.observableArrayList();
     private FilteredList<Task> filteredTasks;
-
-
     private Task selectedTask;
 
-
-    private static final ZoneId MALAYSIA_ZONE =
-            ZoneId.of("Asia/Kuala_Lumpur");
-
-
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern(
-                    "dd/MM/yyyy HH:mm"
-            );
-
-
-    // =========================================================
-    // INITIALIZE
-    // =========================================================
+    private static final ZoneId MALAYSIA_ZONE = ZoneId.of("Asia/Kuala_Lumpur");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @FXML
     public void initialize() {
-        updateManagerRoleLabel();
         loadCurrentUser();
-
         setupTaskTable();
-
         setupHistoryTable();
-
         setupFilters();
-
         configureTaskSelection();
-
-        clearSelectedTask();
-
+        clearTaskSelection();
         loadReferenceDataAndTasks();
     }
 
-
-    private void updateManagerRoleLabel() {
-        User manager = SessionManager.getCurrentUser();
-
-        if (manager == null) {
-                topRoleLabel.setText("MANAGER");
-                return;
-        }
-
-        String managerId = manager.getEmployeeId();
-
-        if (managerId != null && !managerId.isBlank()) {
-                topRoleLabel.setText("MANAGER  •  " + managerId);
-        } else {
-                topRoleLabel.setText("MANAGER");
-        }
-    }
-    // =========================================================
-    // CURRENT USER
-    // =========================================================
-
     private void loadCurrentUser() {
+        User user = SessionManager.getCurrentUser();
+        if (user == null) return;
 
-        User user =
-                SessionManager.getCurrentUser();
+        String name = user.getFullName();
+        if (name == null || name.isBlank()) name = user.getUsername();
+        if (name == null || name.isBlank()) name = "Manager";
 
-
-        if (user == null) {
-            return;
+        if (welcomeLabel != null) welcomeLabel.setText("Welcome, " + name);
+        if (topNameLabel != null) topNameLabel.setText(name);
+        if (topRoleLabel != null) {
+            String employeeId = user.getEmployeeId();
+            topRoleLabel.setText(employeeId == null || employeeId.isBlank()
+                    ? "MANAGER"
+                    : "MANAGER  •  " + employeeId);
         }
-
-
-        String name =
-                user.getFullName() == null
-                        || user.getFullName().isBlank()
-                        ? "Manager"
-                        : user.getFullName();
-
-
-        welcomeLabel.setText(
-                "Welcome, " + name
-        );
-
-
-        topNameLabel.setText(
-                name
-        );
     }
-
-
-    // =========================================================
-    // TASK TABLE
-    // =========================================================
 
     private void setupTaskTable() {
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("taskTitle"));
 
-        // TASK TITLE
-        titleColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "taskTitle"
-                )
-        );
+        categoryColumn.setCellValueFactory(cellData -> {
+            Task task = cellData.getValue();
+            if (task == null || task.getCategoryId() == null) return new SimpleStringProperty("-");
+            return new SimpleStringProperty(categoryDisplayMap.getOrDefault(task.getCategoryId(), "-"));
+        });
 
+        employeeColumn.setCellValueFactory(cellData -> {
+            Task task = cellData.getValue();
+            if (task == null) return new SimpleStringProperty("-");
 
-        // CATEGORY
-        categoryColumn.setCellValueFactory(
-                cellData -> {
+            if (task.getAssignedEmployeeId() != null) {
+                String userId = task.getAssignedEmployeeId().toString();
+                return new SimpleStringProperty(employeeDisplayMap.getOrDefault(userId, userId));
+            }
 
-                    Task task =
-                            cellData.getValue();
+            return new SimpleStringProperty(
+                    teamMemberDisplayMap.getOrDefault(task.getTaskId(), "Team Task")
+            );
+        });
 
+        priorityColumn.setCellValueFactory(new PropertyValueFactory<>("priority"));
+        difficultyColumn.setCellValueFactory(new PropertyValueFactory<>("difficultyLevel"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("taskStatus"));
+        progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
+        dueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
 
-                    if (
-                            task == null
-                                    || task.getCategoryId() == null
-                    ) {
+        progressColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? "-" : String.format("%.0f%%", value));
+            }
+        });
 
-                        return new SimpleStringProperty(
-                                "-"
-                        );
-                    }
+        dueDateColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(OffsetDateTime value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? "-" : formatDateTime(value));
+            }
+        });
 
-
-                    return new SimpleStringProperty(
-                            categoryDisplayMap.getOrDefault(
-                                    task.getCategoryId(),
-                                    "-"
-                            )
-                    );
-                }
-        );
-
-
-        // EMPLOYEE
-        // =========================================================
-        // EMPLOYEE / TEAM MEMBERS
-        // =========================================================
-
-        employeeColumn.setCellValueFactory(
-                cellData -> {
-
-                Task currentTask =
-                        cellData.getValue();
-
-
-                if (currentTask == null) {
-
-                        return new SimpleStringProperty(
-                                "-"
-                        );
-                }
-
-
-                // =================================================
-                // NORMAL INDIVIDUAL TASK
-                // =================================================
-
-                if (
-                        currentTask.getAssignedEmployeeId()
-                                != null
-                ) {
-
-                        String userId =
-                                currentTask
-                                        .getAssignedEmployeeId()
-                                        .toString();
-
-
-                        return new SimpleStringProperty(
-                                employeeDisplayMap
-                                        .getOrDefault(
-                                                userId,
-                                                userId
-                                        )
-                        );
-                }
-
-
-                // =================================================
-                // TEAM TASK
-                // =================================================
-
-                String teamMembers =
-                        teamMemberDisplayMap.get(
-                                currentTask.getTaskId()
-                        );
-
-
-                if (
-                        teamMembers == null
-                                || teamMembers.isBlank()
-                ) {
-
-                        return new SimpleStringProperty(
-                                "Team Task"
-                        );
-                }
-
-
-                return new SimpleStringProperty(
-                        teamMembers
-                );
-                }
-        );
-
-
-        priorityColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "priority"
-                )
-        );
-
-
-        difficultyColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "difficultyLevel"
-                )
-        );
-
-
-        statusColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "taskStatus"
-                )
-        );
-
-
-        progressColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "progress"
-                )
-        );
-
-
-        dueDateColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "dueDate"
-                )
-        );
-
-
-        // PROGRESS %
-        progressColumn.setCellFactory(
-                column ->
-                        new TableCell<>() {
-
-                            @Override
-                            protected void updateItem(
-                                    Double value,
-                                    boolean empty
-                            ) {
-
-                                super.updateItem(
-                                        value,
-                                        empty
-                                );
-
-
-                                setText(
-                                        empty || value == null
-                                                ? "-"
-                                                : String.format(
-                                                        "%.0f%%",
-                                                        value
-                                                )
-                                );
-                            }
-                        }
-        );
-
-
-        // DUE DATE
-        dueDateColumn.setCellFactory(
-                column ->
-                        new TableCell<>() {
-
-                            @Override
-                            protected void updateItem(
-                                    OffsetDateTime value,
-                                    boolean empty
-                            ) {
-
-                                super.updateItem(
-                                        value,
-                                        empty
-                                );
-
-
-                                if (
-                                        empty
-                                                || value == null
-                                ) {
-
-                                    setText("-");
-
-                                } else {
-
-                                    setText(
-                                            formatDateTime(
-                                                    value
-                                            )
-                                    );
-                                }
-                            }
-                        }
-        );
-
-
-        taskTable.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
-        );
+        taskTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     }
-
-
-    // =========================================================
-    // HISTORY TABLE
-    // =========================================================
 
     private void setupHistoryTable() {
+        historyProgressColumn.setCellValueFactory(new PropertyValueFactory<>("progressPercentage"));
+        historyNoteColumn.setCellValueFactory(new PropertyValueFactory<>("progressNote"));
+        historyDateColumn.setCellValueFactory(new PropertyValueFactory<>("updatedAt"));
 
-        historyProgressColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "progressPercentage"
-                )
-        );
+        historyProgressColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? "-" : String.format("%.0f%%", value));
+            }
+        });
 
+        historyDateColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(OffsetDateTime value, boolean empty) {
+                super.updateItem(value, empty);
+                setText(empty || value == null ? "-" : formatDateTime(value));
+            }
+        });
 
-        historyNoteColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "progressNote"
-                )
-        );
-
-
-        historyDateColumn.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "updatedAt"
-                )
-        );
-
-
-        historyProgressColumn.setCellFactory(
-                column ->
-                        new TableCell<>() {
-
-                            @Override
-                            protected void updateItem(
-                                    Double value,
-                                    boolean empty
-                            ) {
-
-                                super.updateItem(
-                                        value,
-                                        empty
-                                );
-
-
-                                setText(
-                                        empty || value == null
-                                                ? "-"
-                                                : String.format(
-                                                        "%.0f%%",
-                                                        value
-                                                )
-                                );
-                            }
-                        }
-        );
-
-
-        historyDateColumn.setCellFactory(
-                column ->
-                        new TableCell<>() {
-
-                            @Override
-                            protected void updateItem(
-                                    OffsetDateTime value,
-                                    boolean empty
-                            ) {
-
-                                super.updateItem(
-                                        value,
-                                        empty
-                                );
-
-
-                                if (
-                                        empty
-                                                || value == null
-                                ) {
-
-                                    setText("-");
-
-                                } else {
-
-                                    setText(
-                                            formatDateTime(
-                                                    value
-                                            )
-                                    );
-                                }
-                            }
-                        }
-        );
-
-
-        historyTable.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
-        );
+        historyTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     }
-
-
-    // =========================================================
-    // FILTER SETUP
-    // =========================================================
 
     private void setupFilters() {
+        filteredTasks = new FilteredList<>(allTasks, task -> true);
+        taskTable.setItems(filteredTasks);
 
-        filteredTasks =
-                new FilteredList<>(
-                        allTasks,
-                        task -> true
-                );
+        statusFilterComboBox.setItems(FXCollections.observableArrayList(
+                "All Status", "Pending", "Accepted", "In Progress",
+                "Completed", "Overdue", "Cancelled", "Locked"
+        ));
+        statusFilterComboBox.setValue("All Status");
 
-
-        taskTable.setItems(
-                filteredTasks
-        );
-
-
-        // DEFAULT STATUS OPTIONS
-        statusFilterComboBox.setItems(
-                FXCollections.observableArrayList(
-                        "All Status",
-                        "Pending",
-                        "Accepted",
-                        "In Progress",
-                        "Completed",
-                        "Overdue",
-                        "Cancelled",
-                        "Locked"
-                )
-        );
-
-
-        statusFilterComboBox.setValue(
-                "All Status"
-        );
-
-
-        // SEARCH TASK NAME
-        searchField
-                .textProperty()
-                .addListener(
-                        (
-                                observable,
-                                oldValue,
-                                newValue
-                        ) -> applyFilters()
-                );
-
-
-        // EMPLOYEE
-        employeeFilterComboBox
-                .valueProperty()
-                .addListener(
-                        (
-                                observable,
-                                oldValue,
-                                newValue
-                        ) -> applyFilters()
-                );
-
-
-        // CATEGORY
-        categoryFilterComboBox
-                .valueProperty()
-                .addListener(
-                        (
-                                observable,
-                                oldValue,
-                                newValue
-                        ) -> applyFilters()
-                );
-
-
-        // STATUS
-        statusFilterComboBox
-                .valueProperty()
-                .addListener(
-                        (
-                                observable,
-                                oldValue,
-                                newValue
-                        ) -> applyFilters()
-                );
-
-
-        // DUE DATE
-        dueDateFilterPicker
-                .valueProperty()
-                .addListener(
-                        (
-                                observable,
-                                oldValue,
-                                newValue
-                        ) -> applyFilters()
-                );
+        searchField.textProperty().addListener((o, oldValue, newValue) -> applyFilters());
+        employeeFilterComboBox.valueProperty().addListener((o, oldValue, newValue) -> applyFilters());
+        categoryFilterComboBox.valueProperty().addListener((o, oldValue, newValue) -> applyFilters());
+        statusFilterComboBox.valueProperty().addListener((o, oldValue, newValue) -> applyFilters());
+        dueDateFilterPicker.valueProperty().addListener((o, oldValue, newValue) -> applyFilters());
     }
-
-
-    // =========================================================
-    // POPULATE FILTER OPTIONS
-    // =========================================================
 
     private void populateFilterOptions() {
+        List<String> employees = new ArrayList<>(employeeDisplayMap.values());
+        employees.sort(String.CASE_INSENSITIVE_ORDER);
 
-        // =====================================================
-        // EMPLOYEE FILTER
-        // =====================================================
+        employeeFilterComboBox.getItems().clear();
+        employeeFilterComboBox.getItems().add("All Employees");
+        employeeFilterComboBox.getItems().addAll(employees);
+        employeeFilterComboBox.setValue("All Employees");
 
-        List<String> employees =
-                new ArrayList<>(
-                        employeeDisplayMap.values()
-                );
+        List<String> categories = new ArrayList<>(categoryDisplayMap.values());
+        categories.sort(String.CASE_INSENSITIVE_ORDER);
 
-
-        employees.sort(
-                String.CASE_INSENSITIVE_ORDER
-        );
-
-
-        employeeFilterComboBox
-                .getItems()
-                .clear();
-
-
-        employeeFilterComboBox
-                .getItems()
-                .add(
-                        "All Employees"
-                );
-
-
-        employeeFilterComboBox
-                .getItems()
-                .addAll(
-                        employees
-                );
-
-
-        employeeFilterComboBox.setValue(
-                "All Employees"
-        );
-
-
-        // =====================================================
-        // CATEGORY FILTER
-        // =====================================================
-
-        List<String> categories =
-                new ArrayList<>(
-                        categoryDisplayMap.values()
-                );
-
-
-        categories.sort(
-                String.CASE_INSENSITIVE_ORDER
-        );
-
-
-        categoryFilterComboBox
-                .getItems()
-                .clear();
-
-
-        categoryFilterComboBox
-                .getItems()
-                .add(
-                        "All Categories"
-                );
-
-
-        categoryFilterComboBox
-                .getItems()
-                .addAll(
-                        categories
-                );
-
-
-        categoryFilterComboBox.setValue(
-                "All Categories"
-        );
+        categoryFilterComboBox.getItems().clear();
+        categoryFilterComboBox.getItems().add("All Categories");
+        categoryFilterComboBox.getItems().addAll(categories);
+        categoryFilterComboBox.setValue("All Categories");
     }
-
-
-    // =========================================================
-    // APPLY FILTERS
-    // =========================================================
 
     private void applyFilters() {
+        if (filteredTasks == null) return;
 
-        if (filteredTasks == null) {
-            return;
-        }
+        String searchText = searchField.getText() == null
+                ? ""
+                : searchField.getText().trim().toLowerCase();
+        String selectedEmployee = employeeFilterComboBox.getValue();
+        String selectedCategory = categoryFilterComboBox.getValue();
+        String selectedStatus = statusFilterComboBox.getValue();
+        LocalDate selectedDueDate = dueDateFilterPicker.getValue();
 
+        filteredTasks.setPredicate(task -> {
+            if (task == null) return false;
 
-        String searchText =
-                searchField.getText() == null
-                        ? ""
-                        : searchField
-                                .getText()
-                                .trim()
-                                .toLowerCase();
+            boolean matchesTaskName = searchText.isBlank()
+                    || (task.getTaskTitle() != null
+                    && task.getTaskTitle().toLowerCase().contains(searchText));
 
-
-        String selectedEmployee =
-                employeeFilterComboBox
-                        .getValue();
-
-
-        String selectedCategory =
-                categoryFilterComboBox
-                        .getValue();
-
-
-        String selectedStatus =
-                statusFilterComboBox
-                        .getValue();
-
-
-        LocalDate selectedDueDate =
-                dueDateFilterPicker
-                        .getValue();
-
-
-        filteredTasks.setPredicate(
-                task -> {
-
-                    if (task == null) {
-                        return false;
-                    }
-
-
-                    // =================================================
-                    // TASK NAME
-                    // =================================================
-
-                    boolean matchesTaskName =
-                            searchText.isBlank()
-                                    || (
-                                    task.getTaskTitle() != null
-                                            && task.getTaskTitle()
-                                            .toLowerCase()
-                                            .contains(
-                                                    searchText
-                                            )
-                            );
-
-
-                    // =================================================
-                    // EMPLOYEE
-                    // =================================================
-
-                    boolean matchesEmployee =
-                            true;
-
-
-                    if (
-                            selectedEmployee != null
-                                    && !"All Employees".equals(
-                                    selectedEmployee
-                            )
-                    ) {
-
-                        if (
-                                task.getAssignedEmployeeId() == null
-                        ) {
-
-                            matchesEmployee =
-                                    false;
-
-                        } else {
-
-                            String employeeDisplay =
-                                    employeeDisplayMap.get(
-                                            task.getAssignedEmployeeId()
-                                                    .toString()
-                                    );
-
-
-                            matchesEmployee =
-                                    selectedEmployee.equals(
-                                            employeeDisplay
-                                    );
-                        }
-                    }
-
-
-                    // =================================================
-                    // CATEGORY
-                    // =================================================
-
-                    boolean matchesCategory =
-                            true;
-
-
-                    if (
-                            selectedCategory != null
-                                    && !"All Categories".equals(
-                                    selectedCategory
-                            )
-                    ) {
-
-                        if (
-                                task.getCategoryId() == null
-                        ) {
-
-                            matchesCategory =
-                                    false;
-
-                        } else {
-
-                            String categoryName =
-                                    categoryDisplayMap.get(
-                                            task.getCategoryId()
-                                    );
-
-
-                            matchesCategory =
-                                    selectedCategory.equals(
-                                            categoryName
-                                    );
-                        }
-                    }
-
-
-                    // =================================================
-                    // STATUS
-                    // =================================================
-                    String taskStatus = task.getTaskStatus() == null
-                            ? ""
-                            : task.getTaskStatus().trim();
-
-                    boolean completed =
-                            "Completed".equalsIgnoreCase(taskStatus)
-                            || task.getCompletionDate() != null;
-
-                    boolean cancelled =
-                            "Cancelled".equalsIgnoreCase(taskStatus)
-                            || "Canceled".equalsIgnoreCase(taskStatus);
-
-                    boolean overdue =
-                            !completed
-                            && !cancelled
-                            && task.getDueDate() != null
-                            && task.getDueDate().toInstant()
-                                    .isBefore(java.time.Instant.now());
-    
-                    boolean matchesStatus;
-
-                    if (selectedStatus == null || "All Status".equals(selectedStatus)) {
-                    matchesStatus = true;
-                    } else if ("Overdue".equals(selectedStatus)) {
-                    matchesStatus = overdue;
-                    } else {
-                    matchesStatus = selectedStatus.equalsIgnoreCase(taskStatus);
-                    }
-
-
-                    // =================================================
-                    // DUE DATE
-                    // =================================================
-
-                    boolean matchesDueDate =
-                            true;
-
-
-                    if (selectedDueDate != null) {
-
-                        if (
-                                task.getDueDate() == null
-                        ) {
-
-                            matchesDueDate =
-                                    false;
-
-                        } else {
-
-                            LocalDate taskDueDate =
-                                    task.getDueDate()
-                                            .atZoneSameInstant(
-                                                    MALAYSIA_ZONE
-                                            )
-                                            .toLocalDate();
-
-
-                            matchesDueDate =
-                                    taskDueDate.equals(
-                                            selectedDueDate
-                                    );
-                        }
-                    }
-
-
-                    return matchesTaskName
-                            && matchesEmployee
-                            && matchesCategory
-                            && matchesStatus
-                            && matchesDueDate;
+            boolean matchesEmployee = true;
+            if (selectedEmployee != null && !"All Employees".equals(selectedEmployee)) {
+                if (task.getAssignedEmployeeId() != null) {
+                    String employeeDisplay = employeeDisplayMap.get(task.getAssignedEmployeeId().toString());
+                    matchesEmployee = selectedEmployee.equals(employeeDisplay);
+                } else {
+                    String members = teamMemberDisplayMap.get(task.getTaskId());
+                    matchesEmployee = members != null && members.contains(selectedEmployee);
                 }
-        );
+            }
 
+            boolean matchesCategory = true;
+            if (selectedCategory != null && !"All Categories".equals(selectedCategory)) {
+                if (task.getCategoryId() == null) {
+                    matchesCategory = false;
+                } else {
+                    String categoryName = categoryDisplayMap.get(task.getCategoryId());
+                    matchesCategory = selectedCategory.equals(categoryName);
+                }
+            }
 
-        clearSelectedTask();
+            boolean matchesStatus = selectedStatus == null
+                    || "All Status".equals(selectedStatus)
+                    || selectedStatus.equals(task.getTaskStatus());
+
+            boolean matchesDueDate = true;
+            if (selectedDueDate != null) {
+                if (task.getDueDate() == null) {
+                    matchesDueDate = false;
+                } else {
+                    LocalDate taskDueDate = task.getDueDate()
+                            .atZoneSameInstant(MALAYSIA_ZONE)
+                            .toLocalDate();
+                    matchesDueDate = taskDueDate.equals(selectedDueDate);
+                }
+            }
+
+            return matchesTaskName
+                    && matchesEmployee
+                    && matchesCategory
+                    && matchesStatus
+                    && matchesDueDate;
+        });
+
+        clearTaskSelection();
     }
-
-
-    // =========================================================
-    // CLEAR FILTERS
-    // =========================================================
 
     @FXML
     private void handleClearFilters() {
-
         searchField.clear();
-
-
-        employeeFilterComboBox.setValue(
-                "All Employees"
-        );
-
-
-        categoryFilterComboBox.setValue(
-                "All Categories"
-        );
-
-
-        statusFilterComboBox.setValue(
-                "All Status"
-        );
-
-
-        dueDateFilterPicker.setValue(
-                null
-        );
-
-
+        employeeFilterComboBox.setValue("All Employees");
+        categoryFilterComboBox.setValue("All Categories");
+        statusFilterComboBox.setValue("All Status");
+        dueDateFilterPicker.setValue(null);
         applyFilters();
     }
 
-
-    // =========================================================
-    // TASK SELECTION
-    // =========================================================
-
     private void configureTaskSelection() {
+        taskTable.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
+            if (newValue != null) {
+                selectedTask = newValue;
+                loadProgressHistory(newValue);
+            }
+        });
 
-        taskTable
-                .getSelectionModel()
-                .selectedItemProperty()
-                .addListener(
-                        (
-                                observable,
-                                oldValue,
-                                newValue
-                        ) -> {
+        taskTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() != 2) return;
 
-                            if (newValue != null) {
+            Task task = taskTable.getSelectionModel().getSelectedItem();
+            if (task == null) return;
 
-                                selectedTask =
-                                        newValue;
-
-
-                                displaySelectedTask(
-                                        newValue
-                                );
-
-
-                                loadProgressHistory(
-                                        newValue
-                                );
-                            }
-                        }
-                );
+            selectedTask = task;
+            showTaskPopup(task);
+        });
     }
 
+    private void showTaskPopup(Task task) {
+        String category = task.getCategoryId() == null
+                ? "-"
+                : categoryDisplayMap.getOrDefault(task.getCategoryId(), "-");
 
-    // =========================================================
-    // DISPLAY SELECTED TASK
-    // =========================================================
+        Stage owner = (Stage) taskTable.getScene().getWindow();
 
-    private void displaySelectedTask(
-            Task task
-    ) {
-
-        selectedTaskLabel.setText(
-                safe(
-                        task.getTaskTitle()
-                )
-        );
-
-
-        // CATEGORY
-        if (
-                task.getCategoryId() == null
-        ) {
-
-            selectedCategoryLabel.setText(
-                    "-"
-            );
-
-        } else {
-
-            selectedCategoryLabel.setText(
-                    categoryDisplayMap.getOrDefault(
-                            task.getCategoryId(),
-                            "-"
-                    )
-            );
-        }
-
-
-        // EMPLOYEE
-        if (
-                task.getAssignedEmployeeId() == null
-        ) {
-
-            selectedEmployeeLabel.setText(
-                    "-"
-            );
-
-        } else {
-
-            String userId =
-                    task.getAssignedEmployeeId()
-                            .toString();
-
-
-            selectedEmployeeLabel.setText(
-                    employeeDisplayMap.getOrDefault(
-                            userId,
-                            userId
-                    )
-            );
-        }
-
-
-        selectedStatusLabel.setText(
-                safe(
-                        task.getTaskStatus()
-                )
-        );
-
-
-        selectedProgressLabel.setText(
-                String.format(
-                        "%.0f%%",
-                        task.getProgress()
-                )
+        ManagerTaskDetailsDialog dialog = new ManagerTaskDetailsDialog();
+        dialog.show(
+                owner,
+                task,
+                category,
+                employeeDisplayMap,
+                () -> openEditTask(task),
+                () -> cancelTask(task)
         );
     }
 
+    private void clearTaskSelection() {
+        if (taskTable != null) taskTable.getSelectionModel().clearSelection();
+        selectedTask = null;
 
-    // =========================================================
-    // CLEAR SELECTED TASK
-    // =========================================================
-
-    private void clearSelectedTask() {
-
-        taskTable
-                .getSelectionModel()
-                .clearSelection();
-
-
-        selectedTask =
-                null;
-
-
-        selectedTaskLabel.setText(
-                "No task selected"
-        );
-
-
-        selectedCategoryLabel.setText(
-                "-"
-        );
-
-
-        selectedEmployeeLabel.setText(
-                "-"
-        );
-
-
-        selectedStatusLabel.setText(
-                "-"
-        );
-
-
-        selectedProgressLabel.setText(
-                "-"
-        );
-
-
-        historyTable
-                .getItems()
-                .clear();
-
-
-        showHistoryMessage(
-                "Select a task to view progress history."
-        );
+        if (historyTable != null) historyTable.getItems().clear();
+        showHistoryMessage("Select a task to view progress history.");
     }
-
-
-    // =========================================================
-    // LOAD EMPLOYEES + CATEGORIES
-    // =========================================================
 
     private void loadReferenceDataAndTasks() {
-
         hideMessage();
 
+        javafx.concurrent.Task<Void> referenceTask = new javafx.concurrent.Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                List<User> users = userService.getAllUsers();
+                employeeDisplayMap.clear();
 
-        javafx.concurrent.Task<Void> referenceTask =
-                new javafx.concurrent.Task<>() {
+                if (users != null) {
+                    for (User user : users) {
+                        if (user == null || user.getRoleId() != 3) continue;
+                        if (user.getUserId() == null || user.getUserId().isBlank()) continue;
 
-                    @Override
-                    protected Void call()
-                            throws Exception {
+                        String staffId = user.getEmployeeId() == null || user.getEmployeeId().isBlank()
+                                ? "-"
+                                : user.getEmployeeId();
 
-                        // =================================================
-                        // EMPLOYEES
-                        // =================================================
+                        String name = user.getFullName();
+                        if (name == null || name.isBlank()) name = user.getUsername();
+                        if (name == null || name.isBlank()) name = "-";
 
-                        List<User> users =
-                                userService
-                                        .getAllUsers();
-
-
-                        employeeDisplayMap.clear();
-
-
-                        if (users != null) {
-
-                            for (User user : users) {
-
-                                if (
-                                        user == null
-                                                || user.getRoleId() != 3
-                                ) {
-
-                                    continue;
-                                }
-
-
-                                if (
-                                        user.getUserId() == null
-                                                || user.getUserId().isBlank()
-                                ) {
-
-                                    continue;
-                                }
-
-
-                                String staffId =
-                                        user.getEmployeeId() == null
-                                                || user.getEmployeeId().isBlank()
-                                                ? "-"
-                                                : user.getEmployeeId();
-
-
-                                String name =
-                                        user.getFullName() == null
-                                                || user.getFullName().isBlank()
-                                                ? "-"
-                                                : user.getFullName();
-
-
-                                employeeDisplayMap.put(
-                                        user.getUserId(),
-                                        staffId
-                                                + " - "
-                                                + name
-                                );
-                            }
-                        }
-
-
-                        // =================================================
-                        // CATEGORIES
-                        // =================================================
-
-                        List<TaskCategory> categories =
-                                categoryService
-                                        .getActiveCategories();
-
-
-                        categoryDisplayMap.clear();
-
-
-                        if (categories != null) {
-
-                            for (
-                                    TaskCategory category
-                                    : categories
-                            ) {
-
-                                if (
-                                        category == null
-                                                || category.getCategoryId() == null
-                                ) {
-
-                                    continue;
-                                }
-
-
-                                categoryDisplayMap.put(
-                                        category.getCategoryId(),
-                                        category.getCategoryName()
-                                );
-                            }
-                        }
-
-
-                        return null;
+                        employeeDisplayMap.put(user.getUserId(), staffId + " - " + name);
                     }
-                };
-
-
-        referenceTask.setOnSucceeded(
-                event -> {
-
-                    populateFilterOptions();
-
-                    loadTasks();
                 }
-        );
 
+                List<TaskCategory> categories = categoryService.getActiveCategories();
+                categoryDisplayMap.clear();
 
-        referenceTask.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            referenceTask.getException();
-
-
-                    if (error != null) {
-
-                        error.printStackTrace();
+                if (categories != null) {
+                    for (TaskCategory category : categories) {
+                        if (category == null || category.getCategoryId() == null) continue;
+                        categoryDisplayMap.put(category.getCategoryId(), category.getCategoryName());
                     }
-
-
-                    loadTasks();
                 }
-        );
 
+                return null;
+            }
+        };
 
-        Thread thread =
-                new Thread(
-                        referenceTask
-                );
+        referenceTask.setOnSucceeded(event -> {
+            populateFilterOptions();
+            loadTasks();
+        });
 
+        referenceTask.setOnFailed(event -> {
+            Throwable error = referenceTask.getException();
+            if (error != null) error.printStackTrace();
+            loadTasks();
+        });
 
+        Thread thread = new Thread(referenceTask);
         thread.setDaemon(true);
-
         thread.start();
     }
-
-
-    // =========================================================
-    // LOAD TASKS
-    // =========================================================
 
     private void loadTasks() {
+        javafx.concurrent.Task<List<Task>> loadTask = new javafx.concurrent.Task<>() {
+            @Override
+            protected List<Task> call() throws Exception {
+                return taskService.getAllTasks();
+            }
+        };
 
-        javafx.concurrent.Task<List<Task>> loadTask =
-                new javafx.concurrent.Task<>() {
+        loadTask.setOnSucceeded(event -> {
+            List<Task> tasks = loadTask.getValue();
+            allTasks.clear();
+            teamMemberDisplayMap.clear();
 
-                    @Override
-                    protected List<Task> call()
-                            throws Exception {
+            if (tasks != null) allTasks.addAll(tasks);
 
-                        return taskService
-                                .getAllTasks();
-                    }
-                };
+            applyFilters();
+            taskTable.refresh();
+            loadTeamTaskMembers();
 
+            if (tasks == null || tasks.isEmpty()) {
+                showMessage("No tasks found.");
+            } else {
+                hideMessage();
+            }
+        });
 
-        loadTask.setOnSucceeded(
-                event -> {
+        loadTask.setOnFailed(event -> {
+            Throwable error = loadTask.getException();
+            showMessage(error == null ? "Unable to load tasks." : error.getMessage());
+        });
 
-                    List<Task> tasks =
-                            loadTask.getValue();
-
-
-                    allTasks.clear();
-
-
-                    if (tasks != null) {
-
-                        allTasks.addAll(
-                                tasks
-                        );
-                    }
-
-
-                    applyFilters();
-
-                    taskTable.refresh();
-
-
-                    if (
-                            tasks == null
-                                    || tasks.isEmpty()
-                    ) {
-
-                        showMessage(
-                                "No tasks found."
-                        );
-
-                    } else {
-
-                        hideMessage();
-                    }
-                }
-        );
-
-
-        loadTask.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            loadTask.getException();
-
-
-                    showMessage(
-                            error == null
-                                    ? "Unable to load tasks."
-                                    : error.getMessage()
-                    );
-                }
-        );
-
-
-        Thread thread =
-                new Thread(
-                        loadTask
-                );
-
-
+        Thread thread = new Thread(loadTask);
         thread.setDaemon(true);
-
         thread.start();
-    }
-
-
-    // =========================================================
-    // PROGRESS HISTORY
-    // =========================================================
-
-    private void loadProgressHistory(
-            Task task
-    ) {
-
-        historyTable
-                .getItems()
-                .clear();
-
-
-        showHistoryMessage(
-                "Loading progress history..."
-        );
-
-
-        javafx.concurrent.Task<List<TaskProgress>> historyTask =
-                new javafx.concurrent.Task<>() {
-
-                    @Override
-                    protected List<TaskProgress> call()
-                            throws Exception {
-
-                        return taskProgressService
-                                .getProgressHistory(
-                                        task.getTaskId()
-                                );
-                    }
-                };
-
-
-        historyTask.setOnSucceeded(
-                event -> {
-
-                    List<TaskProgress> history =
-                            historyTask.getValue();
-
-
-                    historyTable
-                            .getItems()
-                            .clear();
-
-
-                    if (history != null) {
-
-                        historyTable
-                                .getItems()
-                                .addAll(
-                                        history
-                                );
-                    }
-
-
-                    historyTable.refresh();
-
-
-                    if (
-                            history == null
-                                    || history.isEmpty()
-                    ) {
-
-                        showHistoryMessage(
-                                "No progress history yet."
-                        );
-
-                    } else {
-
-                        hideHistoryMessage();
-                    }
-                }
-        );
-
-
-        historyTask.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            historyTask.getException();
-
-
-                    showHistoryMessage(
-                            error == null
-                                    ? "Unable to load progress history."
-                                    : error.getMessage()
-                    );
-                }
-        );
-
-
-        Thread thread =
-                new Thread(
-                        historyTask
-                );
-
-
-        thread.setDaemon(true);
-
-        thread.start();
-    }
-
-
-    // =========================================================
-    // CREATE TASK
-    // =========================================================
-
-    @FXML
-    private void handleCreateTask(
-            ActionEvent event
-    ) {
-
-        navigate(
-                event,
-                "/fxml/manager/managerCreateTask.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // EDIT TASK
-    // =========================================================
-
-    @FXML
-    private void handleEditTask(
-            ActionEvent event
-    ) {
-
-        if (selectedTask == null) {
-
-            showMessage(
-                    "Please select a task first."
-            );
-
-            return;
-        }
-
-
-        if (
-                "Completed".equals(
-                        selectedTask.getTaskStatus()
-                )
-                        || "Cancelled".equals(
-                        selectedTask.getTaskStatus()
-                )
-        ) {
-
-            showMessage(
-                    "Completed or cancelled tasks cannot be edited."
-            );
-
-            return;
-        }
-
-
-        ManagerTaskEditContext.setTask(
-                selectedTask
-        );
-
-
-        navigate(
-                event,
-                "/fxml/manager/managerEditTask.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // CANCEL TASK
-    // =========================================================
-
-    @FXML
-    private void handleCancelTask() {
-
-        if (selectedTask == null) {
-
-            showMessage(
-                    "Please select a task first."
-            );
-
-            return;
-        }
-
-
-        if (
-                "Completed".equals(
-                        selectedTask.getTaskStatus()
-                )
-        ) {
-
-            showMessage(
-                    "Completed tasks cannot be cancelled."
-            );
-
-            return;
-        }
-
-
-        if (
-                "Cancelled".equals(
-                        selectedTask.getTaskStatus()
-                )
-        ) {
-
-            showMessage(
-                    "This task is already cancelled."
-            );
-
-            return;
-        }
-
-
-        Alert confirmation =
-                new Alert(
-                        Alert.AlertType.CONFIRMATION
-                );
-
-
-        confirmation.setTitle(
-                "Cancel Task"
-        );
-
-
-        confirmation.setHeaderText(
-                "Cancel "
-                        + selectedTask.getTaskTitle()
-                        + "?"
-        );
-
-
-        confirmation.setContentText(
-                "This task will be marked as Cancelled."
-        );
-
-
-        Optional<ButtonType> result =
-                confirmation.showAndWait();
-
-
-        if (
-                result.isEmpty()
-                        || result.get() != ButtonType.OK
-        ) {
-
-            return;
-        }
-
-
-        javafx.concurrent.Task<Void> cancelTask =
-                new javafx.concurrent.Task<>() {
-
-                    @Override
-                    protected Void call()
-                            throws Exception {
-
-                        taskService.cancelTask(
-                                selectedTask.getTaskId()
-                        );
-
-
-                        return null;
-                    }
-                };
-
-
-        cancelTask.setOnSucceeded(
-                event -> {
-
-                    loadReferenceDataAndTasks();
-                }
-        );
-
-
-        cancelTask.setOnFailed(
-                event -> {
-
-                    Throwable error =
-                            cancelTask.getException();
-
-
-                    showMessage(
-                            error == null
-                                    ? "Unable to cancel task."
-                                    : error.getMessage()
-                    );
-                }
-        );
-
-
-        Thread thread =
-                new Thread(
-                        cancelTask
-                );
-
-
-        thread.setDaemon(true);
-
-        thread.start();
-    }
-
-
-    // =========================================================
-    // REFRESH
-    // =========================================================
-
-    @FXML
-    private void handleRefresh() {
-
-        loadReferenceDataAndTasks();
-    }
-
-
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
-
-    @FXML
-    private void handleHome(
-            ActionEvent event
-    ) {
-
-        navigate(
-                event,
-                "/fxml/manager/managerHome.fxml"
-        );
-    }
-
-
-    @FXML
-    private void handleProfile(
-            ActionEvent event
-    ) {
-
-        navigate(
-                event,
-                "/fxml/manager/managerProfile.fxml"
-        );
-    }
-
-
-    @FXML
-    private void handleTaskManagement() {
-    }
-
-
-        @FXML
-        private void handlePerformance(
-                ActionEvent event
-        ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/manager/managerPerformance.fxml"
-        );
-        }
-
-    @FXML
-        private void handleReports(javafx.event.ActionEvent event) {
-        javafx.stage.Window owner =
-                ((javafx.scene.Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-        ManagerReportsPage.show(owner);
-    }
-
-    @FXML
-    private void handleDashboard() {
-    }
-
-
-    @FXML
-    private void handleLogout(
-            ActionEvent event
-    ) {
-
-        SessionManager.clearSession();
-
-
-        navigate(
-                event,
-                "/fxml/auth/login.fxml"
-        );
-    }
-
-
-    // =========================================================
-    // HELPERS
-    // =========================================================
-
-    private String safe(
-            String value
-    ) {
-
-        return value == null
-                ? "-"
-                : value;
-    }
-
-
-    private String formatDateTime(
-            OffsetDateTime value
-    ) {
-
-        return value
-                .atZoneSameInstant(
-                        MALAYSIA_ZONE
-                )
-                .format(
-                        DATE_FORMATTER
-                );
-    }
-
-
-    private void showMessage(
-            String value
-    ) {
-
-        messageLabel.setText(
-                value
-        );
-
-
-        messageLabel.setVisible(
-                true
-        );
-
-
-        messageLabel.setManaged(
-                true
-        );
-    }
-
-
-    private void hideMessage() {
-
-        messageLabel.setText(
-                ""
-        );
-
-
-        messageLabel.setVisible(
-                false
-        );
-
-
-        messageLabel.setManaged(
-                false
-        );
-    }
-
-
-    private void showHistoryMessage(
-            String value
-    ) {
-
-        historyMessageLabel.setText(
-                value
-        );
-
-
-        historyMessageLabel.setVisible(
-                true
-        );
-
-
-        historyMessageLabel.setManaged(
-                true
-        );
-    }
-
-
-    private void hideHistoryMessage() {
-
-        historyMessageLabel.setText(
-                ""
-        );
-
-
-        historyMessageLabel.setVisible(
-                false
-        );
-
-
-        historyMessageLabel.setManaged(
-                false
-        );
-    }
-
-
-    private void navigate(
-            ActionEvent event,
-            String path
-    ) {
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-
-        NavigationManager.navigate(
-                stage,
-                path
-        );
     }
 
     private void loadTeamTaskMembers() {
+        for (Task task : allTasks) {
+            if (task == null || task.getTaskId() == null || task.getAssignedEmployeeId() != null) continue;
 
-    String accessToken =
-            SessionManager.getAccessToken();
+            javafx.concurrent.Task<List<TaskAssignment>> worker = new javafx.concurrent.Task<>() {
+                @Override
+                protected List<TaskAssignment> call() throws Exception {
+                    return teamTaskService.getAssignments(task.getTaskId());
+                }
+            };
 
+            worker.setOnSucceeded(event -> {
+                teamMemberDisplayMap.put(task.getTaskId(), buildMemberDisplay(worker.getValue()));
+                taskTable.refresh();
+            });
 
-    if (
-            accessToken == null
-                    || accessToken.isBlank()
-    ) {
+            worker.setOnFailed(event -> {
+                teamMemberDisplayMap.put(task.getTaskId(), "Team Task");
+                taskTable.refresh();
+            });
 
-        return;
+            Thread thread = new Thread(worker);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
+    private String buildMemberDisplay(List<TaskAssignment> assignments) {
+        if (assignments == null || assignments.isEmpty()) return "Team Task";
 
-    for (
-            Task currentTask
-            : allTasks
-    ) {
+        List<String> names = new ArrayList<>();
+        for (TaskAssignment assignment : assignments) {
+            if (assignment == null || assignment.getEmployeeId() == null) continue;
 
-        if (
-                currentTask == null
-                        || currentTask.getTaskId() == null
-        ) {
-
-            continue;
+            String userId = assignment.getEmployeeId().toString();
+            names.add(employeeDisplayMap.getOrDefault(userId, userId));
         }
 
+        return names.isEmpty() ? "Team Task" : String.join(", ", names);
+    }
 
-        /*
-         * Individual tasks already have
-         * assigned_employee_id.
-         */
-        if (
-                currentTask.getAssignedEmployeeId()
-                        != null
-        ) {
+    private void loadProgressHistory(Task task) {
+        historyTable.getItems().clear();
+        showHistoryMessage("Loading progress history...");
 
-            continue;
-        }
+        javafx.concurrent.Task<List<TaskProgress>> historyTask = new javafx.concurrent.Task<>() {
+            @Override
+            protected List<TaskProgress> call() throws Exception {
+                return taskProgressService.getProgressHistory(task.getTaskId());
+            }
+        };
 
+        historyTask.setOnSucceeded(event -> {
+            List<TaskProgress> history = historyTask.getValue();
+            historyTable.getItems().clear();
+            if (history != null) historyTable.getItems().addAll(history);
+            historyTable.refresh();
 
-        javafx.concurrent.Task<List<TaskAssignment>>
-                worker =
-                new javafx.concurrent.Task<>() {
+            if (history == null || history.isEmpty()) {
+                showHistoryMessage("No progress history yet.");
+            } else {
+                hideHistoryMessage();
+            }
+        });
 
-                    @Override
-                    protected List<TaskAssignment> call()
-                            throws Exception {
+        historyTask.setOnFailed(event -> {
+            Throwable error = historyTask.getException();
+            showHistoryMessage(error == null ? "Unable to load progress history." : error.getMessage());
+        });
 
-                        return assignmentRepository
-                                .getAssignments(
-                                        currentTask.getTaskId(),
-                                        accessToken
-                                );
-                    }
-                };
-
-
-        worker.setOnSucceeded(
-                event -> {
-
-                    List<TaskAssignment> assignments =
-                            worker.getValue();
-
-
-                    if (
-                            assignments == null
-                                    || assignments.isEmpty()
-                    ) {
-
-                        teamMemberDisplayMap.put(
-                                currentTask.getTaskId(),
-                                "Team Task"
-                        );
-
-                        taskTable.refresh();
-
-                        return;
-                    }
-
-
-                    List<String> names =
-                            new ArrayList<>();
-
-
-                    for (
-                            TaskAssignment assignment
-                            : assignments
-                    ) {
-
-                        if (
-                                assignment == null
-                                        || assignment.getEmployeeId()
-                                        == null
-                        ) {
-
-                            continue;
-                        }
-
-
-                        String employeeId =
-                                assignment
-                                        .getEmployeeId()
-                                        .toString();
-
-
-                        String display =
-                                employeeDisplayMap
-                                        .getOrDefault(
-                                                employeeId,
-                                                employeeId
-                                        );
-
-
-                        names.add(
-                                display
-                        );
-                    }
-
-
-                    String displayText =
-                            String.join(
-                                    ", ",
-                                    names
-                            );
-
-
-                    if (displayText.isBlank()) {
-
-                        displayText =
-                                "Team Task";
-                    }
-
-
-                    teamMemberDisplayMap.put(
-                            currentTask.getTaskId(),
-                            displayText
-                    );
-
-
-                    taskTable.refresh();
-                }
-        );
-
-
-        worker.setOnFailed(
-                event -> {
-
-                    teamMemberDisplayMap.put(
-                            currentTask.getTaskId(),
-                            "Team Task"
-                    );
-
-
-                    taskTable.refresh();
-                }
-        );
-
-
-        Thread thread =
-                new Thread(
-                        worker
-                );
-
-
-        thread.setDaemon(
-                true
-        );
-
-
+        Thread thread = new Thread(historyTask);
+        thread.setDaemon(true);
         thread.start();
     }
+
+    @FXML
+    private void handleCreateTask(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerCreateTask.fxml");
+    }
+
+    private void openEditTask(Task task) {
+        if (task == null) return;
+
+        if ("Completed".equals(task.getTaskStatus()) || "Cancelled".equals(task.getTaskStatus())) {
+            showMessage("Completed or cancelled tasks cannot be edited.");
+            return;
+        }
+
+        ManagerTaskEditContext.setTask(task);
+        Stage stage = (Stage) taskTable.getScene().getWindow();
+        NavigationManager.navigate(stage, "/fxml/manager/managerEditTask.fxml");
+    }
+
+    private void cancelTask(Task task) {
+        if (task == null) return;
+
+        if ("Completed".equals(task.getTaskStatus())) {
+            showMessage("Completed tasks cannot be cancelled.");
+            return;
+        }
+
+        if ("Cancelled".equals(task.getTaskStatus())) {
+            showMessage("This task is already cancelled.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Cancel Task");
+        confirmation.setHeaderText("Cancel " + task.getTaskTitle() + "?");
+        confirmation.setContentText("This task will be marked as Cancelled.");
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+
+        javafx.concurrent.Task<Void> cancelWorker = new javafx.concurrent.Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                taskService.cancelTask(task.getTaskId());
+                return null;
+            }
+        };
+
+        cancelWorker.setOnSucceeded(event -> {
+            selectedTask = null;
+            loadReferenceDataAndTasks();
+        });
+
+        cancelWorker.setOnFailed(event -> {
+            Throwable error = cancelWorker.getException();
+            showMessage(error == null ? "Unable to cancel task." : error.getMessage());
+        });
+
+        Thread thread = new Thread(cancelWorker);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    private void handleRefresh() {
+        loadReferenceDataAndTasks();
+    }
+
+    @FXML
+    private void handleHome(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerHome.fxml");
+    }
+
+    @FXML
+    private void handleProfile(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerProfile.fxml");
+    }
+
+    @FXML
+    private void handleTasks() {
+        // Already on this page.
+    }
+
+    @FXML
+    private void handleTaskManagement() {
+        // Already on this page.
+    }
+
+    @FXML
+    private void handleDeadlineEscalation(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerDeadlineEscalation.fxml");
+    }
+
+    @FXML
+    private void handlePerformance(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerPerformance.fxml");
+    }
+
+    @FXML
+    private void handleReports(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerReport.fxml");
+    }
+
+    @FXML
+    private void handleDashboard(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerHome.fxml");
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        SessionManager.clearSession();
+        navigate(event, "/fxml/auth/login.fxml");
+    }
+
+    private String formatDateTime(OffsetDateTime value) {
+        return value.atZoneSameInstant(MALAYSIA_ZONE).format(DATE_FORMATTER);
+    }
+
+    private void showMessage(String value) {
+        if (messageLabel == null) return;
+        messageLabel.setText(value);
+        messageLabel.setVisible(true);
+        messageLabel.setManaged(true);
+    }
+
+    private void hideMessage() {
+        if (messageLabel == null) return;
+        messageLabel.setText("");
+        messageLabel.setVisible(false);
+        messageLabel.setManaged(false);
+    }
+
+    private void showHistoryMessage(String value) {
+        if (historyMessageLabel == null) return;
+        historyMessageLabel.setText(value);
+        historyMessageLabel.setVisible(true);
+        historyMessageLabel.setManaged(true);
+    }
+
+    private void hideHistoryMessage() {
+        if (historyMessageLabel == null) return;
+        historyMessageLabel.setText("");
+        historyMessageLabel.setVisible(false);
+        historyMessageLabel.setManaged(false);
+    }
+
+    private void navigate(ActionEvent event, String path) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        NavigationManager.navigate(stage, path);
     }
 }

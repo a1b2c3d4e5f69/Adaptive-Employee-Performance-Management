@@ -37,6 +37,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import java.util.List;
+import com.aepm.logic.task.EmployeeProgressSubmissionService;
+import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
+import java.io.File;
 
 
 public class EmployeeTaskDetailController {
@@ -98,6 +102,8 @@ public class EmployeeTaskDetailController {
     @FXML
     private Label attachmentSizeLabel;
 
+    
+
 
     private TaskAttachment currentAttachment;
 
@@ -125,6 +131,21 @@ public class EmployeeTaskDetailController {
 
     @FXML
     private TextArea progressNoteArea;
+
+    @FXML
+    private Button uploadEvidenceButton;
+
+    @FXML
+    private Label evidenceFileNameLabel;
+
+    @FXML
+    private HBox evidencePreviewBox;
+
+    @FXML
+    private Label evidenceNameLabel;
+
+    @FXML
+    private Label evidenceSizeLabel;
 
 
     // =========================================================
@@ -162,6 +183,10 @@ public class EmployeeTaskDetailController {
     private final TaskProgressService taskProgressService =
             new TaskProgressService();
 
+    private final EmployeeProgressSubmissionService
+        progressSubmissionService =
+        new EmployeeProgressSubmissionService();
+
 
     // =========================================================
     // DATA
@@ -172,6 +197,8 @@ public class EmployeeTaskDetailController {
     private Stage stage;
 
     private Runnable refreshCallback;
+
+    private File selectedEvidenceFile;
 
 
     private static final ZoneId MALAYSIA_ZONE =
@@ -367,6 +394,28 @@ public class EmployeeTaskDetailController {
 
         progressNoteArea.clear();
 
+        selectedEvidenceFile =
+        null;
+
+
+        if (evidenceFileNameLabel != null) {
+
+        evidenceFileNameLabel.setText(
+                "No file selected"
+        );
+        }
+
+
+        if (evidencePreviewBox != null) {
+
+        evidencePreviewBox.setVisible(
+                false
+        );
+
+        evidencePreviewBox.setManaged(
+                false
+        );
+        }
 
         updateButtonState();
 
@@ -822,6 +871,10 @@ public class EmployeeTaskDetailController {
                 !inProgress
         );
 
+        uploadEvidenceButton.setDisable(
+                !inProgress
+        );
+
 
         progressUpdateSection.setDisable(
                 !inProgress
@@ -870,18 +923,236 @@ public class EmployeeTaskDetailController {
         );
     }
 
+    // =========================================================
+        // CHOOSE PROGRESS EVIDENCE
+        // =========================================================
+
+        @FXML
+        private void handleChooseEvidence() {
+
+                FileChooser chooser =
+                        new FileChooser();
+
+
+                chooser.setTitle(
+                        "Select Progress Evidence"
+                );
+
+
+                chooser.getExtensionFilters()
+                        .addAll(
+
+                                new FileChooser.ExtensionFilter(
+                                        "Supported Evidence",
+                                        "*.pdf",
+                                        "*.png",
+                                        "*.jpg",
+                                        "*.jpeg",
+                                        "*.doc",
+                                        "*.docx",
+                                        "*.xls",
+                                        "*.xlsx",
+                                        "*.ppt",
+                                        "*.pptx",
+                                        "*.txt",
+                                        "*.csv",
+                                        "*.zip"
+                                ),
+
+                                new FileChooser.ExtensionFilter(
+                                        "All Files",
+                                        "*.*"
+                                )
+                        );
+
+
+                File file =
+                        chooser.showOpenDialog(
+                                progressUpdateSection
+                                        .getScene()
+                                        .getWindow()
+                        );
+
+
+                if (file == null) {
+
+                        return;
+                }
+
+
+                long maxSize =
+                        10L
+                                * 1024L
+                                * 1024L;
+
+
+                if (file.length() <= 0) {
+
+                        showMessage(
+                                "The selected evidence file is empty."
+                        );
+
+                        return;
+                }
+
+
+                if (file.length() > maxSize) {
+
+                        showMessage(
+                                "Evidence file cannot exceed 10 MB."
+                        );
+
+                        return;
+                }
+
+
+                selectedEvidenceFile =
+                        file;
+
+
+                evidenceFileNameLabel.setText(
+                        file.getName()
+                );
+
+
+                evidenceNameLabel.setText(
+                        file.getName()
+                );
+
+
+                evidenceSizeLabel.setText(
+                        formatEvidenceSize(
+                                file.length()
+                        )
+                );
+
+
+                evidencePreviewBox.setVisible(
+                        true
+                );
+
+
+                evidencePreviewBox.setManaged(
+                        true
+                );
+
+
+                hideMessage();
+     }
+
+     // =========================================================
+        // REMOVE PROGRESS EVIDENCE
+        // =========================================================
+
+        @FXML
+        private void handleRemoveEvidence() {
+
+                selectedEvidenceFile =
+                        null;
+
+
+                evidenceFileNameLabel.setText(
+                        "No file selected"
+                );
+
+
+                evidenceNameLabel.setText(
+                        ""
+                );
+
+
+                evidenceSizeLabel.setText(
+                        ""
+                );
+
+
+                evidencePreviewBox.setVisible(
+                        false
+                );
+
+
+                evidencePreviewBox.setManaged(
+                        false
+                );
+        }
+
+        // =========================================================
+        // FORMAT EVIDENCE SIZE
+        // =========================================================
+
+        private String formatEvidenceSize(
+                long bytes
+        ) {
+
+        if (bytes < 1024) {
+
+                return bytes
+                        + " B";
+        }
+
+
+        if (
+                bytes
+                        < 1024L
+                        * 1024L
+        ) {
+
+                return String.format(
+                        "%.1f KB",
+                        bytes / 1024.0
+                );
+        }
+
+
+        return String.format(
+                "%.1f MB",
+                bytes
+                        / (
+                        1024.0
+                                * 1024.0
+                )
+        );
+        }
+
 
     // =========================================================
     // UPDATE PROGRESS
     // =========================================================
 
-    @FXML
-    private void handleUpdateProgress() {
+    // =========================================================
+        // SUBMIT PROGRESS FOR VERIFICATION
+        // =========================================================
+
+        @FXML
+        private void handleUpdateProgress() {
 
         if (task == null) {
-            return;
+
+                return;
         }
 
+
+        // =====================================================
+        // TASK STATUS
+        // =====================================================
+
+        if (
+                !"In Progress".equalsIgnoreCase(
+                        task.getTaskStatus()
+                )
+        ) {
+
+                showMessage(
+                        "Only an In Progress task can submit progress."
+                );
+
+                return;
+        }
+
+
+        // =====================================================
+        // PROGRESS
+        // =====================================================
 
         String progressText =
                 progressField
@@ -889,130 +1160,379 @@ public class EmployeeTaskDetailController {
                         .trim();
 
 
+        if (progressText.isBlank()) {
+
+                showMessage(
+                        "Please enter requested progress percentage."
+                );
+
+                return;
+        }
+
+
+        int proposedProgress;
+
+
+        try {
+
+                double input =
+                        Double.parseDouble(
+                                progressText
+                        );
+
+
+                if (
+                        input
+                                != Math.floor(
+                                input
+                        )
+                ) {
+
+                showMessage(
+                        "Please enter a whole number for progress."
+                );
+
+                return;
+                }
+
+
+                proposedProgress =
+                        (int) input;
+
+
+        } catch (NumberFormatException e) {
+
+                showMessage(
+                        "Progress must be a valid number."
+                );
+
+                return;
+        }
+
+
+        if (
+                proposedProgress < 0
+                        || proposedProgress > 100
+        ) {
+
+                showMessage(
+                        "Progress must be between 0 and 100."
+                );
+
+                return;
+        }
+
+
+        int currentProgress =
+                (int) Math.round(
+                        task.getProgress()
+                );
+
+
+        if (
+                proposedProgress
+                        <= currentProgress
+        ) {
+
+                showMessage(
+                        "Requested progress must be higher than the current verified progress of "
+                                + currentProgress
+                                + "%."
+                );
+
+                return;
+        }
+
+
+        // =====================================================
+        // NOTE
+        // =====================================================
+
         String note =
                 progressNoteArea
                         .getText()
                         .trim();
 
 
-        if (progressText.isBlank()) {
-
-            showMessage(
-                    "Please enter progress percentage."
-            );
-
-            return;
-        }
-
-
-        double progress;
-
-
-        try {
-
-            progress =
-                    Double.parseDouble(
-                            progressText
-                    );
-
-        } catch (NumberFormatException e) {
-
-            showMessage(
-                    "Progress must be a number."
-            );
-
-            return;
-        }
-
-
-        if (
-                progress < 0
-                        || progress > 100
-        ) {
-
-            showMessage(
-                    "Progress must be between 0 and 100."
-            );
-
-            return;
-        }
-
-
-        if (
-                progress
-                        < task.getProgress()
-        ) {
-
-            showMessage(
-                    "New progress cannot be lower than current progress."
-            );
-
-            return;
-        }
-
-
         if (note.isBlank()) {
 
-            showMessage(
-                    "Please enter a progress note."
-            );
+                showMessage(
+                        "Please describe the work you completed."
+                );
 
-            return;
+                return;
         }
 
 
-        double finalProgress =
-                progress;
+        if (note.length() < 20) {
+
+                showMessage(
+                        "Please provide a more detailed progress note (at least 20 characters)."
+                );
+
+                return;
+        }
 
 
-        runAction(
-                () -> {
+        // =====================================================
+        // EVIDENCE
+        // =====================================================
 
-                    taskService.updateProgress(
-                            task.getTaskId(),
-                            finalProgress
-                    );
+        if (selectedEvidenceFile == null) {
+
+                showMessage(
+                        "Please upload supporting evidence before submitting progress."
+                );
+
+                return;
+        }
 
 
-                    taskProgressService.addProgress(
-                            task.getTaskId(),
-                            finalProgress,
-                            note
-                    );
+        // =====================================================
+        // DISABLE FORM
+        // =====================================================
+
+        updateProgressButton.setDisable(
+                true
+        );
+
+        uploadEvidenceButton.setDisable(
+                true
+        );
+
+        progressField.setDisable(
+                true
+        );
+
+        progressNoteArea.setDisable(
+                true
+        );
+
+
+        hideMessage();
+
+
+        // =====================================================
+        // BACKGROUND SUBMISSION
+        // =====================================================
+
+        javafx.concurrent.Task<
+                EmployeeProgressSubmissionService.SubmissionResult
+                > submitTask =
+
+                new javafx.concurrent.Task<>() {
+
+                        @Override
+                        protected EmployeeProgressSubmissionService
+                                .SubmissionResult call()
+                                throws Exception {
+
+                        return progressSubmissionService
+                                .submitProgress(
+
+                                        task.getTaskId(),
+
+                                        proposedProgress,
+
+                                        note,
+
+                                        selectedEvidenceFile
+                                );
+                        }
+                };
+
+
+        // =====================================================
+        // SUCCESS
+        // =====================================================
+
+        submitTask.setOnSucceeded(
+                event -> {
+
+                        EmployeeProgressSubmissionService
+                                .SubmissionResult result =
+                                submitTask.getValue();
+
+
+                        progressField.setText(
+                                String.valueOf(
+                                        result.getCurrentProgress()
+                                )
+                        );
+
+
+                        progressNoteArea.clear();
+
+
+                        handleRemoveEvidence();
+
+
+                        String deadline =
+                                result
+                                        .getVerificationDeadline()
+                                        .atZoneSameInstant(
+                                                MALAYSIA_ZONE
+                                        )
+                                        .format(
+                                                DateTimeFormatter
+                                                        .ofPattern(
+                                                                "dd MMM yyyy, hh:mm a"
+                                                        )
+                                        );
+
+
+                        showMessage(
+                                "Progress submitted successfully.\n"
+                                        + "Requested Progress: "
+                                        + result.getRequestedProgress()
+                                        + "%\n"
+                                        + "Actual Verified Progress: "
+                                        + result.getCurrentProgress()
+                                        + "%\n"
+                                        + "Status: "
+                                        + result.getStatus()
+                                        + "\n"
+                                        + "Manager Review Deadline: "
+                                        + deadline
+                        );
+
+
+                        /*
+                        * IMPORTANT:
+                        *
+                        * Do NOT update progressBar here.
+                        *
+                        * Actual progress has NOT been approved yet.
+                        */
+
+
+                        updateProgressButton.setDisable(
+                                false
+                        );
+
+
+                        uploadEvidenceButton.setDisable(
+                                false
+                        );
+
+
+                        progressField.setDisable(
+                                false
+                        );
+
+
+                        progressNoteArea.setDisable(
+                                false
+                        );
+
+
+                        if (refreshCallback != null) {
+
+                        refreshCallback.run();
+                        }
                 }
         );
+
+
+        // =====================================================
+        // FAILURE
+        // =====================================================
+
+        submitTask.setOnFailed(
+                event -> {
+
+                        Throwable error =
+                                submitTask.getException();
+
+
+                        if (error != null) {
+
+                        error.printStackTrace();
+                        }
+
+
+                        showMessage(
+                                error == null
+                                        ? "Unable to submit progress for verification."
+                                        : error.getMessage()
+                        );
+
+
+                        updateProgressButton.setDisable(
+                                false
+                        );
+
+
+                        uploadEvidenceButton.setDisable(
+                                false
+                        );
+
+
+                        progressField.setDisable(
+                                false
+                        );
+
+
+                        progressNoteArea.setDisable(
+                                false
+                        );
+
+
+                        updateButtonState();
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        submitTask
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
     }
 
-
-    // =========================================================
-    // COMPLETE
-    // =========================================================
-
-    @FXML
-    private void handleCompleteTask() {
+        @FXML
+        private void handleCompleteTask() {
 
         if (task == null) {
-            return;
+
+                return;
         }
 
 
-        runAction(
-                () -> {
+        if (
+                !"In Progress".equalsIgnoreCase(
+                        task.getTaskStatus()
+                )
+        ) {
 
-                    taskService.completeTask(
-                            task.getTaskId()
-                    );
+                showMessage(
+                        "Only an In Progress task can request completion."
+                );
 
+                return;
+        }
 
-                    taskProgressService.addProgress(
-                            task.getTaskId(),
-                            100,
-                            "Task completed."
-                    );
-                }
+        progressField.setText(
+                "100"
         );
-    }
 
+
+        showMessage(
+                "To complete this task, enter your completion note, "
+                        + "upload supporting evidence, then click "
+                        + "\"Submit for Verification\"."
+        );
+
+
+        progressNoteArea.requestFocus();
+        }
 
     // =========================================================
     // RUN ACTION

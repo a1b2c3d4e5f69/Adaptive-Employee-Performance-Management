@@ -403,15 +403,13 @@
                 </HBox>
 
                 </VBox>
-
-
                 <!-- =================================================
-                     UPDATE PROGRESS
+                     UPDATE PROGRESS / VERIFICATION
                      ================================================= -->
 
                 <VBox
                         fx:id="progressUpdateSection"
-                        spacing="12"
+                        spacing="14"
                         maxWidth="Infinity"
                         styleClass="employee-card">
 
@@ -419,52 +417,40 @@
                     <VBox spacing="3">
 
                         <Label
-                                text="Update Progress"
+                                text="Submit Progress for Verification"
                                 styleClass="employee-section-title"/>
 
                         <Label
-                                text="Update the percentage completed and optionally add a note."
+                                text="Enter your requested progress, describe the work completed, and upload supporting evidence."
                                 wrapText="true"
                                 styleClass="employee-section-subtitle"/>
 
                     </VBox>
 
 
-                    <!-- PERCENTAGE -->
+                    <!-- =================================================
+                         PERCENTAGE
+                         ================================================= -->
 
-                    <HBox
-                            spacing="16"
-                            alignment="CENTER_LEFT">
+                    <VBox spacing="5">
 
-                        <VBox spacing="5">
+                        <Label
+                                text="Requested Progress Percentage"
+                                styleClass="employee-field-label"/>
 
-                            <Label
-                                    text="Progress Percentage"
-                                    styleClass="employee-field-label"/>
+                        <TextField
+                                fx:id="progressField"
+                                promptText="0 - 100"
+                                prefWidth="210"
+                                maxWidth="210"
+                                styleClass="employee-input"/>
 
-                            <TextField
-                                    fx:id="progressField"
-                                    promptText="0 - 100"
-                                    prefWidth="210"
-                                    maxWidth="210"
-                                    styleClass="employee-input"/>
-
-                        </VBox>
+                    </VBox>
 
 
-                        <Region HBox.hgrow="ALWAYS"/>
-
-
-                        <Button
-                                fx:id="updateProgressButton"
-                                text="Update Progress"
-                                onAction="#handleUpdateProgress"
-                                styleClass="employee-button-primary"/>
-
-                    </HBox>
-
-
-                    <!-- NOTE -->
+                    <!-- =================================================
+                         NOTE
+                         ================================================= -->
 
                     <VBox spacing="5">
 
@@ -474,16 +460,142 @@
 
                         <TextArea
                                 fx:id="progressNoteArea"
-                                promptText="Add a short progress note..."
-                                prefRowCount="2"
-                                prefHeight="72"
+                                promptText="Describe the work completed..."
+                                prefRowCount="4"
+                                prefHeight="100"
                                 wrapText="true"
                                 maxWidth="Infinity"
                                 styleClass="employee-text-area"/>
 
                     </VBox>
 
+
+                    <!-- =================================================
+                         SUPPORTING EVIDENCE
+                         ================================================= -->
+
+                    <VBox
+                            spacing="8"
+                            maxWidth="Infinity">
+
+                        <Label
+                                text="Supporting Evidence"
+                                styleClass="employee-field-label"/>
+
+                        <Label
+                                text="Upload a screenshot, image, PDF, document, source file, or other supporting evidence."
+                                wrapText="true"
+                                styleClass="employee-section-subtitle"/>
+
+
+                        <HBox
+                                spacing="10"
+                                alignment="CENTER_LEFT">
+
+                            <Button
+                                    fx:id="uploadEvidenceButton"
+                                    text="Upload Evidence"
+                                    onAction="#handleChooseEvidence"
+                                    styleClass="employee-button"/>
+
+                            <Label
+                                    fx:id="evidenceFileNameLabel"
+                                    text="No file selected"
+                                    wrapText="true"
+                                    maxWidth="420"
+                                    styleClass="employee-helper-text"/>
+
+                        </HBox>
+
+
+                        <HBox
+                                fx:id="evidencePreviewBox"
+                                spacing="10"
+                                alignment="CENTER_LEFT"
+                                visible="false"
+                                managed="false"
+                                style="-fx-background-color: #F8FAFC;
+                                       -fx-background-radius: 8;
+                                       -fx-border-color: #E2E8F0;
+                                       -fx-border-radius: 8;
+                                       -fx-padding: 10;">
+
+                            <VBox
+                                    spacing="2"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="evidenceNameLabel"
+                                        text=""
+                                        wrapText="true"
+                                        styleClass="employee-section-title"/>
+
+                                <Label
+                                        fx:id="evidenceSizeLabel"
+                                        text=""
+                                        styleClass="employee-helper-text"/>
+
+                            </VBox>
+
+
+                            <Button
+                                    text="Remove"
+                                    onAction="#handleRemoveEvidence"
+                                    style="-fx-background-color: transparent;
+                                           -fx-text-fill: #DC2626;
+                                           -fx-cursor: hand;"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         VERIFICATION INFO
+                         ================================================= -->
+
+                    <VBox
+                            spacing="5"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #EFF6FF;
+                                   -fx-background-radius: 8;
+                                   -fx-border-color: #BFDBFE;
+                                   -fx-border-radius: 8;
+                                   -fx-padding: 12;">
+
+                        <Label
+                                text="Progress Verification"
+                                style="-fx-font-weight: bold;
+                                       -fx-text-fill: #1E40AF;"/>
+
+                        <Label
+                                text="Your requested progress will not immediately change the actual task progress. A manager will review your supporting evidence first. If the manager does not respond before the review deadline, the system may perform limited automatic verification."
+                                wrapText="true"
+                                maxWidth="Infinity"
+                                style="-fx-font-size: 12px;
+                                       -fx-text-fill: #475569;"/>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         SUBMIT BUTTON
+                         ================================================= -->
+
+                    <HBox alignment="CENTER_RIGHT">
+
+                        <Button
+                                fx:id="updateProgressButton"
+                                text="Submit for Verification"
+                                onAction="#handleUpdateProgress"
+                                styleClass="employee-button-primary"/>
+
+                    </HBox>
+
                 </VBox>
+
+
+
 
 
                 <!-- =================================================
