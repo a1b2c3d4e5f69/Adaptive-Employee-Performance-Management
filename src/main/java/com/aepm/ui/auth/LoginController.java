@@ -132,29 +132,74 @@ public class LoginController {
 
 
         loginTask.setOnFailed(
-                event -> {
+        event -> {
 
-                    setLoading(false);
-
-
-                    Throwable exception =
-                            loginTask
-                                    .getException();
+            setLoading(false);
 
 
-                    String message =
-                            exception == null
-                                    ? "Login failed."
-                                    : exception.getMessage();
+            Throwable exception =
+                    loginTask
+                            .getException();
 
 
-                    UIHelper.showError(
-                            errorLabel,
-                            message
-                    );
+            // =================================================
+            // PRINT FULL ERROR TO TERMINAL
+            // =================================================
+
+            if (exception != null) {
+
+                System.err.println(
+                        "========================================"
+                );
+
+                System.err.println(
+                        "[LOGIN ERROR]"
+                );
+
+                exception.printStackTrace();
+
+                System.err.println(
+                        "========================================"
+                );
+            }
+
+
+                // =================================================
+                // USER-FRIENDLY ERROR MESSAGE
+                // =================================================
+
+                String message;
+
+                if (exception == null) {
+
+                        message =
+                                "Login failed.";
+
+                } else if (
+                        exception.getMessage() == null
+                                || exception
+                                .getMessage()
+                                .isBlank()
+                ) {
+
+                        message =
+                                exception
+                                        .getClass()
+                                        .getSimpleName();
+
+                } else {
+
+                        message =
+                                exception.getMessage();
+                }
+
+
+                UIHelper.showError(
+                        errorLabel,
+                        message
+                );
                 }
         );
-
 
         Thread thread =
                 new Thread(

@@ -322,21 +322,31 @@
 
 
                             <!-- ASSIGN EMPLOYEE -->
+                                <Label
+                                        text="Assign Employee"
+                                        styleClass="input-label"
+                                        GridPane.columnIndex="2"
+                                        GridPane.rowIndex="0"/>
 
-                            <Label
-                                    text="Assign Employee"
-                                    styleClass="manager-field-label"
-                                    GridPane.columnIndex="2"
-                                    GridPane.rowIndex="0"/>
+                                <VBox
+                                        spacing="7"
+                                        GridPane.columnIndex="3"
+                                        GridPane.rowIndex="0">
 
-                            <ComboBox
-                                    fx:id="employeeComboBox"
-                                    promptText="Select employee"
-                                    maxWidth="Infinity"
-                                    styleClass="manager-combo-box"
-                                    GridPane.columnIndex="3"
-                                    GridPane.rowIndex="0"/>
+                                <ComboBox
+                                        fx:id="employeeComboBox"
+                                        promptText="Select employee(s)"
+                                        prefWidth="300"
+                                        maxWidth="Infinity"/>
 
+                                <VBox
+                                        fx:id="selectedEmployeesBox"
+                                        spacing="4"
+                                        visible="false"
+                                        managed="false"
+                                        styleClass="manager-selected-employees-box"/>
+
+                                </VBox>
 
                             <!-- CATEGORY -->
 
@@ -443,6 +453,67 @@
                                     wrapText="true"
                                     maxWidth="Infinity"
                                     styleClass="manager-text-area"/>
+
+                        </VBox>
+
+                        <!-- =====================================================
+                        OPTIONAL ATTACHMENT
+                        ===================================================== -->
+
+                        <VBox
+                                spacing="8"
+                                maxWidth="Infinity">
+
+                        <HBox
+                                spacing="10"
+                                alignment="CENTER_LEFT">
+
+                                <VBox spacing="3">
+
+                                <Label
+                                        text="Required File"
+                                        styleClass="input-label"/>
+
+                                <Label
+                                        text="Optional — attach a file for the assigned employee(s). Maximum 10 MB."
+                                        styleClass="content-description"/>
+
+                                </VBox>
+
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <Button
+                                        text="Choose File"
+                                        onAction="#handleChooseAttachment"
+                                        styleClass="manager-button"/>
+
+                        </HBox>
+
+
+                        <HBox
+                                fx:id="attachmentPreviewBox"
+                                spacing="10"
+                                alignment="CENTER_LEFT"
+                                visible="false"
+                                managed="false"
+                                styleClass="manager-attachment-preview">
+
+                                <Label
+                                        text="📎"
+                                        styleClass="manager-attachment-icon"/>
+
+                                <Label
+                                        fx:id="attachmentNameLabel"
+                                        text=""
+                                        HBox.hgrow="ALWAYS"
+                                        styleClass="manager-attachment-name"/>
+
+                                <Button
+                                        text="Remove"
+                                        onAction="#handleRemoveAttachment"
+                                        styleClass="manager-button"/>
+
+                        </HBox>
 
                         </VBox>
 

@@ -64,6 +64,13 @@ public class TaskRepository {
                         : task.getAssignedEmployeeId().toString()
         );
 
+        body.put(
+        "assignment_type",
+        task.getAssignedEmployeeId() == null
+                ? "TEAM"
+                : "INDIVIDUAL"
+        );
+
 
         body.put(
                 "assigned_by",
@@ -1044,4 +1051,95 @@ public void updateTask(
 
         return null;
     }
+
+
+    public List<Task> getTeamTasksByEmployee(
+                UUID employeeId,
+                String accessToken
+        ) throws Exception {
+
+        String assignmentUrl =
+                AppConfig.REST_URL
+                        + "/task_assignment_tbl"
+                        + "?select=task_id"
+                        + "&employee_id=eq."
+                        + employeeId;
+
+
+        HttpRequest assignmentRequest =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                assignmentUrl,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+
+        HttpResponse<String> assignmentResponse =
+                supabaseClient
+                        .getHttpClient()
+                        .send(
+                                assignmentRequest,
+                                HttpResponse.BodyHandlers.ofString()
+                        );
+
+
+        validateResponse(
+                assignmentResponse,
+                "Unable to load task assignments"
+        );
+
+
+        JSONArray assignments =
+                new JSONArray(
+                        assignmentResponse.body()
+                );
+
+
+        List<Task> result =
+                new ArrayList<>();
+
+
+        for (
+                int i = 0;
+                i < assignments.length();
+                i++
+        ) {
+
+                String taskId =
+                        assignments
+                                .getJSONObject(i)
+                                .optString(
+                                        "task_id",
+                                        null
+                                );
+
+                if (
+                        taskId == null
+                                || taskId.isBlank()
+                ) {
+                continue;
+                }
+
+
+                Task task =
+                        getTaskById(
+                                UUID.fromString(
+                                        taskId
+                                ),
+                                accessToken
+                        );
+
+
+                if (task != null) {
+                result.add(
+                        task
+                );
+                }
+        }
+
+
+        return result;
+        }
 }

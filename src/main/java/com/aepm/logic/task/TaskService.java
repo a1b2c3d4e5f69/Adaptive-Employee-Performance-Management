@@ -1,27 +1,35 @@
 package com.aepm.logic.task;
 
+import com.aepm.data.repository.NotificationRepository;
 import com.aepm.data.task.TaskRepository;
+
 import com.aepm.model.Task;
 import com.aepm.model.User;
+
 import com.aepm.util.SessionManager;
 
 import java.time.OffsetDateTime;
-import com.aepm.data.repository.NotificationRepository;
+
 import java.util.List;
 import java.util.UUID;
 
+
 public class TaskService {
+
 
     private final TaskRepository taskRepository =
             new TaskRepository();
 
+
     private final NotificationRepository notificationRepository =
-        new NotificationRepository();
+            new NotificationRepository();
+
+
     // =========================================================
     // CREATE TASK
     // =========================================================
 
-    public void createTask(
+    public UUID createTask(
             String title,
             String description,
             Long categoryId,
@@ -31,6 +39,7 @@ public class TaskService {
             OffsetDateTime dueDate,
             String completionCriteria
     ) throws Exception {
+
 
         User currentUser =
                 SessionManager.getCurrentUser();
@@ -161,47 +170,69 @@ public class TaskService {
         );
 
 
-        // 1. Create task and get generated Task ID
-        String accessToken = getAccessToken();
+        // =====================================================
+        // CREATE TASK AND GET GENERATED ID
+        // =====================================================
 
-        UUID createdTaskId = taskRepository.createTask(
-                task,
-                accessToken
-        );
+        String accessToken =
+                getAccessToken();
 
-        // 2. Send notification to assigned employee
+
+        UUID createdTaskId =
+                taskRepository.createTask(
+                        task,
+                        accessToken
+                );
+
+
+        // =====================================================
+        // NOTIFICATION
+        // ORIGINAL FUNCTION KEPT
+        // =====================================================
+
         try {
 
-                System.out.println(
-                        "[Notification] Creating TASK_ASSIGNED for task: "
-                        + createdTaskId
-                );
+            notificationRepository.createOnce(
+                    accessToken,
+                    employeeId.toString(),
 
-                boolean created = notificationRepository.createOnce(
-                        accessToken,
-                        employeeId.toString(),
-                        "New Task Assigned",
-                        "You have been assigned a new task: "
-                                + task.getTaskTitle(),
-                        "TASK_ASSIGNED",
-                        createdTaskId.toString(),
-                        null,
-                        "task_assigned:" + createdTaskId
-                );
+                    "New Task Assigned",
 
-                System.out.println(
-                        "[Notification] TASK_ASSIGNED created: " + created
-                );
+                    "You have been assigned a new task: "
+                            + task.getTaskTitle(),
 
-                } catch (Exception e) {
+                    "TASK_ASSIGNED",
 
-                System.err.println(
-                        "[Notification] Failed to send task assignment: "
-                        + e.getMessage()
-                );
+                    createdTaskId.toString(),
 
-                e.printStackTrace();
-                }
+                    null,
+
+                    "task_assigned:"
+                            + createdTaskId
+            );
+
+
+        } catch (Exception e) {
+
+            /*
+             * Task creation already succeeded.
+             * Notification failure should not make
+             * the task creation fail.
+             */
+
+            System.err.println(
+                    "[Notification] Failed to send task assignment: "
+                            + e.getMessage()
+            );
+        }
+
+
+        // =====================================================
+        // NEW:
+        // RETURN ID FOR ATTACHMENT / MANAGER CREATE TASK
+        // =====================================================
+
+        return createdTaskId;
     }
 
 
@@ -211,6 +242,7 @@ public class TaskService {
 
     public List<Task> getAllTasks()
             throws Exception {
+
 
         return taskRepository
                 .getAllTasks(
@@ -225,6 +257,7 @@ public class TaskService {
 
     public List<Task> getMyTasks()
             throws Exception {
+
 
         User currentUser =
                 SessionManager.getCurrentUser();
@@ -256,6 +289,7 @@ public class TaskService {
             UUID employeeId
     ) throws Exception {
 
+
         if (employeeId == null) {
 
             throw new IllegalArgumentException(
@@ -280,6 +314,7 @@ public class TaskService {
             UUID taskId
     ) throws Exception {
 
+
         validateTaskId(
                 taskId
         );
@@ -301,6 +336,7 @@ public class TaskService {
             UUID taskId
     ) throws Exception {
 
+
         validateTaskId(
                 taskId
         );
@@ -321,49 +357,82 @@ public class TaskService {
     public void completeTask(
             UUID taskId
     ) throws Exception {
-    
-        validateTaskId(taskId);
-    
-        String accessToken = getAccessToken();
-    
-        // 1. Get task details before updating
-        Task task = taskRepository.getTaskById(
-                taskId,
-                accessToken
+
+
+        validateTaskId(
+                taskId
         );
-    
-        // 2. Update task status to Completed
+
+
+        String accessToken =
+                getAccessToken();
+
+
+        // =====================================================
+        // GET TASK DETAILS BEFORE UPDATE
+        // =====================================================
+
+        Task task =
+                taskRepository.getTaskById(
+                        taskId,
+                        accessToken
+                );
+
+
+        // =====================================================
+        // UPDATE STATUS
+        // =====================================================
+
         taskRepository.updateTaskStatus(
                 taskId,
                 "Completed",
                 accessToken
         );
-    
-        // 3. Notify the Manager who assigned this task
-        if (task.getAssignedBy() != null) {
-    
+
+
+        // =====================================================
+        // NOTIFY MANAGER
+        // =====================================================
+
+        if (
+                task != null
+                        && task.getAssignedBy() != null
+        ) {
+
             try {
-    
-                boolean created = notificationRepository.createOnce(
-                        accessToken,
-                        task.getAssignedBy().toString(),
-                        "Task Completed",
-                        "Employee has completed the task: "
-                                + task.getTaskTitle()
-                                + ". Please review the completed task.",
-                        "TASK_COMPLETED",
-                        taskId.toString(),
-                        null,
-                        "task_completed:" + taskId
-                );
-    
+
+                boolean created =
+                        notificationRepository.createOnce(
+                                accessToken,
+
+                                task.getAssignedBy()
+                                        .toString(),
+
+                                "Task Completed",
+
+                                "Employee has completed the task: "
+                                        + task.getTaskTitle()
+                                        + ". Please review the completed task.",
+
+                                "TASK_COMPLETED",
+
+                                taskId.toString(),
+
+                                null,
+
+                                "task_completed:"
+                                        + taskId
+                        );
+
+
                 System.out.println(
                         "[Notification] Task completed notification created: "
                                 + created
                 );
-    
+
+
             } catch (Exception e) {
-    
+
                 System.err.println(
                         "[Notification] Failed to send task completed: "
                                 + e.getMessage()
@@ -381,6 +450,7 @@ public class TaskService {
             UUID taskId,
             double progress
     ) throws Exception {
+
 
         validateTaskId(
                 taskId
@@ -414,6 +484,7 @@ public class TaskService {
             Task task
     ) throws Exception {
 
+
         if (task == null) {
 
             throw new IllegalArgumentException(
@@ -438,7 +509,9 @@ public class TaskService {
         }
 
 
-        if (task.getDueDate() == null) {
+        if (
+                task.getDueDate() == null
+        ) {
 
             throw new IllegalArgumentException(
                     "Due date is required."
@@ -480,55 +553,71 @@ public class TaskService {
         );
 
 
-        String accessToken = getAccessToken();
+        String accessToken =
+                getAccessToken();
 
-        // 1. Update task information
+
+        // =====================================================
+        // UPDATE TASK INFORMATION
+        // =====================================================
+
         taskRepository.updateTask(
                 task,
                 accessToken
         );
 
-        System.out.println(
-        "[DEBUG] updateTask called, Task ID: "
-                + task.getTaskId()
-        );
 
         System.out.println(
-        "[DEBUG] Assigned Employee ID: "
-                + task.getAssignedEmployeeId()
+                "[DEBUG] updateTask called, Task ID: "
+                        + task.getTaskId()
         );
 
-        System.out.println(
-                "[DEBUG] Task ID: " + task.getTaskId()
-        );
 
         System.out.println(
                 "[DEBUG] Assigned Employee ID: "
                         + task.getAssignedEmployeeId()
         );
 
-        if (task.getAssignedEmployeeId() != null) {
 
-        try {
+        // =====================================================
+        // NOTIFY EMPLOYEE
+        // ORIGINAL FUNCTION KEPT
+        // =====================================================
+
+        if (
+                task.getAssignedEmployeeId() != null
+        ) {
+
+            try {
 
                 notificationRepository.create(
                         accessToken,
-                        task.getAssignedEmployeeId().toString(),
+
+                        task.getAssignedEmployeeId()
+                                .toString(),
+
                         "Task Updated",
-                        "Your task \"" + task.getTaskTitle()
+
+                        "Your task \""
+                                + task.getTaskTitle()
                                 + "\" has been updated. Please review the changes.",
+
                         "TASK_UPDATED",
-                        task.getTaskId().toString(),
+
+                        task.getTaskId()
+                                .toString(),
+
                         null
                 );
 
-        } catch (Exception e) {
+
+            } catch (Exception e) {
 
                 System.err.println(
                         "[Notification] Failed to send task update: "
                                 + e.getMessage()
                 );
-        }
+            }
         }
     }
 
@@ -540,6 +629,7 @@ public class TaskService {
     public void cancelTask(
             UUID taskId
     ) throws Exception {
+
 
         validateTaskId(
                 taskId
@@ -561,6 +651,7 @@ public class TaskService {
             UUID taskId
     ) {
 
+
         if (taskId == null) {
 
             throw new IllegalArgumentException(
@@ -577,6 +668,7 @@ public class TaskService {
     private String validatePriority(
             String priority
     ) {
+
 
         if (
                 priority == null
@@ -610,6 +702,7 @@ public class TaskService {
             String difficulty
     ) {
 
+
         if (
                 difficulty == null
                         || difficulty.isBlank()
@@ -642,6 +735,7 @@ public class TaskService {
             String value
     ) {
 
+
         if (
                 value == null
                         || value.isBlank()
@@ -660,6 +754,7 @@ public class TaskService {
     // =========================================================
 
     private String getAccessToken() {
+
 
         String accessToken =
                 SessionManager.getAccessToken();

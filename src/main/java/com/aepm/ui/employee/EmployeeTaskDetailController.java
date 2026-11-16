@@ -1,9 +1,16 @@
 package com.aepm.ui.employee;
 
+import com.aepm.data.task.TaskAttachmentRepository;
+
 import com.aepm.logic.task.TaskProgressService;
 import com.aepm.logic.task.TaskService;
 
 import com.aepm.model.Task;
+import com.aepm.model.TaskAttachment;
+
+import com.aepm.ui.navigation.NavigationManager;
+
+import com.aepm.util.SessionManager;
 
 import javafx.fxml.FXML;
 
@@ -17,15 +24,23 @@ import javafx.scene.layout.VBox;
 
 import javafx.stage.Stage;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+
+import java.awt.Desktop;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import com.aepm.ui.navigation.NavigationManager;
+import java.util.List;
+
 
 public class EmployeeTaskDetailController {
+
 
     // =========================================================
     // HEADER
@@ -68,6 +83,28 @@ public class EmployeeTaskDetailController {
 
     @FXML
     private Label criteriaLabel;
+
+
+    // =========================================================
+    // ATTACHMENT
+    // =========================================================
+
+    @FXML
+    private VBox attachmentSection;
+
+    @FXML
+    private Label attachmentNameLabel;
+
+    @FXML
+    private Label attachmentSizeLabel;
+
+
+    private TaskAttachment currentAttachment;
+
+
+    private final TaskAttachmentRepository
+            attachmentRepository =
+            new TaskAttachmentRepository();
 
 
     // =========================================================
@@ -114,18 +151,7 @@ public class EmployeeTaskDetailController {
     @FXML
     private Label messageLabel;
 
-    @FXML
-        private void handleAttendance(ActionEvent event) {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
-
-        NavigationManager.navigate(
-                stage,
-                "/fxml/employee/employeeAttendance.fxml"
-        );
-    }
     // =========================================================
     // SERVICE
     // =========================================================
@@ -161,6 +187,30 @@ public class EmployeeTaskDetailController {
 
 
     // =========================================================
+    // ATTENDANCE NAVIGATION
+    // =========================================================
+
+    @FXML
+    private void handleAttendance(
+            ActionEvent event
+    ) {
+
+        Stage currentStage =
+                (Stage) (
+                        (Node) event.getSource()
+                )
+                        .getScene()
+                        .getWindow();
+
+
+        NavigationManager.navigate(
+                currentStage,
+                "/fxml/employee/employeeAttendance.fxml"
+        );
+    }
+
+
+    // =========================================================
     // SET TASK
     // =========================================================
 
@@ -184,11 +234,18 @@ public class EmployeeTaskDetailController {
         displayTask(
                 categoryName
         );
+
+
+        // =====================================================
+        // NEW: LOAD OPTIONAL TASK ATTACHMENT
+        // =====================================================
+
+        loadTaskAttachment();
     }
 
 
     // =========================================================
-    // DISPLAY
+    // DISPLAY TASK
     // =========================================================
 
     private void displayTask(
@@ -319,6 +376,391 @@ public class EmployeeTaskDetailController {
 
 
     // =========================================================
+    // LOAD TASK ATTACHMENT
+    // =========================================================
+
+    private void loadTaskAttachment() {
+
+        hideAttachment();
+
+
+        if (
+                task == null
+                        || task.getTaskId() == null
+        ) {
+
+            return;
+        }
+
+
+        String accessToken =
+                SessionManager.getAccessToken();
+
+
+        if (
+                accessToken == null
+                        || accessToken.isBlank()
+        ) {
+
+            return;
+        }
+
+
+        javafx.concurrent.Task<List<TaskAttachment>>
+                backgroundTask =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected List<TaskAttachment> call()
+                            throws Exception {
+
+                        return attachmentRepository
+                                .getByTask(
+                                        task.getTaskId(),
+                                        accessToken
+                                );
+                    }
+                };
+
+
+        backgroundTask.setOnSucceeded(
+                event -> {
+
+                    List<TaskAttachment> attachments =
+                            backgroundTask.getValue();
+
+
+                    if (
+                            attachments == null
+                                    || attachments.isEmpty()
+                    ) {
+
+                        hideAttachment();
+
+                        return;
+                    }
+
+
+                    // Currently Create Task accepts one optional
+                    // attachment, so display the first record.
+                    currentAttachment =
+                            attachments.get(
+                                    0
+                            );
+
+
+                    attachmentNameLabel.setText(
+                            safe(
+                                    currentAttachment
+                                            .getFileName()
+                            )
+                    );
+
+
+                    attachmentSizeLabel.setText(
+                            formatFileSize(
+                                    currentAttachment
+                                            .getFileSize()
+                            )
+                    );
+
+
+                    attachmentSection.setVisible(
+                            true
+                    );
+
+
+                    attachmentSection.setManaged(
+                            true
+                    );
+                }
+        );
+
+
+        backgroundTask.setOnFailed(
+                event -> {
+
+                    Throwable error =
+                            backgroundTask
+                                    .getException();
+
+
+                    if (error != null) {
+
+                        System.err.println(
+                                "[Task Attachment] Unable to load attachment: "
+                                        + error.getMessage()
+                        );
+
+                        error.printStackTrace();
+                    }
+
+
+                    hideAttachment();
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        backgroundTask
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // OPEN ATTACHMENT
+    // =========================================================
+
+    @FXML
+    private void handleOpenAttachment() {
+
+        if (currentAttachment == null) {
+
+            showMessage(
+                    "No attachment is available."
+            );
+
+            return;
+        }
+
+
+        String accessToken =
+                SessionManager.getAccessToken();
+
+
+        if (
+                accessToken == null
+                        || accessToken.isBlank()
+        ) {
+
+            showMessage(
+                    "Session expired. Please login again."
+            );
+
+            return;
+        }
+
+
+        if (
+                !Desktop.isDesktopSupported()
+        ) {
+
+            showMessage(
+                    "Opening files is not supported on this device."
+            );
+
+            return;
+        }
+
+
+        hideMessage();
+
+
+        javafx.concurrent.Task<Path>
+                backgroundTask =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected Path call()
+                            throws Exception {
+
+
+                        byte[] data =
+                                attachmentRepository
+                                        .download(
+                                                currentAttachment,
+                                                accessToken
+                                        );
+
+
+                        if (
+                                data == null
+                                        || data.length == 0
+                        ) {
+
+                            throw new IllegalStateException(
+                                    "The attachment is empty."
+                            );
+                        }
+
+
+                        String originalName =
+                                currentAttachment
+                                        .getFileName();
+
+
+                        String safeName =
+                                originalName == null
+                                        || originalName.isBlank()
+                                        ? "attachment"
+                                        : originalName
+                                        .replaceAll(
+                                                "[^a-zA-Z0-9._-]",
+                                                "_"
+                                        );
+
+
+                        String extension =
+                                getFileExtension(
+                                        safeName
+                                );
+
+
+                        Path tempFile;
+
+
+                        if (extension.isBlank()) {
+
+                            tempFile =
+                                    Files.createTempFile(
+                                            "aepm-task-attachment-",
+                                            ".tmp"
+                                    );
+
+                        } else {
+
+                            tempFile =
+                                    Files.createTempFile(
+                                            "aepm-task-attachment-",
+                                            extension
+                                    );
+                        }
+
+
+                        Files.write(
+                                tempFile,
+                                data
+                        );
+
+
+                        tempFile
+                                .toFile()
+                                .deleteOnExit();
+
+
+                        return tempFile;
+                    }
+                };
+
+
+        backgroundTask.setOnSucceeded(
+                event -> {
+
+                    try {
+
+                        Path downloadedFile =
+                                backgroundTask
+                                        .getValue();
+
+
+                        Desktop
+                                .getDesktop()
+                                .open(
+                                        downloadedFile
+                                                .toFile()
+                                );
+
+                    } catch (Exception error) {
+
+                        error.printStackTrace();
+
+
+                        showMessage(
+                                "Unable to open the attachment."
+                        );
+                    }
+                }
+        );
+
+
+        backgroundTask.setOnFailed(
+                event -> {
+
+                    Throwable error =
+                            backgroundTask
+                                    .getException();
+
+
+                    if (error != null) {
+
+                        error.printStackTrace();
+                    }
+
+
+                    showMessage(
+                            error == null
+                                    ? "Unable to download the attachment."
+                                    : error.getMessage()
+                    );
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        backgroundTask
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // HIDE ATTACHMENT
+    // =========================================================
+
+    private void hideAttachment() {
+
+        currentAttachment =
+                null;
+
+
+        if (attachmentNameLabel != null) {
+
+            attachmentNameLabel.setText(
+                    ""
+            );
+        }
+
+
+        if (attachmentSizeLabel != null) {
+
+            attachmentSizeLabel.setText(
+                    ""
+            );
+        }
+
+
+        if (attachmentSection != null) {
+
+            attachmentSection.setVisible(
+                    false
+            );
+
+
+            attachmentSection.setManaged(
+                    false
+            );
+        }
+    }
+
+
+    // =========================================================
     // BUTTON STATE
     // =========================================================
 
@@ -331,21 +773,24 @@ public class EmployeeTaskDetailController {
 
 
         boolean pending =
-                "Pending".equalsIgnoreCase(
-                        status
-                );
+                "Pending"
+                        .equalsIgnoreCase(
+                                status
+                        );
 
 
         boolean accepted =
-                "Accepted".equalsIgnoreCase(
-                        status
-                );
+                "Accepted"
+                        .equalsIgnoreCase(
+                                status
+                        );
 
 
         boolean inProgress =
-                "In Progress".equalsIgnoreCase(
-                        status
-                );
+                "In Progress"
+                        .equalsIgnoreCase(
+                                status
+                        );
 
 
         acceptButton.setDisable(
@@ -385,7 +830,7 @@ public class EmployeeTaskDetailController {
 
 
     // =========================================================
-    // ACCEPT
+    // ACCEPT TASK
     // =========================================================
 
     @FXML
@@ -406,7 +851,7 @@ public class EmployeeTaskDetailController {
 
 
     // =========================================================
-    // START
+    // START TASK
     // =========================================================
 
     @FXML
@@ -585,7 +1030,8 @@ public class EmployeeTaskDetailController {
         hideMessage();
 
 
-        javafx.concurrent.Task<Void> backgroundTask =
+        javafx.concurrent.Task<Void>
+                backgroundTask =
                 new javafx.concurrent.Task<>() {
 
                     @Override
@@ -602,13 +1048,17 @@ public class EmployeeTaskDetailController {
         backgroundTask.setOnSucceeded(
                 event -> {
 
-                    if (refreshCallback != null) {
+                    if (
+                            refreshCallback != null
+                    ) {
 
                         refreshCallback.run();
                     }
 
 
-                    if (stage != null) {
+                    if (
+                            stage != null
+                    ) {
 
                         stage.close();
                     }
@@ -633,6 +1083,7 @@ public class EmployeeTaskDetailController {
 
 
                     if (error != null) {
+
                         error.printStackTrace();
                     }
 
@@ -673,21 +1124,26 @@ public class EmployeeTaskDetailController {
                 disable
         );
 
+
         startButton.setDisable(
                 disable
         );
+
 
         updateProgressButton.setDisable(
                 disable
         );
 
+
         completeButton.setDisable(
                 disable
         );
 
+
         progressField.setDisable(
                 disable
         );
+
 
         progressNoteArea.setDisable(
                 disable
@@ -702,7 +1158,9 @@ public class EmployeeTaskDetailController {
     @FXML
     private void handleClose() {
 
-        if (stage != null) {
+        if (
+                stage != null
+        ) {
 
             stage.close();
         }
@@ -771,6 +1229,93 @@ public class EmployeeTaskDetailController {
     }
 
 
+    // =========================================================
+    // FILE SIZE
+    // =========================================================
+
+    private String formatFileSize(
+            long bytes
+    ) {
+
+        if (bytes <= 0) {
+            return "";
+        }
+
+
+        if (bytes < 1024) {
+
+            return bytes
+                    + " B";
+        }
+
+
+        if (
+                bytes
+                        < 1024L
+                        * 1024L
+        ) {
+
+            return String.format(
+                    "%.1f KB",
+                    bytes / 1024.0
+            );
+        }
+
+
+        return String.format(
+                "%.1f MB",
+                bytes
+                        / (
+                        1024.0
+                                * 1024.0
+                )
+        );
+    }
+
+
+    // =========================================================
+    // GET EXTENSION
+    // =========================================================
+
+    private String getFileExtension(
+            String filename
+    ) {
+
+        if (
+                filename == null
+                        || filename.isBlank()
+        ) {
+
+            return "";
+        }
+
+
+        int index =
+                filename.lastIndexOf(
+                        '.'
+                );
+
+
+        if (
+                index < 0
+                        || index
+                        == filename.length() - 1
+        ) {
+
+            return "";
+        }
+
+
+        return filename.substring(
+                index
+        );
+    }
+
+
+    // =========================================================
+    // MESSAGE
+    // =========================================================
+
     private void showMessage(
             String value
     ) {
@@ -808,6 +1353,10 @@ public class EmployeeTaskDetailController {
         );
     }
 
+
+    // =========================================================
+    // ACTION
+    // =========================================================
 
     @FunctionalInterface
     private interface TaskAction {

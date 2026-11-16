@@ -9,6 +9,10 @@ import com.aepm.model.Task;
 import com.aepm.model.TaskCategory;
 import com.aepm.model.TaskProgress;
 import com.aepm.model.User;
+import com.aepm.data.task.TaskAssignmentRepository;
+import com.aepm.model.TaskAssignment;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.aepm.ui.navigation.NavigationManager;
 
@@ -50,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ManagerTaskController {
 
@@ -177,6 +182,13 @@ public class ManagerTaskController {
         );
     }
 
+    private final TaskAssignmentRepository
+        assignmentRepository =new TaskAssignmentRepository();
+
+    private final Map<UUID, String>
+        teamMemberDisplayMap =
+        new ConcurrentHashMap<>();
+
     // =========================================================
     // SERVICES
     // =========================================================
@@ -224,7 +236,7 @@ public class ManagerTaskController {
 
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern(
-                    "dd MMM yyyy HH:mm"
+                    "dd/MM/yyyy HH:mm"
             );
 
 
@@ -344,35 +356,74 @@ public class ManagerTaskController {
 
 
         // EMPLOYEE
+        // =========================================================
+        // EMPLOYEE / TEAM MEMBERS
+        // =========================================================
+
         employeeColumn.setCellValueFactory(
                 cellData -> {
 
-                    Task task =
-                            cellData.getValue();
+                Task currentTask =
+                        cellData.getValue();
 
 
-                    if (
-                            task == null
-                                    || task.getAssignedEmployeeId() == null
-                    ) {
+                if (currentTask == null) {
 
                         return new SimpleStringProperty(
                                 "-"
                         );
-                    }
+                }
 
 
-                    String userId =
-                            task.getAssignedEmployeeId()
-                                    .toString();
+                // =================================================
+                // NORMAL INDIVIDUAL TASK
+                // =================================================
+
+                if (
+                        currentTask.getAssignedEmployeeId()
+                                != null
+                ) {
+
+                        String userId =
+                                currentTask
+                                        .getAssignedEmployeeId()
+                                        .toString();
 
 
-                    return new SimpleStringProperty(
-                            employeeDisplayMap.getOrDefault(
-                                    userId,
-                                    userId
-                            )
-                    );
+                        return new SimpleStringProperty(
+                                employeeDisplayMap
+                                        .getOrDefault(
+                                                userId,
+                                                userId
+                                        )
+                        );
+                }
+
+
+                // =================================================
+                // TEAM TASK
+                // =================================================
+
+                String teamMembers =
+                        teamMemberDisplayMap.get(
+                                currentTask.getTaskId()
+                        );
+
+
+                if (
+                        teamMembers == null
+                                || teamMembers.isBlank()
+                ) {
+
+                        return new SimpleStringProperty(
+                                "Team Task"
+                        );
+                }
+
+
+                return new SimpleStringProperty(
+                        teamMembers
+                );
                 }
         );
 
@@ -1939,5 +1990,180 @@ public class ManagerTaskController {
                 stage,
                 path
         );
+    }
+
+    private void loadTeamTaskMembers() {
+
+    String accessToken =
+            SessionManager.getAccessToken();
+
+
+    if (
+            accessToken == null
+                    || accessToken.isBlank()
+    ) {
+
+        return;
+    }
+
+
+    for (
+            Task currentTask
+            : allTasks
+    ) {
+
+        if (
+                currentTask == null
+                        || currentTask.getTaskId() == null
+        ) {
+
+            continue;
+        }
+
+
+        /*
+         * Individual tasks already have
+         * assigned_employee_id.
+         */
+        if (
+                currentTask.getAssignedEmployeeId()
+                        != null
+        ) {
+
+            continue;
+        }
+
+
+        javafx.concurrent.Task<List<TaskAssignment>>
+                worker =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected List<TaskAssignment> call()
+                            throws Exception {
+
+                        return assignmentRepository
+                                .getAssignments(
+                                        currentTask.getTaskId(),
+                                        accessToken
+                                );
+                    }
+                };
+
+
+        worker.setOnSucceeded(
+                event -> {
+
+                    List<TaskAssignment> assignments =
+                            worker.getValue();
+
+
+                    if (
+                            assignments == null
+                                    || assignments.isEmpty()
+                    ) {
+
+                        teamMemberDisplayMap.put(
+                                currentTask.getTaskId(),
+                                "Team Task"
+                        );
+
+                        taskTable.refresh();
+
+                        return;
+                    }
+
+
+                    List<String> names =
+                            new ArrayList<>();
+
+
+                    for (
+                            TaskAssignment assignment
+                            : assignments
+                    ) {
+
+                        if (
+                                assignment == null
+                                        || assignment.getEmployeeId()
+                                        == null
+                        ) {
+
+                            continue;
+                        }
+
+
+                        String employeeId =
+                                assignment
+                                        .getEmployeeId()
+                                        .toString();
+
+
+                        String display =
+                                employeeDisplayMap
+                                        .getOrDefault(
+                                                employeeId,
+                                                employeeId
+                                        );
+
+
+                        names.add(
+                                display
+                        );
+                    }
+
+
+                    String displayText =
+                            String.join(
+                                    ", ",
+                                    names
+                            );
+
+
+                    if (displayText.isBlank()) {
+
+                        displayText =
+                                "Team Task";
+                    }
+
+
+                    teamMemberDisplayMap.put(
+                            currentTask.getTaskId(),
+                            displayText
+                    );
+
+
+                    taskTable.refresh();
+                }
+        );
+
+
+        worker.setOnFailed(
+                event -> {
+
+                    teamMemberDisplayMap.put(
+                            currentTask.getTaskId(),
+                            "Team Task"
+                    );
+
+
+                    taskTable.refresh();
+                }
+        );
+
+
+        Thread thread =
+                new Thread(
+                        worker
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
+    }
     }
 }

@@ -354,6 +354,56 @@
 
                 </VBox>
 
+                <!-- =================================================
+                TASK ATTACHMENT
+                ================================================= -->
+
+                <VBox
+                        fx:id="attachmentSection"
+                        spacing="12"
+                        maxWidth="Infinity"
+                        visible="false"
+                        managed="false"
+                        styleClass="employee-task-detail-card">
+
+                <Label
+                        text="Required File"
+                        styleClass="employee-task-detail-section-title"/>
+
+
+                <HBox
+                        spacing="12"
+                        alignment="CENTER_LEFT">
+
+                        <Label
+                                text="📎"
+                                styleClass="employee-task-detail-field-value"/>
+
+                        <VBox
+                                spacing="3"
+                                HBox.hgrow="ALWAYS">
+
+                        <Label
+                                fx:id="attachmentNameLabel"
+                                text="-"
+                                styleClass="employee-task-detail-field-value"/>
+
+                        <Label
+                                fx:id="attachmentSizeLabel"
+                                text=""
+                                styleClass="employee-task-detail-field-label"/>
+
+                        </VBox>
+
+                        <Button
+                                text="Open File"
+                                onAction="#handleOpenAttachment"
+                                styleClass="employee-task-detail-primary-button"/>
+
+                </HBox>
+
+                </VBox>
+
 
                 <!-- =================================================
                      UPDATE PROGRESS
