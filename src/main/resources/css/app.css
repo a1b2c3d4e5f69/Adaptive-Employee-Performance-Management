@@ -4277,3 +4277,68 @@
     -fx-font-family: "Plus Jakarta Sans";
     -fx-font-size: 11px;
 }
+
+/* ============================================================
+   NOTIFICATION CENTER
+   ============================================================ */
+
+.notification-center-header {
+    -fx-spacing: 22px;
+    -fx-padding: 0 0 22px 0;
+}
+
+.notification-center-title-box {
+    -fx-spacing: 5px;
+}
+
+.notification-center-navigation {
+    -fx-spacing: 10px;
+    -fx-alignment: center-left;
+}
+
+.notification-nav-button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-text-fill: #1E3A8A;
+
+    -fx-background-radius: 8px;
+
+    -fx-border-color: #D9DEE8;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 18px;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-cursor: hand;
+
+    -fx-min-height: 40px;
+    -fx-pref-height: 40px;
+}
+
+
+.notification-nav-button:hover {
+    -fx-background-color: #F3F6FD;
+    -fx-border-color: #B9C8ED;
+}
+
+
+.notification-nav-button-active {
+    -fx-background-color: #1E3A8A;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-border-color: #1E3A8A;
+}
+
+
+.notification-nav-button-active:hover {
+    -fx-background-color: #244FB3;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-border-color: #244FB3;
+}
