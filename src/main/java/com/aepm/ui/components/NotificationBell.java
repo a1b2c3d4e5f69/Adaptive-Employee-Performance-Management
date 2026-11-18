@@ -35,6 +35,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import com.aepm.ui.common.AnnouncementDetailsDialog;
+import com.aepm.ui.manager.ManagerProgressVerificationDialog;
 
 public class NotificationBell extends StackPane {
     private static final ZoneId MALAYSIA = ZoneId.of("Asia/Kuala_Lumpur");
@@ -299,6 +300,76 @@ public class NotificationBell extends StackPane {
 
                 String notificationType =
                         data.optString("notification_type", "");
+
+                // =====================================================
+                // PROGRESS VERIFICATION NOTIFICATION
+                // =====================================================
+
+                if (
+                        "PROGRESS_VERIFICATION"
+                                .equalsIgnoreCase(
+                                        notificationType
+                                )
+                ) {
+
+                    boolean isManager =
+                            SessionManager.getCurrentUser() != null
+                                    && SessionManager
+                                    .getCurrentUser()
+                                    .getRoleId() == 2;
+
+
+                    if (!isManager) {
+
+                        AEPMDialog.showError(
+                                getScene() == null
+                                        ? null
+                                        : getScene().getWindow(),
+
+                                "Access Denied",
+
+                                "Only managers can review employee progress submissions."
+                        );
+
+                        return;
+                    }
+
+
+                    String submissionId =
+                            data.optString(
+                                    "related_progress_submission_id",
+                                    ""
+                            );
+
+
+                    if (submissionId.isBlank()) {
+
+                        AEPMDialog.showError(
+                                getScene() == null
+                                        ? null
+                                        : getScene().getWindow(),
+
+                                "Unable to Review",
+
+                                "The progress submission reference is missing."
+                        );
+
+                        return;
+                    }
+
+
+                    ManagerProgressVerificationDialog.show(
+
+                            getScene() == null
+                                    ? null
+                                    : getScene().getWindow(),
+
+                            submissionId
+                    );
+
+
+                    return;
+                }
 
                 // System Configuration notifications
                 boolean isConfigurationNotification =

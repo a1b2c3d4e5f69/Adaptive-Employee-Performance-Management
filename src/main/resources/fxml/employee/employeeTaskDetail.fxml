@@ -648,13 +648,6 @@
                 onAction="#handleStartTask"
                 styleClass="employee-button"/>
 
-
-        <Button
-                fx:id="completeButton"
-                text="Complete Task"
-                onAction="#handleCompleteTask"
-                styleClass="employee-button-primary"/>
-
     </HBox>
 
 </VBox>

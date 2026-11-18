@@ -2,7 +2,6 @@ package com.aepm.ui.employee;
 
 import com.aepm.data.task.TaskAttachmentRepository;
 
-import com.aepm.logic.task.TaskProgressService;
 import com.aepm.logic.task.TaskService;
 
 import com.aepm.model.Task;
@@ -14,6 +13,7 @@ import com.aepm.util.SessionManager;
 
 import javafx.fxml.FXML;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -160,11 +160,6 @@ public class EmployeeTaskDetailController {
 
     @FXML
     private Button updateProgressButton;
-
-    @FXML
-    private Button completeButton;
-
-
     // =========================================================
     // MESSAGE
     // =========================================================
@@ -179,10 +174,6 @@ public class EmployeeTaskDetailController {
 
     private final TaskService taskService =
             new TaskService();
-
-    private final TaskProgressService taskProgressService =
-            new TaskProgressService();
-
     private final EmployeeProgressSubmissionService
         progressSubmissionService =
         new EmployeeProgressSubmissionService();
@@ -855,13 +846,6 @@ public class EmployeeTaskDetailController {
         updateProgressButton.setDisable(
                 !inProgress
         );
-
-
-        completeButton.setDisable(
-                !inProgress
-        );
-
-
         progressField.setDisable(
                 !inProgress
         );
@@ -1296,6 +1280,10 @@ public class EmployeeTaskDetailController {
                 true
         );
 
+        updateProgressButton.setText(
+                "Submitting..."
+        );
+
         uploadEvidenceButton.setDisable(
                 true
         );
@@ -1309,7 +1297,9 @@ public class EmployeeTaskDetailController {
         );
 
 
-        hideMessage();
+        showMessage(
+                "Submitting progress and evidence for verification..."
+        );
 
 
         // =====================================================
@@ -1320,7 +1310,7 @@ public class EmployeeTaskDetailController {
                 EmployeeProgressSubmissionService.SubmissionResult
                 > submitTask =
 
-                new javafx.concurrent.Task<>() {
+                new javafx.concurrent.Task<EmployeeProgressSubmissionService.SubmissionResult>() {
 
                         @Override
                         protected EmployeeProgressSubmissionService
@@ -1341,7 +1331,6 @@ public class EmployeeTaskDetailController {
                         }
                 };
 
-
         // =====================================================
         // SUCCESS
         // =====================================================
@@ -1352,6 +1341,11 @@ public class EmployeeTaskDetailController {
                         EmployeeProgressSubmissionService
                                 .SubmissionResult result =
                                 submitTask.getValue();
+
+
+                        updateProgressButton.setText(
+                                "Submit for Verification"
+                        );
 
 
                         progressField.setText(
@@ -1374,36 +1368,63 @@ public class EmployeeTaskDetailController {
                                                 MALAYSIA_ZONE
                                         )
                                         .format(
-                                                DateTimeFormatter
-                                                        .ofPattern(
-                                                                "dd MMM yyyy, hh:mm a"
-                                                        )
+                                                DateTimeFormatter.ofPattern(
+                                                        "dd MMM yyyy, hh:mm a"
+                                                )
                                         );
 
 
                         showMessage(
-                                "Progress submitted successfully.\n"
-                                        + "Requested Progress: "
+                                "Progress submitted successfully. "
+                                        + "Requested: "
                                         + result.getRequestedProgress()
-                                        + "%\n"
+                                        + "% | Actual: "
+                                        + result.getCurrentProgress()
+                                        + "% | Status: "
+                                        + result.getStatus()
+                        );
+
+
+                        Alert successAlert =
+                                new Alert(
+                                        Alert.AlertType.INFORMATION
+                                );
+
+
+                        successAlert.setTitle(
+                                "Progress Submitted"
+                        );
+
+
+                        successAlert.setHeaderText(
+                                "Progress submitted for verification"
+                        );
+
+
+                        successAlert.setContentText(
+                                "Requested Progress: "
+                                        + result.getRequestedProgress()
+                                        + "%"
                                         + "Actual Verified Progress: "
                                         + result.getCurrentProgress()
-                                        + "%\n"
+                                        + "%"
                                         + "Status: "
                                         + result.getStatus()
-                                        + "\n"
+                                        + ""
                                         + "Manager Review Deadline: "
                                         + deadline
                         );
 
 
-                        /*
-                        * IMPORTANT:
-                        *
-                        * Do NOT update progressBar here.
-                        *
-                        * Actual progress has NOT been approved yet.
-                        */
+                        if (stage != null) {
+
+                                successAlert.initOwner(
+                                        stage
+                                );
+                        }
+
+
+                        successAlert.showAndWait();
 
 
                         updateProgressButton.setDisable(
@@ -1428,12 +1449,10 @@ public class EmployeeTaskDetailController {
 
                         if (refreshCallback != null) {
 
-                        refreshCallback.run();
+                                refreshCallback.run();
                         }
                 }
         );
-
-
         // =====================================================
         // FAILURE
         // =====================================================
@@ -1441,21 +1460,84 @@ public class EmployeeTaskDetailController {
         submitTask.setOnFailed(
                 event -> {
 
-                        Throwable error =
-                                submitTask.getException();
+                Throwable error =
+                        submitTask.getException();
 
 
-                        if (error != null) {
+                updateProgressButton.setText(
+                        "Submit for Verification"
+                );
+
+
+                if (error != null) {
 
                         error.printStackTrace();
-                        }
+                }
+
+
+                String errorMessage =
+                        error == null
+                                ? "Unable to submit progress for verification."
+                                : (
+                                error.getMessage() == null
+                                        || error.getMessage().isBlank()
+                                        ? error.toString()
+                                        : error.getMessage()
+                        );
+
+
+                // =================================================
+                // ALREADY PENDING
+                // =================================================
+
+                if (
+                        errorMessage.contains(
+                                "already have a progress submission waiting for verification"
+                        )
+                ) {
+
+                        String pendingMessage =
+                                "Your progress submission is currently pending verification.\n\n"
+                                        + "Please wait for your manager to review the submission. "
+                                        + "If the manager does not respond before the review deadline, "
+                                        + "the system may perform automatic verification.";
 
 
                         showMessage(
-                                error == null
-                                        ? "Unable to submit progress for verification."
-                                        : error.getMessage()
+                                "Progress verification is currently pending."
                         );
+
+
+                        Alert pendingAlert =
+                                new Alert(
+                                        Alert.AlertType.INFORMATION
+                                );
+
+
+                        pendingAlert.setTitle(
+                                "Verification Pending"
+                        );
+
+
+                        pendingAlert.setHeaderText(
+                                "Progress submission is under review"
+                        );
+
+
+                        pendingAlert.setContentText(
+                                pendingMessage
+                        );
+
+
+                        if (stage != null) {
+
+                        pendingAlert.initOwner(
+                                stage
+                        );
+                        }
+
+
+                        pendingAlert.showAndWait();
 
 
                         updateProgressButton.setDisable(
@@ -1479,60 +1561,78 @@ public class EmployeeTaskDetailController {
 
 
                         updateButtonState();
+
+
+                        return;
                 }
-        );
 
 
-        Thread thread =
-                new Thread(
-                        submitTask
-                );
-
-
-        thread.setDaemon(
-                true
-        );
-
-
-        thread.start();
-    }
-
-        @FXML
-        private void handleCompleteTask() {
-
-        if (task == null) {
-
-                return;
-        }
-
-
-        if (
-                !"In Progress".equalsIgnoreCase(
-                        task.getTaskStatus()
-                )
-        ) {
+                // =================================================
+                // REAL ERROR
+                // =================================================
 
                 showMessage(
-                        "Only an In Progress task can request completion."
+                        errorMessage
                 );
 
-                return;
+
+                Alert errorAlert =
+                        new Alert(
+                                Alert.AlertType.ERROR
+                        );
+
+
+                errorAlert.setTitle(
+                        "Submission Failed"
+                );
+
+
+                errorAlert.setHeaderText(
+                        "Unable to submit progress"
+                );
+
+
+                errorAlert.setContentText(
+                        errorMessage
+                );
+
+
+                if (stage != null) {
+
+                        errorAlert.initOwner(
+                                stage
+                        );
+                }
+
+
+                errorAlert.showAndWait();
+
+
+                updateProgressButton.setDisable(
+                        false
+                );
+
+
+                uploadEvidenceButton.setDisable(
+                        false
+                );
+
+
+                progressField.setDisable(
+                        false
+                );
+
+
+                progressNoteArea.setDisable(
+                        false
+                );
+
+
+                updateButtonState();
+                }
+                );
         }
 
-        progressField.setText(
-                "100"
-        );
-
-
-        showMessage(
-                "To complete this task, enter your completion note, "
-                        + "upload supporting evidence, then click "
-                        + "\"Submit for Verification\"."
-        );
-
-
-        progressNoteArea.requestFocus();
-        }
 
     // =========================================================
     // RUN ACTION
@@ -1653,13 +1753,6 @@ public class EmployeeTaskDetailController {
         updateProgressButton.setDisable(
                 disable
         );
-
-
-        completeButton.setDisable(
-                disable
-        );
-
-
         progressField.setDisable(
                 disable
         );

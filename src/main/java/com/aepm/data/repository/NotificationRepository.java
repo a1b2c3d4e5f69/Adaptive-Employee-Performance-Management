@@ -260,4 +260,122 @@ public class NotificationRepository {
             body
         );
     }
+
+    // =========================================================
+    // CREATE PROGRESS VERIFICATION NOTIFICATION
+    // =========================================================
+
+    public boolean createProgressVerificationNotification(
+            String accessToken,
+            String managerId,
+            String title,
+            String message,
+            String taskId,
+            String submissionId,
+            String eventKey
+    ) throws Exception {
+
+        JSONObject body =
+                new JSONObject();
+
+
+        body.put(
+                "recipient_id",
+                managerId
+        );
+
+
+        body.put(
+                "title",
+                title
+        );
+
+
+        body.put(
+                "message",
+                message
+        );
+
+
+        body.put(
+                "notification_type",
+                "PROGRESS_VERIFICATION"
+        );
+
+
+        body.put(
+                "related_task_id",
+                taskId
+        );
+
+
+        body.put(
+                "related_progress_submission_id",
+                submissionId
+        );
+
+
+        body.put(
+                "event_key",
+                eventKey
+        );
+
+
+        body.put(
+                "is_read",
+                false
+        );
+
+
+        String url =
+                AppConfig.REST_URL
+                        + "/notification_tbl";
+
+
+        HttpRequest request =
+                SupabaseClient
+                        .getInstance()
+                        .createAuthenticatedRequest(
+                                url,
+                                accessToken
+                        )
+                        .header(
+                                "Prefer",
+                                "return=representation"
+                        )
+                        .POST(
+                                HttpRequest.BodyPublishers
+                                        .ofString(
+                                                body.toString()
+                                        )
+                        )
+                        .build();
+
+
+        HttpResponse<String> response =
+                SupabaseClient
+                        .getInstance()
+                        .getHttpClient()
+                        .send(
+                                request,
+                                HttpResponse.BodyHandlers.ofString()
+                        );
+
+
+        if (
+                response.statusCode() >= 200
+                        && response.statusCode() < 300
+        ) {
+
+            return true;
+        }
+
+
+        throw new RuntimeException(
+                "Unable to create progress verification notification. "
+                        + response.statusCode()
+                        + " "
+                        + response.body()
+        );
+    }
 }

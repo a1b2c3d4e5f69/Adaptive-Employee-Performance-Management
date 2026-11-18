@@ -1,6 +1,7 @@
 package com.aepm.logic.task;
 
 import com.aepm.config.AppConfig;
+import com.aepm.data.repository.NotificationRepository;
 import com.aepm.data.repository.ProgressVerificationConfigRepository;
 import com.aepm.data.repository.ProgressVerificationConfigRepository.ProgressVerificationConfig;
 import com.aepm.data.supabase.SupabaseClient;
@@ -26,12 +27,11 @@ import java.util.UUID;
 
 public class EmployeeProgressSubmissionService {
 
-    /*
-     * IMPORTANT:
-     *
-     * This must match the Supabase Storage bucket
-     * created for task progress evidence.
-     */
+
+    // =========================================================
+    // STORAGE
+    // =========================================================
+
     private static final String EVIDENCE_BUCKET =
             "task-progress-evidence";
 
@@ -40,12 +40,20 @@ public class EmployeeProgressSubmissionService {
             10L * 1024L * 1024L;
 
 
+    // =========================================================
+    // REPOSITORIES / CLIENT
+    // =========================================================
+
     private final SupabaseClient supabaseClient =
             SupabaseClient.getInstance();
 
 
     private final ProgressVerificationConfigRepository configRepository =
             new ProgressVerificationConfigRepository();
+
+
+    private final NotificationRepository notificationRepository =
+            new NotificationRepository();
 
 
     // =========================================================
@@ -58,6 +66,7 @@ public class EmployeeProgressSubmissionService {
             String progressNote,
             File evidenceFile
     ) throws Exception {
+
 
         if (taskId == null) {
 
@@ -74,6 +83,7 @@ public class EmployeeProgressSubmissionService {
         if (
                 currentUser == null
                         || currentUser.getUserId() == null
+                        || currentUser.getUserId().isBlank()
         ) {
 
             throw new IllegalStateException(
@@ -93,7 +103,7 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // 1. LOAD CURRENT ACTUAL PROGRESS
+        // 1. LOAD CURRENT VERIFIED PROGRESS
         // =====================================================
 
         int currentProgress =
@@ -104,7 +114,7 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // 2. VALIDATION
+        // 2. VALIDATE PROGRESS
         // =====================================================
 
         if (
@@ -118,13 +128,23 @@ public class EmployeeProgressSubmissionService {
         }
 
 
-        if (proposedProgress <= currentProgress) {
+        if (
+                proposedProgress
+                        <= currentProgress
+        ) {
 
             throw new IllegalArgumentException(
-                    "Requested progress must be higher than the current verified progress."
+                    "Requested progress must be higher than "
+                            + "the current verified progress of "
+                            + currentProgress
+                            + "%."
             );
         }
 
+
+        // =====================================================
+        // 3. VALIDATE NOTE
+        // =====================================================
 
         if (
                 progressNote == null
@@ -136,6 +156,20 @@ public class EmployeeProgressSubmissionService {
             );
         }
 
+
+        if (
+                progressNote.trim().length() < 20
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Please provide a more detailed progress note."
+            );
+        }
+
+
+        // =====================================================
+        // 4. VALIDATE EVIDENCE
+        // =====================================================
 
         if (evidenceFile == null) {
 
@@ -151,7 +185,7 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // 3. CHECK EXISTING PENDING SUBMISSION
+        // 5. CHECK EXISTING PENDING SUBMISSION
         // =====================================================
 
         if (
@@ -163,13 +197,14 @@ public class EmployeeProgressSubmissionService {
         ) {
 
             throw new IllegalStateException(
-                    "You already have a progress submission waiting for verification."
+                    "You already have a progress submission "
+                            + "waiting for verification."
             );
         }
 
 
         // =====================================================
-        // 4. CONFIG
+        // 6. LOAD VERIFICATION CONFIG
         // =====================================================
 
         ProgressVerificationConfig config =
@@ -189,14 +224,13 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // 5. CREATE SUBMISSION
+        // 7. CREATE SUBMISSION
         // =====================================================
 
         UUID submissionId =
                 createSubmission(
                         taskId,
                         employeeId,
-                        currentProgress,
                         proposedProgress,
                         progressNote.trim(),
                         submittedAt,
@@ -206,7 +240,7 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // 6. UPLOAD EVIDENCE
+        // 8. UPLOAD EVIDENCE
         // =====================================================
 
         try {
@@ -218,15 +252,12 @@ public class EmployeeProgressSubmissionService {
                     accessToken
             );
 
-        } catch (Exception e) {
+        } catch (Exception error) {
 
             /*
-             * Evidence upload failed.
-             *
-             * Remove the incomplete submission so employee
-             * can try again.
+             * Submission is incomplete if evidence upload fails.
+             * Remove the submission so employee can try again.
              */
-
             try {
 
                 deleteSubmission(
@@ -237,13 +268,40 @@ public class EmployeeProgressSubmissionService {
             } catch (Exception cleanupError) {
 
                 System.err.println(
-                        "Unable to clean incomplete progress submission: "
+                        "[Progress Submission Cleanup] "
                                 + cleanupError.getMessage()
                 );
             }
 
 
-            throw e;
+            throw error;
+        }
+
+
+        // =====================================================
+        // 9. NOTIFY MANAGER
+        // =====================================================
+
+        try {
+
+            notifyManager(
+                    submissionId,
+                    taskId,
+                    employeeId,
+                    proposedProgress,
+                    accessToken
+            );
+
+        } catch (Exception notificationError) {
+
+            /*
+             * Submission already succeeded.
+             * Notification failure must NOT delete submission.
+             */
+            System.err.println(
+                    "[Progress Verification Notification] "
+                            + notificationError.getMessage()
+            );
         }
 
 
@@ -268,13 +326,13 @@ public class EmployeeProgressSubmissionService {
     private UUID createSubmission(
             UUID taskId,
             UUID employeeId,
-            int currentProgress,
             int proposedProgress,
             String progressNote,
             OffsetDateTime submittedAt,
             OffsetDateTime verificationDeadline,
             String accessToken
     ) throws Exception {
+
 
         JSONObject body =
                 new JSONObject();
@@ -293,16 +351,16 @@ public class EmployeeProgressSubmissionService {
 
 
         /*
-         * If your table contains current_progress,
-         * we store the snapshot.
+         * IMPORTANT:
          *
-         * If Step 1 did not create this column,
-         * REMOVE only this body.put block.
+         * DO NOT INSERT current_progress here.
+         *
+         * Your real Supabase table does not contain:
+         *
+         * current_progress
+         *
+         * Current actual progress is read from task_tbl.progress.
          */
-        body.put(
-                "current_progress",
-                currentProgress
-        );
 
 
         body.put(
@@ -351,16 +409,17 @@ public class EmployeeProgressSubmissionService {
                                 "return=representation"
                         )
                         .POST(
-                                HttpRequest.BodyPublishers
-                                        .ofString(
-                                                body.toString()
-                                        )
+                                HttpRequest.BodyPublishers.ofString(
+                                        body.toString()
+                                )
                         )
                         .build();
 
 
         HttpResponse<String> response =
-                send(request);
+                send(
+                        request
+                );
 
 
         validateResponse(
@@ -378,17 +437,35 @@ public class EmployeeProgressSubmissionService {
         if (array.isEmpty()) {
 
             throw new IllegalStateException(
-                    "Progress submission was created but no submission ID was returned."
+                    "Progress submission was created "
+                            + "but no submission ID was returned."
+            );
+        }
+
+
+        JSONObject created =
+                array.getJSONObject(
+                        0
+                );
+
+
+        String id =
+                created.optString(
+                        "submission_id",
+                        ""
+                );
+
+
+        if (id.isBlank()) {
+
+            throw new IllegalStateException(
+                    "Submission ID was not returned by Supabase."
             );
         }
 
 
         return UUID.fromString(
-                array
-                        .getJSONObject(0)
-                        .getString(
-                                "submission_id"
-                        )
+                id
         );
     }
 
@@ -403,6 +480,7 @@ public class EmployeeProgressSubmissionService {
             File file,
             String accessToken
     ) throws Exception {
+
 
         byte[] bytes;
 
@@ -421,13 +499,21 @@ public class EmployeeProgressSubmissionService {
         }
 
 
+        if (bytes.length <= 0) {
+
+            throw new IllegalArgumentException(
+                    "Evidence file is empty."
+            );
+        }
+
+
         if (
-                bytes.length <= 0
-                        || bytes.length > MAX_FILE_SIZE
+                bytes.length
+                        > MAX_FILE_SIZE
         ) {
 
             throw new IllegalArgumentException(
-                    "Evidence file must be between 1 byte and 10 MB."
+                    "Evidence file cannot exceed 10 MB."
             );
         }
 
@@ -503,16 +589,17 @@ public class EmployeeProgressSubmissionService {
                                 )
                         )
                         .POST(
-                                HttpRequest.BodyPublishers
-                                        .ofByteArray(
-                                                bytes
-                                        )
+                                HttpRequest.BodyPublishers.ofByteArray(
+                                        bytes
+                                )
                         )
                         .build();
 
 
         HttpResponse<String> uploadResponse =
-                send(uploadRequest);
+                send(
+                        uploadRequest
+                );
 
 
         validateResponse(
@@ -522,7 +609,7 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // EVIDENCE DATABASE RECORD
+        // SAVE EVIDENCE DATABASE RECORD
         // =====================================================
 
         JSONObject evidence =
@@ -575,16 +662,17 @@ public class EmployeeProgressSubmissionService {
                                 "return=representation"
                         )
                         .POST(
-                                HttpRequest.BodyPublishers
-                                        .ofString(
-                                                evidence.toString()
-                                        )
+                                HttpRequest.BodyPublishers.ofString(
+                                        evidence.toString()
+                                )
                         )
                         .build();
 
 
         HttpResponse<String> evidenceResponse =
-                send(evidenceRequest);
+                send(
+                        evidenceRequest
+                );
 
 
         validateResponse(
@@ -595,7 +683,7 @@ public class EmployeeProgressSubmissionService {
 
 
     // =========================================================
-    // CHECK PENDING
+    // CHECK EXISTING PENDING SUBMISSION
     // =========================================================
 
     private boolean hasPendingSubmission(
@@ -603,6 +691,7 @@ public class EmployeeProgressSubmissionService {
             UUID employeeId,
             String accessToken
     ) throws Exception {
+
 
         String url =
                 AppConfig.REST_URL
@@ -627,7 +716,9 @@ public class EmployeeProgressSubmissionService {
 
 
         HttpResponse<String> response =
-                send(request);
+                send(
+                        request
+                );
 
 
         validateResponse(
@@ -647,13 +738,14 @@ public class EmployeeProgressSubmissionService {
 
 
     // =========================================================
-    // CURRENT PROGRESS
+    // GET CURRENT ACTUAL TASK PROGRESS
     // =========================================================
 
     private int getCurrentTaskProgress(
             UUID taskId,
             String accessToken
     ) throws Exception {
+
 
         String url =
                 AppConfig.REST_URL
@@ -675,7 +767,9 @@ public class EmployeeProgressSubmissionService {
 
 
         HttpResponse<String> response =
-                send(request);
+                send(
+                        request
+                );
 
 
         validateResponse(
@@ -699,7 +793,9 @@ public class EmployeeProgressSubmissionService {
 
 
         return array
-                .getJSONObject(0)
+                .getJSONObject(
+                        0
+                )
                 .optInt(
                         "progress",
                         0
@@ -708,13 +804,14 @@ public class EmployeeProgressSubmissionService {
 
 
     // =========================================================
-    // DELETE FAILED SUBMISSION
+    // DELETE INCOMPLETE SUBMISSION
     // =========================================================
 
     private void deleteSubmission(
             UUID submissionId,
             String accessToken
     ) throws Exception {
+
 
         String url =
                 AppConfig.REST_URL
@@ -734,7 +831,9 @@ public class EmployeeProgressSubmissionService {
 
 
         HttpResponse<String> response =
-                send(request);
+                send(
+                        request
+                );
 
 
         validateResponse(
@@ -745,12 +844,339 @@ public class EmployeeProgressSubmissionService {
 
 
     // =========================================================
-    // VALIDATE FILE
+    // NOTIFY MANAGER
+    // =========================================================
+
+    private void notifyManager(
+            UUID submissionId,
+            UUID taskId,
+            UUID employeeId,
+            int proposedProgress,
+            String accessToken
+    ) throws Exception {
+
+
+        String managerId =
+                getEmployeeManagerId(
+                        employeeId,
+                        accessToken
+                );
+
+
+        if (
+                managerId == null
+                        || managerId.isBlank()
+        ) {
+
+            System.err.println(
+                    "[Progress Verification] "
+                            + "Employee has no assigned manager."
+            );
+
+            return;
+        }
+
+
+        String taskTitle =
+                getTaskTitle(
+                        taskId,
+                        accessToken
+                );
+
+
+        String employeeName =
+                getEmployeeDisplayName(
+                        employeeId,
+                        accessToken
+                );
+
+
+        String title =
+                "Progress Verification Required";
+
+
+        String message =
+                employeeName
+                        + " submitted "
+                        + proposedProgress
+                        + "% progress for \""
+                        + taskTitle
+                        + "\". Review the progress note "
+                        + "and supporting evidence.";
+
+
+        /*
+         * For now use the existing notification method.
+         *
+         * related_task_id = real task ID
+         *
+         * event_key contains submission ID for deduplication.
+         */
+        notificationRepository.createOnce(
+
+                accessToken,
+
+                managerId,
+
+                title,
+
+                message,
+
+                "PROGRESS_VERIFICATION",
+
+                taskId.toString(),
+
+                null,
+
+                "progress_verification:"
+                        + submissionId
+        );
+    }
+
+
+    // =========================================================
+    // GET MANAGER
+    // =========================================================
+
+    private String getEmployeeManagerId(
+            UUID employeeId,
+            String accessToken
+    ) throws Exception {
+
+
+        String url =
+                AppConfig.REST_URL
+                        + "/user_tbl"
+                        + "?select=manager_id"
+                        + "&user_id=eq."
+                        + employeeId
+                        + "&limit=1";
+
+
+        HttpRequest request =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                url,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+
+        HttpResponse<String> response =
+                send(
+                        request
+                );
+
+
+        validateResponse(
+                response,
+                "Unable to find employee manager"
+        );
+
+
+        JSONArray array =
+                new JSONArray(
+                        response.body()
+                );
+
+
+        if (array.isEmpty()) {
+
+            return null;
+        }
+
+
+        JSONObject row =
+                array.getJSONObject(
+                        0
+                );
+
+
+        if (
+                !row.has(
+                        "manager_id"
+                )
+                        || row.isNull(
+                        "manager_id"
+                )
+        ) {
+
+            return null;
+        }
+
+
+        return row.optString(
+                "manager_id",
+                null
+        );
+    }
+
+
+    // =========================================================
+    // GET TASK TITLE
+    // =========================================================
+
+    private String getTaskTitle(
+            UUID taskId,
+            String accessToken
+    ) throws Exception {
+
+
+        String url =
+                AppConfig.REST_URL
+                        + "/task_tbl"
+                        + "?select=task_title"
+                        + "&task_id=eq."
+                        + taskId
+                        + "&limit=1";
+
+
+        HttpRequest request =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                url,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+
+        HttpResponse<String> response =
+                send(
+                        request
+                );
+
+
+        validateResponse(
+                response,
+                "Unable to load task title"
+        );
+
+
+        JSONArray array =
+                new JSONArray(
+                        response.body()
+                );
+
+
+        if (array.isEmpty()) {
+
+            return "Task";
+        }
+
+
+        return array
+                .getJSONObject(
+                        0
+                )
+                .optString(
+                        "task_title",
+                        "Task"
+                );
+    }
+
+
+    // =========================================================
+    // GET EMPLOYEE NAME
+    // =========================================================
+
+    private String getEmployeeDisplayName(
+            UUID employeeId,
+            String accessToken
+    ) throws Exception {
+
+
+        String url =
+                AppConfig.REST_URL
+                        + "/user_tbl"
+                        + "?select=username,employee_id,email"
+                        + "&user_id=eq."
+                        + employeeId
+                        + "&limit=1";
+
+
+        HttpRequest request =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                url,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+
+        HttpResponse<String> response =
+                send(
+                        request
+                );
+
+
+        validateResponse(
+                response,
+                "Unable to load employee information"
+        );
+
+
+        JSONArray array =
+                new JSONArray(
+                        response.body()
+                );
+
+
+        if (array.isEmpty()) {
+
+            return "Employee";
+        }
+
+
+        JSONObject row =
+                array.getJSONObject(
+                        0
+                );
+
+
+        String username =
+                row.optString(
+                        "username",
+                        ""
+                );
+
+
+        if (!username.isBlank()) {
+
+            return username;
+        }
+
+
+        String employeeNo =
+                row.optString(
+                        "employee_id",
+                        ""
+                );
+
+
+        if (!employeeNo.isBlank()) {
+
+            return employeeNo;
+        }
+
+
+        return row.optString(
+                "email",
+                "Employee"
+        );
+    }
+
+
+    // =========================================================
+    // VALIDATE EVIDENCE FILE
     // =========================================================
 
     private void validateEvidenceFile(
             File file
     ) {
+
 
         if (!file.exists()) {
 
@@ -776,7 +1202,10 @@ public class EmployeeProgressSubmissionService {
         }
 
 
-        if (file.length() > MAX_FILE_SIZE) {
+        if (
+                file.length()
+                        > MAX_FILE_SIZE
+        ) {
 
             throw new IllegalArgumentException(
                     "Evidence file cannot exceed 10 MB."
@@ -793,6 +1222,7 @@ public class EmployeeProgressSubmissionService {
             String fileName
     ) {
 
+
         if (
                 fileName == null
                         || !fileName.contains(".")
@@ -802,17 +1232,22 @@ public class EmployeeProgressSubmissionService {
         }
 
 
-        return fileName.substring(
-                fileName.lastIndexOf(".") + 1
-        ).toLowerCase();
+        return fileName
+                .substring(
+                        fileName.lastIndexOf(
+                                '.'
+                        ) + 1
+                )
+                .toLowerCase();
     }
 
 
     // =========================================================
-    // TOKEN
+    // ACCESS TOKEN
     // =========================================================
 
     private String getAccessToken() {
+
 
         String accessToken =
                 SessionManager.getAccessToken();
@@ -841,6 +1276,7 @@ public class EmployeeProgressSubmissionService {
             HttpRequest request
     ) throws Exception {
 
+
         return supabaseClient
                 .getHttpClient()
                 .send(
@@ -854,6 +1290,7 @@ public class EmployeeProgressSubmissionService {
             HttpResponse<String> response,
             String message
     ) {
+
 
         if (
                 response.statusCode() < 200
@@ -877,6 +1314,7 @@ public class EmployeeProgressSubmissionService {
 
     public static class SubmissionResult {
 
+
         private final UUID submissionId;
 
         private final int currentProgress;
@@ -899,14 +1337,18 @@ public class EmployeeProgressSubmissionService {
             this.submissionId =
                     submissionId;
 
+
             this.currentProgress =
                     currentProgress;
+
 
             this.requestedProgress =
                     requestedProgress;
 
+
             this.status =
                     status;
+
 
             this.verificationDeadline =
                     verificationDeadline;
@@ -914,26 +1356,31 @@ public class EmployeeProgressSubmissionService {
 
 
         public UUID getSubmissionId() {
+
             return submissionId;
         }
 
 
         public int getCurrentProgress() {
+
             return currentProgress;
         }
 
 
         public int getRequestedProgress() {
+
             return requestedProgress;
         }
 
 
         public String getStatus() {
+
             return status;
         }
 
 
         public OffsetDateTime getVerificationDeadline() {
+
             return verificationDeadline;
         }
     }
