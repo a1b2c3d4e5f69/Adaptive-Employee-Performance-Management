@@ -56,6 +56,69 @@ public class NotificationBell extends StackPane {
             )
     );
 
+    // =========================================================
+    // ROLE THEME
+    // =========================================================
+
+    private boolean isManagerTheme() {
+
+        User user =
+                SessionManager.getCurrentUser();
+
+        return user != null
+                && user.getRoleId() == 2;
+    }
+
+
+    private boolean isAdminTheme() {
+
+        User user =
+                SessionManager.getCurrentUser();
+
+        return user != null
+                && user.getRoleId() == 1;
+    }
+
+
+    private String primaryColor() {
+
+        return isManagerTheme()
+                ? "#0F766E"
+                : "#1E3A8A";
+    }
+
+
+    private String accentColor() {
+
+        return isManagerTheme()
+                ? "#0D9488"
+                : "#2563EB";
+    }
+
+
+    private String softColor() {
+
+        return isManagerTheme()
+                ? "#DFF7F2"
+                : "#E8EEFC";
+    }
+
+
+    private String unreadColor() {
+
+        return isManagerTheme()
+                ? "#ECFDF8"
+                : "#EFF6FF";
+    }
+
+
+    private String unreadBorderColor() {
+
+        return isManagerTheme()
+                ? "#7DD3C7"
+                : "#93C5FD";
+    }
+
     public NotificationBell() {
         setAlignment(Pos.CENTER);
         setPrefSize(48, 48);
@@ -63,7 +126,7 @@ public class NotificationBell extends StackPane {
         SVGPath bellIcon = new SVGPath();
         bellIcon.setContent("M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4");
         bellIcon.setFill(Color.TRANSPARENT);
-        bellIcon.setStroke(Color.web("#334155"));
+        bellIcon.setStroke(Color.web(primaryColor()));  
         bellIcon.setStrokeWidth(1.8);
         bellIcon.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
         bellIcon.setStrokeLineJoin(javafx.scene.shape.StrokeLineJoin.ROUND);
@@ -117,11 +180,28 @@ public class NotificationBell extends StackPane {
 
     private void createPopup() {
 
-        Label heading = new Label("Notifications");
-        heading.setStyle("-fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: #0F2345;");
+        Label heading =
+                new Label(
+                        "Notifications"
+                );
+
+        heading.setStyle(
+                "-fx-font-size: 19px;"
+                + "-fx-font-weight: 700;"
+                + "-fx-text-fill: "
+                + primaryColor()
+                + ";"
+        );
 
         Button markAll = new Button("Mark all as read");
-        markAll.setStyle("-fx-background-color: transparent; -fx-text-fill: #2563EB; -fx-font-size: 12px; -fx-cursor: hand;");
+        markAll.setStyle(
+                "-fx-background-color: transparent;"
+                + "-fx-text-fill: "
+                + accentColor()
+                + ";"
+                + "-fx-font-size: 12px;"
+                + "-fx-cursor: hand;"
+        );
         markAll.setOnAction(e -> markAllAsRead());
 
         Region spacer = new Region();
@@ -146,11 +226,12 @@ public class NotificationBell extends StackPane {
         container.setPrefWidth(420);
         container.setStyle(
             "-fx-font-family: 'Plus Jakarta Sans';" +
-            "-fx-background-color: white;" +
+            "-fx-background-color: #FFFFFF;" +
             "-fx-background-radius: 14;" +
-            "-fx-border-color: #DEE7F3;" +
+            "-fx-border-color: #CBD5E1;" +
+            "-fx-border-width: 1;" +
             "-fx-border-radius: 14;" +
-            "-fx-effect: dropshadow(gaussian, rgba(15,35,69,0.15), 22, 0, 0, 7);"
+            "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.18), 18, 0, 0, 5);"
         );
 
         popup.getContent().add(container);
@@ -244,24 +325,57 @@ public class NotificationBell extends StackPane {
         String notificationId = data.getString("notification_id");
         boolean read = data.optBoolean("is_read", false);
 
-        Label icon = new Label("▤");
-        icon.setStyle("-fx-font-size: 21px; -fx-text-fill: #2563EB; -fx-background-color: #E4EEFF; -fx-background-radius: 10; -fx-padding: 8 11;");
+        Label icon =
+                new Label(
+                        "▤"
+                );
+
+        icon.setStyle(
+                "-fx-font-size: 21px;"
+                + "-fx-text-fill: "
+                + accentColor()
+                + ";"
+                + "-fx-background-color: "
+                + softColor()
+                + ";"
+                + "-fx-background-radius: 10;"
+                + "-fx-padding: 8 11;"
+        );
 
         Label title = new Label(data.optString("title", "Notification"));
         title.setWrapText(true);
         title.setMaxWidth(290);
-        title.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #10264A;");
+        title.setStyle(
+            "-fx-font-size: 13px;"
+            + "-fx-font-weight: 700;"
+            + "-fx-text-fill: #0F172A;"
+        );
 
         Label message = new Label(data.optString("message", ""));
         message.setWrapText(true);
         message.setMaxWidth(290);
-        message.setStyle("-fx-font-size: 12px; -fx-text-fill: #62799C;");
+        message.setStyle(
+            "-fx-font-size: 12px;"
+            + "-fx-text-fill: #475569;"
+        );
 
         Label date = new Label(formatDate(data.optString("created_at", "")));
-        date.setStyle("-fx-font-size: 11px; -fx-text-fill: #7C90AF;");
+        date.setStyle(
+            "-fx-font-size: 11px;"
+            + "-fx-text-fill: #64748B;"
+        );
 
-        Label arrow = new Label("›");
-        arrow.setStyle("-fx-font-size: 25px; -fx-text-fill: #2563EB;");
+        Label arrow =
+                new Label(
+                        "›"
+                );
+
+        arrow.setStyle(
+                "-fx-font-size: 25px;"
+                + "-fx-text-fill: "
+                + accentColor()
+                + ";"
+        );
 
         VBox info = new VBox(6, title, message, date);
         HBox.setHgrow(info, Priority.ALWAYS);
@@ -271,9 +385,26 @@ public class NotificationBell extends StackPane {
 
         VBox item = new VBox(row);
         item.setPadding(new Insets(16));
-        item.setStyle("-fx-background-color: " + (read ? "#FFFFFF" : "#EFF6FF")
-            + "; -fx-background-radius: 11; -fx-border-color: " + (read ? "#E6EBF3" : "#D2E4FF")
-            + "; -fx-border-radius: 11; -fx-cursor: hand;");
+                item.setStyle(
+                    "-fx-background-color: "
+                    + (
+                            read
+                                    ? "#FFFFFF"
+                                    : unreadColor()
+                    )
+                    + ";"
+                    + "-fx-background-radius: 11;"
+                    + "-fx-border-color: "
+                    + (
+                            read
+                                    ? "#CBD5E1"
+                                    : unreadBorderColor()
+                    )
+                    + ";"
+                    + "-fx-border-width: 1;"
+                    + "-fx-border-radius: 11;"
+                    + "-fx-cursor: hand;"
+            );
 
             item.setOnMouseClicked(e -> {
 
@@ -454,23 +585,23 @@ public class NotificationBell extends StackPane {
         pane.setPrefWidth(850);
         pane.setPrefHeight(680);
         pane.setStyle(
-            "-fx-font-family: 'Plus Jakarta Sans';" +
-            "-fx-background-color: #F5F7FC;"
+            "-fx-font-family: 'Plus Jakarta Sans';"
+            + "-fx-background-color: #F3F6FD;"
         );
 
         Label heading = new Label("Performance Risk Details");
         heading.setStyle(
-            "-fx-font-size: 24px;" +
-            "-fx-font-weight: bold;" +
-            "-fx-text-fill: #10264A;"
+            "-fx-font-size: 24px;"
+            + "-fx-font-weight: 700;"
+            + "-fx-text-fill: #0F172A;"
         );
 
         Label subtitle = new Label(
             "Level 3 employee performance risk review."
         );
         subtitle.setStyle(
-            "-fx-font-size: 13px;" +
-            "-fx-text-fill: #7187AC;"
+            "-fx-font-size: 13px;"
+            + "-fx-text-fill: #475569;"
         );
 
         VBox header = new VBox(6, heading, subtitle);
@@ -499,14 +630,24 @@ public class NotificationBell extends StackPane {
 
         pane.setContent(scroll);
 
-        Button close = (Button) pane.lookupButton(ButtonType.CLOSE);
-        close.setText("Close");
+        Button close =
+                (Button) pane.lookupButton(
+                        ButtonType.CLOSE
+                );
+
+        close.setText(
+                "Close"
+        );
+
         close.setStyle(
-            "-fx-background-color: #2563EB;" +
-            "-fx-text-fill: white;" +
-            "-fx-font-weight: bold;" +
-            "-fx-background-radius: 9;" +
-            "-fx-padding: 10 28;"
+                "-fx-background-color: #1E3A8A;"
+                + "-fx-text-fill: #FFFFFF;"
+                + "-fx-font-weight: 700;"
+                + "-fx-background-radius: 9;"
+                + "-fx-border-color: #1E3A8A;"
+                + "-fx-border-radius: 9;"
+                + "-fx-padding: 10 28;"
+                + "-fx-cursor: hand;"
         );
 
         if (escalationId == null) {
@@ -740,9 +881,9 @@ public class NotificationBell extends StackPane {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         titleLabel.setStyle(
-            "-fx-font-size: 12px;" +
-            "-fx-text-fill: #64748B;"
-        );
+            "-fx-font-size: 12px;"
+            + "-fx-text-fill: #475569;"
+        );;
 
         Label valueLabel = new Label(
             value == null || value.isBlank() ? "-" : value
@@ -752,9 +893,9 @@ public class NotificationBell extends StackPane {
         valueLabel.setMaxWidth(Double.MAX_VALUE);
 
         valueLabel.setStyle(
-            "-fx-font-size: 13px;" +
-            "-fx-font-weight: bold;" +
-            "-fx-text-fill: #10264A;"
+            "-fx-font-size: 13px;"
+            + "-fx-font-weight: 700;"
+            + "-fx-text-fill: #0F172A;"
         );
 
         VBox card = new VBox(7, titleLabel, valueLabel);
@@ -765,10 +906,10 @@ public class NotificationBell extends StackPane {
         card.setMaxWidth(Double.MAX_VALUE);
 
         card.setStyle(
-            "-fx-background-color: #F5F8FD;" +
-            "-fx-background-radius: 10;" +
-            "-fx-border-color: #E4ECF7;" +
-            "-fx-border-radius: 10;"
+            "-fx-background-color: #F8FAFC;"
+            + "-fx-background-radius: 10;"
+            + "-fx-border-color: #CBD5E1;"
+            + "-fx-border-radius: 10;"
         );
 
         return card;
@@ -777,11 +918,10 @@ public class NotificationBell extends StackPane {
     private VBox riskSection(String title, javafx.scene.Node... fields) {
 
         Label heading = new Label(title);
-
         heading.setStyle(
-            "-fx-font-size: 15px;" +
-            "-fx-font-weight: bold;" +
-            "-fx-text-fill: #10264A;"
+            "-fx-font-size: 15px;"
+            + "-fx-font-weight: 700;"
+            + "-fx-text-fill: #0F172A;"
         );
 
         VBox body = new VBox(12, fields);
@@ -791,10 +931,10 @@ public class NotificationBell extends StackPane {
         section.setPadding(new Insets(18));
 
         section.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 12;" +
-            "-fx-border-color: #DDE7F5;" +
-            "-fx-border-radius: 12;"
+            "-fx-background-color: #FFFFFF;"
+            + "-fx-background-radius: 12;"
+            + "-fx-border-color: #CBD5E1;"
+            + "-fx-border-radius: 12;"
         );
 
         return section;

@@ -33,6 +33,39 @@ public final class TaskDetailsDialog {
     private static final String MUTED = "#7184A4";
     private static final String BLUE = "#2563EB";
 
+    private static String roleAccent() {
+
+        User user =
+                SessionManager.getCurrentUser();
+
+        if (
+                user != null
+                        && user.getRoleId() == 2
+        ) {
+
+            return "#0D9488";
+        }
+
+        return "#2563EB";
+    }
+
+
+    private static String roleSoft() {
+
+        User user =
+                SessionManager.getCurrentUser();
+
+        if (
+                user != null
+                        && user.getRoleId() == 2
+        ) {
+
+            return "#DFF7F2";
+        }
+
+        return "#E9F1FF";
+    }
+
     private TaskDetailsDialog() {
     }
 
@@ -86,10 +119,25 @@ public final class TaskDetailsDialog {
 
         VBox headerText = new VBox(4, heading, subtitle);
 
-        Label headerIcon = label("▤", 24, BLUE, true);
+        Label headerIcon =
+            label(
+                    "▤",
+                    24,
+                    roleAccent(),
+                    true
+            );
         headerIcon.setAlignment(Pos.CENTER);
         headerIcon.setMinSize(44, 44);
-        headerIcon.setStyle("-fx-background-color: #E9F1FF; -fx-background-radius: 14; -fx-text-fill: " + BLUE + "; -fx-font-size: 24px;");
+        headerIcon.setStyle(
+                "-fx-background-color: "
+                + roleSoft()
+                + ";"
+                + "-fx-background-radius: 14;"
+                + "-fx-text-fill: "
+                + roleAccent()
+                + ";"
+                + "-fx-font-size: 24px;"
+        );
 
         HBox header = new HBox(12, headerIcon, headerText);
         header.setAlignment(Pos.CENTER_LEFT);
@@ -127,8 +175,25 @@ public final class TaskDetailsDialog {
             NavigationManager.navigate(stage, "/fxml/employee/employeeTask.fxml");
         });
 
-        Button close = new Button("Close");
-        close.setStyle("-fx-background-color: white; -fx-text-fill: #334B70; -fx-font-weight: bold; -fx-border-color: #CCD8E9; -fx-border-radius: 9; -fx-background-radius: 9; -fx-padding: 10 22; -fx-cursor: hand;");
+        Button close =
+                new Button(
+                        "Close"
+                );
+
+        close.setStyle(
+                "-fx-background-color: "
+                + rolePrimary()
+                + ";"
+                + "-fx-text-fill: #FFFFFF;"
+                + "-fx-font-weight: 700;"
+                + "-fx-border-color: "
+                + rolePrimary()
+                + ";"
+                + "-fx-border-radius: 9;"
+                + "-fx-background-radius: 9;"
+                + "-fx-padding: 10 22;"
+                + "-fx-cursor: hand;"
+        );
         close.setOnAction(e -> dialog.close());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -307,11 +372,21 @@ public final class TaskDetailsDialog {
         HBox progressHead = new HBox(sectionLabel("TASK PROGRESS"));
         Region grow = new Region();
         HBox.setHgrow(grow, Priority.ALWAYS);
-        progressHead.getChildren().addAll(grow, label(formatPercent(progress), 13, BLUE, true));
+        progressHead.getChildren().addAll(grow, label(
+                formatPercent(progress),
+                13,
+                roleAccent(),
+                true
+        ));
 
         ProgressBar bar = new ProgressBar(progress / 100.0);
         bar.setMaxWidth(Double.MAX_VALUE);
         bar.setPrefHeight(9);
+        bar.setStyle(
+                "-fx-accent: "
+                + roleAccent()
+                + ";"
+        );
         progressBox.getChildren().addAll(progressHead, bar);
         card.getChildren().add(progressBox);
 
@@ -1093,6 +1168,23 @@ public final class TaskDetailsDialog {
         if (owner != null) alert.initOwner(owner);
         alert.setHeaderText(null);
         alert.showAndWait();
+    }
+
+    private static String rolePrimary() {
+
+        User user =
+                SessionManager.getCurrentUser();
+
+        if (
+                user != null
+                        && user.getRoleId() == 2
+        ) {
+            // Manager
+            return "#0F766E";
+        }
+
+        // Admin / default
+        return "#1E3A8A";
     }
 
 }
