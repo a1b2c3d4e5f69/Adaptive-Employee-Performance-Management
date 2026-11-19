@@ -36,6 +36,7 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 import com.aepm.ui.common.AnnouncementDetailsDialog;
 import com.aepm.ui.manager.ManagerProgressVerificationDialog;
+import com.aepm.ui.employee.EmployeeProgressVerificationResultDialog;
 
 public class NotificationBell extends StackPane {
     private static final ZoneId MALAYSIA = ZoneId.of("Asia/Kuala_Lumpur");
@@ -252,35 +253,153 @@ public class NotificationBell extends StackPane {
     public void refresh() {
 
         String accessToken = token();
-
         String recipientId = userId();
-        if (accessToken == null || accessToken.isBlank() || recipientId == null || loading) return;
+
+        if (
+                accessToken == null
+                        || accessToken.isBlank()
+                        || recipientId == null
+                        || loading
+        ) {
+            return;
+        }
+
         loading = true;
 
         Task<JSONArray> task = new Task<>() {
-            @Override protected JSONArray call() throws Exception {
-                return repository.findByRecipient(accessToken, recipientId);
+
+            @Override
+            protected JSONArray call() throws Exception {
+
+                return loadNotificationsWithAutoRefresh(
+                        recipientId
+                );
             }
         };
 
         task.setOnSucceeded(e -> {
+
             loading = false;
 
-            if (getScene() != null && recipientId.equals(userId())) {
-                updateNotifications(task.getValue());
+            if (
+                    getScene() != null
+                            && recipientId.equals(userId())
+            ) {
+
+                updateNotifications(
+                        task.getValue()
+                );
             }
         });
 
         task.setOnFailed(e -> {
-            loading = false;
-            System.err.println("[Notification] Failed to load: " + task.getException().getMessage());
 
-            if (popup.isShowing()) notificationList.getChildren().setAll(messageLabel("Unable to load notifications."));
+            loading = false;
+
+            Throwable error =
+                    task.getException();
+
+            String message =
+                    error == null
+                            ? "Unknown error"
+                            : (
+                            error.getMessage() == null
+                                    || error.getMessage().isBlank()
+                                    ? error.toString()
+                                    : error.getMessage()
+                    );
+
+            System.err.println(
+                    "[Notification] Failed to load: "
+                            + message
+            );
+
+            if (
+                    SessionManager.isAuthenticationExpired(
+                            error
+                    )
+            ) {
+
+                autoRefresh.stop();
+
+                if (popup.isShowing()) {
+
+                    notificationList
+                            .getChildren()
+                            .setAll(
+                                    messageLabel(
+                                            "Your session has expired. Please login again."
+                                    )
+                            );
+                }
+
+                return;
+            }
+
+            if (popup.isShowing()) {
+
+                notificationList
+                        .getChildren()
+                        .setAll(
+                                messageLabel(
+                                        "Unable to load notifications."
+                                )
+                        );
+            }
         });
 
-        Thread thread = new Thread(task, "notification-refresh");
+        Thread thread =
+                new Thread(
+                        task,
+                        "notification-refresh"
+                );
+
         thread.setDaemon(true);
         thread.start();
+    }
+
+
+    // =========================================================
+    // LOAD NOTIFICATIONS WITH AUTOMATIC JWT REFRESH
+    // =========================================================
+
+    private JSONArray loadNotificationsWithAutoRefresh(
+            String recipientId
+    ) throws Exception {
+
+        String accessToken =
+                SessionManager.getAccessToken();
+
+        try {
+
+            return repository.findByRecipient(
+                    accessToken,
+                    recipientId
+            );
+
+        } catch (Exception firstError) {
+
+            if (
+                    !SessionManager.isAuthenticationExpired(
+                            firstError
+                    )
+            ) {
+
+                throw firstError;
+            }
+
+            System.out.println(
+                    "[Notification] JWT expired. Refreshing session..."
+            );
+
+            String newAccessToken =
+                    SessionManager.refreshAccessToken();
+
+            return repository.findByRecipient(
+                    newAccessToken,
+                    recipientId
+            );
+        }
     }
 
     private void updateNotifications(JSONArray array) {
@@ -498,6 +617,72 @@ public class NotificationBell extends StackPane {
                             submissionId
                     );
 
+
+                    return;
+                }
+
+                // =====================================================
+                // EMPLOYEE PROGRESS VERIFICATION RESULT NOTIFICATIONS
+                // =====================================================
+
+                boolean isProgressResultNotification =
+                        "PROGRESS_REVISION_REQUIRED".equalsIgnoreCase(notificationType)
+                        || "PROGRESS_REJECTED".equalsIgnoreCase(notificationType)
+                        || "PROGRESS_APPROVED".equalsIgnoreCase(notificationType)
+                        || "PROGRESS_SYSTEM_APPROVED".equalsIgnoreCase(notificationType);
+
+                if (isProgressResultNotification) {
+
+                    boolean isEmployee =
+                            SessionManager.getCurrentUser() != null
+                                    && SessionManager
+                                    .getCurrentUser()
+                                    .getRoleId() == 3;
+
+                    if (!isEmployee) {
+
+                        AEPMDialog.showError(
+                                getScene() == null
+                                        ? null
+                                        : getScene().getWindow(),
+
+                                "Access Denied",
+
+                                "This progress verification result belongs to an employee account."
+                        );
+
+                        return;
+                    }
+
+                    String submissionId =
+                            data.optString(
+                                    "related_progress_submission_id",
+                                    ""
+                            );
+
+                    if (submissionId.isBlank()) {
+
+                        AEPMDialog.showError(
+                                getScene() == null
+                                        ? null
+                                        : getScene().getWindow(),
+
+                                "Unable to Open",
+
+                                "The progress submission reference is missing."
+                        );
+
+                        return;
+                    }
+
+                    EmployeeProgressVerificationResultDialog.show(
+
+                            getScene() == null
+                                    ? null
+                                    : getScene().getWindow(),
+
+                            submissionId
+                    );
 
                     return;
                 }

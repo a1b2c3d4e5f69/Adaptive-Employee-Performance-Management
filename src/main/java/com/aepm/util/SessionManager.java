@@ -1,6 +1,6 @@
-
 package com.aepm.util;
 
+import com.aepm.data.repository.AuthRepository;
 import com.aepm.logic.deadline.DeadlineEscalationScheduler;
 import com.aepm.model.AuthSession;
 import com.aepm.model.User;
@@ -17,9 +17,7 @@ public final class SessionManager {
             AuthSession session,
             User user
     ) {
-        // Stop any scheduler belonging to a previous session.
         DeadlineEscalationScheduler.getInstance().stop();
-
         authSession = session;
         currentUser = user;
     }
@@ -34,12 +32,87 @@ public final class SessionManager {
 
     public static String getAccessToken() {
         AuthSession session = authSession;
+        return session == null ? null : session.getAccessToken();
+    }
 
-        if (session == null) {
-            return null;
+    public static String getRefreshToken() {
+        AuthSession session = authSession;
+        return session == null ? null : session.getRefreshToken();
+    }
+
+    public static synchronized String refreshAccessToken()
+            throws Exception {
+
+        AuthSession oldSession = authSession;
+
+        if (oldSession == null) {
+            throw new IllegalStateException(
+                    "No active login session."
+            );
         }
 
-        return session.getAccessToken();
+        String refreshToken = oldSession.getRefreshToken();
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new IllegalStateException(
+                    "Refresh token is unavailable. Please login again."
+            );
+        }
+
+        AuthSession refreshed =
+                new AuthRepository().refreshSession(refreshToken);
+
+        String userId = refreshed.getUserId();
+        if (userId == null || userId.isBlank()) {
+            userId = oldSession.getUserId();
+        }
+
+        String email = refreshed.getEmail();
+        if (email == null || email.isBlank()) {
+            email = oldSession.getEmail();
+        }
+
+        String newRefreshToken = refreshed.getRefreshToken();
+        if (newRefreshToken == null || newRefreshToken.isBlank()) {
+            newRefreshToken = oldSession.getRefreshToken();
+        }
+
+        authSession = new AuthSession(
+                refreshed.getAccessToken(),
+                newRefreshToken,
+                userId,
+                email
+        );
+
+        System.out.println(
+                "[Session] Access token refreshed successfully."
+        );
+
+        return authSession.getAccessToken();
+    }
+
+    public static boolean isAuthenticationExpired(
+            Throwable error
+    ) {
+        Throwable current = error;
+
+        while (current != null) {
+            String message = current.getMessage();
+
+            if (message != null) {
+                String lower = message.toLowerCase();
+
+                if (message.contains("401")
+                        || message.contains("PGRST303")
+                        || lower.contains("jwt expired")) {
+                    return true;
+                }
+            }
+
+            current = current.getCause();
+        }
+
+        return false;
     }
 
     public static boolean isLoggedIn() {
@@ -48,9 +121,7 @@ public final class SessionManager {
     }
 
     public static synchronized void clearSession() {
-        // Stop automatic escalation when logging out.
         DeadlineEscalationScheduler.getInstance().stop();
-
         authSession = null;
         currentUser = null;
     }

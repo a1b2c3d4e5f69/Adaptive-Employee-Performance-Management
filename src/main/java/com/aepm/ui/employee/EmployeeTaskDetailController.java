@@ -191,6 +191,13 @@ public class EmployeeTaskDetailController {
 
     private File selectedEvidenceFile;
 
+    private EmployeeProgressSubmissionService.RevisionSubmission
+            revisionSubmission;
+
+    private VBox revisionNoticeBox;
+
+    private Label revisionInstructionLabel;
+
 
     private static final ZoneId MALAYSIA_ZONE =
             ZoneId.of(
@@ -259,6 +266,9 @@ public class EmployeeTaskDetailController {
         // =====================================================
 
         loadTaskAttachment();
+
+        // Check whether this task has a manager-requested revision.
+        loadRevisionRequiredSubmission();
     }
 
 
@@ -800,6 +810,245 @@ public class EmployeeTaskDetailController {
     }
 
 
+
+    // =========================================================
+    // LOAD REVISION REQUIRED SUBMISSION
+    // =========================================================
+
+    private void loadRevisionRequiredSubmission() {
+
+        revisionSubmission =
+                null;
+
+        if (
+                task == null
+                        || task.getTaskId() == null
+        ) {
+            return;
+        }
+
+        javafx.concurrent.Task<
+                EmployeeProgressSubmissionService.RevisionSubmission
+                > backgroundTask =
+                new javafx.concurrent.Task<>() {
+
+                    @Override
+                    protected EmployeeProgressSubmissionService
+                            .RevisionSubmission call()
+                            throws Exception {
+
+                        return progressSubmissionService
+                                .getRevisionRequiredSubmission(
+                                        task.getTaskId()
+                                );
+                    }
+                };
+
+        backgroundTask.setOnSucceeded(
+                event -> {
+
+                    revisionSubmission =
+                            backgroundTask.getValue();
+
+                    if (revisionSubmission == null) {
+
+                        hideRevisionNotice();
+
+                        updateProgressButton.setText(
+                                "Submit for Verification"
+                        );
+
+                        return;
+                    }
+
+                    progressField.setText(
+                            String.valueOf(
+                                    revisionSubmission
+                                            .getProposedProgress()
+                            )
+                    );
+
+                    progressNoteArea.setText(
+                            revisionSubmission
+                                    .getProgressNote()
+                    );
+
+                    updateProgressButton.setText(
+                            "Resubmit for Verification"
+                    );
+
+                    String instruction =
+                            revisionSubmission
+                                    .getManagerInstruction();
+
+                    showRevisionNotice(
+                            instruction
+                    );
+
+                    updateButtonState();
+                }
+        );
+
+        backgroundTask.setOnFailed(
+                event -> {
+
+                    Throwable error =
+                            backgroundTask
+                                    .getException();
+
+                    if (error != null) {
+
+                        System.err.println(
+                                "[Progress Revision] Unable to load revision: "
+                                        + error.getMessage()
+                        );
+                    }
+                }
+        );
+
+        Thread thread =
+                new Thread(
+                        backgroundTask,
+                        "progress-revision-load"
+                );
+
+        thread.setDaemon(
+                true
+        );
+
+        thread.start();
+    }
+
+
+
+    // =========================================================
+    // REVISION REQUIRED NOTICE
+    // =========================================================
+
+    private void showRevisionNotice(
+            String managerInstruction
+    ) {
+
+        if (progressUpdateSection == null) {
+            return;
+        }
+
+        if (revisionNoticeBox == null) {
+
+            Label title =
+                    new Label(
+                            "Revision Required"
+                    );
+
+            title.setStyle(
+                    "-fx-font-size: 14px;"
+                            + "-fx-font-weight: 800;"
+                            + "-fx-text-fill: #9A3412;"
+            );
+
+            revisionInstructionLabel =
+                    new Label();
+
+            revisionInstructionLabel.setWrapText(
+                    true
+            );
+
+            revisionInstructionLabel.setMaxWidth(
+                    Double.MAX_VALUE
+            );
+
+            revisionInstructionLabel.setStyle(
+                    "-fx-font-size: 12px;"
+                            + "-fx-text-fill: #7C2D12;"
+            );
+
+            revisionNoticeBox =
+                    new VBox(
+                            6,
+                            title,
+                            revisionInstructionLabel
+                    );
+
+            revisionNoticeBox.setPadding(
+                    new javafx.geometry.Insets(
+                            14
+                    )
+            );
+
+            revisionNoticeBox.setMaxWidth(
+                    Double.MAX_VALUE
+            );
+
+            revisionNoticeBox.setStyle(
+                    "-fx-background-color: #FFF7ED;"
+                            + "-fx-background-radius: 10;"
+                            + "-fx-border-color: #FDBA74;"
+                            + "-fx-border-radius: 10;"
+                            + "-fx-border-width: 1;"
+            );
+        }
+
+        String instruction =
+                managerInstruction == null
+                        || managerInstruction.isBlank()
+                        ? "Your manager requested changes to this progress submission. "
+                            + "Please update the progress note or upload clearer supporting evidence."
+                        : "Manager Instruction: "
+                            + managerInstruction.trim();
+
+        revisionInstructionLabel.setText(
+                instruction
+        );
+
+        if (
+                !progressUpdateSection
+                        .getChildren()
+                        .contains(
+                                revisionNoticeBox
+                        )
+        ) {
+
+            int insertIndex =
+                    Math.min(
+                            1,
+                            progressUpdateSection
+                                    .getChildren()
+                                    .size()
+                    );
+
+            progressUpdateSection
+                    .getChildren()
+                    .add(
+                            insertIndex,
+                            revisionNoticeBox
+                    );
+        }
+
+        revisionNoticeBox.setVisible(
+                true
+        );
+
+        revisionNoticeBox.setManaged(
+                true
+        );
+    }
+
+
+    private void hideRevisionNotice() {
+
+        if (revisionNoticeBox != null) {
+
+            revisionNoticeBox.setVisible(
+                    false
+            );
+
+            revisionNoticeBox.setManaged(
+                    false
+            );
+        }
+    }
+
+
     // =========================================================
     // BUTTON STATE
     // =========================================================
@@ -1281,7 +1530,9 @@ public class EmployeeTaskDetailController {
         );
 
         updateProgressButton.setText(
-                "Submitting..."
+                revisionSubmission == null
+                        ? "Submitting..."
+                        : "Resubmitting..."
         );
 
         uploadEvidenceButton.setDisable(
@@ -1309,6 +1560,9 @@ public class EmployeeTaskDetailController {
         final File evidenceSnapshot =
                 selectedEvidenceFile;
 
+        final boolean revisionMode =
+                revisionSubmission != null;
+
 
         // =====================================================
         // BACKGROUND SUBMISSION
@@ -1324,6 +1578,24 @@ public class EmployeeTaskDetailController {
                         protected EmployeeProgressSubmissionService
                                 .SubmissionResult call()
                                 throws Exception {
+
+                        if (revisionSubmission != null) {
+
+                                return progressSubmissionService
+                                        .resubmitRevision(
+
+                                                revisionSubmission
+                                                        .getSubmissionId(),
+
+                                                task.getTaskId(),
+
+                                                proposedProgress,
+
+                                                note,
+
+                                                evidenceSnapshot
+                                        );
+                        }
 
                         return progressSubmissionService
                                 .submitProgress(
@@ -1354,6 +1626,11 @@ public class EmployeeTaskDetailController {
                         updateProgressButton.setText(
                                 "Submit for Verification"
                         );
+
+                        revisionSubmission =
+                                null;
+
+                        hideRevisionNotice();
 
 
                         progressField.setText(
@@ -1400,25 +1677,29 @@ public class EmployeeTaskDetailController {
 
 
                         successAlert.setTitle(
-                                "Progress Submitted"
+                                revisionMode
+                                        ? "Revision Resubmitted"
+                                        : "Progress Submitted"
                         );
 
 
                         successAlert.setHeaderText(
-                                "Progress submitted for verification"
+                                revisionMode
+                                        ? "Revised progress resubmitted for verification"
+                                        : "Progress submitted for verification"
                         );
 
 
                         successAlert.setContentText(
                                 "Requested Progress: "
                                         + result.getRequestedProgress()
-                                        + "%"
+                                        + "%\n"
                                         + "Actual Verified Progress: "
                                         + result.getCurrentProgress()
-                                        + "%"
+                                        + "%\n\n"
                                         + "Status: "
                                         + result.getStatus()
-                                        + ""
+                                        + "\n"
                                         + "Manager Review Deadline: "
                                         + deadline
                         );
@@ -1473,7 +1754,9 @@ public class EmployeeTaskDetailController {
 
 
                 updateProgressButton.setText(
-                        "Submit for Verification"
+                        revisionSubmission == null
+                                ? "Submit for Verification"
+                                : "Resubmit for Verification"
                 );
 
 

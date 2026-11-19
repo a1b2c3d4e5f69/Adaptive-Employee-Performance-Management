@@ -201,119 +201,69 @@ public class ProgressVerificationRepository {
             String accessToken
     ) throws Exception {
 
-        JSONObject submission =
-                requireSubmission(
-                        submissionId,
-                        accessToken
-                );
+        if (submissionId == null) {
+            throw new IllegalArgumentException(
+                    "Submission ID is required."
+            );
+        }
 
-
-        validatePendingSubmission(
-                submission
-        );
-
-
-        UUID taskId =
-                UUID.fromString(
-                        submission.getString(
-                                "task_id"
-                        )
-                );
-
-
-        UUID employeeId =
-                UUID.fromString(
-                        submission.getString(
-                                "employee_id"
-                        )
-                );
-
-
-        int proposedProgress =
-                submission.getInt(
-                        "proposed_progress"
-                );
-
-
-        String progressNote =
-                submission.optString(
-                        "progress_note",
-                        null
-                );
-
-
-        // -----------------------------------------------------
-        // Update actual task progress
-        // -----------------------------------------------------
-
-        updateTaskProgress(
-                taskId,
-                proposedProgress,
-                accessToken
-        );
-
-
-        // -----------------------------------------------------
-        // Save approved progress history
-        // -----------------------------------------------------
-
-        saveProgressHistory(
-                taskId,
-                employeeId,
-                proposedProgress,
-                progressNote,
-                accessToken
-        );
-
-
-        // -----------------------------------------------------
-        // Mark submission as approved
-        // -----------------------------------------------------
+        if (managerId == null) {
+            throw new IllegalArgumentException(
+                    "Manager ID is required."
+            );
+        }
 
         JSONObject body =
                 new JSONObject();
 
-
         body.put(
-                "status",
-                "Approved"
+                "p_submission_id",
+                submissionId.toString()
         );
 
-
         body.put(
-                "verification_method",
-                "Manager"
-        );
-
-
-        body.put(
-                "reviewed_by",
-                managerId == null
-                        ? JSONObject.NULL
-                        : managerId.toString()
-        );
-
-
-        body.put(
-                "review_comment",
+                "p_review_comment",
                 emptyToNull(
                         reviewComment
                 )
         );
 
+        String url =
+                AppConfig.REST_URL
+                        + "/rpc/aepm_manager_approve_progress_submission";
 
-        body.put(
-                "reviewed_at",
-                OffsetDateTime
-                        .now()
-                        .toString()
+        HttpRequest request =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                url,
+                                accessToken
+                        )
+                        .header(
+                                "Content-Type",
+                                "application/json"
+                        )
+                        .POST(
+                                HttpRequest
+                                        .BodyPublishers
+                                        .ofString(
+                                                body.toString()
+                                        )
+                        )
+                        .build();
+
+        HttpResponse<String> response =
+                send(
+                        request
+                );
+
+        validate(
+                response,
+                "Unable to approve progress verification submission"
         );
 
-
-        updateSubmission(
-                submissionId,
-                body,
-                accessToken
+        System.out.println(
+                "[Progress Verification] Manager approval completed atomically for submission: "
+                        + submissionId
         );
     }
 
@@ -364,7 +314,7 @@ public class ProgressVerificationRepository {
 
         body.put(
                 "verification_method",
-                "Manager"
+                "MANAGER"
         );
 
 
@@ -449,7 +399,7 @@ public class ProgressVerificationRepository {
 
         body.put(
                 "verification_method",
-                "Manager"
+                "MANAGER"
         );
 
 
@@ -608,7 +558,7 @@ public class ProgressVerificationRepository {
 
         body.put(
                 "verification_method",
-                "System"
+                "SYSTEM"
         );
 
 
@@ -694,7 +644,7 @@ public class ProgressVerificationRepository {
 
         body.put(
                 "verification_method",
-                "System"
+                "SYSTEM"
         );
 
 

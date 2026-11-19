@@ -16,6 +16,7 @@ import javafx.geometry.Pos;
 
 import javafx.scene.control.*;
 
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -39,6 +40,7 @@ import java.util.UUID;
 
 
 public final class ManagerProgressVerificationDialog {
+
 
     private static final String EVIDENCE_BUCKET =
             "task-progress-evidence";
@@ -279,17 +281,18 @@ public final class ManagerProgressVerificationDialog {
 
 
         pane.setPrefWidth(
-                760
+                900
         );
 
 
         pane.setPrefHeight(
-                690
+                820
         );
 
 
         pane.setStyle(
-                "-fx-background-color: #F6F8FC;"
+                "-fx-background-color: #F4F8F7;"
+                        + "-fx-font-family: 'Plus Jakarta Sans';"
         );
 
 
@@ -307,9 +310,57 @@ public final class ManagerProgressVerificationDialog {
                 );
 
 
+        Button defaultClose =
+                (Button) pane.lookupButton(
+                        closeType
+                );
+
+
+        defaultClose.setVisible(
+                false
+        );
+
+
+        defaultClose.setManaged(
+                false
+        );
+
+
         // =====================================================
         // HEADER
         // =====================================================
+
+        Label icon =
+                new Label(
+                        "▤"
+                );
+
+
+        icon.setAlignment(
+                Pos.CENTER
+        );
+
+
+        icon.setMinSize(
+                54,
+                54
+        );
+
+
+        icon.setMaxSize(
+                54,
+                54
+        );
+
+
+        icon.setStyle(
+                "-fx-background-color: #DFF7F2;"
+                        + "-fx-background-radius: 15;"
+                        + "-fx-text-fill: #0D9488;"
+                        + "-fx-font-size: 22px;"
+                        + "-fx-font-weight: bold;"
+        );
+
 
         Label heading =
                 new Label(
@@ -318,9 +369,9 @@ public final class ManagerProgressVerificationDialog {
 
 
         heading.setStyle(
-                "-fx-font-size: 23px;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-text-fill: #0F2345;"
+                "-fx-font-size: 26px;"
+                        + "-fx-font-weight: 800;"
+                        + "-fx-text-fill: #10264A;"
         );
 
 
@@ -337,11 +388,11 @@ public final class ManagerProgressVerificationDialog {
 
         subtitle.setStyle(
                 "-fx-font-size: 12px;"
-                        + "-fx-text-fill: #64748B;"
+                        + "-fx-text-fill: #7184A4;"
         );
 
 
-        VBox header =
+        VBox headingText =
                 new VBox(
                         5,
                         heading,
@@ -349,121 +400,113 @@ public final class ManagerProgressVerificationDialog {
                 );
 
 
-        // =====================================================
-        // BASIC INFO
-        // =====================================================
-
-        VBox employeeBox =
-                field(
-                        "Employee",
-                        item.getEmployeeName()
+        HBox header =
+                new HBox(
+                        16,
+                        icon,
+                        headingText
                 );
 
 
-        VBox taskBox =
-                field(
-                        "Task",
+        header.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+
+        header.setPadding(
+                new Insets(
+                        18,
+                        22,
+                        12,
+                        22
+                )
+        );
+
+
+        // =====================================================
+        // TASK TITLE + BADGES
+        // =====================================================
+
+        Label taskTitle =
+                new Label(
                         item.getTaskTitle()
                 );
 
 
-        HBox basicRow =
-                new HBox(
-                        12,
-                        employeeBox,
-                        taskBox
+        taskTitle.setWrapText(
+                true
+        );
+
+
+        taskTitle.setStyle(
+                "-fx-font-size: 22px;"
+                        + "-fx-font-weight: 800;"
+                        + "-fx-text-fill: #10264A;"
+        );
+
+
+        Label statusBadge =
+                badge(
+                        "PENDING REVIEW",
+                        "#E7F7ED",
+                        "#16834A"
                 );
 
 
-        HBox.setHgrow(
-                employeeBox,
-                Priority.ALWAYS
-        );
-
-
-        HBox.setHgrow(
-                taskBox,
-                Priority.ALWAYS
-        );
-
-
-        employeeBox.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-
-        taskBox.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-
-        // =====================================================
-        // PROGRESS
-        // =====================================================
-
-        VBox current =
-                progressField(
-                        "Actual Verified Progress",
+        Label currentBadge =
+                badge(
                         item.getCurrentProgress()
+                                + "% CURRENT",
+                        "#E8F0FF",
+                        "#2563EB"
                 );
 
 
-        VBox requested =
-                progressField(
-                        "Requested Progress",
+        Label requestedBadge =
+                badge(
                         item.getRequestedProgress()
+                                + "% REQUESTED",
+                        "#FFF2DC",
+                        "#A75A08"
                 );
 
 
-        HBox progressRow =
+        HBox badges =
                 new HBox(
+                        10,
+                        statusBadge,
+                        currentBadge,
+                        requestedBadge
+                );
+
+
+        VBox taskHeader =
+                new VBox(
                         12,
-                        current,
-                        requested
-                );
-
-
-        HBox.setHgrow(
-                current,
-                Priority.ALWAYS
-        );
-
-
-        HBox.setHgrow(
-                requested,
-                Priority.ALWAYS
-        );
-
-
-        current.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-
-        requested.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-
-        // =====================================================
-        // NOTE
-        // =====================================================
-
-        VBox noteBox =
-                field(
-                        "Progress Note",
-                        empty(
-                                item.getProgressNote()
-                        )
+                        taskTitle,
+                        badges
                 );
 
 
         // =====================================================
-        // DATE
+        // EMPLOYEE / SUBMISSION INFO
         // =====================================================
 
-        VBox submitted =
-                field(
+        Label employeeSectionTitle =
+                sectionTitle(
+                        "EMPLOYEE & SUBMISSION"
+                );
+
+
+        VBox employeeBox =
+                infoCard(
+                        "Employee Name",
+                        item.getEmployeeName()
+                );
+
+
+        VBox submittedBox =
+                infoCard(
                         "Submitted",
                         date(
                                 item.getSubmittedAt()
@@ -471,8 +514,49 @@ public final class ManagerProgressVerificationDialog {
                 );
 
 
-        VBox deadline =
-                field(
+        HBox employeeRow =
+                infoRow(
+                        employeeBox,
+                        submittedBox
+                );
+
+
+        VBox employeeSection =
+                new VBox(
+                        10,
+                        employeeSectionTitle,
+                        employeeRow
+                );
+
+
+        // =====================================================
+        // PROGRESS VERIFICATION PANEL
+        // =====================================================
+
+        Label verificationTitle =
+                sectionTitle(
+                        "PROGRESS VERIFICATION"
+                );
+
+
+        VBox currentBox =
+                infoCard(
+                        "Actual Verified Progress",
+                        item.getCurrentProgress()
+                                + "%"
+                );
+
+
+        VBox requestedBox =
+                infoCard(
+                        "Requested Progress",
+                        item.getRequestedProgress()
+                                + "%"
+                );
+
+
+        VBox deadlineBox =
+                infoCard(
                         "Review Deadline",
                         date(
                                 item.getReviewDeadline()
@@ -480,33 +564,163 @@ public final class ManagerProgressVerificationDialog {
                 );
 
 
-        HBox dates =
-                new HBox(
-                        12,
-                        submitted,
-                        deadline
+        VBox statusBox =
+                infoCard(
+                        "Verification Status",
+                        "Pending Manager Review"
                 );
 
 
-        HBox.setHgrow(
-                submitted,
-                Priority.ALWAYS
+        GridPane progressGrid =
+                new GridPane();
+
+
+        progressGrid.setHgap(
+                14
         );
 
 
-        HBox.setHgrow(
-                deadline,
-                Priority.ALWAYS
+        progressGrid.setVgap(
+                12
         );
 
 
-        submitted.setMaxWidth(
+        progressGrid.add(
+                currentBox,
+                0,
+                0
+        );
+
+
+        progressGrid.add(
+                requestedBox,
+                1,
+                0
+        );
+
+
+        progressGrid.add(
+                deadlineBox,
+                0,
+                1
+        );
+
+
+        progressGrid.add(
+                statusBox,
+                1,
+                1
+        );
+
+
+        javafx.scene.layout.ColumnConstraints column1 =
+                new javafx.scene.layout.ColumnConstraints();
+
+
+        column1.setPercentWidth(
+                50
+        );
+
+
+        javafx.scene.layout.ColumnConstraints column2 =
+                new javafx.scene.layout.ColumnConstraints();
+
+
+        column2.setPercentWidth(
+                50
+        );
+
+
+        progressGrid
+                .getColumnConstraints()
+                .addAll(
+                        column1,
+                        column2
+                );
+
+
+        Label noteLabel =
+                new Label(
+                        "PROGRESS NOTE"
+                );
+
+
+        noteLabel.setStyle(
+                "-fx-font-size: 11px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-text-fill: #7184A4;"
+        );
+
+
+        Label note =
+                new Label(
+                        empty(
+                                item.getProgressNote()
+                        )
+                );
+
+
+        note.setWrapText(
+                true
+        );
+
+
+        note.setMaxWidth(
                 Double.MAX_VALUE
         );
 
 
-        deadline.setMaxWidth(
-                Double.MAX_VALUE
+        note.setStyle(
+                "-fx-font-size: 13px;"
+                        + "-fx-font-weight: 600;"
+                        + "-fx-text-fill: #334B70;"
+        );
+
+
+        VBox noteBox =
+                new VBox(
+                        7,
+                        noteLabel,
+                        note
+                );
+
+
+        noteBox.setPadding(
+                new Insets(
+                        14
+                )
+        );
+
+
+        noteBox.setStyle(
+                "-fx-background-color: #FFFFFF;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-color: #DCE7E4;"
+                        + "-fx-border-radius: 10;"
+        );
+
+
+        VBox verificationPanel =
+                new VBox(
+                        12,
+                        verificationTitle,
+                        progressGrid,
+                        noteBox
+                );
+
+
+        verificationPanel.setPadding(
+                new Insets(
+                        18
+                )
+        );
+
+
+        verificationPanel.setStyle(
+                "-fx-background-color: #EAF6F4;"
+                        + "-fx-background-radius: 12;"
+                        + "-fx-border-color: #C9E7E1;"
+                        + "-fx-border-radius: 12;"
         );
 
 
@@ -514,29 +728,15 @@ public final class ManagerProgressVerificationDialog {
         // EVIDENCE
         // =====================================================
 
-        VBox evidence =
+        Label evidenceTitle =
+                sectionTitle(
+                        "SUPPORTING EVIDENCE"
+                );
+
+
+        VBox evidenceList =
                 new VBox(
                         8
-                );
-
-
-        Label evidenceTitle =
-                new Label(
-                        "Supporting Evidence"
-                );
-
-
-        evidenceTitle.setStyle(
-                "-fx-font-size: 12px;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-text-fill: #334155;"
-        );
-
-
-        evidence
-                .getChildren()
-                .add(
-                        evidenceTitle
                 );
 
 
@@ -555,10 +755,11 @@ public final class ManagerProgressVerificationDialog {
 
             noEvidence.setStyle(
                     "-fx-text-fill: #DC2626;"
+                            + "-fx-font-size: 12px;"
             );
 
 
-            evidence
+            evidenceList
                     .getChildren()
                     .add(
                             noEvidence
@@ -571,7 +772,7 @@ public final class ManagerProgressVerificationDialog {
                     : item.getEvidence()
             ) {
 
-                evidence
+                evidenceList
                         .getChildren()
                         .add(
                                 evidenceRow(
@@ -583,21 +784,22 @@ public final class ManagerProgressVerificationDialog {
         }
 
 
+        VBox evidenceSection =
+                new VBox(
+                        10,
+                        evidenceTitle,
+                        evidenceList
+                );
+
+
         // =====================================================
         // COMMENT
         // =====================================================
 
         Label commentLabel =
-                new Label(
-                        "Review Comment"
+                sectionTitle(
+                        "MANAGER REVIEW COMMENT"
                 );
-
-
-        commentLabel.setStyle(
-                "-fx-font-size: 12px;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-text-fill: #334155;"
-        );
 
 
         TextArea comment =
@@ -605,12 +807,12 @@ public final class ManagerProgressVerificationDialog {
 
 
         comment.setPromptText(
-                "Enter approval comment, rejection reason or revision instruction..."
+                "Record your approval comment, rejection reason or revision instruction..."
         );
 
 
         comment.setPrefRowCount(
-                3
+                4
         );
 
 
@@ -619,9 +821,20 @@ public final class ManagerProgressVerificationDialog {
         );
 
 
-        VBox commentBox =
+        comment.setStyle(
+                "-fx-background-color: #FFFFFF;"
+                        + "-fx-border-color: #C9DAD6;"
+                        + "-fx-border-radius: 8;"
+                        + "-fx-background-radius: 8;"
+                        + "-fx-font-size: 12px;"
+                        + "-fx-focus-color: transparent;"
+                        + "-fx-faint-focus-color: transparent;"
+        );
+
+
+        VBox commentSection =
                 new VBox(
-                        6,
+                        10,
                         commentLabel,
                         comment
                 );
@@ -632,23 +845,26 @@ public final class ManagerProgressVerificationDialog {
         // =====================================================
 
         Button reject =
-                button(
+                actionButton(
                         "Reject",
-                        "#DC2626"
+                        "#FCE8E8",
+                        "#C2413A"
                 );
 
 
         Button revision =
-                button(
+                actionButton(
                         "Request Revision",
-                        "#D97706"
+                        "#FFF1E6",
+                        "#C76824"
                 );
 
 
         Button approve =
-                button(
+                actionButton(
                         "Approve",
-                        "#16A34A"
+                        "#E7F7ED",
+                        "#16834A"
                 );
 
 
@@ -741,20 +957,9 @@ public final class ManagerProgressVerificationDialog {
         );
 
 
-        Region spacer =
-                new Region();
-
-
-        HBox.setHgrow(
-                spacer,
-                Priority.ALWAYS
-        );
-
-
         HBox actions =
                 new HBox(
                         10,
-                        spacer,
                         reject,
                         revision,
                         approve
@@ -762,38 +967,62 @@ public final class ManagerProgressVerificationDialog {
 
 
         actions.setAlignment(
-                Pos.CENTER_RIGHT
+                Pos.CENTER_LEFT
         );
 
 
         // =====================================================
-        // ROOT
+        // MAIN CARD
         // =====================================================
 
-        VBox content =
+        VBox mainCard =
                 new VBox(
-                        14,
-                        header,
-                        basicRow,
-                        progressRow,
-                        noteBox,
-                        dates,
-                        evidence,
-                        commentBox,
+                        18,
+                        taskHeader,
+                        employeeSection,
+                        verificationPanel,
+                        evidenceSection,
+                        commentSection,
                         actions
                 );
 
 
-        content.setPadding(
+        mainCard.setPadding(
                 new Insets(
                         20
                 )
         );
 
 
+        mainCard.setStyle(
+                "-fx-background-color: #FFFFFF;"
+                        + "-fx-background-radius: 14;"
+                        + "-fx-border-color: #DCE7E4;"
+                        + "-fx-border-radius: 14;"
+        );
+
+
+        VBox body =
+                new VBox(
+                        8,
+                        header,
+                        mainCard
+                );
+
+
+        body.setPadding(
+                new Insets(
+                        10,
+                        16,
+                        16,
+                        16
+                )
+        );
+
+
         ScrollPane scroll =
                 new ScrollPane(
-                        content
+                        body
                 );
 
 
@@ -807,18 +1036,295 @@ public final class ManagerProgressVerificationDialog {
         );
 
 
+        scroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
+        );
+
+
         scroll.setStyle(
-                "-fx-background: transparent;"
-                        + "-fx-background-color: transparent;"
+                "-fx-background: #F4F8F7;"
+                        + "-fx-background-color: #F4F8F7;"
+                        + "-fx-border-color: transparent;"
+        );
+
+
+        // =====================================================
+        // FOOTER
+        // =====================================================
+
+        Button closeButton =
+                new Button(
+                        "Close"
+                );
+
+
+        closeButton.setStyle(
+                "-fx-background-color: #0F766E;"
+                        + "-fx-text-fill: #FFFFFF;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-background-radius: 9;"
+                        + "-fx-padding: 11 30;"
+                        + "-fx-cursor: hand;"
+        );
+
+
+        closeButton.setOnAction(
+                event ->
+                        dialog.close()
+        );
+
+
+        HBox footer =
+                new HBox(
+                        closeButton
+                );
+
+
+        footer.setAlignment(
+                Pos.CENTER_RIGHT
+        );
+
+
+        footer.setPadding(
+                new Insets(
+                        14,
+                        20,
+                        14,
+                        20
+                )
+        );
+
+
+        footer.setStyle(
+                "-fx-background-color: #FFFFFF;"
+                        + "-fx-border-color: #DCE7E4 transparent transparent transparent;"
+                        + "-fx-border-width: 1 0 0 0;"
+        );
+
+
+        VBox layout =
+                new VBox(
+                        scroll,
+                        footer
+                );
+
+
+        VBox.setVgrow(
+                scroll,
+                Priority.ALWAYS
         );
 
 
         pane.setContent(
-                scroll
+                layout
         );
 
 
         dialog.showAndWait();
+    }
+
+
+    // =========================================================
+    // UI HELPERS
+    // =========================================================
+
+    private static Label sectionTitle(
+            String text
+    ) {
+
+        Label label =
+                new Label(
+                        text
+                );
+
+
+        label.setStyle(
+                "-fx-font-size: 11px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-text-fill: #7184A4;"
+        );
+
+
+        return label;
+    }
+
+
+    private static Label badge(
+            String text,
+            String background,
+            String foreground
+    ) {
+
+        Label label =
+                new Label(
+                        text
+                );
+
+
+        label.setStyle(
+                "-fx-background-color: "
+                        + background
+                        + ";"
+                        + "-fx-text-fill: "
+                        + foreground
+                        + ";"
+                        + "-fx-background-radius: 20;"
+                        + "-fx-padding: 6 13;"
+                        + "-fx-font-size: 11px;"
+                        + "-fx-font-weight: 700;"
+        );
+
+
+        return label;
+    }
+
+
+    private static VBox infoCard(
+            String title,
+            String value
+    ) {
+
+        Label titleLabel =
+                new Label(
+                        title
+                );
+
+
+        titleLabel.setStyle(
+                "-fx-font-size: 11px;"
+                        + "-fx-text-fill: #7184A4;"
+        );
+
+
+        Label valueLabel =
+                new Label(
+                        value == null
+                                || value.isBlank()
+                                ? "-"
+                                : value
+                );
+
+
+        valueLabel.setWrapText(
+                true
+        );
+
+
+        valueLabel.setStyle(
+                "-fx-font-size: 13px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-text-fill: #10264A;"
+        );
+
+
+        VBox box =
+                new VBox(
+                        7,
+                        titleLabel,
+                        valueLabel
+                );
+
+
+        box.setPadding(
+                new Insets(
+                        13
+                )
+        );
+
+
+        box.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+
+        box.setStyle(
+                "-fx-background-color: #F8FAFD;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-color: #E3EAF4;"
+                        + "-fx-border-radius: 10;"
+        );
+
+
+        return box;
+    }
+
+
+    private static HBox infoRow(
+            VBox left,
+            VBox right
+    ) {
+
+        HBox row =
+                new HBox(
+                        14,
+                        left,
+                        right
+                );
+
+
+        left.setMinWidth(
+                0
+        );
+
+
+        right.setMinWidth(
+                0
+        );
+
+
+        left.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+
+        right.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+
+        HBox.setHgrow(
+                left,
+                Priority.ALWAYS
+        );
+
+
+        HBox.setHgrow(
+                right,
+                Priority.ALWAYS
+        );
+
+
+        return row;
+    }
+
+
+    private static Button actionButton(
+            String text,
+            String background,
+            String foreground
+    ) {
+
+        Button button =
+                new Button(
+                        text
+                );
+
+
+        button.setStyle(
+                "-fx-background-color: "
+                        + background
+                        + ";"
+                        + "-fx-text-fill: "
+                        + foreground
+                        + ";"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-background-radius: 9;"
+                        + "-fx-padding: 10 16;"
+                        + "-fx-cursor: hand;"
+        );
+
+
+        return button;
     }
 
 
@@ -837,9 +1343,15 @@ public final class ManagerProgressVerificationDialog {
                 );
 
 
+        name.setWrapText(
+                true
+        );
+
+
         name.setStyle(
-                "-fx-font-weight: bold;"
-                        + "-fx-text-fill: #0F172A;"
+                "-fx-font-weight: 700;"
+                        + "-fx-text-fill: #10264A;"
+                        + "-fx-font-size: 12px;"
         );
 
 
@@ -864,13 +1376,13 @@ public final class ManagerProgressVerificationDialog {
 
         info.setStyle(
                 "-fx-font-size: 11px;"
-                        + "-fx-text-fill: #64748B;"
+                        + "-fx-text-fill: #7184A4;"
         );
 
 
         VBox text =
                 new VBox(
-                        2,
+                        3,
                         name,
                         info
                 );
@@ -883,9 +1395,11 @@ public final class ManagerProgressVerificationDialog {
 
 
         open.setStyle(
-                "-fx-background-color: #2563EB;"
+                "-fx-background-color: #0F766E;"
                         + "-fx-text-fill: white;"
-                        + "-fx-background-radius: 7;"
+                        + "-fx-background-radius: 8;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-padding: 9 15;"
                         + "-fx-cursor: hand;"
         );
 
@@ -912,7 +1426,7 @@ public final class ManagerProgressVerificationDialog {
 
         HBox row =
                 new HBox(
-                        10,
+                        12,
                         text,
                         spacer,
                         open
@@ -926,16 +1440,16 @@ public final class ManagerProgressVerificationDialog {
 
         row.setPadding(
                 new Insets(
-                        10
+                        12
                 )
         );
 
 
         row.setStyle(
-                "-fx-background-color: #F8FAFC;"
-                        + "-fx-border-color: #E2E8F0;"
-                        + "-fx-background-radius: 8;"
-                        + "-fx-border-radius: 8;"
+                "-fx-background-color: #F8FAFD;"
+                        + "-fx-border-color: #DCE7E4;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-radius: 10;"
         );
 
 
@@ -1224,167 +1738,8 @@ public final class ManagerProgressVerificationDialog {
 
 
     // =========================================================
-    // UI HELPERS
+    // FORMAT HELPERS
     // =========================================================
-
-    private static VBox field(
-            String name,
-            String value
-    ) {
-
-        Label key =
-                new Label(
-                        name
-                );
-
-
-        key.setStyle(
-                "-fx-font-size: 11px;"
-                        + "-fx-text-fill: #64748B;"
-        );
-
-
-        Label val =
-                new Label(
-                        value
-                );
-
-
-        val.setWrapText(
-                true
-        );
-
-
-        val.setStyle(
-                "-fx-font-size: 13px;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-text-fill: #0F172A;"
-        );
-
-
-        VBox box =
-                new VBox(
-                        4,
-                        key,
-                        val
-                );
-
-
-        box.setPadding(
-                new Insets(
-                        11
-                )
-        );
-
-
-        box.setStyle(
-                "-fx-background-color: #FFFFFF;"
-                        + "-fx-border-color: #E2E8F0;"
-                        + "-fx-background-radius: 8;"
-                        + "-fx-border-radius: 8;"
-        );
-
-
-        return box;
-    }
-
-
-    private static VBox progressField(
-            String title,
-            int progress
-    ) {
-
-        Label key =
-                new Label(
-                        title
-                );
-
-
-        Label value =
-                new Label(
-                        progress
-                                + "%"
-                );
-
-
-        value.setStyle(
-                "-fx-font-size: 21px;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-text-fill: #0F2345;"
-        );
-
-
-        ProgressBar bar =
-                new ProgressBar(
-                        Math.max(
-                                0,
-                                Math.min(
-                                        1,
-                                        progress / 100.0
-                                )
-                        )
-                );
-
-
-        bar.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-
-        VBox box =
-                new VBox(
-                        5,
-                        key,
-                        value,
-                        bar
-                );
-
-
-        box.setPadding(
-                new Insets(
-                        12
-                )
-        );
-
-
-        box.setStyle(
-                "-fx-background-color: #FFFFFF;"
-                        + "-fx-border-color: #E2E8F0;"
-                        + "-fx-background-radius: 8;"
-                        + "-fx-border-radius: 8;"
-        );
-
-
-        return box;
-    }
-
-
-    private static Button button(
-            String text,
-            String color
-    ) {
-
-        Button button =
-                new Button(
-                        text
-                );
-
-
-        button.setStyle(
-                "-fx-background-color: "
-                        + color
-                        + ";"
-                        + "-fx-text-fill: white;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-background-radius: 8;"
-                        + "-fx-padding: 9 15;"
-                        + "-fx-cursor: hand;"
-        );
-
-
-        return button;
-    }
-
 
     private static String date(
             String value
@@ -1478,6 +1833,10 @@ public final class ManagerProgressVerificationDialog {
                 : value;
     }
 
+
+    // =========================================================
+    // ERROR
+    // =========================================================
 
     private static void showError(
             Window owner,

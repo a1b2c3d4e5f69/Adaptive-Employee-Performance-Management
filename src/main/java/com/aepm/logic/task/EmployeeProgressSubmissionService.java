@@ -754,6 +754,457 @@ public class EmployeeProgressSubmissionService {
     }
 
 
+
+    // =========================================================
+    // LOAD REVISION-REQUIRED SUBMISSION FOR CURRENT EMPLOYEE
+    // =========================================================
+
+    public RevisionSubmission getRevisionRequiredSubmission(
+            UUID taskId
+    ) throws Exception {
+
+        if (taskId == null) {
+            return null;
+        }
+
+        User currentUser =
+                SessionManager.getCurrentUser();
+
+        if (
+                currentUser == null
+                        || currentUser.getUserId() == null
+                        || currentUser.getUserId().isBlank()
+        ) {
+            return null;
+        }
+
+        UUID employeeId =
+                UUID.fromString(
+                        currentUser.getUserId()
+                );
+
+        String accessToken =
+                getAccessToken();
+
+        String url =
+                AppConfig.REST_URL
+                        + "/task_progress_submission_tbl"
+                        + "?select=submission_id,proposed_progress,progress_note,review_comment,status,submitted_at,reviewed_at"
+                        + "&task_id=eq."
+                        + taskId
+                        + "&employee_id=eq."
+                        + employeeId
+                        + "&status=eq.Revision%20Required"
+                        + "&order=reviewed_at.desc.nullslast"
+                        + "&limit=1";
+
+        HttpRequest request =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                url,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+        HttpResponse<String> response =
+                send(
+                        request
+                );
+
+        validateResponse(
+                response,
+                "Unable to load revision-required progress submission"
+        );
+
+        JSONArray array =
+                new JSONArray(
+                        response.body()
+                );
+
+        if (array.isEmpty()) {
+            return null;
+        }
+
+        JSONObject row =
+                array.getJSONObject(0);
+
+        return new RevisionSubmission(
+                UUID.fromString(
+                        row.getString(
+                                "submission_id"
+                        )
+                ),
+                row.optInt(
+                        "proposed_progress",
+                        0
+                ),
+                row.optString(
+                        "progress_note",
+                        ""
+                ),
+                row.optString(
+                        "review_comment",
+                        ""
+                ),
+                row.optString(
+                        "status",
+                        ""
+                )
+        );
+    }
+
+
+    // =========================================================
+    // RESUBMIT REVISION USING THE SAME SUBMISSION
+    // =========================================================
+
+    public SubmissionResult resubmitRevision(
+            UUID submissionId,
+            UUID taskId,
+            int proposedProgress,
+            String progressNote,
+            File evidenceFile
+    ) throws Exception {
+
+        if (submissionId == null) {
+            throw new IllegalArgumentException(
+                    "Revision submission ID is required."
+            );
+        }
+
+        if (taskId == null) {
+            throw new IllegalArgumentException(
+                    "Task ID is required."
+            );
+        }
+
+        User currentUser =
+                SessionManager.getCurrentUser();
+
+        if (
+                currentUser == null
+                        || currentUser.getUserId() == null
+                        || currentUser.getUserId().isBlank()
+        ) {
+            throw new IllegalStateException(
+                    "No logged-in employee found."
+            );
+        }
+
+        UUID employeeId =
+                UUID.fromString(
+                        currentUser.getUserId()
+                );
+
+        String accessToken =
+                getAccessToken();
+
+        int currentProgress =
+                getCurrentTaskProgress(
+                        taskId,
+                        accessToken
+                );
+
+        if (
+                proposedProgress < 0
+                        || proposedProgress > 100
+        ) {
+            throw new IllegalArgumentException(
+                    "Progress must be between 0% and 100%."
+            );
+        }
+
+        if (proposedProgress <= currentProgress) {
+            throw new IllegalArgumentException(
+                    "Requested progress must be higher than "
+                            + "the current verified progress of "
+                            + currentProgress
+                            + "%."
+            );
+        }
+
+        if (
+                progressNote == null
+                        || progressNote.trim().isEmpty()
+        ) {
+            throw new IllegalArgumentException(
+                    "Please enter a progress note."
+            );
+        }
+
+        if (progressNote.trim().length() < 20) {
+            throw new IllegalArgumentException(
+                    "Please provide a more detailed progress note."
+            );
+        }
+
+        if (evidenceFile == null) {
+            throw new IllegalArgumentException(
+                    "Please upload revised supporting evidence."
+            );
+        }
+
+        validateEvidenceFile(
+                evidenceFile
+        );
+
+        String lookupUrl =
+                AppConfig.REST_URL
+                        + "/task_progress_submission_tbl"
+                        + "?select=submission_id,task_id,employee_id,status"
+                        + "&submission_id=eq."
+                        + submissionId
+                        + "&limit=1";
+
+        HttpRequest lookupRequest =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                lookupUrl,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+        HttpResponse<String> lookupResponse =
+                send(
+                        lookupRequest
+                );
+
+        validateResponse(
+                lookupResponse,
+                "Unable to load revision submission"
+        );
+
+        JSONArray lookupRows =
+                new JSONArray(
+                        lookupResponse.body()
+                );
+
+        if (lookupRows.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Revision submission was not found."
+            );
+        }
+
+        JSONObject existing =
+                lookupRows.getJSONObject(0);
+
+        if (
+                !taskId.toString().equals(
+                        existing.optString(
+                                "task_id",
+                                ""
+                        )
+                )
+                        ||
+                !employeeId.toString().equals(
+                        existing.optString(
+                                "employee_id",
+                                ""
+                        )
+                )
+        ) {
+            throw new IllegalStateException(
+                    "This revision submission does not belong to the current employee/task."
+            );
+        }
+
+        if (
+                !"Revision Required".equalsIgnoreCase(
+                        existing.optString(
+                                "status",
+                                ""
+                        )
+                )
+        ) {
+            throw new IllegalStateException(
+                    "This progress submission is no longer waiting for revision."
+            );
+        }
+
+        ProgressVerificationConfig config =
+                configRepository.getConfig(
+                        accessToken
+                );
+
+        OffsetDateTime submittedAt =
+                OffsetDateTime.now();
+
+        OffsetDateTime verificationDeadline =
+                submittedAt.plusHours(
+                        config.getReviewTimeoutHours()
+                );
+
+        // Keep old evidence for audit history and add the revised evidence.
+        uploadEvidence(
+                submissionId,
+                employeeId,
+                evidenceFile,
+                accessToken
+        );
+
+        // =====================================================
+        // RESUBMIT THROUGH SECURITY DEFINER RPC
+        // =====================================================
+
+        JSONObject rpcBody =
+                new JSONObject();
+
+        rpcBody.put(
+                "p_submission_id",
+                submissionId.toString()
+        );
+
+        rpcBody.put(
+                "p_proposed_progress",
+                proposedProgress
+        );
+
+        rpcBody.put(
+                "p_progress_note",
+                progressNote.trim()
+        );
+
+        rpcBody.put(
+                "p_verification_deadline",
+                verificationDeadline.toString()
+        );
+
+        String rpcUrl =
+                AppConfig.REST_URL
+                        + "/rpc/aepm_resubmit_progress_revision";
+
+        HttpRequest rpcRequest =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                rpcUrl,
+                                accessToken
+                        )
+                        .header(
+                                "Content-Type",
+                                "application/json"
+                        )
+                        .timeout(
+                                Duration.ofSeconds(
+                                        30
+                                )
+                        )
+                        .POST(
+                                HttpRequest.BodyPublishers.ofString(
+                                        rpcBody.toString()
+                                )
+                        )
+                        .build();
+
+        HttpResponse<String> rpcResponse =
+                send(
+                        rpcRequest
+                );
+
+        System.out.println(
+                "[Progress Revision] RPC response: "
+                        + rpcResponse.statusCode()
+                        + " "
+                        + rpcResponse.body()
+        );
+
+        validateResponse(
+                rpcResponse,
+                "Unable to resubmit revised progress"
+        );
+
+
+        // =====================================================
+        // VERIFY DATABASE STATE AFTER RPC
+        // =====================================================
+
+        String verifyUrl =
+                AppConfig.REST_URL
+                        + "/task_progress_submission_tbl"
+                        + "?select=status,proposed_progress,review_comment,reviewed_by,reviewed_at,verification_deadline"
+                        + "&submission_id=eq."
+                        + submissionId
+                        + "&limit=1";
+
+        HttpRequest verifyRequest =
+                supabaseClient
+                        .createAuthenticatedRequest(
+                                verifyUrl,
+                                accessToken
+                        )
+                        .GET()
+                        .build();
+
+        HttpResponse<String> verifyResponse =
+                send(
+                        verifyRequest
+                );
+
+        validateResponse(
+                verifyResponse,
+                "Unable to verify revised progress submission"
+        );
+
+        JSONArray verifyRows =
+                new JSONArray(
+                        verifyResponse.body()
+                );
+
+        if (verifyRows.isEmpty()) {
+            throw new IllegalStateException(
+                    "Revision resubmission completed but the submission could not be verified."
+            );
+        }
+
+        JSONObject verified =
+                verifyRows.getJSONObject(0);
+
+        String verifiedStatus =
+                verified.optString(
+                        "status",
+                        ""
+                );
+
+        if (
+                !"Pending Manager Review".equalsIgnoreCase(
+                        verifiedStatus
+                )
+        ) {
+            throw new IllegalStateException(
+                    "Revision resubmission did not update the database correctly. "
+                            + "Current status: "
+                            + verifiedStatus
+            );
+        }
+
+        if (
+                verified.optInt(
+                        "proposed_progress",
+                        -1
+                )
+                        != proposedProgress
+        ) {
+            throw new IllegalStateException(
+                    "Revision resubmission did not save the requested progress correctly."
+            );
+        }
+
+        System.out.println(
+                "[Progress Revision] Submission updated successfully: "
+                        + submissionId
+        );
+
+        return new SubmissionResult(
+                submissionId,
+                currentProgress,
+                proposedProgress,
+                "Pending Manager Review",
+                verificationDeadline
+        );
+    }
+
+
     // =========================================================
     // GET CURRENT ACTUAL TASK PROGRESS
     // =========================================================
@@ -994,6 +1445,69 @@ public class EmployeeProgressSubmissionService {
                             + "]: "
                             + response.body()
             );
+        }
+    }
+
+
+    // =========================================================
+    // REVISION SUBMISSION
+    // =========================================================
+
+    public static class RevisionSubmission {
+
+        private final UUID submissionId;
+
+        private final int proposedProgress;
+
+        private final String progressNote;
+
+        private final String managerInstruction;
+
+        private final String status;
+
+
+        public RevisionSubmission(
+                UUID submissionId,
+                int proposedProgress,
+                String progressNote,
+                String managerInstruction,
+                String status
+        ) {
+
+            this.submissionId = submissionId;
+
+            this.proposedProgress = proposedProgress;
+
+            this.progressNote = progressNote;
+
+            this.managerInstruction = managerInstruction;
+
+            this.status = status;
+        }
+
+
+        public UUID getSubmissionId() {
+            return submissionId;
+        }
+
+
+        public int getProposedProgress() {
+            return proposedProgress;
+        }
+
+
+        public String getProgressNote() {
+            return progressNote;
+        }
+
+
+        public String getManagerInstruction() {
+            return managerInstruction;
+        }
+
+
+        public String getStatus() {
+            return status;
         }
     }
 

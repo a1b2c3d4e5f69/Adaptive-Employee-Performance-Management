@@ -133,6 +133,119 @@ public class AuthRepository {
 
 
     // =========================================================
+    // REFRESH SESSION
+    // =========================================================
+
+    public AuthSession refreshSession(
+            String refreshToken
+    ) throws Exception {
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Refresh token is missing."
+            );
+        }
+
+        String url =
+                AppConfig.AUTH_URL
+                        + "/token?grant_type=refresh_token";
+
+        JsonObject requestBody =
+                new JsonObject();
+
+        requestBody.addProperty(
+                "refresh_token",
+                refreshToken
+        );
+
+        HttpRequest request =
+                supabaseClient
+                        .createRequest(url)
+                        .POST(
+                                HttpRequest.BodyPublishers.ofString(
+                                        gson.toJson(requestBody)
+                                )
+                        )
+                        .build();
+
+        HttpResponse<String> response =
+                supabaseClient
+                        .getHttpClient()
+                        .send(
+                                request,
+                                HttpResponse.BodyHandlers.ofString()
+                        );
+
+        if (
+                response.statusCode() < 200
+                        || response.statusCode() >= 300
+        ) {
+            throw new Exception(
+                    extractErrorMessage(
+                            response.body(),
+                            "Unable to refresh login session."
+                    )
+            );
+        }
+
+        JsonObject json =
+                JsonParser
+                        .parseString(response.body())
+                        .getAsJsonObject();
+
+        String accessToken =
+                json.has("access_token")
+                        && !json.get("access_token").isJsonNull()
+                        ? json.get("access_token").getAsString()
+                        : null;
+
+        String newRefreshToken =
+                json.has("refresh_token")
+                        && !json.get("refresh_token").isJsonNull()
+                        ? json.get("refresh_token").getAsString()
+                        : refreshToken;
+
+        String userId = null;
+        String email = null;
+
+        if (
+                json.has("user")
+                        && !json.get("user").isJsonNull()
+        ) {
+            JsonObject authUser =
+                    json.getAsJsonObject("user");
+
+            if (
+                    authUser.has("id")
+                            && !authUser.get("id").isJsonNull()
+            ) {
+                userId = authUser.get("id").getAsString();
+            }
+
+            if (
+                    authUser.has("email")
+                            && !authUser.get("email").isJsonNull()
+            ) {
+                email = authUser.get("email").getAsString();
+            }
+        }
+
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new Exception(
+                    "Refresh response did not contain an access token."
+            );
+        }
+
+        return new AuthSession(
+                accessToken,
+                newRefreshToken,
+                userId,
+                email
+        );
+    }
+
+
+    // =========================================================
     // REGISTER
     // =========================================================
 
