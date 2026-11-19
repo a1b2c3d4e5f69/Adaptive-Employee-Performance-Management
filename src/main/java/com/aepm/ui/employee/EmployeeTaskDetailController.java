@@ -1303,6 +1303,14 @@ public class EmployeeTaskDetailController {
 
 
         // =====================================================
+        // EVIDENCE SNAPSHOT
+        // =====================================================
+
+        final File evidenceSnapshot =
+                selectedEvidenceFile;
+
+
+        // =====================================================
         // BACKGROUND SUBMISSION
         // =====================================================
 
@@ -1326,7 +1334,7 @@ public class EmployeeTaskDetailController {
 
                                         note,
 
-                                        selectedEvidenceFile
+                                        evidenceSnapshot
                                 );
                         }
                 };
@@ -1631,7 +1639,23 @@ public class EmployeeTaskDetailController {
                 updateButtonState();
                 }
                 );
-        }
+        // =========================================================
+        // IMPORTANT: START BACKGROUND SUBMISSION TASK
+        // =========================================================
+
+        Thread submitThread =
+                new Thread(
+                        submitTask
+                );
+
+
+        submitThread.setDaemon(
+                true
+        );
+
+
+        submitThread.start();
+    }
 
 
     // =========================================================

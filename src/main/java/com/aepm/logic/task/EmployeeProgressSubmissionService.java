@@ -1,7 +1,6 @@
 package com.aepm.logic.task;
 
 import com.aepm.config.AppConfig;
-import com.aepm.data.repository.NotificationRepository;
 import com.aepm.data.repository.ProgressVerificationConfigRepository;
 import com.aepm.data.repository.ProgressVerificationConfigRepository.ProgressVerificationConfig;
 import com.aepm.data.supabase.SupabaseClient;
@@ -50,10 +49,6 @@ public class EmployeeProgressSubmissionService {
 
     private final ProgressVerificationConfigRepository configRepository =
             new ProgressVerificationConfigRepository();
-
-
-    private final NotificationRepository notificationRepository =
-            new NotificationRepository();
 
 
     // =========================================================
@@ -279,33 +274,6 @@ public class EmployeeProgressSubmissionService {
 
 
         // =====================================================
-        // 9. NOTIFY MANAGER
-        // =====================================================
-
-        try {
-
-            notifyManager(
-                    submissionId,
-                    taskId,
-                    employeeId,
-                    proposedProgress,
-                    accessToken
-            );
-
-        } catch (Exception notificationError) {
-
-            /*
-             * Submission already succeeded.
-             * Notification failure must NOT delete submission.
-             */
-            System.err.println(
-                    "[Progress Verification Notification] "
-                            + notificationError.getMessage()
-            );
-        }
-
-
-        // =====================================================
         // RESULT
         // =====================================================
 
@@ -470,16 +438,16 @@ public class EmployeeProgressSubmissionService {
     }
 
 
-    // =========================================================
-    // UPLOAD EVIDENCE
-    // =========================================================
+        // =========================================================
+        // UPLOAD EVIDENCE
+        // =========================================================
 
-    private void uploadEvidence(
-            UUID submissionId,
-            UUID employeeId,
-            File file,
-            String accessToken
-    ) throws Exception {
+        private void uploadEvidence(
+                UUID submissionId,
+                UUID employeeId,
+                File file,
+                String accessToken
+        ) throws Exception {
 
 
         byte[] bytes;
@@ -492,18 +460,18 @@ public class EmployeeProgressSubmissionService {
                         )
         ) {
 
-            bytes =
-                    input.readNBytes(
-                            (int) MAX_FILE_SIZE + 1
-                    );
+                bytes =
+                        input.readNBytes(
+                                (int) MAX_FILE_SIZE + 1
+                        );
         }
 
 
         if (bytes.length <= 0) {
 
-            throw new IllegalArgumentException(
-                    "Evidence file is empty."
-            );
+                throw new IllegalArgumentException(
+                        "Evidence file is empty."
+                );
         }
 
 
@@ -512,9 +480,9 @@ public class EmployeeProgressSubmissionService {
                         > MAX_FILE_SIZE
         ) {
 
-            throw new IllegalArgumentException(
-                    "Evidence file cannot exceed 10 MB."
-            );
+                throw new IllegalArgumentException(
+                        "Evidence file cannot exceed 10 MB."
+                );
         }
 
 
@@ -552,14 +520,19 @@ public class EmployeeProgressSubmissionService {
                         || mimeType.isBlank()
         ) {
 
-            mimeType =
-                    "application/octet-stream";
+                mimeType =
+                        "application/octet-stream";
         }
 
 
         // =====================================================
-        // STORAGE UPLOAD
+        // 1. UPLOAD FILE TO STORAGE
         // =====================================================
+
+        System.out.println(
+                "[Progress Evidence] Starting storage upload..."
+        );
+
 
         String uploadUrl =
                 AppConfig.STORAGE_URL
@@ -585,7 +558,7 @@ public class EmployeeProgressSubmissionService {
                         )
                         .timeout(
                                 Duration.ofSeconds(
-                                        120
+                                        30
                                 )
                         )
                         .POST(
@@ -597,9 +570,20 @@ public class EmployeeProgressSubmissionService {
 
 
         HttpResponse<String> uploadResponse =
-                send(
-                        uploadRequest
-                );
+                supabaseClient
+                        .getHttpClient()
+                        .send(
+                                uploadRequest,
+                                HttpResponse.BodyHandlers.ofString()
+                        );
+
+
+        System.out.println(
+                "[Progress Evidence] Storage response: "
+                        + uploadResponse.statusCode()
+                        + " "
+                        + uploadResponse.body()
+        );
 
 
         validateResponse(
@@ -608,78 +592,111 @@ public class EmployeeProgressSubmissionService {
         );
 
 
+        System.out.println(
+                "[Progress Evidence] Storage upload successful: "
+                        + storagePath
+        );
+
+
         // =====================================================
-        // SAVE EVIDENCE DATABASE RECORD
+        // 2. SAVE METADATA USING SECURITY DEFINER RPC
         // =====================================================
 
-        JSONObject evidence =
+        System.out.println(
+                "[Progress Evidence] Saving metadata through RPC..."
+        );
+
+
+        JSONObject rpcBody =
                 new JSONObject();
 
 
-        evidence.put(
-                "submission_id",
+        rpcBody.put(
+                "p_submission_id",
                 submissionId.toString()
         );
 
 
-        evidence.put(
-                "file_name",
+        rpcBody.put(
+                "p_file_name",
                 originalName
         );
 
 
-        evidence.put(
-                "file_path",
+        rpcBody.put(
+                "p_file_path",
                 storagePath
         );
 
 
-        evidence.put(
-                "file_type",
+        rpcBody.put(
+                "p_file_type",
                 mimeType
         );
 
 
-        evidence.put(
-                "file_size",
+        rpcBody.put(
+                "p_file_size",
                 bytes.length
         );
 
 
-        String evidenceUrl =
+        String rpcUrl =
                 AppConfig.REST_URL
-                        + "/task_progress_evidence_tbl";
+                        + "/rpc/aepm_save_progress_evidence";
 
 
         HttpRequest evidenceRequest =
                 supabaseClient
                         .createAuthenticatedRequest(
-                                evidenceUrl,
+                                rpcUrl,
                                 accessToken
                         )
-                        .header(
-                                "Prefer",
-                                "return=representation"
+                        .setHeader(
+                                "Content-Type",
+                                "application/json"
+                        )
+                        .timeout(
+                                Duration.ofSeconds(
+                                        30
+                                )
                         )
                         .POST(
                                 HttpRequest.BodyPublishers.ofString(
-                                        evidence.toString()
+                                        rpcBody.toString()
                                 )
                         )
                         .build();
 
 
         HttpResponse<String> evidenceResponse =
-                send(
-                        evidenceRequest
-                );
+                supabaseClient
+                        .getHttpClient()
+                        .send(
+                                evidenceRequest,
+                                HttpResponse.BodyHandlers.ofString()
+                        );
+
+
+        System.out.println(
+                "[Progress Evidence] RPC response: "
+                        + evidenceResponse.statusCode()
+                        + " "
+                        + evidenceResponse.body()
+        );
 
 
         validateResponse(
                 evidenceResponse,
-                "Unable to save progress evidence information"
+                "Unable to save progress evidence metadata"
         );
-    }
+
+
+        System.out.println(
+                "[Progress Evidence] Metadata saved successfully for submission: "
+                        + submissionId
+        );
+     }
 
 
     // =========================================================
@@ -841,333 +858,6 @@ public class EmployeeProgressSubmissionService {
                 "Unable to remove incomplete progress submission"
         );
     }
-
-
-    // =========================================================
-    // NOTIFY MANAGER
-    // =========================================================
-
-    private void notifyManager(
-            UUID submissionId,
-            UUID taskId,
-            UUID employeeId,
-            int proposedProgress,
-            String accessToken
-    ) throws Exception {
-
-
-        String managerId =
-                getEmployeeManagerId(
-                        employeeId,
-                        accessToken
-                );
-
-
-        if (
-                managerId == null
-                        || managerId.isBlank()
-        ) {
-
-            System.err.println(
-                    "[Progress Verification] "
-                            + "Employee has no assigned manager."
-            );
-
-            return;
-        }
-
-
-        String taskTitle =
-                getTaskTitle(
-                        taskId,
-                        accessToken
-                );
-
-
-        String employeeName =
-                getEmployeeDisplayName(
-                        employeeId,
-                        accessToken
-                );
-
-
-        String title =
-                "Progress Verification Required";
-
-
-        String message =
-                employeeName
-                        + " submitted "
-                        + proposedProgress
-                        + "% progress for \""
-                        + taskTitle
-                        + "\". Review the progress note "
-                        + "and supporting evidence.";
-
-
-        /*
-         * For now use the existing notification method.
-         *
-         * related_task_id = real task ID
-         *
-         * event_key contains submission ID for deduplication.
-         */
-        notificationRepository.createOnce(
-
-                accessToken,
-
-                managerId,
-
-                title,
-
-                message,
-
-                "PROGRESS_VERIFICATION",
-
-                taskId.toString(),
-
-                null,
-
-                "progress_verification:"
-                        + submissionId
-        );
-    }
-
-
-    // =========================================================
-    // GET MANAGER
-    // =========================================================
-
-    private String getEmployeeManagerId(
-            UUID employeeId,
-            String accessToken
-    ) throws Exception {
-
-
-        String url =
-                AppConfig.REST_URL
-                        + "/user_tbl"
-                        + "?select=manager_id"
-                        + "&user_id=eq."
-                        + employeeId
-                        + "&limit=1";
-
-
-        HttpRequest request =
-                supabaseClient
-                        .createAuthenticatedRequest(
-                                url,
-                                accessToken
-                        )
-                        .GET()
-                        .build();
-
-
-        HttpResponse<String> response =
-                send(
-                        request
-                );
-
-
-        validateResponse(
-                response,
-                "Unable to find employee manager"
-        );
-
-
-        JSONArray array =
-                new JSONArray(
-                        response.body()
-                );
-
-
-        if (array.isEmpty()) {
-
-            return null;
-        }
-
-
-        JSONObject row =
-                array.getJSONObject(
-                        0
-                );
-
-
-        if (
-                !row.has(
-                        "manager_id"
-                )
-                        || row.isNull(
-                        "manager_id"
-                )
-        ) {
-
-            return null;
-        }
-
-
-        return row.optString(
-                "manager_id",
-                null
-        );
-    }
-
-
-    // =========================================================
-    // GET TASK TITLE
-    // =========================================================
-
-    private String getTaskTitle(
-            UUID taskId,
-            String accessToken
-    ) throws Exception {
-
-
-        String url =
-                AppConfig.REST_URL
-                        + "/task_tbl"
-                        + "?select=task_title"
-                        + "&task_id=eq."
-                        + taskId
-                        + "&limit=1";
-
-
-        HttpRequest request =
-                supabaseClient
-                        .createAuthenticatedRequest(
-                                url,
-                                accessToken
-                        )
-                        .GET()
-                        .build();
-
-
-        HttpResponse<String> response =
-                send(
-                        request
-                );
-
-
-        validateResponse(
-                response,
-                "Unable to load task title"
-        );
-
-
-        JSONArray array =
-                new JSONArray(
-                        response.body()
-                );
-
-
-        if (array.isEmpty()) {
-
-            return "Task";
-        }
-
-
-        return array
-                .getJSONObject(
-                        0
-                )
-                .optString(
-                        "task_title",
-                        "Task"
-                );
-    }
-
-
-    // =========================================================
-    // GET EMPLOYEE NAME
-    // =========================================================
-
-    private String getEmployeeDisplayName(
-            UUID employeeId,
-            String accessToken
-    ) throws Exception {
-
-
-        String url =
-                AppConfig.REST_URL
-                        + "/user_tbl"
-                        + "?select=username,employee_id,email"
-                        + "&user_id=eq."
-                        + employeeId
-                        + "&limit=1";
-
-
-        HttpRequest request =
-                supabaseClient
-                        .createAuthenticatedRequest(
-                                url,
-                                accessToken
-                        )
-                        .GET()
-                        .build();
-
-
-        HttpResponse<String> response =
-                send(
-                        request
-                );
-
-
-        validateResponse(
-                response,
-                "Unable to load employee information"
-        );
-
-
-        JSONArray array =
-                new JSONArray(
-                        response.body()
-                );
-
-
-        if (array.isEmpty()) {
-
-            return "Employee";
-        }
-
-
-        JSONObject row =
-                array.getJSONObject(
-                        0
-                );
-
-
-        String username =
-                row.optString(
-                        "username",
-                        ""
-                );
-
-
-        if (!username.isBlank()) {
-
-            return username;
-        }
-
-
-        String employeeNo =
-                row.optString(
-                        "employee_id",
-                        ""
-                );
-
-
-        if (!employeeNo.isBlank()) {
-
-            return employeeNo;
-        }
-
-
-        return row.optString(
-                "email",
-                "Employee"
-        );
-    }
-
 
     // =========================================================
     // VALIDATE EVIDENCE FILE
