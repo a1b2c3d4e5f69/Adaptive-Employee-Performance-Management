@@ -1,6 +1,6 @@
-
 package com.aepm.ui.common;
 
+import com.aepm.util.SessionManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,6 +47,41 @@ public final class AIRecommendationHistoryDialog {
 
         dialog.setTitle("AI Recommendation History");
 
+        // =====================================================
+        // ROLE-AWARE HISTORY THEME
+        // =====================================================
+        var currentUser =
+                SessionManager.getCurrentUser();
+
+        boolean employeeTheme =
+                currentUser != null
+                        && currentUser.getRoleId() == 3L;
+
+        String historyPrimary =
+                employeeTheme
+                        ? "#FFC107"
+                        : "#0F766E";
+
+        String historyHover =
+                employeeTheme
+                        ? "#E0A800"
+                        : "#115E59";
+
+        String historySoft =
+                employeeTheme
+                        ? "#FFF8E1"
+                        : "#DFF7F2";
+
+        String historySelection =
+                employeeTheme
+                        ? "#FFF3BF"
+                        : "#D7F2ED";
+
+        String historyText =
+                employeeTheme
+                        ? "#8A5A00"
+                        : "#0F5F59";
+
         if (owner != null) {
             dialog.initOwner(owner);
             dialog.initModality(Modality.WINDOW_MODAL);
@@ -67,6 +102,21 @@ public final class AIRecommendationHistoryDialog {
         iconBox.setMinSize(58, 58);
         iconBox.setPrefSize(58, 58);
         iconBox.setMaxSize(58, 58);
+
+        icon.setStyle(
+                "-fx-text-fill: "
+                        + historyText
+                        + ";"
+                        + "-fx-font-size: 22px;"
+                        + "-fx-font-weight: bold;"
+        );
+
+        iconBox.setStyle(
+                "-fx-background-color: "
+                        + historySoft
+                        + ";"
+                        + "-fx-background-radius: 18;"
+        );
 
         // =====================================================
         // HEADER TEXT
@@ -171,6 +221,19 @@ public final class AIRecommendationHistoryDialog {
 
         table.getStyleClass().add(
                 "ai-history-table"
+        );
+
+        table.setStyle(
+                "-fx-focus-color: "
+                        + historyPrimary
+                        + ";"
+                        + "-fx-faint-focus-color: transparent;"
+                        + "-fx-selection-bar: "
+                        + historySelection
+                        + ";"
+                        + "-fx-selection-bar-non-focused: "
+                        + historySelection
+                        + ";"
         );
 
         table.setColumnResizePolicy(
@@ -320,6 +383,64 @@ public final class AIRecommendationHistoryDialog {
                 "ai-history-primary-button"
         );
 
+        // Shared dialog, role-specific visual identity.
+        boolean employeeView = employeeTheme;
+
+        String primaryColor = historyPrimary;
+        String primaryHoverColor = historyHover;
+
+        String primaryTextColor =
+                employeeView
+                        ? "#0F172A"
+                        : "#FFFFFF";
+
+        String primaryButtonStyle =
+                "-fx-background-color: "
+                        + primaryColor
+                        + ";"
+                        + "-fx-border-color: "
+                        + primaryColor
+                        + ";"
+                        + "-fx-border-width: 1.5;"
+                        + "-fx-text-fill: "
+                        + primaryTextColor
+                        + ";"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-radius: 10;"
+                        + "-fx-font-size: 14px;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-cursor: hand;";
+
+        view.setStyle(
+                primaryButtonStyle
+        );
+
+        view.setOnMouseEntered(event ->
+                view.setStyle(
+                        "-fx-background-color: "
+                                + primaryHoverColor
+                                + ";"
+                                + "-fx-border-color: "
+                                + primaryHoverColor
+                                + ";"
+                                + "-fx-border-width: 1.5;"
+                                + "-fx-text-fill: "
+                                + primaryTextColor
+                                + ";"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-border-radius: 10;"
+                                + "-fx-font-size: 14px;"
+                                + "-fx-font-weight: bold;"
+                                + "-fx-cursor: hand;"
+                )
+        );
+
+        view.setOnMouseExited(event ->
+                view.setStyle(
+                        primaryButtonStyle
+                )
+        );
+
         view.setPrefWidth(160);
         view.setMinHeight(43);
         view.setDefaultButton(true);
@@ -418,6 +539,41 @@ public final class AIRecommendationHistoryDialog {
             TableRow<JsonObject> row =
                     new TableRow<>();
 
+            Runnable updateRowTheme = () -> {
+
+                if (row.isEmpty()) {
+                    row.setStyle("");
+                    return;
+                }
+
+                if (row.isSelected()) {
+
+                    row.setStyle(
+                            "-fx-background-color: "
+                                    + historySelection
+                                    + ";"
+                                    + "-fx-text-background-color: #0F172A;"
+                    );
+
+                } else {
+
+                    row.setStyle(
+                            "-fx-background-color: transparent;"
+                                    + "-fx-text-background-color: #0F172A;"
+                    );
+                }
+            };
+
+            row.selectedProperty().addListener(
+                    (obs, wasSelected, isSelected) ->
+                            updateRowTheme.run()
+            );
+
+            row.emptyProperty().addListener(
+                    (obs, wasEmpty, isEmpty) ->
+                            updateRowTheme.run()
+            );
+
             row.setOnMouseClicked(event -> {
 
                 if (event.getClickCount() == 2
@@ -444,6 +600,63 @@ public final class AIRecommendationHistoryDialog {
         close.getStyleClass().addAll(
                 "ai-history-button",
                 "ai-history-secondary-button"
+        );
+
+        String secondaryColor =
+                employeeView
+                        ? "#D69E00"
+                        : historyPrimary;
+
+        String secondaryHoverColor =
+                employeeView
+                        ? "#A66B00"
+                        : historyHover;
+
+        String secondaryHoverBackground = historySoft;
+
+        String secondaryButtonStyle =
+                "-fx-background-color: #FFFFFF;"
+                        + "-fx-text-fill: "
+                        + secondaryColor
+                        + ";"
+                        + "-fx-border-color: "
+                        + secondaryColor
+                        + ";"
+                        + "-fx-border-width: 1.5;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-radius: 10;"
+                        + "-fx-font-size: 14px;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-cursor: hand;";
+
+        close.setStyle(
+                secondaryButtonStyle
+        );
+
+        close.setOnMouseEntered(event ->
+                close.setStyle(
+                        "-fx-background-color: "
+                                + secondaryHoverBackground
+                                + ";"
+                                + "-fx-text-fill: "
+                                + secondaryHoverColor
+                                + ";"
+                                + "-fx-border-color: "
+                                + secondaryHoverColor
+                                + ";"
+                                + "-fx-border-width: 1.5;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-border-radius: 10;"
+                                + "-fx-font-size: 14px;"
+                                + "-fx-font-weight: bold;"
+                                + "-fx-cursor: hand;"
+                )
+        );
+
+        close.setOnMouseExited(event ->
+                close.setStyle(
+                        secondaryButtonStyle
+                )
         );
 
         close.setPrefWidth(135);
@@ -497,6 +710,10 @@ public final class AIRecommendationHistoryDialog {
 
         panel.getStyleClass().add(
                 "ai-history-panel"
+        );
+
+        panel.setStyle(
+                "-fx-font-family: 'Plus Jakarta Sans';"
         );
 
         panel.setTop(header);
