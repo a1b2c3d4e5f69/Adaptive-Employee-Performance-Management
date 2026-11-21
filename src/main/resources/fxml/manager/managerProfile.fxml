@@ -19,6 +19,7 @@
 
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerProfileController"
         stylesheets="@../../css/app.css,@../../css/manager.css"
@@ -140,6 +141,14 @@
                                 styleClass="manager-nav-button"/>
 
                         <Button
+                                fx:id="chatNavButton"
+                                text="✉   Chat Center"
+                                maxWidth="Infinity"
+                                alignment="CENTER_LEFT"
+                                onAction="#handleChat"
+                                styleClass="manager-nav-button"/>
+
+                        <Button
                                 text="≡   Reports"
                                 maxWidth="Infinity"
                                 alignment="CENTER_LEFT"
@@ -164,6 +173,7 @@
                                 styleClass="manager-sidebar-section"/>
 
                         <Button
+                            fx:id="currentNavButton"
                                 text="○   My Profile"
                                 maxWidth="Infinity"
                                 alignment="CENTER_LEFT"
@@ -253,7 +263,8 @@
                                     minWidth="104"
                                     minHeight="104"
                                     maxWidth="104"
-                                    maxHeight="104">
+                                    maxHeight="104"
+                                    alignment="CENTER">
 
 
                                 <Circle
@@ -268,6 +279,8 @@
                                 <Label
                                         fx:id="profileInitialLabel"
                                         text="M"
+                                        visible="true"
+                                        managed="true"
                                         style="
                                             -fx-font-size: 28px;
                                             -fx-font-weight: bold;
@@ -281,18 +294,10 @@
                                         fitHeight="92"
                                         preserveRatio="false"
                                         smooth="true"
-                                        visible="false">
-
-                                    <clip>
-
-                                        <Circle
-                                                centerX="46"
-                                                centerY="46"
-                                                radius="46"/>
-
-                                    </clip>
-
-                                </ImageView>
+                                        pickOnBounds="false"
+                                        visible="false"
+                                        managed="false"
+                                        StackPane.alignment="CENTER"/>
 
 
                                 <Button

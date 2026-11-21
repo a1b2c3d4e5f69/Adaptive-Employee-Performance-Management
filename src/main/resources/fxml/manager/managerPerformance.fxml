@@ -17,6 +17,7 @@
 
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerPerformanceController"
         stylesheets="@../../css/app.css,@../../css/manager.css"
@@ -134,11 +135,20 @@
 
 
                     <Button
+                            fx:id="currentNavButton"
                             text="★   Performance"
                             alignment="CENTER_LEFT"
                             maxWidth="Infinity"
                             onAction="#handlePerformance"
                             styleClass="manager-nav-button-active"/>
+
+                     <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="manager-nav-button"/>
 
 
                     <Button

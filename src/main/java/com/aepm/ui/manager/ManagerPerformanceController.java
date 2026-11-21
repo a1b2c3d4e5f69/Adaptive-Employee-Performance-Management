@@ -9,6 +9,7 @@ import com.aepm.model.PerformanceFeedback;
 import com.aepm.model.User;
 
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.SessionManager;
 
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,8 +22,11 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -58,6 +62,18 @@ import com.aepm.ui.common.AEPMDialog;
 
 import java.util.UUID;
 public class ManagerPerformanceController {
+
+    @FXML
+    private BorderPane pageRoot;
+
+    @FXML
+    private Button currentNavButton;
+
+    @FXML
+    private Button chatNavButton;
+
+    private ChatController chatController;
+
 
     // =========================================================
     // TOP BAR
@@ -2235,8 +2251,8 @@ public class ManagerPerformanceController {
 
 
     @FXML
-    private void handlePerformance() {
-        // Current page
+    private void handlePerformance(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerPerformance.fxml");
     }
 
 
@@ -2273,6 +2289,67 @@ public class ManagerPerformanceController {
         );
     }
 
+
+
+    // =========================================================
+    // CHAT CENTER
+    // =========================================================
+
+    private void setChatNavigationActive() {
+
+        if (currentNavButton != null) {
+            currentNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            currentNavButton.getStyleClass().add("manager-nav-button");
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add("manager-nav-button-active");
+        }
+    }
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/common/chat.fxml")
+            );
+
+            Parent chatRoot = loader.load();
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            chatController = loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(chatRoot);
+
+        } catch (Exception e) {
+
+            System.err.println("Failed to open Manager Chat Center.");
+            e.printStackTrace();
+        }
+    }
+
+    private void stopChatIfNeeded() {
+
+        if (chatController != null) {
+            chatController.stop();
+            chatController = null;
+        }
+    }
 
     // =========================================================
     // HELPERS
@@ -2399,11 +2476,12 @@ public class ManagerPerformanceController {
             String path
     ) {
 
+        stopChatIfNeeded();
+
         Stage stage =
                 (Stage) ((Node) event.getSource())
                         .getScene()
                         .getWindow();
-
 
         NavigationManager.navigate(
                 stage,

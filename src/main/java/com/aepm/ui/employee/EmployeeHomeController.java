@@ -5,15 +5,20 @@ import com.aepm.model.User;
 import com.aepm.ui.components.NotificationBell;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
+import com.aepm.ui.common.chat.ChatController;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -22,7 +27,12 @@ import java.util.Locale;
 
 public class EmployeeHomeController {
 
-    @FXML private Label topNameLabel;
+    
+    @FXML private BorderPane pageRoot;
+    @FXML private Button homeNavButton;
+    @FXML private Button chatNavButton;
+    private ChatController chatController;
+@FXML private Label topNameLabel;
     @FXML private Label topRoleLabel;
     @FXML private Label welcomeNameLabel;
     @FXML private Label employeeIdLabel;
@@ -402,82 +412,276 @@ public class EmployeeHomeController {
         loadDashboard();
     }
 
-    @FXML
-    private void handleHome() {
-        // Already on Home.
-    }
+        // =========================================================
+        // HOME
+        // =========================================================
 
-    @FXML
-    private void handleProfile(ActionEvent event) {
+        @FXML
+        private void handleHome(ActionEvent event) {
+
         navigate(
                 event,
-                "/fxml/employee/employeeProfile.fxml"
+                "/fxml/employee/employeeHome.fxml"
         );
-    }
+        }
 
-    @FXML
-    private void handleTasks(ActionEvent event) {
+
+        // =========================================================
+        // MY TASKS
+        // =========================================================
+
+        @FXML
+        private void handleTasks(ActionEvent event) {
+
         navigate(
                 event,
                 "/fxml/employee/employeeTask.fxml"
         );
-    }
+        }
 
-    @FXML
-    private void handleKpi(ActionEvent event) {
-        navigate(
-                event,
-                "/fxml/employee/employeePerformance.fxml"
-        );
-    }
 
-    @FXML
-    private void handleAttendance(ActionEvent event) {
+        // =========================================================
+        // ATTENDANCE
+        // =========================================================
+
+        @FXML
+        private void handleAttendance(ActionEvent event) {
+
         navigate(
                 event,
                 "/fxml/employee/employeeAttendance.fxml"
         );
-    }
+        }
 
-    @FXML
-    private void handleEscalationRules(ActionEvent event) {
-        // Preserve existing navigation for compatibility.
+
+        // =========================================================
+        // MY PERFORMANCE
+        // =========================================================
+
+        @FXML
+        private void handleKpi(ActionEvent event) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeePerformance.fxml"
+        );
+        }
+
+
+        // =========================================================
+        // ANONYMOUS REPORT
+        // =========================================================
+
+        @FXML
+        private void handleAnonymousReport(ActionEvent event) {
+
+        navigate(
+                event,
+                "/fxml/employee/employeeAnonymousReport.fxml"
+        );
+        }
+
+
+        // =========================================================
+        // MY PROFILE
+        // =========================================================
+
+        @FXML
+        private void handleProfile(ActionEvent event) {
+
         navigate(
                 event,
                 "/fxml/employee/employeeProfile.fxml"
         );
-    }
+        }
 
-    @FXML
-    private void handleReports() {
-        System.out.println(
-                "Employee Reports not implemented yet."
-        );
-    }
 
-    @FXML
-    private void handleAnonymousReport(javafx.event.ActionEvent event) {
-        navigate(event, "/fxml/employee/employeeAnonymousReport.fxml");
-    }
+        // =========================================================
+        // CHAT ACTIVE STYLE
+        // =========================================================
 
-    @FXML
-    private void handleLogout(ActionEvent event) {
+        private void setChatNavigationActive() {
 
-        SessionManager.clearSession();
+        if (
+                homeNavButton == null
+                        || chatNavButton == null
+        ) {
 
-        navigate(event, "/fxml/auth/login.fxml");
-    }
+                return;
+        }
 
-    private void navigate(
-            ActionEvent event,
-            String path
-    ) {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene().getWindow();
+        // HOME NORMAL
+        homeNavButton
+                .getStyleClass()
+                .removeAll(
+                        "employee-nav-button",
+                        "employee-nav-button-active"
+                );
 
-        NavigationManager.navigate(stage, path);
-    }
+        homeNavButton
+                .getStyleClass()
+                .add(
+                        "employee-nav-button"
+                );
+
+
+        // CHAT ACTIVE
+        chatNavButton
+                .getStyleClass()
+                .removeAll(
+                        "employee-nav-button",
+                        "employee-nav-button-active"
+                );
+
+        chatNavButton
+                .getStyleClass()
+                .add(
+                        "employee-nav-button-active"
+                );
+        }
+
+
+        // =========================================================
+        // CHAT CENTER
+        // =========================================================
+
+        @FXML
+        private void handleChat(ActionEvent event) {
+
+        try {
+
+                FXMLLoader loader =
+                        new FXMLLoader(
+                                getClass().getResource(
+                                        "/fxml/common/chat.fxml"
+                                )
+                        );
+
+
+                Parent chatRoot =
+                        loader.load();
+
+
+                // Stop previous chat refresh if already opened.
+                if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+                }
+
+
+                chatController =
+                        loader.getController();
+
+
+                // Highlight Chat Center
+                setChatNavigationActive();
+
+
+                // IMPORTANT:
+                // Only replace middle content.
+                // Keep AEPM topbar + Employee sidebar.
+                pageRoot.setCenter(
+                        chatRoot
+                );
+
+
+        } catch (Exception e) {
+
+                System.err.println(
+                        "Failed to open Chat Center."
+                );
+
+                e.printStackTrace();
+        }
+        }
+
+        @FXML
+        private void handleLogout(ActionEvent event) {
+
+        try {
+
+                // Stop chat auto refresh if Chat Center was opened.
+                if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+                }
+
+
+                // Clear logged-in user session.
+                SessionManager.clearSession();
+
+
+                // Return to login page.
+                Stage stage =
+                        (Stage) ((Node) event.getSource())
+                                .getScene()
+                                .getWindow();
+
+
+                NavigationManager.navigate(
+                        stage,
+                        "/fxml/auth/login.fxml"
+                );
+
+
+        } catch (Exception e) {
+
+                System.err.println(
+                        "Logout failed."
+                );
+
+                e.printStackTrace();
+        }
+        }
+
+
+                // =========================================================
+                // COMMON NAVIGATION
+                // =========================================================
+
+        private void navigate(
+                ActionEvent event,
+                String path
+        ) {
+
+        try {
+
+                System.out.println(
+                        "[Employee Navigation] Opening: " + path
+                );
+
+                // Stop Chat Center auto refresh before leaving.
+                if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+                }
+
+                Stage stage =
+                        (Stage) ((Node) event.getSource())
+                                .getScene()
+                                .getWindow();
+
+                NavigationManager.navigate(
+                        stage,
+                        path
+                );
+
+        } catch (Exception e) {
+
+                System.err.println(
+                        "[Employee Navigation] Failed: " + path
+                );
+
+                e.printStackTrace();
+        }
+        }
 
     private XYChart.Data<String, Number> createBarData(
                 String category,

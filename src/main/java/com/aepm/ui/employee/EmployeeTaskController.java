@@ -8,6 +8,7 @@ import com.aepm.model.TaskCategory;
 import com.aepm.model.User;
 
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 
 import com.aepm.util.SessionManager;
 
@@ -25,7 +26,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -49,6 +52,17 @@ import java.util.List;
 import java.util.Map;
 
 public class EmployeeTaskController {
+
+    @FXML
+    private BorderPane pageRoot;
+
+    @FXML
+    private Button taskNavButton;
+
+    @FXML
+    private Button chatNavButton;
+
+    private ChatController chatController;
 
     // =========================================================
     // TOP BAR
@@ -107,16 +121,11 @@ public class EmployeeTaskController {
 
     @FXML
     private Label messageLabel;
-
     @FXML
-        private void handleAttendance(ActionEvent event) {
+    private void handleAttendance(ActionEvent event) {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
-
-        NavigationManager.navigate(
-                stage,
+        navigate(
+                event,
                 "/fxml/employee/employeeAttendance.fxml"
         );
     }
@@ -919,9 +928,14 @@ public class EmployeeTaskController {
 
 
     @FXML
-    private void handleTasks() {
+    private void handleTasks(
+            ActionEvent event
+    ) {
 
-        // Current page
+        navigate(
+                event,
+                "/fxml/employee/employeeTask.fxml"
+        );
     }
 
     @FXML
@@ -974,6 +988,73 @@ private void handleAIRecommendation(
             "/fxml/employee/employeeAIRecommendation.fxml"
     );
 }
+
+
+
+    private void setChatNavigationActive() {
+
+        if (taskNavButton != null) {
+            taskNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active"
+            );
+            taskNavButton.getStyleClass().add(
+                    "employee-nav-button"
+            );
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active",
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add(
+                    "employee-nav-button-active"
+            );
+        }
+    }
+
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/common/chat.fxml"
+                            )
+                    );
+
+            Parent chatRoot =
+                    loader.load();
+
+            chatController =
+                    loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(
+                    chatRoot
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Failed to open Chat Center from My Tasks."
+            );
+
+            e.printStackTrace();
+        }
+    }
 
 
     @FXML
@@ -1052,15 +1133,30 @@ private void handleAIRecommendation(
             String path
     ) {
 
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
+        try {
 
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
 
-        NavigationManager.navigate(
-                stage,
-                path
-        );
+            Stage stage =
+                    (Stage) ((Node) event.getSource())
+                            .getScene()
+                            .getWindow();
+
+            NavigationManager.navigate(
+                    stage,
+                    path
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "[Employee Task Navigation] Failed: " + path
+            );
+
+            e.printStackTrace();
+        }
     }
 }

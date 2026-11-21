@@ -4,17 +4,20 @@ import com.aepm.logic.dashboard.AdminDashboardService;
 import com.aepm.model.User;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
+import com.aepm.ui.common.chat.ChatController;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import com.aepm.ui.components.DashboardAttentionPanel;
@@ -23,7 +26,12 @@ import java.util.Locale;
 
 public class AdminHomeController {
 
-    @FXML private Label welcomeLabel;
+    
+    @FXML private BorderPane pageRoot;
+    @FXML private Button homeNavButton;
+    @FXML private Button chatNavButton;
+    private ChatController chatController;
+@FXML private Label welcomeLabel;
     @FXML private Label topNameLabel;
     @FXML private Label dashboardStatusLabel;
 
@@ -378,6 +386,59 @@ public class AdminHomeController {
         navigate(event, "/fxml/admin/adminAnonymousReports.fxml");
     }
 
+    private void setChatNavigationActive() {
+
+        if (homeNavButton == null || chatNavButton == null) {
+            return;
+        }
+
+        homeNavButton.getStyleClass().removeAll(
+                "admin-nav-button",
+                "admin-nav-button-active"
+        );
+        homeNavButton.getStyleClass().add("admin-nav-button");
+
+        chatNavButton.getStyleClass().removeAll(
+                "admin-nav-button",
+                "admin-nav-button-active"
+        );
+        chatNavButton.getStyleClass().add("admin-nav-button-active");
+    }
+
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        setChatNavigationActive();
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/fxml/common/chat.fxml"
+                    )
+            );
+
+            Parent chatRoot = loader.load();
+
+            if (chatController != null) {
+                chatController.stop();
+            }
+
+            chatController = loader.getController();
+
+            pageRoot.setCenter(chatRoot);
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Failed to open Chat Center."
+            );
+
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     private void handleLogout(ActionEvent event) {
 
@@ -386,14 +447,40 @@ public class AdminHomeController {
         navigate(event, "/fxml/auth/login.fxml");
     }
 
-    private void navigate(
-            ActionEvent event,
-            String path
-    ) {
+        private void navigate(
+                ActionEvent event,
+                String path
+        ) {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene().getWindow();
+        try {
 
-        NavigationManager.navigate(stage, path);
-    }
+                if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+                }
+
+
+                Stage stage =
+                        (Stage) ((Node) event.getSource())
+                                .getScene()
+                                .getWindow();
+
+
+                NavigationManager.navigate(
+                        stage,
+                        path
+                );
+
+
+        } catch (Exception e) {
+
+                System.err.println(
+                        "Navigation failed: " + path
+                );
+
+                e.printStackTrace();
+        }
+        }
 }

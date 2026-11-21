@@ -8,6 +8,7 @@ import com.aepm.model.PerformanceFeedback;
 import com.aepm.model.User;
 
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.SessionManager;
 
 import javafx.beans.property.SimpleDoubleProperty;
@@ -19,14 +20,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 
 import javafx.stage.Stage;
 
@@ -47,6 +51,11 @@ import javafx.scene.control.Button;
 import java.util.UUID;
 
 public class EmployeePerformanceController {
+
+    @FXML private BorderPane pageRoot;
+    @FXML private Button performanceNavButton;
+    @FXML private Button chatNavButton;
+    private ChatController chatController;
 
     // =========================================================
     // TOP BAR
@@ -171,14 +180,10 @@ public class EmployeePerformanceController {
     private Label messageLabel;
 
     @FXML
-        private void handleAttendance(ActionEvent event) {
+    private void handleAttendance(ActionEvent event) {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
-
-        NavigationManager.navigate(
-                stage,
+        navigate(
+                event,
                 "/fxml/employee/employeeAttendance.fxml"
         );
     }
@@ -1174,6 +1179,72 @@ public class EmployeePerformanceController {
     }
 
 
+    private void setChatNavigationActive() {
+
+        if (performanceNavButton != null) {
+            performanceNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active"
+            );
+            performanceNavButton.getStyleClass().add(
+                    "employee-nav-button"
+            );
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active",
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add(
+                    "employee-nav-button-active"
+            );
+        }
+    }
+
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/common/chat.fxml"
+                            )
+                    );
+
+            Parent chatRoot =
+                    loader.load();
+
+            chatController =
+                    loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(
+                    chatRoot
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Failed to open Chat Center from Performance."
+            );
+
+            e.printStackTrace();
+        }
+    }
+
+
     @FXML
     private void handleLogout(
             ActionEvent event
@@ -1304,17 +1375,33 @@ public class EmployeePerformanceController {
             String path
     ) {
 
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
+        try {
 
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
 
-        NavigationManager.navigate(
-                stage,
-                path
-        );
+            Stage stage =
+                    (Stage) ((Node) event.getSource())
+                            .getScene()
+                            .getWindow();
+
+            NavigationManager.navigate(
+                    stage,
+                    path
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "[Performance Navigation] Failed: " + path
+            );
+
+            e.printStackTrace();
+        }
     }
+
 
     @FXML
     private void handleAiRecommendations() {

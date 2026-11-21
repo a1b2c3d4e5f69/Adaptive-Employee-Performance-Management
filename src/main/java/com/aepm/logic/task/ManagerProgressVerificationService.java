@@ -318,6 +318,11 @@ public class ManagerProgressVerificationService {
                         employee
                 ),
 
+                employee.optString(
+                        "employee_id",
+                        "-"
+                ),
+
                 task.optInt(
                         "progress",
                         0
@@ -355,6 +360,21 @@ public class ManagerProgressVerificationService {
 
                 submission.optString(
                         "system_reason",
+                        ""
+                ),
+
+                submission.optString(
+                        "verification_method",
+                        ""
+                ),
+
+                submission.optString(
+                        "review_comment",
+                        ""
+                ),
+
+                submission.optString(
+                        "reviewed_at",
                         ""
                 ),
 
@@ -798,6 +818,8 @@ public class ManagerProgressVerificationService {
 
         private final String employeeName;
 
+        private final String employeeCode;
+
         private final int currentProgress;
 
         private final int requestedProgress;
@@ -814,6 +836,12 @@ public class ManagerProgressVerificationService {
 
         private final String systemReason;
 
+        private final String verificationMethod;
+
+        private final String reviewComment;
+
+        private final String reviewedAt;
+
         private final List<EvidenceItem> evidence;
 
 
@@ -823,6 +851,7 @@ public class ManagerProgressVerificationService {
                 UUID employeeId,
                 String taskTitle,
                 String employeeName,
+                String employeeCode,
                 int currentProgress,
                 int requestedProgress,
                 String progressNote,
@@ -831,6 +860,9 @@ public class ManagerProgressVerificationService {
                 String reviewDeadline,
                 double systemConfidence,
                 String systemReason,
+                String verificationMethod,
+                String reviewComment,
+                String reviewedAt,
                 List<EvidenceItem> evidence
         ) {
 
@@ -839,6 +871,7 @@ public class ManagerProgressVerificationService {
             this.employeeId = employeeId;
             this.taskTitle = taskTitle;
             this.employeeName = employeeName;
+            this.employeeCode = employeeCode;
             this.currentProgress = currentProgress;
             this.requestedProgress = requestedProgress;
             this.progressNote = progressNote;
@@ -847,6 +880,9 @@ public class ManagerProgressVerificationService {
             this.reviewDeadline = reviewDeadline;
             this.systemConfidence = systemConfidence;
             this.systemReason = systemReason;
+            this.verificationMethod = verificationMethod;
+            this.reviewComment = reviewComment;
+            this.reviewedAt = reviewedAt;
             this.evidence = evidence;
         }
 
@@ -869,6 +905,10 @@ public class ManagerProgressVerificationService {
 
         public String getEmployeeName() {
             return employeeName;
+        }
+
+        public String getEmployeeCode() {
+            return employeeCode;
         }
 
         public int getCurrentProgress() {
@@ -901,6 +941,18 @@ public class ManagerProgressVerificationService {
 
         public String getSystemReason() {
             return systemReason;
+        }
+
+        public String getVerificationMethod() {
+            return verificationMethod;
+        }
+
+        public String getReviewComment() {
+            return reviewComment;
+        }
+
+        public String getReviewedAt() {
+            return reviewedAt;
         }
 
         public List<EvidenceItem> getEvidence() {
@@ -999,30 +1051,43 @@ public class ManagerProgressVerificationService {
         }
 
 
-        String status =
+        String employeeIdRaw =
                 submission.optString(
-                        "status",
+                        "employee_id",
                         ""
                 );
 
-
-        /*
-        * Only unresolved submissions can still
-        * be reviewed from notification.
-        */
-        if (
-                !"Pending Manager Review"
-                        .equalsIgnoreCase(status)
-                        &&
-                !"Needs Manager Review"
-                        .equalsIgnoreCase(status)
-        ) {
+        if (employeeIdRaw.isBlank()) {
 
             throw new IllegalStateException(
-                    "This progress submission has already been reviewed."
+                    "The progress submission has no employee reference."
             );
         }
 
+        UUID employeeId =
+                UUID.fromString(
+                        employeeIdRaw
+                );
+
+        List<UUID> managedEmployees =
+                getManagedEmployeeIds(
+                        getCurrentManagerId(),
+                        accessToken
+                );
+
+        if (!managedEmployees.contains(employeeId)) {
+
+            throw new IllegalStateException(
+                    "You are not allowed to view this employee progress submission."
+            );
+        }
+
+        /*
+         * Important:
+         * Reviewed submissions are intentionally still viewable.
+         * The dialog decides whether it is actionable or read-only
+         * based on the current submission status.
+         */
 
         return buildVerificationItem(
                 submission,

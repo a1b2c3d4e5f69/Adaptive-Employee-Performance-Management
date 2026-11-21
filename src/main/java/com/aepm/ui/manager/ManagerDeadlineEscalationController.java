@@ -1,8 +1,12 @@
 package com.aepm.ui.manager;
 
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Button;
 import com.aepm.config.AppConfig;
 import com.aepm.data.supabase.SupabaseClient;
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.SessionManager;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -11,6 +15,8 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.control.TableView;
@@ -35,6 +41,18 @@ import java.util.stream.Collectors;
 import com.aepm.model.User;
 
 public class ManagerDeadlineEscalationController {
+
+    @FXML
+    private BorderPane pageRoot;
+
+    @FXML
+    private Button currentNavButton;
+
+    @FXML
+    private Button chatNavButton;
+
+    private ChatController chatController;
+
 
     @FXML private Label topRoleLabel;
     @FXML private Label totalLabel;
@@ -541,7 +559,7 @@ public class ManagerDeadlineEscalationController {
 
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().add(ButtonType.CLOSE);
-        pane.setPrefSize(620, 600);
+        pane.setPrefSize(920, 840);
         pane.setStyle(
             "-fx-background-color: #F6F8FC;"
         );
@@ -551,19 +569,31 @@ public class ManagerDeadlineEscalationController {
         defaultClose.setVisible(false);
         defaultClose.setManaged(false);
 
+        Label icon = new Label("!");
+        icon.setAlignment(javafx.geometry.Pos.CENTER);
+        icon.setMinSize(54, 54);
+        icon.setMaxSize(54, 54);
+        icon.setStyle(
+            "-fx-background-color: #FFF0B8;"
+            + "-fx-background-radius: 15;"
+            + "-fx-text-fill: #B86A00;"
+            + "-fx-font-size: 24px;"
+            + "-fx-font-weight: bold;"
+        );
+
         Label title = new Label("Escalation Details");
         title.setStyle(
-            "-fx-font-size: 22px;" +
-            "-fx-font-weight: bold;" +
-            "-fx-text-fill: #10264A;"
+            "-fx-font-size: 26px;"
+            + "-fx-font-weight: 800;"
+            + "-fx-text-fill: #10264A;"
         );
 
         Label subtitle = new Label(
             "Review the escalation record and manager decision."
         );
         subtitle.setStyle(
-            "-fx-font-size: 12px;" +
-            "-fx-text-fill: #7184A4;"
+            "-fx-font-size: 12px;"
+            + "-fx-text-fill: #7184A4;"
         );
 
         VBox heading = new VBox(5, title, subtitle);
@@ -598,11 +628,19 @@ public class ManagerDeadlineEscalationController {
 
         HBox badges = new HBox(8, levelBadge, statusBadge);
 
-        VBox header = new VBox(13, heading, badges);
-        header.setPadding(new javafx.geometry.Insets(22));
+        javafx.scene.layout.Region headerSpacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(headerSpacer, javafx.scene.layout.Priority.ALWAYS);
+
+        HBox topHeader = new HBox(16, icon, heading, headerSpacer);
+        topHeader.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        VBox header = new VBox(13, topHeader, badges);
+        header.setPadding(new javafx.geometry.Insets(18, 22, 12, 22));
         header.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 14;"
+            "-fx-background-color: white;"
+            + "-fx-background-radius: 14;"
+            + "-fx-border-color: #DCE6F4;"
+            + "-fx-border-radius: 14;"
         );
 
         Label taskTitle = new Label(record.task());
@@ -614,10 +652,17 @@ public class ManagerDeadlineEscalationController {
         );
 
         VBox taskSection = new VBox(
-            7,
+            10,
             detailSectionTitle("TASK INFORMATION"),
             taskTitle,
             detailField("Assigned Employee", record.employee())
+        );
+        taskSection.setPadding(new javafx.geometry.Insets(14));
+        taskSection.setStyle(
+            "-fx-background-color: #F3F7FF;"
+            + "-fx-background-radius: 12;"
+            + "-fx-border-color: #BFD2F2;"
+            + "-fx-border-radius: 12;"
         );
 
         VBox decisionSection = new VBox(
@@ -626,6 +671,13 @@ public class ManagerDeadlineEscalationController {
             detailField("Escalation ID", "#" + record.id()),
             detailField("Manager Decision", record.decision()),
             detailField("Escalated At", record.date())
+        );
+        decisionSection.setPadding(new javafx.geometry.Insets(14));
+        decisionSection.setStyle(
+            "-fx-background-color: #F3F7FF;"
+            + "-fx-background-radius: 12;"
+            + "-fx-border-color: #BFD2F2;"
+            + "-fx-border-radius: 12;"
         );
 
         javafx.scene.layout.GridPane dates =
@@ -659,6 +711,13 @@ public class ManagerDeadlineEscalationController {
             detailSectionTitle("DEADLINE INFORMATION"),
             dates
         );
+        deadlineSection.setPadding(new javafx.geometry.Insets(14));
+        deadlineSection.setStyle(
+            "-fx-background-color: #F3F7FF;"
+            + "-fx-background-radius: 12;"
+            + "-fx-border-color: #BFD2F2;"
+            + "-fx-border-radius: 12;"
+        );
 
         Label noteText = new Label(
             record.note() == null || record.note().isBlank()
@@ -678,6 +737,13 @@ public class ManagerDeadlineEscalationController {
             detailSectionTitle("MANAGER FOLLOW-UP NOTE"),
             noteText
         );
+        noteBox.setPadding(new javafx.geometry.Insets(14));
+        noteBox.setStyle(
+            "-fx-background-color: #F3F7FF;"
+            + "-fx-background-radius: 12;"
+            + "-fx-border-color: #BFD2F2;"
+            + "-fx-border-radius: 12;"
+        );
 
         VBox content = new VBox(
             22,
@@ -689,8 +755,10 @@ public class ManagerDeadlineEscalationController {
 
         content.setPadding(new javafx.geometry.Insets(22));
         content.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 14;"
+            "-fx-background-color: white;"
+            + "-fx-background-radius: 14;"
+            + "-fx-border-color: #DCE6F4;"
+            + "-fx-border-radius: 14;"
         );
 
         VBox body = new VBox(14, header, content);
@@ -707,7 +775,7 @@ public class ManagerDeadlineEscalationController {
 
         Button closeButton = new Button("Close");
         closeButton.setStyle(
-            "-fx-background-color: #2563EB;" +
+            "-fx-background-color: #10264A;" +
             "-fx-text-fill: white;" +
             "-fx-font-weight: bold;" +
             "-fx-background-radius: 9;" +
@@ -766,7 +834,7 @@ public class ManagerDeadlineEscalationController {
         box.setStyle(
             "-fx-background-color: #F8FAFD;" +
             "-fx-background-radius: 10;" +
-            "-fx-border-color: #E3EAF4;" +
+            "-fx-border-color: #C9D9F2;" +
             "-fx-border-radius: 10;"
         );
 
@@ -781,37 +849,41 @@ public class ManagerDeadlineEscalationController {
         ).showAndWait();
     }
 
-    private void navigate(String path) {
+    private void navigate(ActionEvent event, String path) {
 
-        Stage stage = (Stage)
-            escalationTable.getScene().getWindow();
+        stopChatIfNeeded();
+
+        Stage stage =
+                (Stage) ((javafx.scene.Node) event.getSource())
+                        .getScene()
+                        .getWindow();
 
         NavigationManager.navigate(stage, path);
     }
 
     @FXML
-    private void handleHome() {
-        navigate("/fxml/manager/managerHome.fxml");
+    private void handleHome(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerHome.fxml");
     }
 
     @FXML
-    private void handleProfile() {
-        navigate("/fxml/manager/managerProfile.fxml");
+    private void handleProfile(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerProfile.fxml");
     }
 
     @FXML
-    private void handleTaskManagement() {
-        navigate("/fxml/manager/managerTask.fxml");
+    private void handleTaskManagement(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerTask.fxml");
     }
 
     @FXML
-    private void handleDeadlineEscalation() {
-        // Already on Deadline Escalation page.
+    private void handleDeadlineEscalation(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerDeadlineEscalation.fxml");
     }
 
     @FXML
-    private void handlePerformance() {
-        navigate("/fxml/manager/managerPerformance.fxml");
+    private void handlePerformance(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerPerformance.fxml");
     }
 
     @FXML
@@ -825,14 +897,75 @@ public class ManagerDeadlineEscalationController {
     }
 
     @FXML
-    private void handleDashboard() {
-        System.out.println("Dashboard not implemented yet.");
+    private void handleDashboard(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerHome.fxml");
     }
 
     @FXML
-    private void handleLogout() {
+    private void handleLogout(ActionEvent event) {
         SessionManager.clearSession();
-        navigate("/fxml/auth/login.fxml");
+        navigate(event, "/fxml/auth/login.fxml");
+    }
+
+
+    // =========================================================
+    // CHAT CENTER
+    // =========================================================
+
+    private void setChatNavigationActive() {
+
+        if (currentNavButton != null) {
+            currentNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            currentNavButton.getStyleClass().add("manager-nav-button");
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add("manager-nav-button-active");
+        }
+    }
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/common/chat.fxml")
+            );
+
+            Parent chatRoot = loader.load();
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            chatController = loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(chatRoot);
+
+        } catch (Exception e) {
+
+            System.err.println("Failed to open Manager Chat Center.");
+            e.printStackTrace();
+        }
+    }
+
+    private void stopChatIfNeeded() {
+
+        if (chatController != null) {
+            chatController.stop();
+            chatController = null;
+        }
     }
 
     private void updateManagerRoleLabel() {

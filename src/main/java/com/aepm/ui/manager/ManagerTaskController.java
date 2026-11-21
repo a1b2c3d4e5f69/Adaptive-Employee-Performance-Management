@@ -11,6 +11,7 @@ import com.aepm.model.TaskCategory;
 import com.aepm.model.TaskProgress;
 import com.aepm.model.User;
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.ManagerTaskEditContext;
 import com.aepm.util.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,7 +20,11 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -43,6 +48,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ManagerTaskController {
+
+    @FXML
+    private BorderPane pageRoot;
+
+    @FXML
+    private Button currentNavButton;
+
+    @FXML
+    private Button chatNavButton;
+
+    private ChatController chatController;
+
 
     @FXML private Label welcomeLabel;
     @FXML private Label topNameLabel;
@@ -595,8 +612,8 @@ public class ManagerTaskController {
     }
 
     @FXML
-    private void handleTaskManagement() {
-        // Already on this page.
+    private void handleTaskManagement(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerTask.fxml");
     }
 
     @FXML
@@ -611,7 +628,9 @@ public class ManagerTaskController {
 
     @FXML
     private void handleReports(ActionEvent event) {
-        navigate(event, "/fxml/manager/managerReport.fxml");
+        javafx.stage.Window owner =
+                ((Node) event.getSource()).getScene().getWindow();
+        ManagerReportsPage.show(owner);
     }
 
     @FXML
@@ -623,6 +642,67 @@ public class ManagerTaskController {
     private void handleLogout(ActionEvent event) {
         SessionManager.clearSession();
         navigate(event, "/fxml/auth/login.fxml");
+    }
+
+
+    // =========================================================
+    // CHAT CENTER
+    // =========================================================
+
+    private void setChatNavigationActive() {
+
+        if (currentNavButton != null) {
+            currentNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            currentNavButton.getStyleClass().add("manager-nav-button");
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add("manager-nav-button-active");
+        }
+    }
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/common/chat.fxml")
+            );
+
+            Parent chatRoot = loader.load();
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            chatController = loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(chatRoot);
+
+        } catch (Exception e) {
+
+            System.err.println("Failed to open Manager Chat Center.");
+            e.printStackTrace();
+        }
+    }
+
+    private void stopChatIfNeeded() {
+
+        if (chatController != null) {
+            chatController.stop();
+            chatController = null;
+        }
     }
 
     private String formatDateTime(OffsetDateTime value) {
@@ -658,7 +738,13 @@ public class ManagerTaskController {
     }
 
     private void navigate(ActionEvent event, String path) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stopChatIfNeeded();
+
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
         NavigationManager.navigate(stage, path);
     }
 }

@@ -140,6 +140,14 @@
                             onAction="#handlePerformance"
                             styleClass="manager-nav-button"/>
 
+                       <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="manager-nav-button"/>
+
 
                     <Button
                             text="≡   Reports"

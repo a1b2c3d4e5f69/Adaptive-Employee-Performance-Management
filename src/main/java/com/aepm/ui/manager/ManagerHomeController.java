@@ -5,24 +5,36 @@ import com.aepm.model.User;
 import com.aepm.ui.components.NotificationBell;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
+import com.aepm.ui.common.chat.ChatController;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+
 import com.aepm.ui.components.DashboardAttentionPanel;
 import com.aepm.ui.components.DashboardTaskChart;
 import java.util.Locale;
 
 public class ManagerHomeController {
 
-    @FXML private Label welcomeLabel;
+    
+    @FXML private BorderPane pageRoot;
+    @FXML private Button homeNavButton;
+    @FXML private Button chatNavButton;
+    private ChatController chatController;
+@FXML private Label welcomeLabel;
     @FXML private Label topNameLabel;
     @FXML private Label topRoleLabel;
     @FXML private Label departmentLabel;
@@ -289,77 +301,225 @@ public class ManagerHomeController {
         attentionPanel.reload();
     }
 
-    @FXML
-    private void handleHome() {
-        // Already on Home.
-    }
+    // =========================================================
+        // NAVIGATION
+        // =========================================================
 
-    @FXML
-    private void handleProfile(ActionEvent event) {
-        navigate(
-                event,
-                "/fxml/manager/managerProfile.fxml"
-        );
-    }
+        @FXML
+        private void handleHome(ActionEvent event) {
 
-    @FXML
-    private void handleTaskManagement(ActionEvent event) {
-        navigate(
-                event,
-                "/fxml/manager/managerTask.fxml"
-        );
-    }
-
-    @FXML
-    private void handleDeadlineEscalation(ActionEvent event) {
-        navigate(
-                event,
-                "/fxml/manager/managerDeadlineEscalation.fxml"
-        );
-    }
-
-    @FXML
-    private void handlePerformance(ActionEvent event) {
-        navigate(
-                event,
-                "/fxml/manager/managerPerformance.fxml"
-        );
-    }
-
-    @FXML
-        private void handleReports(javafx.event.ActionEvent event) {
-        javafx.stage.Window owner =
-                ((javafx.scene.Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-        ManagerReportsPage.show(owner);
-    }
-
-    @FXML
-    private void handleDashboard(ActionEvent event) {
         navigate(
                 event,
                 "/fxml/manager/managerHome.fxml"
         );
         }
 
-    @FXML
-    private void handleLogout(ActionEvent event) {
 
-        SessionManager.clearSession();
+        @FXML
+        private void handleProfile(ActionEvent event) {
 
-        navigate(event, "/fxml/auth/login.fxml");
-    }
+        navigate(
+                event,
+                "/fxml/manager/managerProfile.fxml"
+        );
+        }
 
-    private void navigate(
-            ActionEvent event,
-            String path
-    ) {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene().getWindow();
+        @FXML
+        private void handleTaskManagement(ActionEvent event) {
 
-        NavigationManager.navigate(stage, path);
-    }
+        navigate(
+                event,
+                "/fxml/manager/managerTask.fxml"
+        );
+        }
+
+
+        @FXML
+        private void handlePerformance(ActionEvent event) {
+
+        navigate(
+                event,
+                "/fxml/manager/managerPerformance.fxml"
+        );
+        }
+
+
+        @FXML
+        private void handleDeadlineEscalation(ActionEvent event) {
+
+        navigate(
+                event,
+                "/fxml/manager/managerDeadlineEscalation.fxml"
+        );
+        }
+
+        @FXML
+        private void handleReports(ActionEvent event) {
+
+        Window owner =
+                ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        ManagerReportsPage.show(owner);
+        }
+
+
+        // =========================================================
+        // CHAT
+        // =========================================================
+
+        private void setChatNavigationActive() {
+
+        if (homeNavButton == null
+                || chatNavButton == null) {
+
+                return;
+        }
+
+
+        homeNavButton
+                .getStyleClass()
+                .removeAll(
+                        "manager-nav-button",
+                        "manager-nav-button-active"
+                );
+
+        homeNavButton
+                .getStyleClass()
+                .add(
+                        "manager-nav-button"
+                );
+
+
+        chatNavButton
+                .getStyleClass()
+                .removeAll(
+                        "manager-nav-button",
+                        "manager-nav-button-active"
+                );
+
+        chatNavButton
+                .getStyleClass()
+                .add(
+                        "manager-nav-button-active"
+                );
+        }
+
+
+        @FXML
+        private void handleChat(ActionEvent event) {
+
+        setChatNavigationActive();
+
+        try {
+
+                FXMLLoader loader =
+                        new FXMLLoader(
+                                getClass().getResource(
+                                        "/fxml/common/chat.fxml"
+                                )
+                        );
+
+
+                Parent chatRoot =
+                        loader.load();
+
+
+                if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+                }
+
+
+                chatController =
+                        loader.getController();
+
+
+                pageRoot.setCenter(
+                        chatRoot
+                );
+
+
+        } catch (Exception e) {
+
+                System.err.println(
+                        "Failed to open Chat Center."
+                );
+
+                e.printStackTrace();
+        }
+        }
+
+
+        // =========================================================
+        // LOGOUT
+        // =========================================================
+
+        @FXML
+        private void handleLogout(ActionEvent event) {
+
+        if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+        }
+
+
+                SessionManager.clearSession();
+
+
+                navigate(
+                        event,
+                        "/fxml/auth/login.fxml"
+                );
+                }
+
+
+                // =========================================================
+                // COMMON NAVIGATION
+                // =========================================================
+
+        private void navigate(
+                ActionEvent event,
+                String path
+        ) {
+
+        try {
+
+                System.out.println(
+                        "[Manager Navigation] Opening: " + path
+                );
+
+                // Stop Chat Center auto refresh before navigating away.
+                if (chatController != null) {
+
+                chatController.stop();
+
+                chatController = null;
+                }
+
+                Stage stage =
+                        (Stage) ((Node) event.getSource())
+                                .getScene()
+                                .getWindow();
+
+                NavigationManager.navigate(
+                        stage,
+                        path
+                );
+
+        } catch (Exception e) {
+
+                System.err.println(
+                        "[Manager Navigation] Failed: " + path
+                );
+
+                e.printStackTrace();
+        }
+        }
 }

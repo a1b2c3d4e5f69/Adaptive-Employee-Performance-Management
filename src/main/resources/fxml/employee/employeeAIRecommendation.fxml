@@ -60,6 +60,14 @@
             <Button text="▥   Performance" alignment="CENTER_LEFT"
                     maxWidth="Infinity" onAction="#handleKpi"
                     styleClass="modern-nav-button"/>
+            
+            <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="manager-nav-button"/>
 
             <Button text="▦   My Attendance" alignment="CENTER_LEFT"
                     maxWidth="Infinity" onAction="#handleAttendance"

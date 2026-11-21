@@ -4,13 +4,18 @@ import com.aepm.logic.user.UserService;
 import com.aepm.model.User;
 import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.SessionManager;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.geometry.Rectangle2D;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -28,6 +33,18 @@ import java.io.File;
 import java.nio.file.Path;
 
 public class ManagerProfileController {
+
+    @FXML
+    private BorderPane pageRoot;
+
+    @FXML
+    private Button currentNavButton;
+
+    @FXML
+    private Button chatNavButton;
+
+    private ChatController chatController;
+
 
     @FXML
     private Label topRoleLabel;
@@ -106,9 +123,9 @@ public class ManagerProfileController {
 
         Circle clip =
                 new Circle(
-                        60,
-                        60,
-                        60
+                        46,
+                        46,
+                        46
                 );
 
         profileImageView.setClip(
@@ -235,26 +252,182 @@ public class ManagerProfileController {
                                 true
                         );
 
+                profileImageView.setFitWidth(
+                        92
+                );
+
+                profileImageView.setFitHeight(
+                        92
+                );
+
+                profileImageView.setPreserveRatio(
+                        false
+                );
+
+                profileImageView.setSmooth(
+                        true
+                );
+
+                profileImageView.setClip(
+                        new Circle(
+                                46,
+                                46,
+                                46
+                        )
+                );
+
                 profileImageView.setImage(
                         image
                 );
 
-                profileImageView.setVisible(
-                        true
-                );
+                /*
+                 * JavaFX background-loading images can initially report
+                 * width/height as 0. Apply the center crop only after the
+                 * real image dimensions are available.
+                 */
+                Runnable applyCoverCrop =
+                        () -> {
 
-                profileInitialLabel.setVisible(
-                        false
-                );
+                            double sourceWidth =
+                                    image.getWidth();
+
+                            double sourceHeight =
+                                    image.getHeight();
+
+                            if (
+                                    sourceWidth <= 0
+                                            || sourceHeight <= 0
+                            ) {
+                                return;
+                            }
+
+                            double cropSize =
+                                    Math.min(
+                                            sourceWidth,
+                                            sourceHeight
+                                    );
+
+                            double cropX =
+                                    (sourceWidth - cropSize)
+                                            / 2.0;
+
+                            double cropY =
+                                    (sourceHeight - cropSize)
+                                            / 2.0;
+
+                            profileImageView.setViewport(
+                                    new Rectangle2D(
+                                            cropX,
+                                            cropY,
+                                            cropSize,
+                                            cropSize
+                                    )
+                            );
+
+                            profileImageView.setVisible(
+                                    true
+                            );
+
+                            profileImageView.setManaged(
+                                    true
+                            );
+
+                            profileInitialLabel.setVisible(
+                                    false
+                            );
+
+                            profileInitialLabel.setManaged(
+                                    false
+                            );
+                        };
+
+
+                if (
+                        image.getWidth() > 0
+                                && image.getHeight() > 0
+                ) {
+
+                    applyCoverCrop.run();
+
+                } else {
+
+                    image.progressProperty()
+                            .addListener(
+                                    (
+                                            observable,
+                                            oldValue,
+                                            newValue
+                                    ) -> {
+
+                                        if (
+                                                newValue.doubleValue()
+                                                        >= 1.0
+                                        ) {
+
+                                            applyCoverCrop.run();
+                                        }
+                                    }
+                            );
+                }
+
+
+                image.errorProperty()
+                        .addListener(
+                                (
+                                        observable,
+                                        oldValue,
+                                        hasError
+                                ) -> {
+
+                                    if (
+                                            Boolean.TRUE.equals(
+                                                    hasError
+                                            )
+                                    ) {
+
+                                        showProfileInitial(
+                                                user
+                                        );
+                                    }
+                                }
+                        );
 
                 return;
 
             } catch (Exception ignored) {
+
+                showProfileInitial(
+                        user
+                );
+
+                return;
             }
         }
 
 
+        showProfileInitial(
+                user
+        );
+    }
+
+
+    private void showProfileInitial(
+            User user
+    ) {
+
+        profileImageView.setImage(
+                null
+        );
+
+        profileImageView.setViewport(
+                null
+        );
+
         profileImageView.setVisible(
+                false
+        );
+
+        profileImageView.setManaged(
                 false
         );
 
@@ -262,9 +435,15 @@ public class ManagerProfileController {
                 true
         );
 
+        profileInitialLabel.setManaged(
+                true
+        );
+
 
         String name =
-                user.getFullName();
+                user == null
+                        ? null
+                        : user.getFullName();
 
 
         if (
@@ -514,8 +693,8 @@ public class ManagerProfileController {
     // =========================================================
 
     @FXML
-    private void handleProfile() {
-        // already on profile page
+    private void handleProfile(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerProfile.fxml");
     }
 
 
@@ -573,11 +752,8 @@ public class ManagerProfileController {
     }
     
     @FXML
-    private void handleDashboard() {
-
-        System.out.println(
-                "Dashboard not implemented yet."
-        );
+    private void handleDashboard(ActionEvent event) {
+        navigate(event, "/fxml/manager/managerHome.fxml");
     }
 
 
@@ -600,6 +776,8 @@ public class ManagerProfileController {
             String path
     ) {
 
+        stopChatIfNeeded();
+
         NavigationManager.navigate(
                 getStage(event),
                 path
@@ -616,6 +794,67 @@ public class ManagerProfileController {
                 .getWindow();
     }
 
+
+
+    // =========================================================
+    // CHAT CENTER
+    // =========================================================
+
+    private void setChatNavigationActive() {
+
+        if (currentNavButton != null) {
+            currentNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            currentNavButton.getStyleClass().add("manager-nav-button");
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add("manager-nav-button-active");
+        }
+    }
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/common/chat.fxml")
+            );
+
+            Parent chatRoot = loader.load();
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            chatController = loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(chatRoot);
+
+        } catch (Exception e) {
+
+            System.err.println("Failed to open Manager Chat Center.");
+            e.printStackTrace();
+        }
+    }
+
+    private void stopChatIfNeeded() {
+
+        if (chatController != null) {
+            chatController.stop();
+            chatController = null;
+        }
+    }
 
     private String safe(
             String value

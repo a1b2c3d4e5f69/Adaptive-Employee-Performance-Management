@@ -23,6 +23,7 @@
 <?import com.aepm.ui.components.DashboardAttentionPanel?>
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.admin.AdminHomeController"
         stylesheets="@../../css/app.css"
@@ -119,6 +120,7 @@
                             styleClass="admin-sidebar-section"/>
 
                     <Button
+                            fx:id="homeNavButton"
                             text="⌂   Dashboard"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
@@ -131,6 +133,15 @@
                             alignment="CENTER_LEFT"
                             onAction="#handleUserManagement"
                             styleClass="admin-nav-button"/>
+
+                    <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="admin-nav-button"/>
+
 
                     <Button
                             text="✓   Task Management"

@@ -4,19 +4,23 @@ import com.aepm.logic.user.UserService;
 import com.aepm.model.User;
 import com.aepm.ui.components.UIHelper;
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.SessionManager;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -25,6 +29,17 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class EmployeeProfileController {
+
+    @FXML
+    private BorderPane pageRoot;
+
+    @FXML
+    private Button profileNavButton;
+
+    @FXML
+    private Button chatNavButton;
+
+    private ChatController chatController;
 
     // =========================================================
     // TOP BAR
@@ -943,6 +958,73 @@ public class EmployeeProfileController {
     }
 
 
+
+    private void setChatNavigationActive() {
+
+        if (profileNavButton != null) {
+            profileNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active"
+            );
+            profileNavButton.getStyleClass().add(
+                    "employee-nav-button"
+            );
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active",
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add(
+                    "employee-nav-button-active"
+            );
+        }
+    }
+
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/common/chat.fxml"
+                            )
+                    );
+
+            Parent chatRoot =
+                    loader.load();
+
+            chatController =
+                    loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(
+                    chatRoot
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Failed to open Chat Center from My Profile."
+            );
+
+            e.printStackTrace();
+        }
+    }
+
+
     @FXML
     private void handleChangePassword(
             ActionEvent event
@@ -974,10 +1056,26 @@ public class EmployeeProfileController {
             String path
     ) {
 
-        NavigationManager.navigate(
-                getStage(event),
-                path
-        );
+        try {
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            NavigationManager.navigate(
+                    getStage(event),
+                    path
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "[Employee Profile Navigation] Failed: " + path
+            );
+
+            e.printStackTrace();
+        }
     }
 
 
