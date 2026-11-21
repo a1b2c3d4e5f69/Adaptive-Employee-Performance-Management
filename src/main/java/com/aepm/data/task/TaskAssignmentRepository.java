@@ -381,6 +381,8 @@ public class TaskAssignmentRepository {
                 )
         );
 
+        assignment.setDueDate(date(json, "due_date"));
+
         assignment.setAcceptedAt(
                 date(
                         json,

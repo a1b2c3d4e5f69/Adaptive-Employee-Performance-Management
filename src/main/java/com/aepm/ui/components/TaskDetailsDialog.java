@@ -205,6 +205,21 @@ public final class TaskDetailsDialog {
         VBox dialogLayout = new VBox(scroll, footer);
         VBox.setVgrow(scroll, Priority.ALWAYS);
         pane.setContent(dialogLayout);
+        // Preserve the Employee yellow theme.
+        if (isEmployee) {
+            String employeeButtonStyle =
+                "-fx-background-color: #FFC700;"
+                + "-fx-text-fill: #111111;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 9;"
+                + "-fx-border-radius: 9;"
+                + "-fx-border-color: #FFC700;"
+                + "-fx-padding: 11 19;"
+                + "-fx-cursor: hand;";
+
+            close.setStyle(employeeButtonStyle);
+            view.setStyle(employeeButtonStyle);
+        }
 
         Task<JSONObject[]> fetch = new Task<>() {
             @Override protected JSONObject[] call() throws Exception {
@@ -214,63 +229,64 @@ public final class TaskDetailsDialog {
                 JSONObject task = rows.getJSONObject(0);
 
                 JSONObject employee = null;
-
-                String employeeId = task.optString("assigned_employee_id", "");
-
-                if (isManager && !employeeId.isBlank()) {
-                    try {
-                        JSONArray users = getRows(token, AppConfig.REST_URL + "/user_tbl?select=full_name,employee_id&user_id=eq." + enc(employeeId) + "&limit=1");
-
-                        if (!users.isEmpty()) employee = users.getJSONObject(0);
-                    } catch (Exception ex) {
-                        System.err.println("[Task Details] Employee lookup unavailable: " + ex.getMessage());
-                    }
-                }
-
                 JSONObject escalation = null;
+                String employeeId = task.optString("assigned_employee_id", "");
+                if ("null".equalsIgnoreCase(employeeId)) employeeId = "";
 
-                if (isManager && escalationId != null) {
-                    JSONArray events = getRows(token, AppConfig.REST_URL
+                // An explicit case must never be replaced by another member's case.
+                if (escalationId != null) {
+                    String caseUrl = AppConfig.REST_URL
                         + "/task_escalation_tbl?select=*,escalation_rule_tbl(extension_days,action_type)"
                         + "&escalation_id=eq." + escalationId
+                        + "&task_id=eq." + enc(taskId);
+                    if (isEmployee) {
+                        caseUrl += "&employee_id=eq." + enc(current.getUserId());
+                    }
+                    JSONArray events = getRows(token, caseUrl + "&limit=1");
+                    if (events.isEmpty()) {
+                        throw new IllegalStateException("Escalation not found or access is not permitted.");
+                    }
+                    escalation = events.getJSONObject(0);
+                    employeeId = escalation.getString("employee_id");
+                } else if (isEmployee) {
+                    employeeId = current.getUserId();
+                    JSONArray decisions = getRows(token, AppConfig.REST_URL
+                        + "/task_escalation_tbl?select=*"
                         + "&task_id=eq." + enc(taskId)
-                        + "&limit=1");
-                    System.out.println("[DEBUG] Is Manager: " + isManager);
-                    System.out.println("[DEBUG] Escalation ID: " + escalationId);
-                    System.out.println("[DEBUG] Task ID: " + taskId);
-                    if (!events.isEmpty()) escalation = events.getJSONObject(0);
-                    System.out.println("[DEBUG] Escalation Query Result: " + events);
+                        + "&employee_id=eq." + enc(employeeId)
+                        + "&order=escalation_id.desc&limit=1");
+                    if (!decisions.isEmpty()) escalation = decisions.getJSONObject(0);
                 }
 
-                if (isEmployee) {
-                    try {
-                        JSONArray decisions = getRows(
-                            token,
-                            AppConfig.REST_URL + "/task_escalation_tbl"
-                                + "?select=escalation_id,current_level,status,"
-                                + "manager_decision,follow_up_note,decided_at,"
-                                + "previous_deadline,new_deadline"
-                                + "&task_id=eq." + enc(taskId)
-                                + "&order=escalation_id.desc"
-                                + "&limit=1"
-                        );
-
-                        if (!decisions.isEmpty()) {
-                            escalation = decisions.getJSONObject(0);
-                        }
-
-                        System.out.println(
-                            "[Employee Escalation] " + decisions
-                        );
-
-                    } catch (Exception ex) {
-                        System.err.println(
-                            "[Employee Escalation] Lookup failed: "
-                                + ex.getMessage()
-                        );
+                boolean isTeam = "TEAM".equalsIgnoreCase(task.optString("assignment_type", ""));
+                if (isTeam && !employeeId.isBlank()) {
+                    JSONArray members = getRows(token, AppConfig.REST_URL
+                        + "/task_assignment_tbl?select=*"
+                        + "&task_id=eq." + enc(taskId)
+                        + "&employee_id=eq." + enc(employeeId) + "&limit=1");
+                    if (members.isEmpty()) {
+                        throw new IllegalStateException("Member assignment not found or access is not permitted.");
+                    }
+                    JSONObject member = members.getJSONObject(0);
+                    // Display copy only: no database update is sent.
+                    task.put("member_deadline_view", true);
+                    task.put("shared_due_date", task.opt("due_date"));
+                    task.put("due_date", member.opt("due_date"));
+                    task.put("completion_date", member.opt("completed_at"));
+                    task.put("acceptance_date", member.opt("accepted_at"));
+                    task.put("assigned_employee_id", employeeId);
+                    task.put("progress", member.optInt("individual_progress", 0));
+                    if (!"Cancelled".equalsIgnoreCase(task.optString("task_status", ""))) {
+                        task.put("task_status", member.optString("assignment_status", "Pending"));
                     }
                 }
 
+                if (isManager && !employeeId.isBlank()) {
+                    JSONArray users = getRows(token, AppConfig.REST_URL
+                        + "/user_tbl?select=full_name,employee_id&user_id=eq."
+                        + enc(employeeId) + "&limit=1");
+                    if (!users.isEmpty()) employee = users.getJSONObject(0);
+                }
 
                 return new JSONObject[]{task, employee, escalation};
             }
@@ -360,10 +376,17 @@ public final class TaskDetailsDialog {
         VBox details = new VBox(7, sectionLabel("TASK INFORMATION"));
 
         GridPane info = grid();
-        info.add(infoCard("Due Date", formatDate(task.optString("due_date", ""))), 0, 0);
+        info.add(infoCard(task.optBoolean("member_deadline_view", false)
+                ? "Member Due Date" : "TEAM".equalsIgnoreCase(task.optString("assignment_type", ""))
+                ? "Shared Task Due Date" : "Due Date",
+                formatDate(task.optString("due_date", ""))), 0, 0);
         info.add(infoCard("Completion Date", formatDate(task.optString("completion_date", ""))), 1, 0);
         info.add(infoCard("Difficulty", difficulty), 0, 1);
         info.add(infoCard("Task Status", status), 1, 1);
+        if (task.optBoolean("member_deadline_view", false)) {
+            info.add(infoCard("Shared Task Due Date",
+                    formatDate(task.optString("shared_due_date", ""))), 0, 2);
+        }
         details.getChildren().add(info);
         card.getChildren().add(details);
 

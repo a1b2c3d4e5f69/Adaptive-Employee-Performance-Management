@@ -15,11 +15,20 @@ public class TaskAssignment {
 
     private OffsetDateTime acceptedAt;
     private OffsetDateTime completedAt;
+    private OffsetDateTime dueDate;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
     private String employeeName;
     private String employeeNumber;
+
+    public OffsetDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(OffsetDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
 
     public UUID getAssignmentId() {
         return assignmentId;

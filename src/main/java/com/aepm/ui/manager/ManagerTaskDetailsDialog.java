@@ -71,7 +71,7 @@ public class ManagerTaskDetailsDialog {
         addDetailRow(
                 details,
                 5,
-                "Due Date",
+                task.getAssignedEmployeeId() == null ? "Shared Task Due Date" : "Due Date",
                 task.getDueDate() == null
                         ? "-"
                         : task.getDueDate().atZoneSameInstant(MALAYSIA_ZONE).format(DATE_FORMATTER)
@@ -195,7 +195,12 @@ public class ManagerTaskDetailsDialog {
             for (TaskAssignment assignment : assignments) {
                 if (assignment == null || assignment.getEmployeeId() == null) continue;
                 String userId = assignment.getEmployeeId().toString();
-                addEmployeeLabel(employeeBox, employeeDisplayMap.getOrDefault(userId, userId));
+                String deadline = assignment.getDueDate() == null ? "-"
+                        : assignment.getDueDate().atZoneSameInstant(MALAYSIA_ZONE).format(DATE_FORMATTER);
+                String member = employeeDisplayMap.getOrDefault(userId, userId);
+                addEmployeeLabel(employeeBox, member + " | " + safe(assignment.getAssignmentStatus())
+                        + " | " + assignment.getIndividualProgress() + "%"
+                        + " | Due: " + deadline);
             }
 
             if (employeeBox.getChildren().isEmpty()) {
@@ -218,6 +223,7 @@ public class ManagerTaskDetailsDialog {
     private void addEmployeeLabel(VBox employeeBox, String employee) {
         Label label = new Label("•  " + employee);
         label.getStyleClass().add("manager-task-popup-employee");
+        label.setWrapText(true);
         employeeBox.getChildren().add(label);
     }
 
