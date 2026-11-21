@@ -38,6 +38,58 @@ public final class AIRecommendationDialog {
         Stage dialog = new Stage(StageStyle.TRANSPARENT);
         dialog.setTitle("AI Performance Recommendations");
 
+        // =====================================================
+        // ROLE-AWARE SHARED THEME
+        // Employee = Gold / Yellow
+        // Manager  = Teal
+        // =====================================================
+        var currentUser = SessionManager.getCurrentUser();
+
+        boolean employeeView =
+                currentUser != null
+                        && currentUser.getRoleId() == 3L;
+
+        boolean managerView =
+                currentUser != null
+                        && currentUser.getRoleId() == 2L;
+
+        String rolePrimary =
+                employeeView
+                        ? "#FFC107"
+                        : managerView
+                                ? "#0F766E"
+                                : "#2563EB";
+
+        String roleHover =
+                employeeView
+                        ? "#E0A800"
+                        : managerView
+                                ? "#115E59"
+                                : "#1D4ED8";
+
+        // Content styling:
+        // Employee uses gold/yellow.
+        // Manager keeps the original clean blue content styling.
+        String roleSoft =
+                employeeView
+                        ? "#FFF8E1"
+                        : "#DBEAFE";
+
+        String roleSoftStrong =
+                employeeView
+                        ? "#FFF3BF"
+                        : "#EFF6FF";
+
+        String roleText =
+                employeeView
+                        ? "#8A5A00"
+                        : "#2563EB";
+
+        String primaryButtonText =
+                employeeView
+                        ? "#0F172A"
+                        : "#FFFFFF";
+
         if (owner != null) {
             dialog.initOwner(owner);
             dialog.initModality(Modality.WINDOW_MODAL);
@@ -45,11 +97,13 @@ public final class AIRecommendationDialog {
             dialog.initModality(Modality.APPLICATION_MODAL);
         }
 
-        Label icon = label("AI", 18, "#2563EB", true);
+        Label icon = label("AI", 18, roleText, true);
         icon.setAlignment(Pos.CENTER);
         icon.setMinSize(52, 52);
         icon.setStyle(icon.getStyle()
-                + "-fx-background-color: #DBEAFE;"
+                + "-fx-background-color: "
+                + roleSoft
+                + ";"
                 + "-fx-background-radius: 16;");
 
         VBox heading = new VBox(
@@ -75,8 +129,14 @@ public final class AIRecommendationDialog {
         details.setVgap(16);
         details.setPadding(new Insets(20));
         details.setStyle(
-                "-fx-background-color: #EFF6FF;"
+                "-fx-background-color: "
+                + roleSoftStrong
+                + ";"
                 + "-fx-background-radius: 14;"
+                + "-fx-border-color: "
+                + roleSoft
+                + ";"
+                + "-fx-border-radius: 14;"
         );
 
         for (int i = 0; i < 2; i++) {
@@ -160,8 +220,6 @@ public final class AIRecommendationDialog {
         );
 
         // Manager Coaching is displayed only in the manager view.
-        var currentUser = SessionManager.getCurrentUser();
-
         if (currentUser != null && currentUser.getRoleId() == 2L) {
             sections.getChildren().add(
                     card(
@@ -188,19 +246,49 @@ public final class AIRecommendationDialog {
 
         String buttonStyle =
                 "-fx-background-radius: 10;"
-                + "-fx-text-fill: white;"
+                + "-fx-border-radius: 10;"
+                + "-fx-border-width: 1.5;"
                 + "-fx-font-size: 14px;"
                 + "-fx-font-weight: bold;"
                 + "-fx-cursor: hand;";
 
-        close.setStyle(buttonStyle
-                + "-fx-background-color: #2563EB;");
+        close.setStyle(
+                buttonStyle
+                        + "-fx-background-color: "
+                        + rolePrimary
+                        + ";"
+                        + "-fx-border-color: "
+                        + rolePrimary
+                        + ";"
+                        + "-fx-text-fill: "
+                        + primaryButtonText
+                        + ";"
+        );
 
         close.setOnMouseEntered(event -> close.setStyle(
-                buttonStyle + "-fx-background-color: #1D4ED8;"
+                buttonStyle
+                        + "-fx-background-color: "
+                        + roleHover
+                        + ";"
+                        + "-fx-border-color: "
+                        + roleHover
+                        + ";"
+                        + "-fx-text-fill: "
+                        + primaryButtonText
+                        + ";"
         ));
+
         close.setOnMouseExited(event -> close.setStyle(
-                buttonStyle + "-fx-background-color: #2563EB;"
+                buttonStyle
+                        + "-fx-background-color: "
+                        + rolePrimary
+                        + ";"
+                        + "-fx-border-color: "
+                        + rolePrimary
+                        + ";"
+                        + "-fx-text-fill: "
+                        + primaryButtonText
+                        + ";"
         ));
         close.setOnAction(event -> dialog.close());
 
@@ -213,7 +301,7 @@ public final class AIRecommendationDialog {
         panel.setCenter(scroll);
         panel.setBottom(footer);
         panel.setStyle(
-                "-fx-font-family: 'Segoe UI';"
+                "-fx-font-family: 'Plus Jakarta Sans';"
                 + "-fx-background-color: white;"
                 + "-fx-background-radius: 18;"
                 + "-fx-border-color: #DBE4F0;"
