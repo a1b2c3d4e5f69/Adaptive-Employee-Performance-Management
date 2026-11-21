@@ -16,7 +16,8 @@
 <?import com.aepm.ui.components.EmployeeWelcomeLabel?>
 <?import com.aepm.ui.components.EmployeeRoleLabel?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane fx:id="pageRoot"
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.aepm.ui.employee.EmployeeAttendanceController"
             stylesheets="@../../css/app.css"
             styleClass="employee-root">
@@ -97,6 +98,14 @@
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleKpi"
+                            styleClass="employee-nav-button"/>
+
+                     <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
                             styleClass="employee-nav-button"/>
 
                     <Label text="SUPPORT &amp; GOVERNANCE"

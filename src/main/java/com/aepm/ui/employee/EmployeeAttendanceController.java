@@ -6,6 +6,7 @@ import com.aepm.model.AttendanceRecord;
 import com.aepm.model.AttendanceScanResult;
 import com.aepm.model.User;
 import com.aepm.ui.navigation.NavigationManager;
+import com.aepm.ui.common.chat.ChatController;
 import com.aepm.util.SessionManager;
 
 import com.github.sarxos.webcam.Webcam;
@@ -23,13 +24,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
@@ -45,13 +49,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javax.imageio.ImageIO;
 
 public class EmployeeAttendanceController {
+
+    @FXML private BorderPane pageRoot;
+    @FXML private Button attendanceNavButton;
+    @FXML private Button chatNavButton;
+    private ChatController chatController;
 
     @FXML private Label topNameLabel;
     @FXML private Label topRoleLabel;
@@ -783,11 +791,7 @@ public class EmployeeAttendanceController {
 
     @FXML
     private void handleTasks(ActionEvent event) {
-
-        navigate(
-                event,
-                "/fxml/employee/employeeTask.fxml"
-        );
+        navigate(event, "/fxml/employee/employeeTask.fxml");
     }
 
     @FXML
@@ -797,24 +801,78 @@ public class EmployeeAttendanceController {
 
     @FXML
     private void handleKpi(ActionEvent event) {
-
-        navigate(
-                event,
-                "/fxml/employee/employeePerformance.fxml"
-        );
+        navigate(event, "/fxml/employee/employeePerformance.fxml");
     }
 
     @FXML
     private void handleReports() {
-
-        System.out.println(
-                "Employee Reports not implemented yet."
-        );
+        System.out.println("Employee Reports not implemented yet.");
     }
 
     @FXML
-    private void handleAnonymousReport(javafx.event.ActionEvent event) {
+    private void handleAnonymousReport(ActionEvent event) {
         navigate(event, "/fxml/employee/employeeAnonymousReport.fxml");
+    }
+
+    private void setChatNavigationActive() {
+
+        if (attendanceNavButton != null) {
+            attendanceNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active"
+            );
+            attendanceNavButton.getStyleClass().add(
+                    "employee-nav-button"
+            );
+        }
+
+        if (chatNavButton != null) {
+            chatNavButton.getStyleClass().removeAll(
+                    "employee-nav-button",
+                    "employee-nav-button-active",
+                    "manager-nav-button",
+                    "manager-nav-button-active"
+            );
+            chatNavButton.getStyleClass().add(
+                    "employee-nav-button-active"
+            );
+        }
+    }
+
+    @FXML
+    private void handleChat(ActionEvent event) {
+
+        try {
+
+            stopScanner();
+
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/fxml/common/chat.fxml"
+                    )
+            );
+
+            Parent chatRoot = loader.load();
+
+            chatController = loader.getController();
+
+            setChatNavigationActive();
+
+            pageRoot.setCenter(chatRoot);
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Failed to open Chat Center from Attendance."
+            );
+
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -822,20 +880,48 @@ public class EmployeeAttendanceController {
 
         stopScanner();
 
+        if (chatController != null) {
+            chatController.stop();
+            chatController = null;
+        }
+
         SessionManager.clearSession();
 
         navigate(event, "/fxml/auth/login.fxml");
     }
 
-    private void navigate(ActionEvent event, String path) {
+    private void navigate(
+            ActionEvent event,
+            String path
+    ) {
 
-        stopScanner();
+        try {
 
-        Stage stage = (Stage) ((Node) event.getSource())
-                .getScene()
-                .getWindow();
+            stopScanner();
 
-        NavigationManager.navigate(stage, path);
+            if (chatController != null) {
+                chatController.stop();
+                chatController = null;
+            }
+
+            Stage stage =
+                    (Stage) ((Node) event.getSource())
+                            .getScene()
+                            .getWindow();
+
+            NavigationManager.navigate(
+                    stage,
+                    path
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "[Attendance Navigation] Failed: " + path
+            );
+
+            e.printStackTrace();
+        }
     }
 
     private void stopScanner() {

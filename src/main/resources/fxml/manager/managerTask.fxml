@@ -16,6 +16,7 @@
 
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerTaskController"
         stylesheets="@../../css/app.css,@../../css/manager.css"
@@ -95,6 +96,7 @@
                             styleClass="manager-nav-button"/>
 
                     <Button
+                            fx:id="currentNavButton"
                             text="✓   Task Management"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
@@ -106,6 +108,14 @@
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handlePerformance"
+                            styleClass="manager-nav-button"/>
+
+                     <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
                             styleClass="manager-nav-button"/>
 
                     <Button

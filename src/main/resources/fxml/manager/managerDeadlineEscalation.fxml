@@ -7,6 +7,7 @@
 
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.manager.ManagerDeadlineEscalationController"
         stylesheets="@../../css/app.css,@../../css/manager.css"
@@ -136,6 +137,14 @@
                             onAction="#handlePerformance"
                             styleClass="manager-nav-button"/>
 
+                     <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="manager-nav-button"/>
+
 
                     <Button
                             text="≡   Reports"
@@ -155,6 +164,7 @@
 
 
                     <Button
+                            fx:id="currentNavButton"
                             text="◷   Deadline Escalation"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"

@@ -22,6 +22,7 @@
 <?import com.aepm.ui.components.EmployeeRoleLabel?>
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.employee.EmployeeProfileController"
         stylesheets="@../../css/app.css"
@@ -149,6 +150,14 @@
                             onAction="#handleKpi"
                             styleClass="employee-nav-button"/>
 
+                    <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="employee-nav-button"/>
+
 
                     <!-- SUPPORT -->
 
@@ -164,6 +173,7 @@
                             styleClass="employee-nav-button"/>
 
                     <Button
+                            fx:id="profileNavButton"
                             text="○   My Profile"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"

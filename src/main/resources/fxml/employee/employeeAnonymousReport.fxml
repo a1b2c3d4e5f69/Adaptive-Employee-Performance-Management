@@ -104,6 +104,14 @@
                             onAction="#handleKpi"
                             styleClass="employee-nav-button"/>
 
+                    <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
+                            styleClass="employee-nav-button"/>
+
                     <Label text="SUPPORT &amp; GOVERNANCE"
                            styleClass="employee-sidebar-section"/>
 

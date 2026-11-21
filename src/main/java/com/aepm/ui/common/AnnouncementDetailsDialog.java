@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
@@ -85,32 +86,72 @@ public final class AnnouncementDetailsDialog {
             dialog.initModality(Modality.APPLICATION_MODAL);
         }
 
+        Label icon = new Label("✓");
+        icon.setAlignment(Pos.CENTER);
+        icon.setMinSize(54, 54);
+        icon.setMaxSize(54, 54);
+        icon.setStyle(
+                "-fx-background-color: #FFF0B8;"
+                + "-fx-background-radius: 15;"
+                + "-fx-text-fill: #B86A00;"
+                + "-fx-font-size: 24px;"
+                + "-fx-font-weight: bold;"
+        );
+
         Label heading = new Label(windowTitle);
-        heading.getStyleClass().add("admin-page-title");
+        heading.setStyle(
+                "-fx-font-size: 26px;"
+                + "-fx-font-weight: 800;"
+                + "-fx-text-fill: #10264A;"
+        );
 
         Label subtitle = new Label(
-                "Announcement details, attachments and links"
+                "Review the announcement details, attachments and links."
         );
-        subtitle.getStyleClass().add("admin-page-subtitle");
         subtitle.setWrapText(true);
+        subtitle.setStyle(
+                "-fx-font-size: 12px;"
+                + "-fx-text-fill: #7184A4;"
+        );
 
-        VBox header = new VBox(6, heading, subtitle);
-        header.setPadding(new Insets(24, 24, 16, 24));
+        VBox headingText = new VBox(5, heading, subtitle);
+
+        Region headerSpacer = new Region();
+        HBox.setHgrow(headerSpacer, Priority.ALWAYS);
+
+        Label headerBadge = new Label(
+                query.has("p_schedule_id") ? "SCHEDULED" : "ANNOUNCEMENT"
+        );
+        headerBadge.setStyle(
+                "-fx-background-color: #FFF2DC;"
+                + "-fx-text-fill: #A75A08;"
+                + "-fx-background-radius: 20;"
+                + "-fx-padding: 7 14;"
+                + "-fx-font-size: 11px;"
+                + "-fx-font-weight: 700;"
+        );
+
+        HBox header = new HBox(16, icon, headingText, headerSpacer, headerBadge);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(18, 22, 12, 22));
 
         content.setPadding(
                 new Insets(
-                        20,
-                        28,
-                        24,
-                        28
+                        20
                 )
         );
 
         content.setStyle(
                 "-fx-background-color: #FFFFFF;"
+                + "-fx-background-radius: 14;"
+                + "-fx-border-color: #DCE6F4;"
+                + "-fx-border-radius: 14;"
         );
 
-        ScrollPane scroll = new ScrollPane(content);
+        VBox body = new VBox(8, header, content);
+        body.setPadding(new Insets(10, 16, 16, 16));
+
+        ScrollPane scroll = new ScrollPane(body);
         scroll.setFitToWidth(true);
         scroll.setStyle(
                 "-fx-background: white;"
@@ -147,10 +188,9 @@ public final class AnnouncementDetailsDialog {
 
         HBox footer = new HBox(12, status, retry, close);
         footer.setAlignment(Pos.CENTER_LEFT);
-        footer.setPadding(new Insets(16, 24, 20, 24));
+        footer.setPadding(new Insets(14, 20, 14, 20));
 
         BorderPane root = new BorderPane(scroll);
-        root.setTop(header);
         root.setBottom(footer);
         root.setStyle(
                 "-fx-background-color: #FFFFFF;"
@@ -158,7 +198,7 @@ public final class AnnouncementDetailsDialog {
                 + "-fx-font-size: 12px;"
         );
 
-        Scene scene = new Scene(root, 760, 620);
+        Scene scene = new Scene(root, 920, 840);
 
         var css = AnnouncementDetailsDialog.class.getResource("/css/app.css");
         if (css != null) {
@@ -166,8 +206,8 @@ public final class AnnouncementDetailsDialog {
         }
 
         dialog.setScene(scene);
-        dialog.setMinWidth(550);
-        dialog.setMinHeight(400);
+        dialog.setMinWidth(880);
+        dialog.setMinHeight(760);
 
         dialog.setOnCloseRequest(event -> {
             if (busy) {
@@ -226,9 +266,9 @@ public final class AnnouncementDetailsDialog {
 
         subject.setStyle(
                 "-fx-font-family: 'Plus Jakarta Sans';"
-                + "-fx-font-size: 18px;"
-                + "-fx-font-weight: 700;"
-                + "-fx-text-fill: #111111;"
+                + "-fx-font-size: 22px;"
+                + "-fx-font-weight: 800;"
+                + "-fx-text-fill: #10264A;"
         );
 
         VBox metadata = new VBox(8);
@@ -340,23 +380,38 @@ public final class AnnouncementDetailsDialog {
         );
 
         body.setStyle(
-                "-fx-background-color: #F7F9FD;"
-                + "-fx-border-color: #E3E7EF;"
+                "-fx-background-color: #F3F7FF;"
+                + "-fx-border-color: #BFD2F2;"
                 + "-fx-border-width: 1;"
-                + "-fx-background-radius: 9;"
-                + "-fx-border-radius: 9;"
-                + "-fx-text-fill: #344054;"
+                + "-fx-background-radius: 10;"
+                + "-fx-border-radius: 10;"
+                + "-fx-text-fill: #334B70;"
                 + "-fx-font-family: 'Plus Jakarta Sans';"
                 + "-fx-font-size: 12px;"
         );
 
-        content.getChildren().addAll(subject, metadata, body);
+        VBox announcementInfo = new VBox(
+                12,
+                metadata,
+                body
+        );
+
+        content.getChildren().addAll(
+                subject,
+                sectionPanel(
+                        "ANNOUNCEMENT INFORMATION",
+                        announcementInfo
+                )
+        );
 
         JsonArray files = data.getAsJsonArray("attachments");
-        content.getChildren().add(sectionTitle("Attachments"));
+
+        VBox attachmentContent = new VBox(8);
 
         if (files.isEmpty()) {
-            content.getChildren().add(paragraph("No attachments."));
+            attachmentContent.getChildren().add(
+                    paragraph("No attachments.")
+            );
         }
 
         for (JsonElement element : files) {
@@ -390,21 +445,31 @@ public final class AnnouncementDetailsDialog {
             row.setAlignment(Pos.CENTER_LEFT);
             row.setPadding(new Insets(12));
             row.setStyle(
-                "-fx-background-color: #F7F9FD;"
-                + "-fx-border-color: #E3E7EF;"
+                "-fx-background-color: #F8FAFD;"
+                + "-fx-border-color: #C9D9F2;"
                 + "-fx-border-width: 1;"
                 + "-fx-background-radius: 8;"
                 + "-fx-border-radius: 8;"
             );
 
-            content.getChildren().add(row);
+            attachmentContent.getChildren().add(row);
         }
 
+        content.getChildren().add(
+                sectionPanel(
+                        "ATTACHMENTS",
+                        attachmentContent
+                )
+        );
+
         JsonArray links = data.getAsJsonArray("links");
-        content.getChildren().add(sectionTitle("Links"));
+
+        VBox linksContent = new VBox(10);
 
         if (links.isEmpty()) {
-            content.getChildren().add(paragraph("No links."));
+            linksContent.getChildren().add(
+                    paragraph("No links.")
+            );
         }
 
         for (JsonElement element : links) {
@@ -433,8 +498,34 @@ public final class AnnouncementDetailsDialog {
             );
             address.setOnAction(event -> openLink(url));
 
-            content.getChildren().add(new VBox(4, button, address));
+            VBox linkRow = new VBox(
+                    4,
+                    button,
+                    address
+            );
+
+            linkRow.setPadding(
+                    new Insets(12)
+            );
+
+            linkRow.setStyle(
+                    "-fx-background-color: #F8FAFD;"
+                    + "-fx-border-color: #C9D9F2;"
+                    + "-fx-background-radius: 8;"
+                    + "-fx-border-radius: 8;"
+            );
+
+            linksContent.getChildren().add(
+                    linkRow
+            );
         }
+
+        content.getChildren().add(
+                sectionPanel(
+                        "LINKS",
+                        linksContent
+                )
+        );
 
         status.setText(
                 files.size() + " attachment(s), "
@@ -677,6 +768,53 @@ public final class AnnouncementDetailsDialog {
             );
         }
     }
+
+    private static VBox sectionPanel(
+            String title,
+            Node... nodes
+    ) {
+
+        Label heading =
+                paragraph(
+                        title
+                );
+
+        heading.setStyle(
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 14px;"
+                + "-fx-font-weight: 800;"
+                + "-fx-text-fill: #10264A;"
+        );
+
+        VBox panel =
+                new VBox(
+                        12
+                );
+
+        panel.getChildren().add(
+                heading
+        );
+
+        panel.getChildren().addAll(
+                nodes
+        );
+
+        panel.setPadding(
+                new Insets(
+                        14
+                )
+        );
+
+        panel.setStyle(
+                "-fx-background-color: #F3F7FF;"
+                + "-fx-background-radius: 12;"
+                + "-fx-border-color: #BFD2F2;"
+                + "-fx-border-radius: 12;"
+        );
+
+        return panel;
+    }
+
 
     private static Label paragraph(String value) {
         Label label = new Label(value);

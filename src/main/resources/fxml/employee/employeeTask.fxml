@@ -17,6 +17,7 @@
 <?import com.aepm.ui.components.NotificationBell?>
 
 <BorderPane
+        fx:id="pageRoot"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.aepm.ui.employee.EmployeeTaskController"
         stylesheets="@../../css/app.css"
@@ -117,6 +118,7 @@
                             styleClass="employee-nav-button"/>
 
                     <Button
+                            fx:id="taskNavButton"
                             text="✓   My Tasks"
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
@@ -135,6 +137,14 @@
                             maxWidth="Infinity"
                             alignment="CENTER_LEFT"
                             onAction="#handleKpi"
+                            styleClass="employee-nav-button"/>
+
+                    <Button
+                            fx:id="chatNavButton"
+                            text="✉   Chat Center"
+                            maxWidth="Infinity"
+                            alignment="CENTER_LEFT"
+                            onAction="#handleChat"
                             styleClass="employee-nav-button"/>
 
                     <!-- SUPPORT -->

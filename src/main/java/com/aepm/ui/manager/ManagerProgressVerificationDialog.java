@@ -262,39 +262,29 @@ public final class ManagerProgressVerificationDialog {
         Dialog<Void> dialog =
                 new Dialog<>();
 
-
         if (owner != null) {
-
-            dialog.initOwner(
-                    owner
-            );
+            dialog.initOwner(owner);
         }
 
-
         dialog.setTitle(
-                "Progress Verification"
+                "Progress Verification Details"
         );
-
 
         DialogPane pane =
                 dialog.getDialogPane();
 
-
         pane.setPrefWidth(
-                900
+                920
         );
-
 
         pane.setPrefHeight(
-                820
+                840
         );
-
 
         pane.setStyle(
-                "-fx-background-color: #F4F8F7;"
+                "-fx-background-color: #F6F8FC;"
                         + "-fx-font-family: 'Plus Jakarta Sans';"
         );
-
 
         ButtonType closeType =
                 new ButtonType(
@@ -302,24 +292,19 @@ public final class ManagerProgressVerificationDialog {
                         ButtonBar.ButtonData.CANCEL_CLOSE
                 );
 
-
-        pane
-                .getButtonTypes()
+        pane.getButtonTypes()
                 .add(
                         closeType
                 );
-
 
         Button defaultClose =
                 (Button) pane.lookupButton(
                         closeType
                 );
 
-
         defaultClose.setVisible(
                 false
         );
-
 
         defaultClose.setManaged(
                 false
@@ -327,46 +312,59 @@ public final class ManagerProgressVerificationDialog {
 
 
         // =====================================================
-        // HEADER
+        // STATUS / MODE
+        // =====================================================
+
+        String status =
+                empty(
+                        item.getStatus()
+                );
+
+        boolean pendingReview =
+                "Pending Manager Review".equalsIgnoreCase(status)
+                        || "Needs Manager Review".equalsIgnoreCase(status);
+
+        boolean reviewed =
+                !pendingReview;
+
+
+        // =====================================================
+        // HEADER - WARM YELLOW RESULT STYLE
         // =====================================================
 
         Label icon =
                 new Label(
-                        "▤"
+                        reviewed
+                                ? "✓"
+                                : "⌕"
                 );
-
 
         icon.setAlignment(
                 Pos.CENTER
         );
-
 
         icon.setMinSize(
                 54,
                 54
         );
 
-
         icon.setMaxSize(
                 54,
                 54
         );
 
-
         icon.setStyle(
-                "-fx-background-color: #DFF7F2;"
+                "-fx-background-color: #FFF0B8;"
                         + "-fx-background-radius: 15;"
-                        + "-fx-text-fill: #0D9488;"
-                        + "-fx-font-size: 22px;"
+                        + "-fx-text-fill: #B86A00;"
+                        + "-fx-font-size: 24px;"
                         + "-fx-font-weight: bold;"
         );
 
-
         Label heading =
                 new Label(
-                        "Progress Verification"
+                        "Progress Verification Details"
                 );
-
 
         heading.setStyle(
                 "-fx-font-size: 26px;"
@@ -374,23 +372,21 @@ public final class ManagerProgressVerificationDialog {
                         + "-fx-text-fill: #10264A;"
         );
 
-
         Label subtitle =
                 new Label(
-                        "Review the employee's submitted progress and supporting evidence."
+                        reviewed
+                                ? "Review the final verification outcome and submission history."
+                                : "Review the employee's submitted progress and supporting evidence."
                 );
-
 
         subtitle.setWrapText(
                 true
         );
 
-
         subtitle.setStyle(
                 "-fx-font-size: 12px;"
                         + "-fx-text-fill: #7184A4;"
         );
-
 
         VBox headingText =
                 new VBox(
@@ -399,19 +395,39 @@ public final class ManagerProgressVerificationDialog {
                         subtitle
                 );
 
+        Region headerSpacer =
+                new Region();
+
+        HBox.setHgrow(
+                headerSpacer,
+                Priority.ALWAYS
+        );
+
+        Label modeBadge =
+                badge(
+                        reviewed
+                                ? "PREVIOUSLY REVIEWED"
+                                : "AWAITING REVIEW",
+                        reviewed
+                                ? "#FFF0B8"
+                                : "#E8F0FF",
+                        reviewed
+                                ? "#A75A08"
+                                : "#2563EB"
+                );
 
         HBox header =
                 new HBox(
                         16,
                         icon,
-                        headingText
+                        headingText,
+                        headerSpacer,
+                        modeBadge
                 );
-
 
         header.setAlignment(
                 Pos.CENTER_LEFT
         );
-
 
         header.setPadding(
                 new Insets(
@@ -432,53 +448,54 @@ public final class ManagerProgressVerificationDialog {
                         item.getTaskTitle()
                 );
 
-
         taskTitle.setWrapText(
                 true
         );
 
-
         taskTitle.setStyle(
-                "-fx-font-size: 22px;"
+                "-fx-font-size: 23px;"
                         + "-fx-font-weight: 800;"
                         + "-fx-text-fill: #10264A;"
         );
 
-
         Label statusBadge =
                 badge(
-                        "PENDING REVIEW",
-                        "#E7F7ED",
-                        "#16834A"
+                        displayStatus(
+                                status
+                        ).toUpperCase(),
+                        statusBackground(
+                                status
+                        ),
+                        statusForeground(
+                                status
+                        )
                 );
-
-
-        Label currentBadge =
-                badge(
-                        item.getCurrentProgress()
-                                + "% CURRENT",
-                        "#E8F0FF",
-                        "#2563EB"
-                );
-
 
         Label requestedBadge =
                 badge(
                         item.getRequestedProgress()
-                                + "% REQUESTED",
+                                + "% SUBMITTED",
                         "#FFF2DC",
                         "#A75A08"
                 );
 
+        Label methodBadge =
+                badge(
+                        displayMethod(
+                                item.getVerificationMethod(),
+                                pendingReview
+                        ).toUpperCase(),
+                        "#E8E9FF",
+                        "#4F46C8"
+                );
 
         HBox badges =
                 new HBox(
                         10,
                         statusBadge,
-                        currentBadge,
-                        requestedBadge
+                        requestedBadge,
+                        methodBadge
                 );
-
 
         VBox taskHeader =
                 new VBox(
@@ -489,288 +506,164 @@ public final class ManagerProgressVerificationDialog {
 
 
         // =====================================================
-        // EMPLOYEE / SUBMISSION INFO
+        // VERIFICATION SUMMARY - BLUE INFORMATION GRID
         // =====================================================
 
-        Label employeeSectionTitle =
-                sectionTitle(
-                        "EMPLOYEE & SUBMISSION"
+        Label summaryTitle =
+                sectionHeading(
+                        "VERIFICATION SUMMARY"
                 );
 
-
-        VBox employeeBox =
-                infoCard(
-                        "Employee Name",
-                        item.getEmployeeName()
-                );
-
-
-        VBox submittedBox =
-                infoCard(
-                        "Submitted",
-                        date(
-                                item.getSubmittedAt()
-                        )
-                );
-
-
-        HBox employeeRow =
-                infoRow(
-                        employeeBox,
-                        submittedBox
-                );
-
-
-        VBox employeeSection =
-                new VBox(
-                        10,
-                        employeeSectionTitle,
-                        employeeRow
-                );
-
-
-        // =====================================================
-        // PROGRESS VERIFICATION PANEL
-        // =====================================================
-
-        Label verificationTitle =
-                sectionTitle(
-                        "PROGRESS VERIFICATION"
-                );
-
-
-        VBox currentBox =
-                infoCard(
-                        "Actual Verified Progress",
-                        item.getCurrentProgress()
-                                + "%"
-                );
-
-
-        VBox requestedBox =
-                infoCard(
-                        "Requested Progress",
-                        item.getRequestedProgress()
-                                + "%"
-                );
-
-
-        VBox deadlineBox =
-                infoCard(
-                        "Review Deadline",
-                        date(
-                                item.getReviewDeadline()
-                        )
-                );
-
-
-        VBox statusBox =
-                infoCard(
-                        "Verification Status",
-                        "Pending Manager Review"
-                );
-
-
-        GridPane progressGrid =
+        GridPane summaryGrid =
                 new GridPane();
 
-
-        progressGrid.setHgap(
+        summaryGrid.setHgap(
                 14
         );
 
-
-        progressGrid.setVgap(
+        summaryGrid.setVgap(
                 12
         );
 
-
-        progressGrid.add(
-                currentBox,
+        summaryGrid.add(
+                blueInfoCard(
+                        "Employee Name",
+                        item.getEmployeeName()
+                ),
                 0,
                 0
         );
 
-
-        progressGrid.add(
-                requestedBox,
+        summaryGrid.add(
+                blueInfoCard(
+                        "Employee ID",
+                        item.getEmployeeCode()
+                ),
                 1,
                 0
         );
 
+        summaryGrid.add(
+                blueInfoCard(
+                        "Current Verified Progress",
+                        item.getCurrentProgress()
+                                + "%"
+                ),
+                2,
+                0
+        );
 
-        progressGrid.add(
-                deadlineBox,
+        summaryGrid.add(
+                blueInfoCard(
+                        "Submitted Progress",
+                        item.getRequestedProgress()
+                                + "%"
+                ),
                 0,
                 1
         );
 
-
-        progressGrid.add(
-                statusBox,
+        summaryGrid.add(
+                blueInfoCard(
+                        "Verification Method",
+                        displayMethod(
+                                item.getVerificationMethod(),
+                                pendingReview
+                        )
+                ),
                 1,
                 1
         );
 
-
-        javafx.scene.layout.ColumnConstraints column1 =
-                new javafx.scene.layout.ColumnConstraints();
-
-
-        column1.setPercentWidth(
-                50
+        summaryGrid.add(
+                blueInfoCard(
+                        "Decision",
+                        pendingReview
+                                ? "Pending"
+                                : displayStatus(
+                                        status
+                                )
+                ),
+                2,
+                1
         );
 
+        for (int i = 0; i < 3; i++) {
 
-        javafx.scene.layout.ColumnConstraints column2 =
-                new javafx.scene.layout.ColumnConstraints();
+            javafx.scene.layout.ColumnConstraints column =
+                    new javafx.scene.layout.ColumnConstraints();
 
+            column.setPercentWidth(
+                    33.333
+            );
 
-        column2.setPercentWidth(
-                50
-        );
+            summaryGrid
+                    .getColumnConstraints()
+                    .add(
+                            column
+                    );
+        }
 
-
-        progressGrid
-                .getColumnConstraints()
-                .addAll(
-                        column1,
-                        column2
+        VBox summarySection =
+                blueSection(
+                        summaryTitle,
+                        summaryGrid
                 );
 
 
-        Label noteLabel =
-                new Label(
-                        "PROGRESS NOTE"
+        // =====================================================
+        // PROGRESS NOTE
+        // =====================================================
+
+        Label progressNoteTitle =
+                sectionHeading(
+                        "Progress Note"
                 );
 
-
-        noteLabel.setStyle(
-                "-fx-font-size: 11px;"
-                        + "-fx-font-weight: 700;"
-                        + "-fx-text-fill: #7184A4;"
-        );
-
-
-        Label note =
-                new Label(
+        VBox progressNoteCard =
+                blueTextCard(
                         empty(
                                 item.getProgressNote()
                         )
                 );
 
-
-        note.setWrapText(
-                true
-        );
-
-
-        note.setMaxWidth(
-                Double.MAX_VALUE
-        );
-
-
-        note.setStyle(
-                "-fx-font-size: 13px;"
-                        + "-fx-font-weight: 600;"
-                        + "-fx-text-fill: #334B70;"
-        );
-
-
-        VBox noteBox =
-                new VBox(
-                        7,
-                        noteLabel,
-                        note
+        VBox progressNoteSection =
+                blueSection(
+                        progressNoteTitle,
+                        progressNoteCard
                 );
-
-
-        noteBox.setPadding(
-                new Insets(
-                        14
-                )
-        );
-
-
-        noteBox.setStyle(
-                "-fx-background-color: #FFFFFF;"
-                        + "-fx-background-radius: 10;"
-                        + "-fx-border-color: #DCE7E4;"
-                        + "-fx-border-radius: 10;"
-        );
-
-
-        VBox verificationPanel =
-                new VBox(
-                        12,
-                        verificationTitle,
-                        progressGrid,
-                        noteBox
-                );
-
-
-        verificationPanel.setPadding(
-                new Insets(
-                        18
-                )
-        );
-
-
-        verificationPanel.setStyle(
-                "-fx-background-color: #EAF6F4;"
-                        + "-fx-background-radius: 12;"
-                        + "-fx-border-color: #C9E7E1;"
-                        + "-fx-border-radius: 12;"
-        );
 
 
         // =====================================================
-        // EVIDENCE
+        // SUPPORTING EVIDENCE
         // =====================================================
 
         Label evidenceTitle =
-                sectionTitle(
-                        "SUPPORTING EVIDENCE"
+                sectionHeading(
+                        "Supporting Evidence"
                 );
-
 
         VBox evidenceList =
                 new VBox(
                         8
                 );
 
-
         if (
                 item.getEvidence() == null
-                        || item
-                        .getEvidence()
-                        .isEmpty()
+                        || item.getEvidence().isEmpty()
         ) {
-
-            Label noEvidence =
-                    new Label(
-                            "No evidence uploaded."
-                    );
-
-
-            noEvidence.setStyle(
-                    "-fx-text-fill: #DC2626;"
-                            + "-fx-font-size: 12px;"
-            );
-
 
             evidenceList
                     .getChildren()
                     .add(
-                            noEvidence
+                            blueTextCard(
+                                    "No evidence uploaded."
+                            )
                     );
 
         } else {
 
-            for (
-                    EvidenceItem file
-                    : item.getEvidence()
-            ) {
+            for (EvidenceItem file : item.getEvidence()) {
 
                 evidenceList
                         .getChildren()
@@ -783,192 +676,283 @@ public final class ManagerProgressVerificationDialog {
             }
         }
 
-
         VBox evidenceSection =
-                new VBox(
-                        10,
+                blueSection(
                         evidenceTitle,
                         evidenceList
                 );
 
 
         // =====================================================
-        // COMMENT
+        // MANAGER REVIEW COMMENT / ACTION INPUT
         // =====================================================
 
-        Label commentLabel =
-                sectionTitle(
-                        "MANAGER REVIEW COMMENT"
+        Label commentTitle =
+                sectionHeading(
+                        "Manager Review Comment"
                 );
-
 
         TextArea comment =
                 new TextArea();
 
-
-        comment.setPromptText(
-                "Record your approval comment, rejection reason or revision instruction..."
-        );
-
-
         comment.setPrefRowCount(
-                4
+                reviewed
+                        ? 2
+                        : 4
         );
-
 
         comment.setWrapText(
                 true
         );
 
+        comment.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        if (reviewed) {
+
+            String savedComment =
+                    item.getReviewComment();
+
+            if (
+                    (savedComment == null || savedComment.isBlank())
+                            && "System Approved".equalsIgnoreCase(status)
+            ) {
+                savedComment =
+                        item.getSystemReason();
+            }
+
+            comment.setText(
+                    empty(
+                            savedComment
+                    )
+            );
+
+            comment.setEditable(
+                    false
+            );
+
+            comment.setFocusTraversable(
+                    false
+            );
+
+        } else {
+
+            comment.setPromptText(
+                    "Record your approval comment, rejection reason or revision instruction..."
+            );
+        }
 
         comment.setStyle(
-                "-fx-background-color: #FFFFFF;"
-                        + "-fx-border-color: #C9DAD6;"
-                        + "-fx-border-radius: 8;"
-                        + "-fx-background-radius: 8;"
+                "-fx-background-color: #F8FAFD;"
+                        + "-fx-border-color: #C9D9F2;"
+                        + "-fx-border-radius: 9;"
+                        + "-fx-background-radius: 9;"
                         + "-fx-font-size: 12px;"
                         + "-fx-focus-color: transparent;"
                         + "-fx-faint-focus-color: transparent;"
         );
 
-
         VBox commentSection =
-                new VBox(
-                        10,
-                        commentLabel,
+                blueSection(
+                        commentTitle,
                         comment
                 );
 
 
         // =====================================================
-        // ACTION BUTTONS
+        // REVIEW TIMELINE
         // =====================================================
 
-        Button reject =
-                actionButton(
-                        "Reject",
-                        "#FCE8E8",
-                        "#C2413A"
+        Label timelineTitle =
+                sectionHeading(
+                        "Review Timeline"
                 );
 
-
-        Button revision =
-                actionButton(
-                        "Request Revision",
-                        "#FFF1E6",
-                        "#C76824"
+        VBox submittedCard =
+                blueInfoCard(
+                        "Submitted At",
+                        date(
+                                item.getSubmittedAt()
+                        )
                 );
 
-
-        Button approve =
-                actionButton(
-                        "Approve",
-                        "#E7F7ED",
-                        "#16834A"
+        VBox reviewedCard =
+                blueInfoCard(
+                        reviewed
+                                ? "Reviewed At"
+                                : "Review Deadline",
+                        reviewed
+                                ? date(
+                                        item.getReviewedAt()
+                                )
+                                : date(
+                                        item.getReviewDeadline()
+                                )
                 );
 
-
-        reject.setOnAction(
-                event -> {
-
-                    String reason =
-                            comment
-                                    .getText()
-                                    .trim();
-
-
-                    if (reason.isBlank()) {
-
-                        showError(
-                                owner,
-                                "Reason Required",
-                                "Please enter a rejection reason."
-                        );
-
-                        return;
-                    }
-
-
-                    runAction(
-                            owner,
-                            dialog,
-                            () ->
-                                    service.reject(
-                                            item.getSubmissionId(),
-                                            reason
-                                    ),
-                            "Progress submission rejected."
-                    );
-                }
-        );
-
-
-        revision.setOnAction(
-                event -> {
-
-                    String instruction =
-                            comment
-                                    .getText()
-                                    .trim();
-
-
-                    if (instruction.isBlank()) {
-
-                        showError(
-                                owner,
-                                "Instruction Required",
-                                "Please enter revision instructions."
-                        );
-
-                        return;
-                    }
-
-
-                    runAction(
-                            owner,
-                            dialog,
-                            () ->
-                                    service.requestRevision(
-                                            item.getSubmissionId(),
-                                            instruction
-                                    ),
-                            "Revision requested successfully."
-                    );
-                }
-        );
-
-
-        approve.setOnAction(
-                event -> {
-
-                    runAction(
-                            owner,
-                            dialog,
-                            () ->
-                                    service.approve(
-                                            item.getSubmissionId(),
-                                            comment
-                                                    .getText()
-                                                    .trim()
-                                    ),
-                            "Progress approved successfully."
-                    );
-                }
-        );
-
-
-        HBox actions =
+        HBox timelineRow =
                 new HBox(
-                        10,
-                        reject,
-                        revision,
-                        approve
+                        14,
+                        submittedCard,
+                        reviewedCard
+                );
+
+        HBox.setHgrow(
+                submittedCard,
+                Priority.ALWAYS
+        );
+
+        HBox.setHgrow(
+                reviewedCard,
+                Priority.ALWAYS
+        );
+
+        submittedCard.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        reviewedCard.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        VBox timelineSection =
+                blueSection(
+                        timelineTitle,
+                        timelineRow
                 );
 
 
-        actions.setAlignment(
-                Pos.CENTER_LEFT
-        );
+        // =====================================================
+        // ACTION BUTTONS - ONLY WHEN STILL ACTIONABLE
+        // =====================================================
+
+        VBox actionSection =
+                new VBox();
+
+        if (pendingReview) {
+
+            Button reject =
+                    actionButton(
+                            "Reject",
+                            "#FCE8E8",
+                            "#C2413A"
+                    );
+
+            Button revision =
+                    actionButton(
+                            "Request Revision",
+                            "#FFF1E6",
+                            "#C76824"
+                    );
+
+            Button approve =
+                    actionButton(
+                            "Approve",
+                            "#E7F7ED",
+                            "#16834A"
+                    );
+
+            reject.setOnAction(
+                    event -> {
+
+                        String reason =
+                                comment
+                                        .getText()
+                                        .trim();
+
+                        if (reason.isBlank()) {
+
+                            showError(
+                                    owner,
+                                    "Reason Required",
+                                    "Please enter a rejection reason."
+                            );
+
+                            return;
+                        }
+
+                        runAction(
+                                owner,
+                                dialog,
+                                () ->
+                                        service.reject(
+                                                item.getSubmissionId(),
+                                                reason
+                                        ),
+                                "Progress submission rejected."
+                        );
+                    }
+            );
+
+            revision.setOnAction(
+                    event -> {
+
+                        String instruction =
+                                comment
+                                        .getText()
+                                        .trim();
+
+                        if (instruction.isBlank()) {
+
+                            showError(
+                                    owner,
+                                    "Instruction Required",
+                                    "Please enter revision instructions."
+                            );
+
+                            return;
+                        }
+
+                        runAction(
+                                owner,
+                                dialog,
+                                () ->
+                                        service.requestRevision(
+                                                item.getSubmissionId(),
+                                                instruction
+                                        ),
+                                "Revision requested successfully."
+                        );
+                    }
+            );
+
+            approve.setOnAction(
+                    event -> {
+
+                        runAction(
+                                owner,
+                                dialog,
+                                () ->
+                                        service.approve(
+                                                item.getSubmissionId(),
+                                                comment
+                                                        .getText()
+                                                        .trim()
+                                        ),
+                                "Progress approved successfully."
+                        );
+                    }
+            );
+
+            HBox actions =
+                    new HBox(
+                            10,
+                            reject,
+                            revision,
+                            approve
+                    );
+
+            actions.setAlignment(
+                    Pos.CENTER_LEFT
+            );
+
+            actionSection
+                    .getChildren()
+                    .add(
+                            actions
+                    );
+        }
 
 
         // =====================================================
@@ -977,15 +961,15 @@ public final class ManagerProgressVerificationDialog {
 
         VBox mainCard =
                 new VBox(
-                        18,
+                        12,
                         taskHeader,
-                        employeeSection,
-                        verificationPanel,
+                        summarySection,
+                        progressNoteSection,
                         evidenceSection,
                         commentSection,
-                        actions
+                        timelineSection,
+                        actionSection
                 );
-
 
         mainCard.setPadding(
                 new Insets(
@@ -993,14 +977,12 @@ public final class ManagerProgressVerificationDialog {
                 )
         );
 
-
         mainCard.setStyle(
                 "-fx-background-color: #FFFFFF;"
                         + "-fx-background-radius: 14;"
-                        + "-fx-border-color: #DCE7E4;"
+                        + "-fx-border-color: #DCE6F4;"
                         + "-fx-border-radius: 14;"
         );
-
 
         VBox body =
                 new VBox(
@@ -1008,7 +990,6 @@ public final class ManagerProgressVerificationDialog {
                         header,
                         mainCard
                 );
-
 
         body.setPadding(
                 new Insets(
@@ -1019,31 +1000,26 @@ public final class ManagerProgressVerificationDialog {
                 )
         );
 
-
         ScrollPane scroll =
                 new ScrollPane(
                         body
                 );
 
-
         scroll.setFitToWidth(
                 true
         );
-
 
         scroll.setHbarPolicy(
                 ScrollPane.ScrollBarPolicy.NEVER
         );
 
-
         scroll.setVbarPolicy(
                 ScrollPane.ScrollBarPolicy.AS_NEEDED
         );
 
-
         scroll.setStyle(
-                "-fx-background: #F4F8F7;"
-                        + "-fx-background-color: #F4F8F7;"
+                "-fx-background: #F6F8FC;"
+                        + "-fx-background-color: #F6F8FC;"
                         + "-fx-border-color: transparent;"
         );
 
@@ -1057,9 +1033,8 @@ public final class ManagerProgressVerificationDialog {
                         "Close"
                 );
 
-
         closeButton.setStyle(
-                "-fx-background-color: #0F766E;"
+                "-fx-background-color: #10264A;"
                         + "-fx-text-fill: #FFFFFF;"
                         + "-fx-font-weight: 700;"
                         + "-fx-background-radius: 9;"
@@ -1067,23 +1042,19 @@ public final class ManagerProgressVerificationDialog {
                         + "-fx-cursor: hand;"
         );
 
-
         closeButton.setOnAction(
                 event ->
                         dialog.close()
         );
-
 
         HBox footer =
                 new HBox(
                         closeButton
                 );
 
-
         footer.setAlignment(
                 Pos.CENTER_RIGHT
         );
-
 
         footer.setPadding(
                 new Insets(
@@ -1094,13 +1065,11 @@ public final class ManagerProgressVerificationDialog {
                 )
         );
 
-
         footer.setStyle(
                 "-fx-background-color: #FFFFFF;"
-                        + "-fx-border-color: #DCE7E4 transparent transparent transparent;"
+                        + "-fx-border-color: #DCE6F4 transparent transparent transparent;"
                         + "-fx-border-width: 1 0 0 0;"
         );
-
 
         VBox layout =
                 new VBox(
@@ -1108,17 +1077,14 @@ public final class ManagerProgressVerificationDialog {
                         footer
                 );
 
-
         VBox.setVgrow(
                 scroll,
                 Priority.ALWAYS
         );
 
-
         pane.setContent(
                 layout
         );
-
 
         dialog.showAndWait();
     }
@@ -1127,6 +1093,248 @@ public final class ManagerProgressVerificationDialog {
     // =========================================================
     // UI HELPERS
     // =========================================================
+
+    private static Label sectionHeading(
+            String text
+    ) {
+
+        Label label =
+                new Label(
+                        text
+                );
+
+        label.setStyle(
+                "-fx-font-size: 14px;"
+                        + "-fx-font-weight: 800;"
+                        + "-fx-text-fill: #10264A;"
+        );
+
+        return label;
+    }
+
+
+    private static VBox blueSection(
+            javafx.scene.Node... nodes
+    ) {
+
+        VBox section =
+                new VBox(
+                        12,
+                        nodes
+                );
+
+        section.setPadding(
+                new Insets(
+                        14
+                )
+        );
+
+        section.setStyle(
+                "-fx-background-color: #F3F7FF;"
+                        + "-fx-background-radius: 12;"
+                        + "-fx-border-color: #BFD2F2;"
+                        + "-fx-border-radius: 12;"
+        );
+
+        return section;
+    }
+
+
+    private static VBox blueInfoCard(
+            String title,
+            String value
+    ) {
+
+        Label titleLabel =
+                new Label(
+                        title
+                );
+
+        titleLabel.setWrapText(
+                true
+        );
+
+        titleLabel.setStyle(
+                "-fx-font-size: 11px;"
+                        + "-fx-text-fill: #5F7396;"
+        );
+
+        Label valueLabel =
+                new Label(
+                        empty(
+                                value
+                        )
+                );
+
+        valueLabel.setWrapText(
+                true
+        );
+
+        valueLabel.setStyle(
+                "-fx-font-size: 13px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-text-fill: #10264A;"
+        );
+
+        VBox box =
+                new VBox(
+                        7,
+                        titleLabel,
+                        valueLabel
+                );
+
+        box.setPadding(
+                new Insets(
+                        13
+                )
+        );
+
+        box.setMinWidth(
+                0
+        );
+
+        box.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        box.setStyle(
+                "-fx-background-color: #F8FAFD;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-color: #C9D9F2;"
+                        + "-fx-border-radius: 10;"
+        );
+
+        return box;
+    }
+
+
+    private static VBox blueTextCard(
+            String value
+    ) {
+
+        Label label =
+                new Label(
+                        empty(
+                                value
+                        )
+                );
+
+        label.setWrapText(
+                true
+        );
+
+        label.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+        label.setStyle(
+                "-fx-font-size: 12px;"
+                        + "-fx-text-fill: #334B70;"
+        );
+
+        VBox box =
+                new VBox(
+                        label
+                );
+
+        box.setPadding(
+                new Insets(
+                        13
+                )
+        );
+
+        box.setStyle(
+                "-fx-background-color: #F8FAFD;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-color: #C9D9F2;"
+                        + "-fx-border-radius: 10;"
+        );
+
+        return box;
+    }
+
+
+    private static String displayStatus(
+            String status
+    ) {
+
+        if (status == null || status.isBlank()) {
+            return "Pending";
+        }
+
+        if ("System Approved".equalsIgnoreCase(status)) {
+            return "System Approved";
+        }
+
+        return status;
+    }
+
+
+    private static String displayMethod(
+            String verificationMethod,
+            boolean pendingReview
+    ) {
+
+        if (pendingReview) {
+            return "Manager Review";
+        }
+
+        if ("MANAGER".equalsIgnoreCase(verificationMethod)) {
+            return "Manager Review";
+        }
+
+        if ("SYSTEM".equalsIgnoreCase(verificationMethod)) {
+            return "System Verification";
+        }
+
+        return verificationMethod == null
+                || verificationMethod.isBlank()
+                ? "-"
+                : verificationMethod;
+    }
+
+
+    private static String statusBackground(
+            String status
+    ) {
+
+        if ("Approved".equalsIgnoreCase(status)
+                || "System Approved".equalsIgnoreCase(status)) {
+            return "#E7F7ED";
+        }
+
+        if ("Rejected".equalsIgnoreCase(status)) {
+            return "#FCE8E8";
+        }
+
+        if ("Revision Required".equalsIgnoreCase(status)) {
+            return "#FFF1E6";
+        }
+
+        return "#E8F0FF";
+    }
+
+
+    private static String statusForeground(
+            String status
+    ) {
+
+        if ("Approved".equalsIgnoreCase(status)
+                || "System Approved".equalsIgnoreCase(status)) {
+            return "#16834A";
+        }
+
+        if ("Rejected".equalsIgnoreCase(status)) {
+            return "#C2413A";
+        }
+
+        if ("Revision Required".equalsIgnoreCase(status)) {
+            return "#C76824";
+        }
+
+        return "#2563EB";
+    }
+
 
     private static Label sectionTitle(
             String text

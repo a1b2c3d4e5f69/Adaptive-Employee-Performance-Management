@@ -101,8 +101,8 @@ public final class TaskDetailsDialog {
         if (owner != null) dialog.initOwner(owner);
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().add(ButtonType.CLOSE);
-        pane.setPrefSize(showManagerEscalation ? 760 : 680, 700);
-        pane.setMinWidth(showManagerEscalation ? 720 : 650);
+        pane.setPrefSize(920, 840);
+        pane.setMinWidth(880);
         
         Button defaultClose = (Button) pane.lookupButton(ButtonType.CLOSE);
         defaultClose.setVisible(false);
@@ -121,32 +121,39 @@ public final class TaskDetailsDialog {
 
         Label headerIcon =
             label(
-                    "▤",
+                    showManagerEscalation ? "!" : "✓",
                     24,
-                    roleAccent(),
+                    "#B86A00",
                     true
             );
         headerIcon.setAlignment(Pos.CENTER);
-        headerIcon.setMinSize(44, 44);
+        headerIcon.setMinSize(54, 54);
+        headerIcon.setMaxSize(54, 54);
         headerIcon.setStyle(
-                "-fx-background-color: "
-                + roleSoft()
-                + ";"
-                + "-fx-background-radius: 14;"
-                + "-fx-text-fill: "
-                + roleAccent()
-                + ";"
+                "-fx-background-color: #FFF0B8;"
+                + "-fx-background-radius: 15;"
+                + "-fx-text-fill: #B86A00;"
                 + "-fx-font-size: 24px;"
+                + "-fx-font-weight: bold;"
         );
 
-        HBox header = new HBox(12, headerIcon, headerText);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(16, 18, 12, 18));
+        Region headerSpacer = new Region();
+        HBox.setHgrow(headerSpacer, Priority.ALWAYS);
 
-        VBox card = new VBox(isManager ? 12 : 17);
-        card.setPadding(new Insets(isManager ? 16 : 22));
+        Label headerBadge = chip(
+                showManagerEscalation ? "ESCALATION" : "TASK DETAILS",
+                "#FFF2DC",
+                "#A75A08"
+        );
+
+        HBox header = new HBox(16, headerIcon, headerText, headerSpacer, headerBadge);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(18, 22, 12, 22));
+
+        VBox card = new VBox(14);
+        card.setPadding(new Insets(20));
         card.setFillWidth(true);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 14; -fx-border-color: #E1E8F3; -fx-border-radius: 14;");
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 14; -fx-border-color: #DCE6F4; -fx-border-radius: 14;");
 
         ProgressIndicator indicator = new ProgressIndicator();
         indicator.setPrefSize(28, 28);
@@ -156,7 +163,7 @@ public final class TaskDetailsDialog {
         card.getChildren().add(loading);
 
         VBox body = new VBox(0, header, card);
-        body.setPadding(new Insets(0, 18, 12, 18));
+        body.setPadding(new Insets(8, 16, 16, 16));
 
         ScrollPane scroll = new ScrollPane(body);
         scroll.setFitToWidth(true);
@@ -181,14 +188,10 @@ public final class TaskDetailsDialog {
                 );
 
         close.setStyle(
-                "-fx-background-color: "
-                + rolePrimary()
-                + ";"
+                "-fx-background-color: #10264A;"
                 + "-fx-text-fill: #FFFFFF;"
                 + "-fx-font-weight: 700;"
-                + "-fx-border-color: "
-                + rolePrimary()
-                + ";"
+                + "-fx-border-color: #10264A;"
                 + "-fx-border-radius: 9;"
                 + "-fx-background-radius: 9;"
                 + "-fx-padding: 10 22;"
@@ -200,7 +203,7 @@ public final class TaskDetailsDialog {
 
         HBox footer = new HBox(10, spacer, close, view);
         footer.setAlignment(Pos.CENTER_RIGHT);
-        footer.setPadding(new Insets(10, 18, 10, 18));
+        footer.setPadding(new Insets(14, 20, 14, 20));
         footer.setStyle("-fx-background-color: white; -fx-border-color: #E5EBF4; -fx-border-width: 1 0 0 0;");
         VBox dialogLayout = new VBox(scroll, footer);
         VBox.setVgrow(scroll, Priority.ALWAYS);
@@ -460,9 +463,9 @@ public final class TaskDetailsDialog {
         panel.setPadding(new Insets(14));
 
         panel.setStyle(
-            "-fx-background-color: #F0F6FF;"
+            "-fx-background-color: #F3F7FF;"
             + "-fx-background-radius: 12;"
-            + "-fx-border-color: #D5E4FA;"
+            + "-fx-border-color: #BFD2F2;"
             + "-fx-border-radius: 12;"
         );
 
@@ -574,8 +577,8 @@ public final class TaskDetailsDialog {
         String status = escalation.optString("status", "");
         VBox management = new VBox(10);
         management.setPadding(new Insets(14));
-        management.setStyle("-fx-background-color: #F0F6FF; -fx-background-radius: 12; "
-            + "-fx-border-color: #D5E4FA; -fx-border-radius: 12;");
+        management.setStyle("-fx-background-color: #F3F7FF; -fx-background-radius: 12; "
+            + "-fx-border-color: #BFD2F2; -fx-border-radius: 12;");
         management.getChildren().add(sectionLabel("ESCALATION MANAGEMENT"));
 
         GridPane info = grid();
@@ -1139,7 +1142,7 @@ public final class TaskDetailsDialog {
         box.setPadding(new Insets(10));
         box.setMaxWidth(Double.MAX_VALUE);
         box.setMinHeight(60);
-        box.setStyle("-fx-background-color: #FBFCFE; -fx-background-radius: 10; -fx-border-color: #E3EAF4; -fx-border-radius: 10;");
+        box.setStyle("-fx-background-color: #F8FAFD; -fx-background-radius: 10; -fx-border-color: #C9D9F2; -fx-border-radius: 10;");
         return box;
     }
 
