@@ -101,8 +101,9 @@ public final class TaskDetailsDialog {
         if (owner != null) dialog.initOwner(owner);
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().add(ButtonType.CLOSE);
-        pane.setPrefSize(920, 840);
-        pane.setMinWidth(880);
+        pane.setPrefSize(720, 600);
+        pane.setMinSize(560, 400);
+        dialog.setResizable(true);
         
         Button defaultClose = (Button) pane.lookupButton(ButtonType.CLOSE);
         defaultClose.setVisible(false);
@@ -166,6 +167,8 @@ public final class TaskDetailsDialog {
         body.setPadding(new Insets(8, 16, 16, 16));
 
         ScrollPane scroll = new ScrollPane(body);
+        scroll.setMinHeight(0);
+        scroll.setPrefViewportHeight(480);
         scroll.setFitToWidth(true);
         scroll.setPannable(true);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -418,11 +421,19 @@ public final class TaskDetailsDialog {
 
         if (!"Completed".equalsIgnoreCase(status) && !"Cancelled".equalsIgnoreCase(status)) {
             try {
-                LocalDate due = OffsetDateTime.parse(task.getString("due_date")).atZoneSameInstant(MY).toLocalDate();
-                LocalDate today = LocalDate.now(MY);
+                OffsetDateTime deadline =
+                        OffsetDateTime.parse(task.getString("due_date"));
 
-                if (!due.isAfter(today)) {
-                    boolean overdue = due.isBefore(today);
+                OffsetDateTime currentTime = OffsetDateTime.now(MY);
+
+                boolean overdue = deadline.toInstant()
+                        .isBefore(currentTime.toInstant());
+
+                boolean dueToday = deadline.atZoneSameInstant(MY)
+                        .toLocalDate()
+                        .equals(currentTime.toLocalDate());
+
+                if (overdue || dueToday) {
 
                     String text = overdue
                         ? (isManager ? "This employee task is overdue. Please follow up with the assigned employee." : "This task is overdue. Please review your progress.")
@@ -622,6 +633,75 @@ public final class TaskDetailsDialog {
         reject.setStyle(reject.getStyle() + "-fx-text-fill: #A4574C;");
         approve.setStyle(approve.getStyle() + "-fx-text-fill: #26734D;");
 
+        // =====================================================
+        // LOCK MANAGER ACTIONS WHEN TASK IS NO LONGER ACTIONABLE
+        // =====================================================
+        String taskStatus = task.optString("task_status", "");
+
+        boolean taskClosed =
+                "Completed".equalsIgnoreCase(taskStatus)
+                || "Cancelled".equalsIgnoreCase(taskStatus)
+                || "Closed".equalsIgnoreCase(taskStatus);
+
+        boolean deadlinePassed = false;
+
+        String rawDueDate = task.optString("due_date", "");
+
+        if (rawDueDate != null
+                && !rawDueDate.isBlank()
+                && !"null".equalsIgnoreCase(rawDueDate)) {
+
+            try {
+                OffsetDateTime dueDate =
+                        OffsetDateTime.parse(rawDueDate);
+
+                OffsetDateTime now =
+                        OffsetDateTime.now(MY);
+
+                deadlinePassed =
+                        dueDate.toInstant()
+                                .isBefore(now.toInstant());
+
+            } catch (Exception ignored) {
+                // Keep the existing behaviour if the saved deadline
+                // cannot be parsed.
+            }
+        }
+
+        boolean managerActionsLocked =
+                taskClosed || deadlinePassed;
+
+        if (managerActionsLocked) {
+
+            save.setDisable(true);
+            ack.setDisable(true);
+            reject.setDisable(true);
+            approve.setDisable(true);
+            adjust.setDisable(true);
+            keep.setDisable(true);
+            resolveRisk.setDisable(true);
+
+            note.setDisable(true);
+
+            if (taskClosed) {
+                feedback.setText(
+                        "Manager actions are disabled because this task is already "
+                                + (taskStatus.isBlank() ? "closed" : taskStatus)
+                                + "."
+                );
+            } else {
+                feedback.setText(
+                        "Manager actions are disabled because the task deadline has already passed."
+                );
+            }
+
+            feedback.setStyle(
+                    "-fx-text-fill: #A45B13;"
+                    + "-fx-font-size: 12px;"
+                    + "-fx-font-weight: bold;"
+            );
+        }
+
         boolean pendingLevelOne = level == 1 && decision.isBlank()
             && "active".equalsIgnoreCase(status);
 
@@ -635,23 +715,23 @@ public final class TaskDetailsDialog {
 
         resolveRisk.setVisible(pendingLevelThree);
         resolveRisk.setManaged(pendingLevelThree);
-        resolveRisk.setDisable(!pendingLevelThree);
+        resolveRisk.setDisable(managerActionsLocked || !pendingLevelThree);
 
         adjust.setVisible(pendingLevelTwo);
         adjust.setManaged(pendingLevelTwo);
-        adjust.setDisable(!pendingLevelTwo);
+        adjust.setDisable(managerActionsLocked || !pendingLevelTwo);
 
         keep.setVisible(pendingLevelTwo);
         keep.setManaged(pendingLevelTwo);
-        keep.setDisable(!pendingLevelTwo);
+        keep.setDisable(managerActionsLocked || !pendingLevelTwo);
 
         boolean canApprove = pendingLevelOne && days > 0;
         approve.setVisible(pendingLevelOne);
         approve.setManaged(pendingLevelOne);
-        approve.setDisable(!canApprove);
+        approve.setDisable(managerActionsLocked || !canApprove);
         reject.setVisible(pendingLevelOne);
         reject.setManaged(pendingLevelOne);
-        ack.setDisable(acknowledged);
+        ack.setDisable(managerActionsLocked || acknowledged);
 
         FlowPane actions = new FlowPane( 8, 8, save, ack, reject, approve, adjust, keep, resolveRisk);
         actions.setAlignment(Pos.CENTER_LEFT);
@@ -861,7 +941,7 @@ public final class TaskDetailsDialog {
         );
 
         ((Button) pane.lookupButton(confirmType)).setStyle(
-            "-fx-background-color: #2563EB;"
+            "-fx-background-color: " + rolePrimary() + ";"
             + "-fx-text-fill: white;"
             + "-fx-font-weight: bold;"
             + "-fx-background-radius: 8;"
@@ -1099,11 +1179,11 @@ public final class TaskDetailsDialog {
         pane.getButtonTypes().add(done);
 
         ((Button) pane.lookupButton(done)).setStyle(
-            "-fx-background-color: #2563EB;"
+            "-fx-background-color: " + rolePrimary() + ";"
             + "-fx-text-fill: white;"
             + "-fx-font-weight: bold;"
             + "-fx-background-radius: 8;"
-            + "-fx-padding: 10 22;"
+            + "-fx-padding: 10 16;"
         );
 
         success.showAndWait();

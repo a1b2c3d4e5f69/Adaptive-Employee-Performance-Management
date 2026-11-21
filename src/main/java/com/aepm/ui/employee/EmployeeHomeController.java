@@ -6,7 +6,7 @@ import com.aepm.ui.components.NotificationBell;
 import com.aepm.ui.navigation.NavigationManager;
 import com.aepm.util.SessionManager;
 import com.aepm.ui.common.chat.ChatController;
-
+import com.aepm.ui.components.DashboardTaskChart;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -53,6 +53,9 @@ public class EmployeeHomeController {
     @FXML private Label escalationCountLabel;
     @FXML private Label remindersLabel;
     @FXML private Label donutTotalLabel;
+    @FXML private Label escalationLevel1Label;
+    @FXML private Label escalationLevel2Label;
+    @FXML private Label escalationLevel3Label;
 
     @FXML private BarChart<String, Number> taskStatusChart;
     @FXML private PieChart escalationChart;
@@ -233,9 +236,12 @@ public class EmployeeHomeController {
         );
 
         donutTotalLabel.setText(
-                String.valueOf(s.activeEscalations())
+                String.valueOf(s.level1() + s.level2() + s.level3())
         );
 
+        escalationLevel1Label.setText("Level 1: " + s.level1());
+        escalationLevel2Label.setText("Level 2: " + s.level2());
+        escalationLevel3Label.setText("Level 3: " + s.level3());
         remindersLabel.setText(s.reminders());
     }
 
@@ -243,120 +249,20 @@ public class EmployeeHomeController {
                 EmployeeDashboardService.Summary s
         ) {
 
-        XYChart.Series<String, Number> series =
-                new XYChart.Series<>();
-
-
-        series.getData().add(
-                createBarData(
-                        "Completed",
-                        s.completed()
-                )
+        DashboardTaskChart.update(
+                taskStatusChart,
+                s.completed(),
+                s.inProgress(),
+                s.overdue(),
+                s.pending(),
+                s.other()
         );
 
-
-        series.getData().add(
-                createBarData(
-                        "In Progress",
-                        s.inProgress()
-                )
+        var pieData = FXCollections.observableArrayList(
+                new PieChart.Data("Level 1", s.level1()),
+                new PieChart.Data("Level 2", s.level2()),
+                new PieChart.Data("Level 3", s.level3())
         );
-
-
-        series.getData().add(
-                createBarData(
-                        "Overdue",
-                        s.overdue()
-                )
-        );
-
-
-        series.getData().add(
-                createBarData(
-                        "Pending",
-                        s.pending()
-                )
-        );
-
-
-        series.getData().add(
-                createBarData(
-                        "Other",
-                        0
-                )
-        );
-
-
-        taskStatusChart.getData().clear();
-
-        taskStatusChart.getData().add(
-                series
-        );
-
-
-        String[] barColors = {
-                "#2563EB",
-                "#F59E0B",
-                "#FB7185",
-                "#8B5CF6",
-                "#64748B"
-        };
-
-
-        for (int i = 0;
-                i < series.getData().size();
-                i++) {
-
-                final String color =
-                        barColors[i];
-
-                XYChart.Data<String, Number> item =
-                        series.getData().get(i);
-
-
-                if (item.getNode() != null) {
-
-                item.getNode().setStyle(
-                        "-fx-bar-fill: "
-                                + color
-                                + ";"
-                );
-                }
-
-
-                item.nodeProperty().addListener(
-                        (obs, oldNode, node) -> {
-
-                        if (node != null) {
-
-                                node.setStyle(
-                                        "-fx-bar-fill: "
-                                                + color
-                                                + ";"
-                                );
-                        }
-                        }
-                );
-        }
-
-
-        var pieData =
-                FXCollections.observableArrayList(
-                        new PieChart.Data(
-                                "Level 1",
-                                s.level1()
-                        ),
-                        new PieChart.Data(
-                                "Level 2",
-                                s.level2()
-                        ),
-                        new PieChart.Data(
-                                "Level 3",
-                                s.level3()
-                        )
-                );
-
-
         escalationChart.setAnimated(false);
         escalationChart.setLegendVisible(false);
         escalationChart.setLabelsVisible(false);

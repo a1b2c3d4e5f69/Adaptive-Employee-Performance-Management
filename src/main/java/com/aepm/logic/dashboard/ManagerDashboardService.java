@@ -72,8 +72,8 @@ public final class ManagerDashboardService {
                 data.calculateTasks(tasks);
 
         JSONArray escalations =
-                data.getEscalationsForTasks(
-                        token, taskStats.taskIds()
+                data.getEscalationsForEmployees(
+                        token, employeeIds
                 );
 
         DashboardDataService.EscalationStats escalationStats =

@@ -559,7 +559,9 @@ public class ManagerDeadlineEscalationController {
 
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().add(ButtonType.CLOSE);
-        pane.setPrefSize(920, 840);
+        pane.setPrefSize(720, 600);
+        pane.setMinSize(560, 400);
+        dialog.setResizable(true);
         pane.setStyle(
             "-fx-background-color: #F6F8FC;"
         );
@@ -765,6 +767,8 @@ public class ManagerDeadlineEscalationController {
         body.setPadding(new javafx.geometry.Insets(18));
 
         ScrollPane scroll = new ScrollPane(body);
+        scroll.setMinHeight(0);
+        scroll.setPrefViewportHeight(460);
         scroll.setFitToWidth(true);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setStyle(

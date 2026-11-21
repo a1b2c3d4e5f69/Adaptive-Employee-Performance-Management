@@ -957,3 +957,251 @@
 .manager-table .table-row-cell:selected:focused:hover {
     -fx-background-color: #DFF4F1;
 }
+
+/* Selected rows remain highlighted, even without focus. */
+.manager-table .table-row-cell:filled:selected,
+.manager-table .table-row-cell:filled:selected:hover,
+.manager-table .table-row-cell:filled:selected:focused {
+    -fx-background-color: #C7EBE5;
+}
+
+.manager-table .table-row-cell:filled:selected .table-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #134E4A;
+}
+
+.manager-root .manager-task-chart-card {
+    -fx-border-color: #D8E6E5;
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+}
+
+.manager-root .manager-task-chart-card:hover {
+    -fx-border-color: #0F766E;
+}
+
+/* =====================================================================
+   MANAGER DASHBOARD ATTENTION PANEL - FINAL THEME
+   ===================================================================== */
+
+.manager-attention-panel {
+    -fx-background-color: transparent;
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+/* Keep all internal containers clean on the Manager background. */
+.manager-attention-panel .viewport,
+.manager-attention-panel .scroll-pane,
+.manager-attention-panel .anchor-pane,
+.manager-attention-panel .border-pane,
+.manager-attention-panel .vbox,
+.manager-attention-panel .hbox {
+    -fx-background-color: transparent;
+}
+
+/* ============================================================
+   TEXT
+   ============================================================ */
+
+.manager-attention-panel .label {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-text-fill: #344054;
+}
+
+/* Main headings */
+.manager-attention-panel .section-title,
+.manager-attention-panel .attention-title,
+.manager-attention-panel .modern-panel-title,
+.manager-attention-panel .content-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111111;
+}
+
+/* Description / summary */
+.manager-attention-panel .content-description,
+.manager-attention-panel .attention-summary,
+.manager-attention-panel .attention-subtitle,
+.manager-attention-panel .attention-description,
+.manager-attention-panel .modern-page-subtitle,
+.manager-attention-panel .modern-status,
+.manager-attention-panel .card-description {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 400;
+    -fx-text-fill: #667085;
+}
+
+/* Smaller section headings */
+.manager-attention-panel .card-label,
+.manager-attention-panel .attention-section-title,
+.manager-attention-panel .modern-metric-title {
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #475467;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.manager-attention-panel .button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C9DAD6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+
+    -fx-text-fill: #0F766E;
+
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+
+    -fx-padding: 9px 16px;
+    -fx-min-height: 38px;
+
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.manager-attention-panel .button:hover {
+    -fx-background-color: #0F766E;
+    -fx-border-color: #0F766E;
+    -fx-text-fill: #FFFFFF;
+}
+
+.manager-attention-panel .button:pressed {
+    -fx-background-color: #115E59;
+    -fx-border-color: #115E59;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.manager-attention-panel .table-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCE7E4;
+    -fx-border-width: 1px;
+    -fx-border-radius: 9px;
+    -fx-background-radius: 9px;
+    -fx-table-cell-border-color: transparent;
+    -fx-font-family: "Plus Jakarta Sans";
+}
+
+.manager-attention-panel .table-view .column-header-background {
+    -fx-background-color: #F4F8F7;
+}
+
+.manager-attention-panel .table-view .column-header,
+.manager-attention-panel .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #DCE7E4 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.manager-attention-panel .table-view .column-header .label {
+    -fx-text-fill: #344054;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.manager-attention-panel .table-view .table-cell {
+    -fx-text-fill: #344054;
+    -fx-font-family: "Plus Jakarta Sans";
+    -fx-font-size: 11px;
+    -fx-border-color: transparent transparent #EDF2F1 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.manager-attention-panel .table-view .table-row-cell {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-attention-panel .table-view .table-row-cell:odd {
+    -fx-background-color: #FFFFFF;
+}
+
+.manager-attention-panel .table-view .table-row-cell:hover {
+    -fx-background-color: #DFF4F1;
+}
+
+.manager-attention-panel .table-view .table-row-cell:selected,
+.manager-attention-panel .table-view .table-row-cell:selected:focused {
+    -fx-background-color: #C7EBE5;
+}
+
+.manager-attention-panel .table-view .table-row-cell:selected .table-cell,
+.manager-attention-panel .table-view .table-row-cell:selected:focused .table-cell {
+    -fx-text-fill: #134E4A;
+}
+
+/* Scrollbar */
+.manager-attention-panel .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.manager-attention-panel .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.manager-attention-panel .scroll-bar:vertical .thumb {
+    -fx-background-color: #C9DAD6;
+    -fx-background-radius: 8px;
+}
+
+.manager-attention-panel .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #0F766E;
+}
+
+
+/* =====================================================================
+   MANAGER GLOBAL CARD HOVER BORDER
+   Consistent with Admin / Employee
+   ===================================================================== */
+
+/* Main white cards */
+.manager-root .manager-card:hover {
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+}
+
+/* KPI / metric cards */
+.manager-root .manager-kpi-card:hover {
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+}
+
+/* Report cards */
+.manager-root .manager-report-main-card:hover {
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+}
+
+.manager-root .manager-report-filter-section:hover {
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+}
+
+/* Task popup / detail cards */
+.manager-root .manager-task-popup-card:hover,
+.manager-root .manager-task-popup-employee-box:hover {
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+}
+
+/* Attachment / selected member boxes */
+.manager-root .manager-attachment-preview:hover,
+.manager-root .manager-selected-employees-box:hover {
+    -fx-border-color: #0F766E;
+    -fx-border-width: 1px;
+}
+
+/* Keep background unchanged; only border changes on hover. */

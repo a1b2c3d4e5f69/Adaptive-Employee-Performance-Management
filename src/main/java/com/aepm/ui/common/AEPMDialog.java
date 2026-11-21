@@ -1,16 +1,20 @@
 package com.aepm.ui.common;
 
+import com.aepm.model.User;
+import com.aepm.util.SessionManager;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -377,77 +381,96 @@ public final class AEPMDialog {
         return confirmed[0];
     }
 
-    
     public static void showNotice(
-            Window owner,
-            String title,
-            String message
-    ) {
+                Window owner,
+                String title,
+                String message
+        ) {
 
-        Stage dialog =
-                new Stage();
+        User currentUser =
+                SessionManager.getCurrentUser();
 
-        dialog.initStyle(
-                StageStyle.DECORATED
-        );
+        boolean isEmployee =
+                currentUser != null
+                        && currentUser.getRoleId() == 3;
 
-        dialog.initModality(
-                Modality.APPLICATION_MODAL
-        );
+        boolean isManager =
+                currentUser != null
+                        && currentUser.getRoleId() == 2;
 
-        if (owner != null) {
-            dialog.initOwner(owner);
-        }
+
+        // =========================================================
+        // DIALOG
+        // =========================================================
+
+        javafx.scene.control.Dialog<Void> dialog =
+                new javafx.scene.control.Dialog<>();
 
         dialog.setTitle(
-                title == null
-                        ? "Notification Details"
+                title == null || title.isBlank()
+                        ? "Notification"
                         : title
         );
 
-        Label icon =
-                new Label(
-                        "✓"
-                );
+        dialog.setHeaderText(null);
 
-        icon.setAlignment(
-                Pos.CENTER
+        if (owner != null) {
+                dialog.initOwner(owner);
+        }
+
+        javafx.scene.control.DialogPane pane =
+                dialog.getDialogPane();
+
+        pane.getButtonTypes().add(
+                javafx.scene.control.ButtonType.CLOSE
         );
 
-        icon.setMinSize(
-                54,
-                54
+        // Same style direction as Task Details
+        pane.setPrefSize(
+                720,
+                400
         );
 
-        icon.setMaxSize(
-                54,
-                54
+        pane.setMinSize(
+                560,
+                340
         );
 
-        icon.setStyle(
-                "-fx-background-color: #FFF0B8;"
-                + "-fx-background-radius: 15;"
-                + "-fx-text-fill: #B86A00;"
-                + "-fx-font-size: 24px;"
-                + "-fx-font-weight: bold;"
-        );
-
-        Label heading =
-                new Label(
-                        title == null
-                                ? "Notification Details"
-                                : title
-                );
-
-        heading.setWrapText(
+        dialog.setResizable(
                 true
         );
 
+
+        // Hide JavaFX default Close button
+        Button defaultClose =
+                (Button) pane.lookupButton(
+                        javafx.scene.control.ButtonType.CLOSE
+                );
+
+        defaultClose.setVisible(false);
+        defaultClose.setManaged(false);
+
+
+        // =========================================================
+        // HEADER
+        // =========================================================
+
+        Label heading =
+                new Label(
+                        title == null || title.isBlank()
+                                ? "Notification"
+                                : title
+                );
+
+        heading.setWrapText(true);
+
         heading.setStyle(
-                "-fx-font-size: 26px;"
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 22px;"
                 + "-fx-font-weight: 800;"
                 + "-fx-text-fill: #10264A;"
         );
+
 
         Label subtitle =
                 new Label(
@@ -455,16 +478,45 @@ public final class AEPMDialog {
                 );
 
         subtitle.setStyle(
-                "-fx-font-size: 12px;"
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 12px;"
                 + "-fx-text-fill: #7184A4;"
         );
 
-        VBox headingText =
+
+        VBox headerText =
                 new VBox(
-                        5,
+                        4,
                         heading,
                         subtitle
                 );
+
+
+        Label headerIcon =
+                new Label("✓");
+
+        headerIcon.setAlignment(
+                Pos.CENTER
+        );
+
+        headerIcon.setMinSize(
+                54,
+                54
+        );
+
+        headerIcon.setMaxSize(
+                54,
+                54
+        );
+
+        headerIcon.setStyle(
+                "-fx-background-color: #FFF0B8;"
+                + "-fx-background-radius: 15;"
+                + "-fx-text-fill: #B86A00;"
+                + "-fx-font-size: 24px;"
+                + "-fx-font-weight: bold;"
+        );
+
 
         Region headerSpacer =
                 new Region();
@@ -474,27 +526,30 @@ public final class AEPMDialog {
                 Priority.ALWAYS
         );
 
-        Label badge =
+
+        Label headerBadge =
                 new Label(
                         "NOTIFICATION"
                 );
 
-        badge.setStyle(
+        headerBadge.setStyle(
                 "-fx-background-color: #FFF2DC;"
                 + "-fx-text-fill: #A75A08;"
-                + "-fx-background-radius: 20;"
+                + "-fx-background-radius: 18;"
                 + "-fx-padding: 7 14;"
-                + "-fx-font-size: 11px;"
-                + "-fx-font-weight: 700;"
+                + "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 10px;"
+                + "-fx-font-weight: 800;"
         );
+
 
         HBox header =
                 new HBox(
                         16,
-                        icon,
-                        headingText,
+                        headerIcon,
+                        headerText,
                         headerSpacer,
-                        badge
+                        headerBadge
                 );
 
         header.setAlignment(
@@ -510,16 +565,23 @@ public final class AEPMDialog {
                 )
         );
 
+
+        // =========================================================
+        // NOTIFICATION CARD
+        // =========================================================
+
         Label sectionTitle =
                 new Label(
                         "Notification Information"
                 );
 
         sectionTitle.setStyle(
-                "-fx-font-size: 14px;"
+                "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 14px;"
                 + "-fx-font-weight: 800;"
                 + "-fx-text-fill: #10264A;"
         );
+
 
         Label messageLabel =
                 new Label(
@@ -536,99 +598,105 @@ public final class AEPMDialog {
                 Double.MAX_VALUE
         );
 
-        messageLabel.setStyle(
-                "-fx-font-size: 13px;"
-                + "-fx-text-fill: #334B70;"
-                + "-fx-line-spacing: 4px;"
+        messageLabel.setMinHeight(
+                Region.USE_PREF_SIZE
         );
 
-        VBox messageCard =
-                new VBox(
-                        messageLabel
-                );
-
-        messageCard.setPadding(
+        messageLabel.setPadding(
                 new Insets(
-                        16
+                        14
                 )
         );
 
-        messageCard.setMaxWidth(
-                Double.MAX_VALUE
+        messageLabel.setStyle(
+                "-fx-background-color: #F1F6FD;"
+                + "-fx-background-radius: 10;"
+                + "-fx-text-fill: #273D60;"
+                + "-fx-font-family: 'Plus Jakarta Sans';"
+                + "-fx-font-size: 13px;"
         );
 
-        messageCard.setStyle(
-                "-fx-background-color: #F8FAFD;"
-                + "-fx-background-radius: 10;"
-                + "-fx-border-color: #C9D9F2;"
-                + "-fx-border-radius: 10;"
-        );
 
         VBox infoSection =
                 new VBox(
-                        12,
+                        10,
                         sectionTitle,
-                        messageCard
+                        messageLabel
                 );
 
-        infoSection.setPadding(
-                new Insets(
-                        16
-                )
-        );
 
-        infoSection.setStyle(
-                "-fx-background-color: #F3F7FF;"
-                + "-fx-background-radius: 12;"
-                + "-fx-border-color: #BFD2F2;"
-                + "-fx-border-radius: 12;"
-        );
-
-        VBox mainCard =
+        VBox card =
                 new VBox(
+                        14,
                         infoSection
                 );
 
-        mainCard.setPadding(
+        card.setPadding(
                 new Insets(
                         20
                 )
         );
 
-        mainCard.setStyle(
-                "-fx-background-color: #FFFFFF;"
+        card.setFillWidth(
+                true
+        );
+
+        card.setStyle(
+                "-fx-background-color: white;"
                 + "-fx-background-radius: 14;"
                 + "-fx-border-color: #DCE6F4;"
                 + "-fx-border-radius: 14;"
         );
 
+
+        // =========================================================
+        // BODY
+        // =========================================================
+
         VBox body =
                 new VBox(
-                        8,
+                        0,
                         header,
-                        mainCard
+                        card
                 );
 
         body.setPadding(
                 new Insets(
-                        10,
+                        8,
                         16,
                         16,
                         16
                 )
         );
+
 
         ScrollPane scroll =
                 new ScrollPane(
                         body
                 );
 
+        scroll.setMinHeight(
+                0
+        );
+
+        scroll.setPrefViewportHeight(
+                290
+        );
+
         scroll.setFitToWidth(
+                true
+        );
+
+        scroll.setPannable(
                 true
         );
 
         scroll.setHbarPolicy(
                 ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
         );
 
         scroll.setStyle(
@@ -637,32 +705,73 @@ public final class AEPMDialog {
                 + "-fx-border-color: transparent;"
         );
 
-        Button closeButton =
+        VBox.setVgrow(
+                scroll,
+                Priority.ALWAYS
+        );
+
+
+        // =========================================================
+        // CLOSE BUTTON
+        // =========================================================
+
+        Button close =
                 new Button(
                         "Close"
                 );
 
-        closeButton.setPrefSize(
-                120,
-                40
-        );
 
-        closeButton.setDefaultButton(
-                true
-        );
+        if (isEmployee) {
 
-        closeButton.setStyle(
-                "-fx-background-color: #10264A;"
-                + "-fx-text-fill: #FFFFFF;"
-                + "-fx-font-weight: 700;"
-                + "-fx-background-radius: 9;"
-                + "-fx-padding: 11 30;"
-                + "-fx-cursor: hand;"
-        );
+                close.setStyle(
+                        "-fx-background-color: #FFC700;"
+                        + "-fx-text-fill: #111111;"
+                        + "-fx-font-family: 'Plus Jakarta Sans';"
+                        + "-fx-font-size: 12px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-border-color: #FFC700;"
+                        + "-fx-border-radius: 9;"
+                        + "-fx-background-radius: 9;"
+                        + "-fx-padding: 11 22;"
+                        + "-fx-cursor: hand;"
+                );
 
-        closeButton.setOnAction(
+        } else if (isManager) {
+
+                close.setStyle(
+                        "-fx-background-color: #0F766E;"
+                        + "-fx-text-fill: white;"
+                        + "-fx-font-family: 'Plus Jakarta Sans';"
+                        + "-fx-font-size: 12px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-border-color: #0F766E;"
+                        + "-fx-border-radius: 9;"
+                        + "-fx-background-radius: 9;"
+                        + "-fx-padding: 11 22;"
+                        + "-fx-cursor: hand;"
+                );
+
+        } else {
+
+                close.setStyle(
+                        "-fx-background-color: #10264A;"
+                        + "-fx-text-fill: white;"
+                        + "-fx-font-family: 'Plus Jakarta Sans';"
+                        + "-fx-font-size: 12px;"
+                        + "-fx-font-weight: 700;"
+                        + "-fx-border-color: #10264A;"
+                        + "-fx-border-radius: 9;"
+                        + "-fx-background-radius: 9;"
+                        + "-fx-padding: 11 22;"
+                        + "-fx-cursor: hand;"
+                );
+        }
+
+
+        close.setOnAction(
                 e -> dialog.close()
         );
+
 
         Region spacer =
                 new Region();
@@ -672,10 +781,12 @@ public final class AEPMDialog {
                 Priority.ALWAYS
         );
 
+
         HBox footer =
                 new HBox(
+                        10,
                         spacer,
-                        closeButton
+                        close
                 );
 
         footer.setAlignment(
@@ -692,69 +803,35 @@ public final class AEPMDialog {
         );
 
         footer.setStyle(
-                "-fx-background-color: #FFFFFF;"
-                + "-fx-border-color: #DCE6F4 transparent transparent transparent;"
+                "-fx-background-color: white;"
+                + "-fx-border-color: #E5EBF4;"
                 + "-fx-border-width: 1 0 0 0;"
         );
 
-        BorderPane root =
-                new BorderPane(
-                        scroll
+
+        // =========================================================
+        // FINAL LAYOUT
+        // =========================================================
+
+        VBox dialogLayout =
+                new VBox(
+                        scroll,
+                        footer
                 );
 
-        root.setBottom(
-                footer
+        VBox.setVgrow(
+                scroll,
+                Priority.ALWAYS
         );
 
-        root.setStyle(
-                "-fx-background-color: #F6F8FC;"
-                + "-fx-font-family: 'Plus Jakarta Sans';"
+
+        pane.setContent(
+                dialogLayout
         );
 
-        Scene scene =
-                new Scene(
-                        root,
-                        920,
-                        840
-                );
-
-        dialog.setScene(
-                scene
-        );
-
-        dialog.setMinWidth(
-                880
-        );
-
-        dialog.setMinHeight(
-                760
-        );
-
-        dialog.setOnShown(
-                e -> {
-
-                    if (owner != null) {
-
-                        dialog.setX(
-                                owner.getX()
-                                        + (owner.getWidth() - dialog.getWidth()) / 2
-                        );
-
-                        dialog.setY(
-                                owner.getY()
-                                        + (owner.getHeight() - dialog.getHeight()) / 2
-                        );
-
-                    } else {
-
-                        dialog.centerOnScreen();
-                    }
-                }
-        );
 
         dialog.showAndWait();
     }
-
 
     public enum RecommendationChoice {
         VIEW_HISTORY,

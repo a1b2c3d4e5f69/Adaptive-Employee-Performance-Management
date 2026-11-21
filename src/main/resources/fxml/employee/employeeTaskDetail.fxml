@@ -496,7 +496,7 @@
                                     fx:id="uploadEvidenceButton"
                                     text="Upload Evidence"
                                     onAction="#handleChooseEvidence"
-                                    styleClass="employee-button"/>
+                                    styleClass="employee-button-primary"/>
 
                             <Label
                                     fx:id="evidenceFileNameLabel"

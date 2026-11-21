@@ -80,46 +80,6 @@ public class NotificationBell extends StackPane {
                 && user.getRoleId() == 1;
     }
 
-
-    private String primaryColor() {
-
-        return isManagerTheme()
-                ? "#0F766E"
-                : "#1E3A8A";
-    }
-
-
-    private String accentColor() {
-
-        return isManagerTheme()
-                ? "#0D9488"
-                : "#2563EB";
-    }
-
-
-    private String softColor() {
-
-        return isManagerTheme()
-                ? "#DFF7F2"
-                : "#E8EEFC";
-    }
-
-
-    private String unreadColor() {
-
-        return isManagerTheme()
-                ? "#ECFDF8"
-                : "#EFF6FF";
-    }
-
-
-    private String unreadBorderColor() {
-
-        return isManagerTheme()
-                ? "#7DD3C7"
-                : "#93C5FD";
-    }
-
     public NotificationBell() {
         setAlignment(Pos.CENTER);
         setPrefSize(48, 48);
@@ -127,7 +87,7 @@ public class NotificationBell extends StackPane {
         SVGPath bellIcon = new SVGPath();
         bellIcon.setContent("M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4");
         bellIcon.setFill(Color.TRANSPARENT);
-        bellIcon.setStroke(Color.web(primaryColor()));  
+        bellIcon.setStroke(Color.web(isEmployeeTheme() ? "#C79500" : primaryColor()));
         bellIcon.setStrokeWidth(1.8);
         bellIcon.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
         bellIcon.setStrokeLineJoin(javafx.scene.shape.StrokeLineJoin.ROUND);
@@ -135,6 +95,14 @@ public class NotificationBell extends StackPane {
         bellButton.setPrefSize(44, 44);
         bellButton.setMinSize(44, 44);
         bellButton.setStyle("-fx-background-color: transparent; -fx-background-radius: 10; -fx-padding: 10; -fx-cursor: hand;");
+        if (isEmployeeTheme()) {
+            bellButton.setStyle(
+                "-fx-background-color: transparent;"
+                + "-fx-background-radius: 10;"
+                + "-fx-padding: 10;"
+                + "-fx-cursor: hand;"
+            );
+        }
         badge.setAlignment(Pos.CENTER);
         badge.setMinSize(19, 19);
         badge.setStyle("-fx-background-color: #EF4444; -fx-background-radius: 100; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold;");
@@ -190,7 +158,7 @@ public class NotificationBell extends StackPane {
                 "-fx-font-size: 19px;"
                 + "-fx-font-weight: 700;"
                 + "-fx-text-fill: "
-                + primaryColor()
+                + (isEmployeeTheme() ? "#946200" : primaryColor())
                 + ";"
         );
 
@@ -506,24 +474,20 @@ public class NotificationBell extends StackPane {
         item.setPadding(new Insets(16));
                 item.setStyle(
                     "-fx-background-color: "
-                    + (
-                            read
-                                    ? "#FFFFFF"
-                                    : unreadColor()
-                    )
+                    + (read
+                        ? "#FFFFFF"
+                        : (isEmployeeTheme() ? "#FFF8D6" : unreadColor()))
                     + ";"
                     + "-fx-background-radius: 11;"
                     + "-fx-border-color: "
-                    + (
-                            read
-                                    ? "#CBD5E1"
-                                    : unreadBorderColor()
-                    )
+                    + (read
+                        ? "#CBD5E1"
+                        : (isEmployeeTheme() ? "#FFC700" : unreadBorderColor()))
                     + ";"
                     + "-fx-border-width: 1;"
                     + "-fx-border-radius: 11;"
                     + "-fx-cursor: hand;"
-            );
+                );
 
             item.setOnMouseClicked(e -> {
 
@@ -767,8 +731,9 @@ public class NotificationBell extends StackPane {
 
         DialogPane pane = dialog.getDialogPane();
         pane.getButtonTypes().add(ButtonType.CLOSE);
-        pane.setPrefWidth(850);
-        pane.setPrefHeight(680);
+        pane.setPrefSize(760, 640);
+        pane.setMinSize(560, 400);
+        dialog.setResizable(true);
         pane.setStyle(
             "-fx-font-family: 'Plus Jakarta Sans';"
             + "-fx-background-color: #F3F6FD;"
@@ -809,6 +774,8 @@ public class NotificationBell extends StackPane {
         content.setPadding(new Insets(24));
 
         ScrollPane scroll = new ScrollPane(content);
+        scroll.setMinHeight(0);
+        scroll.setPrefViewportHeight(480);
         scroll.setFitToWidth(true);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setStyle("-fx-background-color: transparent;");
@@ -1311,5 +1278,50 @@ public class NotificationBell extends StackPane {
     @FunctionalInterface
     private interface UpdateAction {
         void run() throws Exception;
+    }
+
+    private boolean isEmployeeTheme() {
+        User user = SessionManager.getCurrentUser();
+        return user != null && user.getRoleId() == 3;
+    }
+
+    private String primaryColor() {
+        if (isEmployeeTheme()) return "#111111";
+
+        return isManagerTheme()
+                ? "#0F766E"
+                : "#1E3A8A";
+    }
+
+    private String accentColor() {
+        if (isEmployeeTheme()) return "#946200";
+
+        return isManagerTheme()
+                ? "#0D9488"
+                : "#2563EB";
+    }
+
+    private String softColor() {
+        if (isEmployeeTheme()) return "#F8FAFD";
+
+        return isManagerTheme()
+                ? "#DFF7F2"
+                : "#E8EEFC";
+    }
+
+    private String unreadColor() {
+        if (isEmployeeTheme()) return "#FFF8D6";
+
+        return isManagerTheme()
+                ? "#ECFDF8"
+                : "#EFF6FF";
+    }
+
+    private String unreadBorderColor() {
+        if (isEmployeeTheme()) return "#FFC700";
+
+        return isManagerTheme()
+                ? "#7DD3C7"
+                : "#93C5FD";
     }
 }

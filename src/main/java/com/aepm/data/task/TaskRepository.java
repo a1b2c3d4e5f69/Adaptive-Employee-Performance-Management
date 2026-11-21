@@ -234,48 +234,92 @@ public class TaskRepository {
     // =========================================================
 
     public List<Task> getTasksByEmployee(
-            UUID employeeId,
-            String accessToken
-    ) throws Exception {
+                UUID employeeId,
+                String accessToken
+        ) throws Exception {
+        if (employeeId == null) {
+                throw new IllegalArgumentException("Employee ID is required.");
+        }
 
-        String url =
-                AppConfig.REST_URL
-                        + "/task_tbl"
-                        + "?select=*"
-                        + "&assigned_employee_id=eq."
-                        + employeeId
-                        + "&order=created_at.desc";
+        String individualUrl = AppConfig.REST_URL
+                + "/task_tbl?select=*"
+                + "&assigned_employee_id=eq." + employeeId
+                + "&order=created_at.desc";
 
-
-        HttpRequest request =
-                supabaseClient
-                        .createAuthenticatedRequest(
-                                url,
-                                accessToken
-                        )
-                        .GET()
-                        .build();
-
-
-        HttpResponse<String> response =
-                supabaseClient
-                        .getHttpClient()
-                        .send(
-                                request,
-                                HttpResponse.BodyHandlers.ofString()
-                        );
-
+        HttpResponse<String> individualResponse =
+                supabaseClient.getHttpClient().send(
+                        supabaseClient.createAuthenticatedRequest(
+                        individualUrl, accessToken
+                        ).GET().build(),
+                        HttpResponse.BodyHandlers.ofString()
+                );
 
         validateResponse(
-                response,
-                "Unable to load employee tasks"
+                individualResponse, "Unable to load employee tasks"
         );
 
+        java.util.Map<UUID, Task> tasks =
+                new java.util.LinkedHashMap<>();
 
-        return mapTaskList(
-                response.body()
+        for (Task task : mapTaskList(individualResponse.body())) {
+                tasks.put(task.getTaskId(), task);
+        }
+
+        String teamUrl = AppConfig.REST_URL
+                + "/task_assignment_tbl?select=*,task_tbl!inner(*)"
+                + "&employee_id=eq." + employeeId
+                + "&task_tbl.assignment_type=eq.TEAM"
+                + "&order=created_at.desc";
+
+        HttpResponse<String> teamResponse =
+                supabaseClient.getHttpClient().send(
+                        supabaseClient.createAuthenticatedRequest(
+                        teamUrl, accessToken
+                        ).GET().build(),
+                        HttpResponse.BodyHandlers.ofString()
+                );
+
+        validateResponse(
+                teamResponse, "Unable to load assigned team tasks"
         );
-    }
+
+        JSONArray assignments = new JSONArray(teamResponse.body());
+
+        for (int i = 0; i < assignments.length(); i++) {
+                JSONObject member = assignments.getJSONObject(i);
+                JSONObject master = member.optJSONObject("task_tbl");
+
+                if (master == null) {
+                continue;
+                }
+
+                JSONObject personalTask = new JSONObject(master.toString());
+
+                personalTask.put("due_date", member.opt("due_date"));
+                personalTask.put(
+                "progress", member.optInt("individual_progress", 0)
+                );
+                personalTask.put(
+                "acceptance_date", member.opt("accepted_at")
+                );
+                personalTask.put(
+                "completion_date", member.opt("completed_at")
+                );
+
+                if (!"Cancelled".equalsIgnoreCase(
+                        master.optString("task_status", ""))) {
+                personalTask.put(
+                        "task_status",
+                        member.optString("assignment_status", "Pending")
+                );
+                }
+
+                Task task = mapTask(personalTask);
+                tasks.put(task.getTaskId(), task);
+        }
+
+        return new ArrayList<>(tasks.values());
+   }
 
 
 // =========================================================
@@ -326,94 +370,106 @@ public Task getTaskById(
     // =========================================================
 
     public void updateTaskStatus(
-            UUID taskId,
-            String status,
-            String accessToken
-    ) throws Exception {
+                UUID taskId,
+                String status,
+                String accessToken
+        ) throws Exception {
 
-        JSONObject body =
-                new JSONObject();
+        // Group Task: Accept / Start updates only the current member.
+        if ("Accepted".equals(status) || "In Progress".equals(status)) {
 
+                Task currentTask = getTaskById(taskId, accessToken);
 
-        body.put(
-                "task_status",
-                status
-        );
+                if (currentTask != null
+                        && currentTask.getAssignedEmployeeId() == null) {
 
+                JSONObject payload = new JSONObject()
+                        .put("p_task_id", taskId.toString())
+                        .put("p_status", status);
 
-        body.put(
-                "updated_at",
-                OffsetDateTime.now().toString()
-        );
-
-
-        if ("Accepted".equals(status)) {
-
-            body.put(
-                    "acceptance_date",
-                    OffsetDateTime.now().toString()
-            );
-        }
-
-
-        if ("Completed".equals(status)) {
-
-            body.put(
-                    "completion_date",
-                    OffsetDateTime.now().toString()
-            );
-
-
-            body.put(
-                    "progress",
-                    100
-            );
-        }
-
-
-        String url =
-                AppConfig.REST_URL
-                        + "/task_tbl"
-                        + "?task_id=eq."
-                        + taskId;
-
-
-        HttpRequest request =
-                supabaseClient
+                HttpRequest memberRequest = supabaseClient
                         .createAuthenticatedRequest(
-                                url,
+                                AppConfig.REST_URL
+                                        + "/rpc/aepm_set_my_team_task_status",
                                 accessToken
                         )
-                        .header(
-                                "Prefer",
-                                "return=representation"
-                        )
-                        .method(
-                                "PATCH",
+                        .POST(
                                 HttpRequest.BodyPublishers.ofString(
-                                        body.toString()
+                                        payload.toString()
                                 )
                         )
                         .build();
 
-
-        HttpResponse<String> response =
-                supabaseClient
+                HttpResponse<String> memberResponse = supabaseClient
                         .getHttpClient()
                         .send(
-                                request,
+                                memberRequest,
                                 HttpResponse.BodyHandlers.ofString()
                         );
 
+                validateResponse(
+                        memberResponse,
+                        "Unable to update your team assignment"
+                );
+
+                // Do not continue to update the shared task.
+                return;
+                }
+        }
+
+        // Preserve the original task-status update path.
+        JSONObject body = new JSONObject();
+
+        body.put("task_status", status);
+        body.put("updated_at", OffsetDateTime.now().toString());
+
+        if ("Accepted".equals(status)) {
+                body.put(
+                        "acceptance_date",
+                        OffsetDateTime.now().toString()
+                );
+        }
+
+        if ("Completed".equals(status)) {
+                body.put(
+                        "completion_date",
+                        OffsetDateTime.now().toString()
+                );
+                body.put("progress", 100);
+        }
+
+        String url = AppConfig.REST_URL
+                + "/task_tbl"
+                + "?task_id=eq."
+                + taskId;
+
+        HttpRequest request = supabaseClient
+                .createAuthenticatedRequest(url, accessToken)
+                .header("Prefer", "return=representation")
+                .method(
+                        "PATCH",
+                        HttpRequest.BodyPublishers.ofString(
+                                body.toString()
+                        )
+                )
+                .build();
+
+        HttpResponse<String> response = supabaseClient
+                .getHttpClient()
+                .send(
+                        request,
+                        HttpResponse.BodyHandlers.ofString()
+                );
 
         validateResponse(
                 response,
                 "Unable to update task status"
         );
+
         if (new JSONArray(response.body()).isEmpty()) {
                 throw new IllegalStateException(
-                        "Task status was not updated. " +
-                        "Please check task permissions or RLS policies."
+                        "Task status was not updated. "
+                                + "Please check task permissions or RLS policies."
                 );
         }
     }

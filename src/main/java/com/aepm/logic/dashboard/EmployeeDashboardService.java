@@ -42,11 +42,9 @@ public final class EmployeeDashboardService {
 
         UUID.fromString(employeeUserId);
 
-        JSONArray tasks = data.readAll(
+        JSONArray tasks = data.getTasksForEmployees(
                 token,
-                "task_tbl",
-                "task_id,task_title,task_status,due_date,completion_date",
-                "&assigned_employee_id=eq." + employeeUserId
+                java.util.Set.of(employeeUserId)
         );
 
         DashboardDataService.TaskStats taskStats =
@@ -98,8 +96,8 @@ public final class EmployeeDashboardService {
         }
 
         JSONArray escalations =
-                data.getEscalationsForTasks(
-                        token, taskStats.taskIds()
+                data.getEscalationsForEmployees(
+                        token, java.util.Set.of(employeeUserId)
                 );
 
         DashboardDataService.EscalationStats escalationStats =

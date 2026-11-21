@@ -50,6 +50,9 @@ public class ManagerHomeController {
     @FXML private Label escalationCountLabel;
     @FXML private Label completionRateLabel;
     @FXML private Label donutTotalLabel;
+    @FXML private Label escalationLevel1Label;
+    @FXML private Label escalationLevel2Label;
+    @FXML private Label escalationLevel3Label;
     @FXML private DashboardAttentionPanel attentionPanel;
     // New Dashboard fields
     @FXML private Label pendingCountLabel;
@@ -211,8 +214,12 @@ public class ManagerHomeController {
         );
 
         donutTotalLabel.setText(
-                String.valueOf(s.activeEscalations())
+                String.valueOf(s.level1() + s.level2() + s.level3())
         );
+
+        escalationLevel1Label.setText("Level 1: " + s.level1());
+        escalationLevel2Label.setText("Level 2: " + s.level2());
+        escalationLevel3Label.setText("Level 3: " + s.level3());
 
         pendingCountLabel.setText(
                 String.valueOf(s.pending())

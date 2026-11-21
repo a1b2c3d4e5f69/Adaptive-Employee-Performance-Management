@@ -739,7 +739,7 @@
                                         styleClass="admin-section-title"/>
 
                                 <Label
-                                        text="Current active deadline escalation levels."
+                                        text="Active and resolved escalation records by level."
                                         styleClass="admin-section-subtitle"/>
 
                             </VBox>
@@ -773,7 +773,7 @@
                                             styleClass="admin-kpi-value"/>
 
                                     <Label
-                                            text="Total Active"
+                                            text="Total Records"
                                             styleClass="admin-kpi-note"/>
 
                                 </VBox>
@@ -788,22 +788,25 @@
                                 <HBox spacing="6" alignment="CENTER">
                                     <Label text="●"
                                             styleClass="level-legend-1"/>
-                                    <Label text="Level 1"
-                                            styleClass="chart-legend-text"/>
+                                    <Label fx:id="escalationLevel1Label"
+                                        text="Level 1: 0"
+                                        styleClass="chart-legend-text"/>
                                 </HBox>
 
                                 <HBox spacing="6" alignment="CENTER">
                                     <Label text="●"
                                             styleClass="level-legend-2"/>
-                                    <Label text="Level 2"
-                                            styleClass="chart-legend-text"/>
+                                    <Label fx:id="escalationLevel2Label"
+                                        text="Level 2: 0"
+                                        styleClass="chart-legend-text"/>
                                 </HBox>
 
                                 <HBox spacing="6" alignment="CENTER">
                                     <Label text="●"
                                             styleClass="level-legend-3"/>
-                                    <Label text="Level 3"
-                                            styleClass="chart-legend-text"/>
+                                    <Label fx:id="escalationLevel3Label"
+                                        text="Level 3: 0"
+                                        styleClass="chart-legend-text"/>
                                 </HBox>
 
                             </HBox>

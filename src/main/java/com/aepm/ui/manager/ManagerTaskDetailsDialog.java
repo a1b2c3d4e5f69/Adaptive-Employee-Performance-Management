@@ -121,6 +121,8 @@ public class ManagerTaskDetailsDialog {
         content.setPadding(new Insets(28));
 
         ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setMinHeight(0);
+        scrollPane.setPrefViewportHeight(460);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -156,7 +158,7 @@ public class ManagerTaskDetailsDialog {
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         root.getStyleClass().add("manager-root");
 
-        Scene scene = new Scene(root, 760, 680);
+        Scene scene = new Scene(root, 720, 600);
 
         var appCss = getClass().getResource("/css/app.css");
         if (appCss != null) scene.getStylesheets().add(appCss.toExternalForm());
@@ -165,8 +167,9 @@ public class ManagerTaskDetailsDialog {
         if (managerCss != null) scene.getStylesheets().add(managerCss.toExternalForm());
 
         dialog.setScene(scene);
-        dialog.setMinWidth(680);
-        dialog.setMinHeight(560);
+        dialog.setMinWidth(560);
+        dialog.setMinHeight(400);
+        dialog.setResizable(true);
         dialog.showAndWait();
     }
 
